@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 /**
- * @version 0.1
+ * @version 0.2
  * @author Pontus Laestadius
  * @since 2017-10-06
  */
@@ -25,9 +25,12 @@ public class Import {
     public static String file(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
-        File file = fileChooser.showOpenDialog(stage);
+        File file;
 
-        // Verifies the file format
+        // If the fileChooser is closed without choosing a file.
+        if ((file = fileChooser.showOpenDialog(stage) ) == null) return null;
+
+        // Verifies the file format.
         if (file.toString().endsWith(".json")) {
             StringBuilder content = new StringBuilder();
             try {
