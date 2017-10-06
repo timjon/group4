@@ -21,12 +21,16 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
         primaryStage.setTitle("FUML");
-        Button btn = new Button();
-        btn.setText("Import");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
+        Button btn_import = new Button();
+        btn_import.setText("Import");
+        btn_import.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Import");
+                String result = Import.file(primaryStage);
+                if (result == null) return;
+
+                // TODO remove print line and parse result (user story 5)
+                System.out.println(result);
             }
         });
 
@@ -50,18 +54,12 @@ public class Main extends Application {
         ta.setPrefColumnCount(60);
         ta.setPrefRowCount(50);
 
-        //ScrollPane sp = new ScrollPane();
-        //sp.add(ta);
-
         GridPane pane =  new GridPane();
         pane.setHgap(5);
         pane.setVgap(5);
-        pane.add(btn, 1,0);
+        pane.add(btn_import, 1,0);
         pane.add(btn2, 2,        0);
-        //ScrollPane sp = ne
-        //sp.add(ta);0);
         pane.add(ta, 1, 3, 20, 20);
-
 
         Group root = new Group();
         Canvas canvas = new Canvas(600, 300);
