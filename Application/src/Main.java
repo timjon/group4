@@ -13,6 +13,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 
+import java.util.Collection;
+
 public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -26,7 +28,7 @@ public class Main extends Application {
         btn_import.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                String result = Import.file(primaryStage);
+                Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
 
                 // TODO remove print line and parse result (user story 5)

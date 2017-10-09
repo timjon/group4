@@ -6,9 +6,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * @version 0.2
+ * @version 0.3
  * @author Pontus Laestadius
  * @since 2017-10-06
  */
@@ -16,53 +19,71 @@ import java.io.IOException;
 public class Import {
 
     /**
-     * Opens a Filechooser and enables safe file loading.
+     * Opens a FileChooser and enables safe file loading.
      * Not a pure function since it has both side-effects in the form of windows and null values.
      * @param stage the parent stage that the dialog window is displayed on top of.
      * @return a file if the import was successful or a null type otherwise.
      * @author Pontus Laestadius
      */
-    public static String file(Stage stage) {
+    public static Collection<String> file(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
-        File file;
+        List<File> files_raw;
 
         // If the fileChooser is closed without choosing a file.
-        if ((file = fileChooser.showOpenDialog(stage) ) == null) return null;
+        if ((files_raw = fileChooser.showOpenMultipleDialog(stage) ) == null) return null;
 
-        // Verifies the file format.
-        if (file.toString().endsWith(".json")) {
-            StringBuilder content = new StringBuilder();
-            try {
-                FileReader fr = new FileReader(file);
-                BufferedReader br = new BufferedReader(fr);
+        Collection<File> files_valid = new ArrayList<>();       // Stores all valid files that will be imported.
+        List<File> files_invalid = new ArrayList<>();           // Stores all invalid files that can not be imported.
+        List<String> files_content = new ArrayList<>();         // Stores the content of the files.
 
-                String line;
-                while ((line=br.readLine()) != null) {
-                    content.append(line);
+        // Verifies the file format of all files.
+        for (File file: files_raw){
+
+            // If the file is not a .json.
+            if (!file.toString().endsWith(".json")) {
+                // Removes from the valid list and moves to the invalid list.
+                files_invalid.add(file);
+            } else { // If it is a .json.
+
+                StringBuilder content = new StringBuilder();
+                try {
+                    FileReader fr = new FileReader(file);
+                    BufferedReader br = new BufferedReader(fr);
+
+                    // Append each line of the file to a StringBuilder.
+                    String line;
+                    while ((line=br.readLine()) != null) {
+                        content.append(line);
+                    }
+
+                    // Any unexpected exceptions.
+                } catch (IOException e) {
+
+                    // Removes from the valid list and moves to the invalid list.
+                    files_invalid.add(file);
+
+                    continue;
                 }
 
-                // Any unexpected exceptions.
-            } catch (IOException e) {
-
-                disp(
-                        "Unable to read file",
-                        "Unexpected exception: \n" + e.toString()
-                );
-
-                return null;
+                // Stores the imported data.
+                files_valid.add(file);
+                files_content.add(content.toString());
             }
-
-            return content.toString();
         }
 
-        // When the verification fails
-        disp(
-                "Incompatible FileType",
-                "The FileType is not supported: \n" + file.toString() +" \n The file must be .json formatted"
-        );
+        // If there were any invalid files, display them all as one error message to the user.
+        if (!files_invalid.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
 
-        return null;
+            for (File file: files_invalid) {
+                sb.append(file.toString());
+                sb.append('\n');
+            }
+            disp("", sb.toString());
+        }
+
+        return files_content;
     }
 
     /**
@@ -72,8 +93,8 @@ public class Import {
      */
     private static void disp(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Import error: " + title);
-        alert.setHeaderText("Import interruption");
+        alert.setTitle("Import error " + title);
+        alert.setHeaderText("Unable to parse the following file(s):");
         alert.setContentText(content);
         alert.show();
     }
