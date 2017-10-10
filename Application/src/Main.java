@@ -31,7 +31,6 @@ public class Main extends Application {
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
 
-
                 // Parse the element if it contains a supported diagram
                 Parser parse = new Parser();
                 switch(DiagramCheck.ContainsDiagram(result)) {
@@ -45,6 +44,7 @@ public class Main extends Application {
                 DiagramCheck.ContainsDiagram(result);
 
             }});
+
 
         Button btn2 = new Button();
         btn2.setText("Settings");
