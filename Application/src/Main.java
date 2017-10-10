@@ -66,9 +66,22 @@ public class Main extends Application {
         pane.add(ta, 1, 3, 20, 20);
 
 
-        Draw draw = new Draw(600, 300);
-        draw.drawClass(0, 0, "test1");
-        draw.drawClass(100, 100, "test2");
+        // Init's a draw object that handles graphical elements
+        Draw draw = new Draw(1180, 790);
+
+        // Replace AddClass with output from parser or something. TODO
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1"); // TODO remove, It's a test.
+
+        // Renders and displays the classes
+        draw.render();
 
         pane.add(draw.getCanvas(), 22, 3, 20, 20);
 
@@ -76,9 +89,10 @@ public class Main extends Application {
 
         stack.getChildren().add(pane);
 
-        Scene main = new Scene(stack,1200, 840);
+        Scene main = new Scene(stack,1500, 837);
 
         primaryStage.setScene(main);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 }
