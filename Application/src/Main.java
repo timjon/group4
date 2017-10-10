@@ -7,11 +7,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 
 import visuals.Draw;
 
@@ -65,7 +60,6 @@ public class Main extends Application {
         pane.add(btn2, 2,        0);
         pane.add(ta, 1, 3, 20, 20);
 
-
         // Init's a draw object that handles graphical elements
         Draw draw = new Draw(1180, 790);
 
@@ -74,11 +68,13 @@ public class Main extends Application {
         draw.addClass("test1"); // TODO remove, It's a test.
         draw.addClass("test1"); // TODO remove, It's a test.
         draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test1231231"); // TODO remove, It's a test.
         draw.addClass("test1"); // TODO remove, It's a test.
         draw.addClass("test1"); // TODO remove, It's a test.
         draw.addClass("test1"); // TODO remove, It's a test.
         draw.addClass("test1"); // TODO remove, It's a test.
         draw.addClass("test1"); // TODO remove, It's a test.
+
 
         // Renders and displays the classes
         draw.render();
