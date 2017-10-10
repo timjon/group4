@@ -30,7 +30,7 @@ public class Main extends Application {
             public void handle(ActionEvent event) {
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
-
+				// Check if the JSON file contains a supported diagram type.
                 System.out.println(DiagramCheck.ContainsDiagram(result));
                 // TODO remove print line and parse result (user story 5)
                 System.out.println(result);
