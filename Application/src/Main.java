@@ -66,11 +66,11 @@ public class Main extends Application {
         pane.add(ta, 1, 3, 20, 20);
 
 
-        Canvas canvas = Draw.newCanvas(600, 300);
-        Draw.drawClass(canvas, 0, 0);
-        Draw.drawClass(canvas, 100, 100);
+        Draw draw = new Draw(600, 300);
+        draw.drawClass(0, 0, "test1");
+        draw.drawClass(100, 100, "test2");
 
-        pane.add(canvas, 22, 3, 20, 20);
+        pane.add(draw.getCanvas(), 22, 3, 20, 20);
 
         StackPane stack = new StackPane();
 
