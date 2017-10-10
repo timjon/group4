@@ -31,6 +31,7 @@ public class Main extends Application {
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
 
+                System.out.println(DiagramCheck.ContainsDiagram(result));
                 // TODO remove print line and parse result (user story 5)
                 System.out.println(result);
             }
