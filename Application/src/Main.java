@@ -65,15 +65,14 @@ public class Main extends Application {
 
         // Replace AddClass with output from parser or something. TODO
         draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1231231"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test1"); // TODO remove, It's a test.
+        draw.addClass("test2"); // TODO remove, It's a test.
+        draw.addClass("test3"); // TODO remove, It's a test.
+        draw.addClass("test4"); // TODO remove, It's a test.
+        draw.addClass("test5 long name"); // TODO remove, It's a test.
+        draw.addClass("test6"); // TODO remove, It's a test.
+        draw.addClass("test7"); // TODO remove, It's a test.
+        draw.addClass("test8"); // TODO remove, It's a test.
+        draw.addClass("test9"); // TODO remove, It's a test.
 
 
         // Renders and displays the classes

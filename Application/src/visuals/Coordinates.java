@@ -1,6 +1,10 @@
 package visuals;
 
-class Coordinates {
+/**
+ * Holds x and y positions
+ * @author Pontus Laestadius
+ */
+public class Coordinates {
     private int x;
     private int y;
 

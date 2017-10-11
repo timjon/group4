@@ -2,17 +2,18 @@ package visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
-
+/**
+ * @version 0.2
+ * @author Pontus Laestadius
+ */
 
 public class Draw {
 
     private Canvas canvas;
-    private ArrayList<Coordinates> classes = new ArrayList<>();
+    private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<String> classes_names = new ArrayList<>();
 
     public Canvas getCanvas() {
@@ -22,6 +23,8 @@ public class Draw {
     public Draw(int w, int h) {
         this.canvas = new Canvas(w, h);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
+
+        // Draws a single pixel border around the canvas.
         gc.strokeRoundRect(0,0,w-1,h-1, 0,0);
     }
 
@@ -55,11 +58,30 @@ public class Draw {
             // Offsets half of the classes y coordinates.
             int y = (this.classes.size() % 2 == 0 ? 70:73);
 
-            this.classes.add(new Coordinates(x,y));
-            Image image = new Image("resources/castle.jpg");
-            gc.drawImage(image, x, y, size/2, size/2);
-            gc.fillText(n, x + size/8, y -15);
+            this.classes.add(new Class(new Coordinates(x,y), size, n));
         }
 
+        for (Class c: this.classes) {
+            c.render(gc);
+        }
     }
+
+    /**
+     * renders an Object on the Canvas.
+     * @param instance a Object which implements Renderable
+     */
+    public void render(Renderable instance) {
+        instance.render(this.canvas.getGraphicsContext2D());
+    }
+
+    /**
+     * renders several Object on the Canvas.
+     * @param instance a Object which implements Renderable
+     */
+    public void render(Renderable instance[]) {
+        for (Renderable i: instance) {
+            i.render(this.canvas.getGraphicsContext2D());
+        }
+    }
+
 }
