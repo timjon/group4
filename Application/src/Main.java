@@ -24,7 +24,7 @@ public class Main extends Application {
         btn_import.setText("Import");
         btn_import.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
+            public void handle(ActionEvent event) { // Import button action handler.
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
 
@@ -38,11 +38,10 @@ public class Main extends Application {
         btn2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Settings");
-            }
+                System.out.println("Settings"); } // Settings button handler.
         });
 
-        TextArea ta = new TextArea("Execution Log: \n " +
+        TextArea ta = new TextArea("Execution Log: \n " +  // Execution log text-box and it's current contents.
                 "> Node1: sent a message to Node2 \n " +
                 "> Node2: received message from Node1 \n " +
                 "> Node2: sent a OK to Node1 \n " +
@@ -53,7 +52,7 @@ public class Main extends Application {
         ta.setPrefColumnCount(60);
         ta.setPrefRowCount(50);
 
-        GridPane pane =  new GridPane();
+        GridPane pane =  new GridPane(); // The "pane" containing the sequence-diagram.
         pane.setHgap(5);
         pane.setVgap(5);
         pane.add(btn_import, 1,0);
