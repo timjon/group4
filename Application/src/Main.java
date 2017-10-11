@@ -76,7 +76,8 @@ public class Main extends Application {
 
         // Renders and displays the classes
         draw.render();
-
+        draw.addMessage(1, 2); //TODO Remove, Just a test.
+        draw.addMessage(0, 1); //TODO Remove, Just a test.
         pane.add(draw.getCanvas(), 22, 3, 20, 20);
 
         StackPane stack = new StackPane();

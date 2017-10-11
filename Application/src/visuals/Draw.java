@@ -35,6 +35,21 @@ public class Draw {
         this.classes_names.add(name);
     }
 
+    public void addMessage(int fromNode, int toNode){
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        // fromClass coordinates.
+        int x1 = classes.get(fromNode).getCoordinates().getX();
+        int y1 = classes.get(fromNode).getCoordinates().getY();
+        // toClass coordinates.
+        int x2 = classes.get(toNode).getCoordinates().getX();
+        int y2 = classes.get(toNode).getCoordinates().getY();
+
+        Message message = new Message(x1+30, x2, y1+20, y2, gc);
+
+        message.createMessage();
+
+    }
+
     /**
      * Renders the classes that have been added on to the Canvas.
      * Dynamically scales the size and position of all classes.
@@ -65,6 +80,8 @@ public class Draw {
             c.render(gc);
         }
     }
+
+
 
     /**
      * renders an Object on the Canvas.
