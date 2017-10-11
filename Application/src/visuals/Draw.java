@@ -36,7 +36,7 @@ public class Draw {
     }
 
     // Draws a Message.
-    public void addMessage(int fromNode, int toNode){
+    public void addMessage(int fromNode, int toNode, String name){ // TODO accommodate dynamic message adding.
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
         int x1 = classes.get(fromNode).getCoordinates().getX();
@@ -45,7 +45,7 @@ public class Draw {
         int x2 = classes.get(toNode).getCoordinates().getX();
         int y2 = classes.get(toNode).getCoordinates().getY();
 
-        Message message = new Message(x1+30, x2, y1+20, y2, gc);
+        Message message = new Message(x1+30, x2, y1+20, y2, gc, name);
 
         message.createMessage();
 
