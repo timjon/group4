@@ -35,6 +35,7 @@ public class Draw {
         this.classes_names.add(name);
     }
 
+    // Draws a Message.
     public void addMessage(int fromNode, int toNode){
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
