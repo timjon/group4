@@ -83,7 +83,6 @@ public class Draw {
     }
 
 
-
     /**
      * renders an Object on the Canvas.
      * @param instance a Object which implements Renderable
@@ -100,6 +99,18 @@ public class Draw {
         for (Renderable i: instance) {
             i.render(this.canvas.getGraphicsContext2D());
         }
+    }
+
+    public void test() {
+        this.addClass("test1"); // TODO remove, It's a test.
+        this.addClass("test2"); // TODO remove, It's a test.
+        this.addClass("test3"); // TODO remove, It's a test.
+        this.addClass("test4"); // TODO remove, It's a test.
+        this.addClass("test5 long name"); // TODO remove, It's a test.
+        this.addClass("test6"); // TODO remove, It's a test.
+        this.addClass("test7"); // TODO remove, It's a test.
+        this.addClass("test8"); // TODO remove, It's a test.
+        this.addClass("test9"); // TODO remove, It's a test.
     }
 
 }

@@ -3,7 +3,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -53,32 +56,32 @@ public class Main extends Application {
         ta.setPrefRowCount(50);
 
         GridPane pane =  new GridPane(); // The "pane" containing the sequence-diagram.
-        pane.setHgap(5);
-        pane.setVgap(5);
+        pane.setHgap(2);
+        pane.setVgap(2);
         pane.add(btn_import, 1,0);
         pane.add(btn2, 2,        0);
         pane.add(ta, 1, 3, 20, 20);
 
         // Init's a draw object that handles graphical elements
-        Draw draw = new Draw(1180, 790);
+        Draw draw = new Draw(1190, 770);
 
-        // Replace AddClass with output from parser or something. TODO
-        draw.addClass("test1"); // TODO remove, It's a test.
-        draw.addClass("test2"); // TODO remove, It's a test.
-        draw.addClass("test3"); // TODO remove, It's a test.
-        draw.addClass("test4"); // TODO remove, It's a test.
-        draw.addClass("test5 long name"); // TODO remove, It's a test.
-        draw.addClass("test6"); // TODO remove, It's a test.
-        draw.addClass("test7"); // TODO remove, It's a test.
-        draw.addClass("test8"); // TODO remove, It's a test.
-        draw.addClass("test9"); // TODO remove, It's a test.
+        // Only used to display an example.
+        draw.test();
+
+        TabPane tabPane = new TabPane();
+        Tab tab = new Tab();
+        tab.setText("Diagram name");
+        tab.setContent(draw.getCanvas());
+        tabPane.getTabs().add(tab);
 
 
         // Renders and displays the classes
         draw.render();
         draw.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
         draw.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
-        pane.add(draw.getCanvas(), 22, 3, 20, 20);
+
+
+        pane.add(tabPane, 22, 3, 20, 20);
 
         StackPane stack = new StackPane();
 

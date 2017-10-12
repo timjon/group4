@@ -17,7 +17,7 @@ public class Class implements Renderable {
         this.size = size;
         this.coordinates = coordinates;
     }
-
+    
     @Override
     public String format() {
         return null;
