@@ -18,6 +18,15 @@ public class Class implements Renderable {
         this.coordinates = coordinates;
     }
 
+    public Class(String name) {
+        this.name = name;
+    }
+
+    public void place(Coordinates coordinates, int size) {
+        this.coordinates = coordinates;
+        this.size = size;
+    }
+
     @Override
     public String format() {
         return null;

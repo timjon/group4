@@ -8,8 +8,8 @@ import javafx.scene.control.Tab;
  * @author Pontus Laestadius
  */
 public class DiagramView {
-    Draw draw;
-    String tabName;
+    private Draw draw;
+    private String tabName;
     State state = State.PAUSED;
 
     public DiagramView(Draw draw, String tabName) {
