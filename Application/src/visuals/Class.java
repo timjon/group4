@@ -17,7 +17,7 @@ public class Class implements Renderable {
         this.size = size;
         this.coordinates = coordinates;
     }
-    
+
     @Override
     public String format() {
         return null;
@@ -30,7 +30,7 @@ public class Class implements Renderable {
 
     @Override
     public void render(GraphicsContext gc) {
-        Image image = new Image("resources/castle.jpg");
+        Image image = new Image("resources/castle.png");
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
         gc.drawImage(image, x, y, size/2, size/2);

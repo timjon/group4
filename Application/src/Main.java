@@ -3,11 +3,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -77,7 +74,6 @@ public class Main extends Application {
         draw.render();
         draw.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
         draw.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
-
 
         pane.add(tabPane, 22, 3, 20, 20);
 

@@ -10,7 +10,7 @@ import javafx.scene.control.Tab;
 public class DiagramView {
     Draw draw;
     String tabName;
-    // TODO Add state.
+    State state = State.PAUSED;
 
     public DiagramView(Draw draw, String tabName) {
         this.draw = draw;
@@ -23,4 +23,10 @@ public class DiagramView {
         tab.setContent(draw.getCanvas());
         return tab;
     }
+}
+
+enum State {
+    WAITING, // Waiting for a response from the server.
+    PAUSED, // Manually paused, no action is being performed.
+    EXECUTING, // Executing the visual aspects.
 }
