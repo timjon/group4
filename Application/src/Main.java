@@ -30,9 +30,9 @@ public class Main extends Application {
             public void handle(ActionEvent event) {
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
-				// Parse the element
-                 for (String element : result ) {
-                    Parser.parse(element);
+                // Parse the element
+                for (String element : result ) {
+                    Parser.Parser(element);
                 }
             }
         });
