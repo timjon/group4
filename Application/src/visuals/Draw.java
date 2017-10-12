@@ -2,6 +2,7 @@ package visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,9 @@ public class Draw {
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
         // Draws a single pixel border around the canvas.
-        gc.strokeRoundRect(0,0,w-1,h-1, 0,0);
+        gc.setFill(Color.GREY);
+        gc.strokeRoundRect(0,-1,w,h+1, 0,0);
+        gc.setFill(Color.BLACK);
     }
 
     /**
