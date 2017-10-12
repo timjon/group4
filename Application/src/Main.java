@@ -30,9 +30,10 @@ public class Main extends Application {
             public void handle(ActionEvent event) {
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
-
-                // TODO remove print line and parse result (user story 5)
-                System.out.println(result);
+				// Parse the element
+                 for (String element : result ) {
+                    Parser.parse(element);
+                }
             }
         });
 
