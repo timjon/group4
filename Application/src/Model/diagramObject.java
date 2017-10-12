@@ -6,7 +6,7 @@ public class diagramObject {
 
     public meta meta;
     String type;
-    List<Process> processes;
+    List<Processes> processes;
     //   diagram diagram;
 
     public String getType() {

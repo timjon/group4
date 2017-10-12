@@ -1,6 +1,6 @@
 package Model;
 
-public class Process {
+public class Processes {
 
     String class1;
     String name;
