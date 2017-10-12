@@ -14,5 +14,8 @@ io:format("New loop  ~n"),
       loop(Coordinator);
     {receive_message} ->
       Coordinator ! {receive_reply},
-      loop(Coordinator)
+      loop(Coordinator);
+	{crash_message} ->
+	  io:format("Brb crashing~n"),
+      error(server_fault)
   end.

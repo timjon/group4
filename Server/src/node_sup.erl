@@ -1,6 +1,6 @@
 -module(node_sup).
 -import(node, [init/2]).
--export([start_link_sup/1, send/2, receive_message/2]).
+-export([start_link_sup/1, send/1, receive_message/1, crash/1]).
 
 start_link_sup(Class_name) ->
   P = self(),
@@ -19,28 +19,31 @@ loop_sup(Coordinator, Class_name) ->
     {'EXIT', _From, normal} ->
       ok;
     {'EXIT', _From, _Reason} ->
-      ok = start_link_supervised(Coordinator, Class_name),
-      loop_sup(Coordinator, Class_name) 
+	  io:format("restarting ~n"),
+      start_link_sup(Class_name)
   end.
 
 start_link_supervised(Coordinator, Class_name) -> 
   case whereis(Class_name) of
     undefined -> spawn_link(fun () -> node:init(Coordinator, Class_name)end), ok;
 	
-	_         -> okl
+	_         -> ok
 	end.
 	
 	
-send(Message, Receiver) ->
+send(Receiver) ->
   Receiver ! {send_message},
   receive
     {send_reply} -> 
 	  send_reply_received
   end.
   
-receive_message(Message, Receiver) ->
+receive_message(Receiver) ->
   Receiver ! {receive_message},
   receive
     {receive_reply} -> 
 	  receive_reply_received
   end.
+  
+crash(Receiver) ->
+  Receiver ! {crash_message}.
