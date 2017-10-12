@@ -1,18 +1,18 @@
 -module(node_sup).
 -import(node, [init/2]).
--export([start_link_sup/2]).
+-export([start_link_sup/1, send/2, receive_message/2]).
 
-start_link_sup(Coordinator, Class_name) ->
+start_link_sup(Class_name) ->
   P = self(),
-  Sup = spawn_link(fun () -> init_sup(P, Coordinator, Class_name) end),
+  Sup = spawn_link(fun () -> init_sup(P, self(), Class_name) end),
   
   receive ack -> {ok, Sup} end.
   
-init_sup(P, Coordinator, Class_name) ->
+init_sup(P, _Coordinator, Class_name) ->
   process_flag(trap_exit, true),
-  ok = start_link_supervised(Coordinator, Class_name),
+  ok = start_link_supervised(P, Class_name),
   P ! ack,
-  loop_sup(Coordinator, Class_name).
+  loop_sup(P, Class_name).
 
 loop_sup(Coordinator, Class_name) ->
   receive
@@ -27,5 +27,20 @@ start_link_supervised(Coordinator, Class_name) ->
   case whereis(Class_name) of
     undefined -> spawn_link(fun () -> node:init(Coordinator, Class_name)end), ok;
 	
-	_         -> ok
+	_         -> okl
 	end.
+	
+	
+send(Message, Receiver) ->
+  Receiver ! {send_message},
+  receive
+    {send_reply} -> 
+	  send_reply_received
+  end.
+  
+receive_message(Message, Receiver) ->
+  Receiver ! {receive_message},
+  receive
+    {receive_reply} -> 
+	  receive_reply_received
+  end.

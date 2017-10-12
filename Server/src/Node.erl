@@ -7,11 +7,12 @@ init(Coordinator, Class_name) ->
   register(Class_name, P).
 
 loop(Coordinator) ->
+io:format("New loop  ~n"),
   receive
-    {send_message, Message, Receiver} ->
-      Coordinator ! {send_reply, Message, self(), Receiver},
+    {send_message} ->
+      Coordinator ! {send_reply},
       loop(Coordinator);
-    {receive_message, Message, Sender} ->
-      Coordinator ! {receive_reply, Message, Sender, self()},
+    {receive_message} ->
+      Coordinator ! {receive_reply},
       loop(Coordinator)
   end.
