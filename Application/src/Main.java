@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import visuals.DiagramView;
 import visuals.Draw;
 
 import java.util.Collection;
@@ -65,16 +66,12 @@ public class Main extends Application {
 
         // Init's a draw object that handles graphical elements
         Draw draw = new Draw(1190, 770);
-
-        // Only used to display an example.
-        draw.test();
+        draw.test(); // Only used to display an example.
 
         TabPane tabPane = new TabPane();
-        Tab tab = new Tab();
-        tab.setText("Diagram name");
-        tab.setContent(draw.getCanvas());
-        tabPane.getTabs().add(tab);
+        DiagramView dv = new DiagramView(draw, "diagram name");
 
+        tabPane.getTabs().add(dv.getTab());
 
         // Renders and displays the classes
         draw.render();

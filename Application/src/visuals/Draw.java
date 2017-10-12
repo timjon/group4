@@ -104,16 +104,22 @@ public class Draw {
         }
     }
 
+    // TODO remove, It's a test.
     public void test() {
-        this.addClass("test1"); // TODO remove, It's a test.
-        this.addClass("test2"); // TODO remove, It's a test.
-        this.addClass("test3"); // TODO remove, It's a test.
-        this.addClass("test4"); // TODO remove, It's a test.
-        this.addClass("test5 long name"); // TODO remove, It's a test.
-        this.addClass("test6"); // TODO remove, It's a test.
-        this.addClass("test7"); // TODO remove, It's a test.
-        this.addClass("test8"); // TODO remove, It's a test.
-        this.addClass("test9"); // TODO remove, It's a test.
+
+        // Classes
+        this.addClass("test1");
+        this.addClass("test2");
+        this.addClass("test3");
+        this.addClass("test4");
+        this.addClass("test5 long name");
+        this.addClass("test6");
+        this.addClass("test7");
+        this.addClass("test8");
+        this.addClass("test9");
+
+        // Messages
+
     }
 
 }
