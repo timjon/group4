@@ -1,9 +1,10 @@
 -module(node).
 
--export([init/1]).
+-export([init/2]).
 
-init(Coordinator) ->
-  loop(Coordinator).
+init(Coordinator, Class_name) ->
+  P = spawn_link(fun () ->  loop(Coordinator) end),
+  register(Class_name, P).
 
 loop(Coordinator) ->
   receive
