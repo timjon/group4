@@ -77,7 +77,7 @@ public class Draw {
 
             // The amount of space each class can use.
             int space = (width-x_offset*3)/this.classes.size();
-            int size = space/2;g
+            int size = space/2;
 
             int offset = 0;
             for (Class c: this.classes) {

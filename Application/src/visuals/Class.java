@@ -2,6 +2,7 @@ package visuals;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 /**
  * A class wrapper for coordinates with extra properties that implements Renderable.
@@ -42,7 +43,17 @@ public class Class implements Renderable {
         Image image = new Image("resources/castle.png");
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
+
+        // Lifeline
+        gc.setFill(Color.BEIGE);
+        int lifeline_width = size/12;
+        gc.strokeRect(x +size/4 -lifeline_width,y + size/6,lifeline_width,1000);
+        gc.setFill(Color.BLACK);
+
+        // Object
         gc.drawImage(image, x, y, size/2, size/2);
+
+
         int len = this.name.length();
 
         int pos_x = x + size/4 - len*2;

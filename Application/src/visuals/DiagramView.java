@@ -10,7 +10,7 @@ import javafx.scene.control.Tab;
 public class DiagramView {
     private Draw draw;
     private String tabName;
-    State state = State.PAUSED;
+    private State state = State.PAUSED;
 
     public DiagramView(Draw draw, String tabName) {
         this.draw = draw;
