@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Observable;
 
 /**
  * @version 0.2
@@ -30,6 +31,8 @@ public class Draw {
         gc.strokeRoundRect(0,-1,w,h+1, 0,0);
         gc.setFill(Color.BLACK);
     }
+
+
 
     /**
      * Draws a Class on the provided canvas.
@@ -79,13 +82,62 @@ public class Draw {
         }
     }
 
+    // Always renders with a new specific resolution.
+    public void resize(String property, int value) {
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        gc.clearRect(0,0,this.canvas.getWidth(),this.canvas.getHeight());
+
+        if (this.items.size() < 1) {
+            System.out.println("nothing to resize");
+            return;
+        } // Nothing to re-render.
+
+
+        switch (property) {
+            case "width":
+                this.canvas.setWidth(value);
+                break;
+            case "height":
+                this.canvas.setHeight(value);
+                break;
+                default:
+                    System.out.println("unknown property: " + property);
+
+        }
+
+
+        ArrayList<Renderable> cpy = this.items;
+        this.items = new ArrayList<>();
+
+        for (int i = 0; i < cpy.size(); i++){
+            if (cpy.get(i) instanceof Class) {
+                this.classes.add((Class) cpy.get(i));
+            } else if (cpy.get(i) instanceof Message) {
+                //this.classes.add((Message) this.items.get(i)); // TODO sebastian plz implement Renderable
+            } else {
+                System.out.println("Unknown class: " + cpy.get(i).getClass());
+            }
+        }
+
+        // Re-render the items.
+        renderClass();
+        renderMessage();
+
+        // Renders all the items on the canvas.
+        for (Renderable r: this.items) {
+            r.render(gc);
+        }
+
+        System.out.println("Canvas: " + this.canvas.getWidth() + "x" + this.canvas.getHeight());
+    }
+
     public void renderMessage() {
         // stuff.
     }
 
 
     public void renderClass() {
-        int x_offset = 30;
+        int x_offset = 70;
         int width = (int) this.canvas.getWidth();        // The width of the canvas
         if (this.classes.size() > 0) {
 
