@@ -4,11 +4,11 @@
 
 start_link_sup(Class_name) ->
   P = self(),
-  Sup = spawn_link(fun () -> init_sup(P, self(), Class_name) end),
+  Sup = spawn_link(fun () -> init_sup(P, Class_name) end),
   
   receive ack -> {ok, Sup} end.
   
-init_sup(P, _Coordinator, Class_name) ->
+init_sup(P, Class_name) ->
   process_flag(trap_exit, true),
   ok = start_link_supervised(P, Class_name),
   P ! ack,
@@ -20,20 +20,19 @@ loop_sup(Coordinator, Class_name) ->
       ok;
     {'EXIT', _From, _Reason} ->
 	  io:format("restarting ~n"),
-      start_link_supervised(Coordinator, Class_name);
-	{'EXIT', _Pid, Reason}   -> 
-	  io:format("Restarting2"),
-	  start_link_supervised(Coordinator, Class_name);
+      start_link_sup(Class_name);
 	{'DOWN', _, process, _Pid, _Reason} ->
 	  io:format("Fuck this shit ~n"),
-	  start_link_supervised(Coordinator, Class_name)
+	  start_link_sup(Class_name);
+	X  -> 
+	  io:format("Hello ~n"),
+	  io:format(X)
   end.
 
 start_link_supervised(Coordinator, Class_name) -> 
   case whereis(Class_name) of
     undefined -> spawn_link(fun () -> node:init(Coordinator, Class_name)end), ok;
-	
-	_         -> ok
+	_         -> ok2
 	end.
 	
 	
