@@ -2,11 +2,12 @@ package visuals;
 
 import javafx.scene.canvas.GraphicsContext;
 
-public class Message {
+public class Message implements Renderable{
 
     private int x1, x2, y1, y2; // The coordinates of the nodes that the message is supposed to pass between.
     GraphicsContext gc;
     String name;
+    
     public Message(int x1, int x2, int y1, int y2, GraphicsContext gc, String name){ // constructor.
         this.x1 = x1;
         this.x2 = x2;
@@ -15,6 +16,24 @@ public class Message {
         this.gc = gc;
         this.name = name;
     }
+
+    @Override
+    public Coordinates getCoordinates() {
+        return null;
+    }
+
+    @Override
+    public String format() {
+        return null;
+    }
+
+    @Override
+    public void render(GraphicsContext gc){
+
+
+
+    }
+
 
     public void createMessage(){ // TODO Modify for redraw and dynamic adding.
 

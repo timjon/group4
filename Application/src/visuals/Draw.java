@@ -46,7 +46,6 @@ public class Draw {
         int y2 = classes.get(toNode).getCoordinates().getY();
 
         Message message = new Message(x1+30, x2, y1+20, y2, gc, name);
-
         message.createMessage();
 
     }
@@ -80,7 +79,7 @@ public class Draw {
         for (Class c: this.classes) {
             c.render(gc);
         }
-    }
+    }      
 
 
 
