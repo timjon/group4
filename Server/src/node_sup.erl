@@ -20,7 +20,13 @@ loop_sup(Coordinator, Class_name) ->
       ok;
     {'EXIT', _From, _Reason} ->
 	  io:format("restarting ~n"),
-      start_link_sup(Class_name)
+      start_link_supervised(Coordinator, Class_name);
+	{'EXIT', _Pid, Reason}   -> 
+	  io:format("Restarting2"),
+	  start_link_supervised(Coordinator, Class_name);
+	{'DOWN', _, process, _Pid, _Reason} ->
+	  io:format("Fuck this shit ~n"),
+	  start_link_supervised(Coordinator, Class_name)
   end.
 
 start_link_supervised(Coordinator, Class_name) -> 

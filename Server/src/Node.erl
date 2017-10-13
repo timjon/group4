@@ -4,7 +4,9 @@
 
 init(Coordinator, Class_name) ->
   P = spawn_link(fun () ->  loop(Coordinator) end),
-  register(Class_name, P).
+  io:format("started ~p~n",[P]),
+  register(Class_name, P),
+  erlang:monitor(process, P).
 
 loop(Coordinator) ->
 io:format("New loop  ~n"),
@@ -17,5 +19,7 @@ io:format("New loop  ~n"),
       loop(Coordinator);
 	{crash_message} ->
 	  io:format("Brb crashing~n"),
-      error(server_fault)
+      exit(self(), plz_die),
+	  io:format("Brb crashing again~n"),
+	  loop(Coordinator)
   end.
