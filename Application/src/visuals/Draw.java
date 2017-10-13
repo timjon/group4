@@ -69,10 +69,24 @@ public class Draw {
     public void render() {
 
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        int x_offset = 30;
-        int width = (int) this.canvas.getWidth();        // The width of the canvas
 
         // If there are any classes that have not been processed.
+        renderClass();
+
+        // Renders all the items on the canvas.
+        for (Renderable r: this.items) {
+            r.render(gc);
+        }
+    }
+
+    public void renderMessage() {
+        // stuff.
+    }
+
+
+    public void renderClass() {
+        int x_offset = 30;
+        int width = (int) this.canvas.getWidth();        // The width of the canvas
         if (this.classes.size() > 0) {
 
             // The amount of space each class can use.
@@ -92,10 +106,6 @@ public class Draw {
             this.classes = new ArrayList<>();
         }
 
-        // Renders all the items on the canvas.
-        for (Renderable r: this.items) {
-            r.render(gc);
-        }
     }
 
 
