@@ -1,12 +1,11 @@
 -module(node).
 
--export([init/2]).
+-export([init/1]).
 
-init(Coordinator, Class_name) ->
-  P = spawn_link(fun () ->  loop(Coordinator) end),
+init(Coordinator) ->
+  P = spawn(fun () ->  loop(Coordinator) end),
   io:format("started ~p~n",[P]),
-  register(Class_name, P),
-  erlang:monitor(process, P).
+  P.
 
 loop(Coordinator) ->
 io:format("New loop  ~n"),
@@ -17,9 +16,9 @@ io:format("New loop  ~n"),
     {receive_message} ->
       Coordinator ! {receive_reply},
       loop(Coordinator);
-	{crash_message} ->
-	  io:format("Brb crashing~n"),
-      exit(self(), plz_die),
-	  io:format("Brb crashing again~n"),
-	  loop(Coordinator)
+	{kill_message} ->
+      Coordinator ! {kill_reply},
+	  io:format("Killed ~n")
+  after 600000 ->
+    io:format("terminating ~n")
   end.
