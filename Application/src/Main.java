@@ -1,24 +1,21 @@
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-import visuals.DiagramView;
 import visuals.Draw;
+import visuals.Resizer;
 
 import java.awt.*;
 import java.util.Collection;
+
+import static visuals.DiagramView.tabPane;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -60,14 +57,9 @@ public class Main extends Application {
         int ta_width = 270;
         ta.setMaxWidth(ta_width);
 
-        //Scales the application to the size of the window.
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        double width = screenSize.getWidth();
-        double height = screenSize.getHeight();
-
         BorderPane borderpane = new BorderPane();
 
-        TabPane tabPane = new TabPane();
+        tabPane = new TabPane();
 
         HBox hbox = new HBox();
         hbox.getChildren().add(btn_import);
@@ -78,6 +70,10 @@ public class Main extends Application {
         borderpane.setCenter(tabPane);
 
         Scene main;
+        //Scales the application to the size of the window or displays it in a maximized view.
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
         if (width < 1400) { // full screen
             main = new Scene(borderpane,width, height);
             primaryStage.setMaximized(true);
@@ -88,43 +84,8 @@ public class Main extends Application {
         primaryStage.setScene(main);
         primaryStage.show();
 
-        // TODO rename and improve.
-        function_name_that_changes_properties_and_inits(primaryStage, tabPane);
-
-    }
-
-    public static void function_name_that_changes_properties_and_inits(Stage primaryStage, TabPane tabPane) {
-        System.out.println("Tab pane: " + tabPane.getWidth() + "x" + tabPane.getWidth());
-
-        // Init's a draw object that handles graphical elements
-        Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
-        draw.test(); // Only used to display an example.
-
-        DiagramView dv = new DiagramView(draw, "diagram name");
-
-        tabPane.getTabs().add(dv.getTab());
-
-        // Renders and displays the classes
-        draw.render();
-        draw.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
-        draw.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
-
-
-        // Listener for when the window is resized.
-        ChangeListener<Number> stageSizeListener = (obserable, oldVal, newVal) ->
-        {
-            // re-render elements.
-            // Rip performance? TODO don't rip performance.
-            for (DiagramView d: DiagramView.list) {
-                System.out.println("1");
-                d.resize(obserable.toString(), obserable.getValue().intValue());
-            }
-
-        };
-
-        primaryStage.widthProperty().addListener(stageSizeListener);
-        primaryStage.heightProperty().addListener(stageSizeListener);
-
+        Draw.temp_generate_diagram(); // TODO replace with actual parsing.
+        Resizer.init(primaryStage);
 
     }
 }

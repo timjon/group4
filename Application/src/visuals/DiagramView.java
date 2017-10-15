@@ -1,19 +1,23 @@
 package visuals;
 
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 
 import java.util.ArrayList;
 
 /*
  * Handles a single tabbed diagram view and it's state
- * @version 0.1
+ * @version 0.2
  * @author Pontus Laestadius
  */
 public class DiagramView {
     private Draw draw;
     private String tabName;
     private State state = State.PAUSED;
+    private Tab tab;
     public static ArrayList<DiagramView> list = new ArrayList<>(); // A list of all Diagram views.
+    public static TabPane tabPane;
+
 
     public DiagramView(Draw draw, String tabName) {
         this.draw = draw;
@@ -22,14 +26,19 @@ public class DiagramView {
     }
 
     public Tab getTab() {
-        Tab tab = new Tab();
+        this.tab = new Tab();
         tab.setText(this.tabName);
         tab.setContent(draw.getCanvas());
         return tab;
     }
 
-    public void resize(String observable, int value) {
-        draw.resize((observable.contains("width") ? "width":"height"), value);
+    void resize(int w, int h) {
+        // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
+        if (this.state == State.RESIZING) return;
+        State tmp = this.state;
+        this.state = State.RESIZING;
+        draw.resize(w,h);
+        this.state = tmp;
     }
 
 }
@@ -38,4 +47,6 @@ enum State {
     WAITING, // Waiting for a response from the server.
     PAUSED, // Manually paused, no action is being performed.
     EXECUTING, // Executing the visual aspects.
+    RESIZING, // While resizing to avoid concurrency issues.
+
 }

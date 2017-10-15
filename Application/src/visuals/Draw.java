@@ -5,11 +5,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Observable;
 
+import static visuals.DiagramView.tabPane;
+
 /**
- * @version 0.2
- * @author Pontus Laestadius
+ * @version 0.3
+ * @author Pontus Laestadius, Sebastian Fransson
  */
 
 public class Draw {
@@ -31,8 +34,6 @@ public class Draw {
         gc.strokeRoundRect(0,-1,w,h+1, 0,0);
         gc.setFill(Color.BLACK);
     }
-
-
 
     /**
      * Draws a Class on the provided canvas.
@@ -82,33 +83,23 @@ public class Draw {
         }
     }
 
+    // TODO experimental feature
     // Always renders with a new specific resolution.
-    public void resize(String property, int value) {
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        gc.clearRect(0,0,this.canvas.getWidth(),this.canvas.getHeight());
-
-        if (this.items.size() < 1) {
-            System.out.println("nothing to resize");
+    public void resize(int w, int h) {
+        if (w == (int)this.canvas.getWidth() && h == (int)this.canvas.getHeight() || this.items.size() < 1) {
             return;
-        } // Nothing to re-render.
+        } // Return if there is nothing to change/display.
+        this.canvas.setHeight(h);
+        this.canvas.setWidth(w);
+        rerender();
+    }
 
-
-        switch (property) {
-            case "width":
-                this.canvas.setWidth(value);
-                break;
-            case "height":
-                this.canvas.setHeight(value);
-                break;
-                default:
-                    System.out.println("unknown property: " + property);
-
-        }
-
-
+    // Re renders all items.
+    private void rerender() {
         ArrayList<Renderable> cpy = this.items;
         this.items = new ArrayList<>();
 
+        // Removes all rendered items in to a copy class.
         for (int i = 0; i < cpy.size(); i++){
             if (cpy.get(i) instanceof Class) {
                 this.classes.add((Class) cpy.get(i));
@@ -123,13 +114,22 @@ public class Draw {
         renderClass();
         renderMessage();
 
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        gc.clearRect(0,0,this.canvas.getWidth(),this.canvas.getHeight());
+        gc.setFill(Color.GREY);
+        gc.strokeRoundRect(0,-1,this.canvas.getWidth(),this.canvas.getHeight()+1, 0,0);
+        gc.setFill(Color.BLACK);
         // Renders all the items on the canvas.
-        for (Renderable r: this.items) {
-            r.render(gc);
+        try {
+            for (Renderable r: this.items) {
+                r.render(gc);
+            }
+        } catch (ConcurrentModificationException cme) {
+            System.out.println("Not good.");
+            System.err.println(cme.toString());
         }
-
-        System.out.println("Canvas: " + this.canvas.getWidth() + "x" + this.canvas.getHeight());
     }
+
 
     public void renderMessage() {
         // stuff.
@@ -137,7 +137,7 @@ public class Draw {
 
 
     public void renderClass() {
-        int x_offset = 70;
+        int x_offset = (int) (this.canvas.getWidth()/100);
         int width = (int) this.canvas.getWidth();        // The width of the canvas
         if (this.classes.size() > 0) {
 
@@ -160,7 +160,6 @@ public class Draw {
 
     }
 
-
     /**
      * renders an Object on the Canvas.
      * @param instance a Object which implements Renderable
@@ -181,7 +180,6 @@ public class Draw {
 
     // TODO remove, It's a test.
     public void test() {
-
         // Classes
         this.addClass("test1");
         this.addClass("test2");
@@ -194,6 +192,19 @@ public class Draw {
         this.addClass("test9");
 
         // Messages
+
+    }
+
+    public static void temp_generate_diagram() {
+        // Init's a draw object that handles graphical elements
+        Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+        draw.test(); // Only used to display an example.
+        DiagramView dv = new DiagramView(draw, "diagram name");
+        tabPane.getTabs().add(dv.getTab());
+        // Renders and displays the classes
+        draw.render();
+        draw.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
+        draw.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
 
     }
 

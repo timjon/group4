@@ -13,12 +13,6 @@ public class Class implements Renderable {
     private int size;
     private String name;
 
-    public Class(Coordinates coordinates, int size, String name) {
-        this.name = name;
-        this.size = size;
-        this.coordinates = coordinates;
-    }
-
     public Class(String name) {
         this.name = name;
     }
