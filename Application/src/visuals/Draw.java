@@ -5,12 +5,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Observable;
+
+import static visuals.DiagramView.tabPane;
 
 /**
  * @version 0.3
- * @author Pontus Laestadius
- * @contributor Sebastian Fransson
+ * @author Pontus Laestadius, Sebastian Fransson
  */
 
 public class Draw {
@@ -21,11 +23,11 @@ public class Draw {
     private ArrayList<Message> messages = new ArrayList<>();
     private static int offset;
 
-    public Canvas getCanvas() {
+    Canvas getCanvas() {
         return canvas;
     }
 
-    public Draw(int w, int h) {
+    Draw(int w, int h) {
         this.canvas = new Canvas(w, h);
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
@@ -35,19 +37,17 @@ public class Draw {
         gc.setFill(Color.BLACK);
     }
 
-
-
     /**
      * Draws a Class on the provided canvas.
      */
-    public void addClass(String name) {
+    private void addClass(String name) {
         this.classes.add(new Class(name));
     }
 
     /**
      * Draws a Class on the provided canvas.
      */
-    public void add(Renderable item) {
+    private void add(Renderable item) {
         this.items.add(item);
     }
 
@@ -57,9 +57,9 @@ public class Draw {
     public void addMessage(int fromNode, int toNode, String name){ // TODO
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
-        Coordinates node1 = classes.get(fromNode).getCoordinates();
+        Coordinates node1 = items.get(fromNode).getCoordinates();
         // toClass coordinates.
-        Coordinates node2 = classes.get(toNode).getCoordinates();
+        Coordinates node2 = items.get(toNode).getCoordinates();
 
         offset += 1;
         Message message = new Message(node1, node2, name, offset);
@@ -72,57 +72,11 @@ public class Draw {
      * Draws the classes as Castles.
      * @author Pontus Laestadius
      */
-    public void render() {
+    void render() {
 
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
 
         // If there are any classes that have not been processed.
-        renderClass();
-
-        // Renders all the items on the canvas.
-        for (Renderable r: this.items) {
-            r.render(gc);
-        }
-    }
-
-    // Always renders with a new specific resolution.
-    public void resize(String property, int value) {
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        gc.clearRect(0,0,this.canvas.getWidth(),this.canvas.getHeight());
-
-        if (this.items.size() < 1) {
-            System.out.println("nothing to resize");
-            return;
-        } // Nothing to re-render.
-
-
-        switch (property) {
-            case "width":
-                this.canvas.setWidth(value);
-                break;
-            case "height":
-                this.canvas.setHeight(value);
-                break;
-                default:
-                    System.out.println("unknown property: " + property);
-
-        }
-
-
-        ArrayList<Renderable> cpy = this.items;
-        this.items = new ArrayList<>();
-
-        for (int i = 0; i < cpy.size(); i++){
-            if (cpy.get(i) instanceof Class) {
-                this.classes.add((Class) cpy.get(i));
-            } else if (cpy.get(i) instanceof Message) {
-                //this.classes.add((Message) this.items.get(i)); // TODO sebastian plz implement Renderable
-            } else {
-                System.out.println("Unknown class: " + cpy.get(i).getClass());
-            }
-        }
-
-        // Re-render the items.
         renderClass();
         renderMessage();
 
@@ -130,17 +84,52 @@ public class Draw {
         for (Renderable r: this.items) {
             r.render(gc);
         }
-
-        System.out.println("Canvas: " + this.canvas.getWidth() + "x" + this.canvas.getHeight());
     }
 
-    public void renderMessage() { //TODO find out what this is for.
+    // TODO experimental feature
+    // Always renders with a new specific resolution.
+    void resize(int w, int h) {
+        if (w == (int)this.canvas.getWidth() && h == (int)this.canvas.getHeight() || this.items.size() < 1) {
+            return;
+        } // Return if there is nothing to change/display.
+        this.canvas.setHeight(h);
+        this.canvas.setWidth(w);
+        rerender();
+    }
+
+    // Re renders all items.
+    private void rerender() {
+        ArrayList<Renderable> cpy = this.items;
+        this.items = new ArrayList<>();
+
+        // Removes all rendered items in to a copy class.
+        for (int i = 0; i < cpy.size(); i++){
+            if (cpy.get(i) instanceof Class) {
+                this.classes.add((Class) cpy.get(i));
+            } else if (cpy.get(i) instanceof Message) {
+                this.messages.add((Message) this.items.get(i));
+            } else {
+                System.out.println("Unknown class: " + cpy.get(i).getClass());
+            }
+        }
+
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        gc.clearRect(0,0,this.canvas.getWidth(),this.canvas.getHeight());
+        gc.setFill(Color.GREY);
+        gc.strokeRoundRect(0,-1,this.canvas.getWidth(),this.canvas.getHeight()+1, 0,0);
+        gc.setFill(Color.BLACK);
+        // Renders all the items on the canvas.
+        render();
+    }
+
+
+    void renderMessage() {
         //What? confusion is real...
     }
 
 
-    public void renderClass() {
-        int x_offset = 70;
+    void renderClass() {
+        int x_offset = (int) (this.canvas.getWidth()/100);
         int width = (int) this.canvas.getWidth();        // The width of the canvas
         if (this.classes.size() > 0) {
 
@@ -160,12 +149,7 @@ public class Draw {
             // Empties the list.
             this.classes = new ArrayList<>();
         }
-
-        for (Class c: this.classes) {
-            c.render(gc);
-        }
     }      
-
 
     /**
      * renders an Object on the Canvas.
@@ -186,8 +170,7 @@ public class Draw {
     }
 
     // TODO remove, It's a test.
-    public void test() {
-
+    void test() {
         // Classes
         this.addClass("test1");
         this.addClass("test2");
@@ -200,6 +183,19 @@ public class Draw {
         this.addClass("test9");
 
         // Messages
+
+    }
+
+    public static void temp_generate_diagram() {
+        // Init's a draw object that handles graphical elements
+        Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+        draw.test(); // Only used to display an example.
+        DiagramView dv = new DiagramView(draw, "diagram name");
+        tabPane.getTabs().add(dv.getTab());
+        // Renders and displays the classes
+        draw.render();
+        draw.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
+        draw.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
 
     }
 
