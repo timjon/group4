@@ -15,8 +15,9 @@ import java.util.Observable;
 public class Draw {
 
     private Canvas canvas;
-    private ArrayList<Renderable> items = new ArrayList<>();
+    private ArrayList<Renderable> items = new ArrayList<>(); // Why are we collecting everything here? Isn't it just inconvenient?
     private ArrayList<Class> classes = new ArrayList<>();
+    private ArrayList<Message> messages = new ArrayList<>();
 
     public Canvas getCanvas() {
         return canvas;
@@ -49,17 +50,15 @@ public class Draw {
     }
 
     // Draws a Message.
-    public void addMessage(int fromNode, int toNode, String name){ // TODO accommodate dynamic message adding.
+    public void addMessage(int fromNode, int toNode, String name){ // TODO
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
-        int x1 = items.get(fromNode).getCoordinates().getX();
-        int y1 = items.get(fromNode).getCoordinates().getY();
+        Coordinates node1 = classes.get(fromNode).getCoordinates();
         // toClass coordinates.
-        int x2 = items.get(toNode).getCoordinates().getX();
-        int y2 = items.get(toNode).getCoordinates().getY();
+        Coordinates node2 = classes.get(toNode).getCoordinates();
 
-        Message message = new Message(x1+30, x2, y1+20, y2, gc, name);
-        message.createMessage();
+        Message message = new Message(node1, node2, name);
+        message.render(gc);
     }
 
     /**
@@ -131,7 +130,7 @@ public class Draw {
     }
 
     public void renderMessage() {
-        // stuff.
+        //What? confusion is real...
     }
 
 

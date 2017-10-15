@@ -3,24 +3,17 @@ package visuals;
 import javafx.scene.canvas.GraphicsContext;
 
 public class Message implements Renderable{
-
-    private int x1, x2, y1, y2; // The coordinates of the nodes that the message is supposed to pass between.
-    GraphicsContext gc;
     String name;
+    private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
 
-    public Message(int x1, int x2, int y1, int y2, GraphicsContext gc, String name){ // constructor.
-        this.x1 = x1;
-        this.x2 = x2;
-        this.y1 = y1;
-        this.y2 = y2;
-        this.gc = gc;
+    public Message(Coordinates node1, Coordinates node2, String name){ // constructor.
+        this.node1 = node1;
+        this.node2 = node2;
         this.name = name;
     }
 
     @Override
-    public Coordinates getCoordinates() {
-        return null;
-    }
+    public Coordinates getCoordinates() { return coordinates; }
 
     @Override
     public String format() {
@@ -29,18 +22,24 @@ public class Message implements Renderable{
 
     @Override
     public void render(GraphicsContext gc){
+        int x1 = this.node1.getX();
+        int y1 = this.node1.getY();
+        int x2 = this.node2.getX();
+        int y2 = this.node2.getY();
 
+        gc.strokeLine(x1, y1, x2, y2);
+        gc.fillText(this.name, x1+25, y1-10);
 
 
     }
 
-
+ /*
     public void createMessage(){ // TODO Modify for redraw and dynamic adding.
 
        gc.strokeLine(this.x1, this.y1, this.x2, this.y1);
 
         gc.fillText(this.name, x1 + 25, y1-10);
 
-    }
+    }*/
 
 }
