@@ -2,13 +2,13 @@
 
 -export([init/1]).
 
+
 init(Coordinator) ->
   P = spawn(fun () ->  loop(Coordinator) end),
   io:format("started ~p~n",[P]),
   P.
 
 loop(Coordinator) ->
-io:format("New loop  ~n"),
   receive
     {send_message} ->
       Coordinator ! {send_reply},
@@ -19,6 +19,7 @@ io:format("New loop  ~n"),
 	{kill_message} ->
       Coordinator ! {kill_reply},
 	  io:format("Killed ~n")
-  after 600000 ->
-    io:format("terminating ~n")
+	after 500 -> 
+	  io:format("Terminating the process ~p", [self()]),
+	  io:format("~n")
   end.
