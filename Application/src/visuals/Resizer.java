@@ -49,7 +49,7 @@ public class Resizer implements Runnable {
         from what was resized, it will attempt to resize it again.
          */
         try {
-            Thread.sleep(50);
+            Thread.sleep(30);
         } catch (Exception e) {
             System.err.println(e.toString());
         }
