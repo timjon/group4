@@ -1,17 +1,23 @@
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import visuals.DiagramView;
 import visuals.Draw;
 
+import java.awt.*;
 import java.util.Collection;
 
 public class Main extends Application {
@@ -49,23 +55,51 @@ public class Main extends Application {
                 "> Node2: sent a OK to Node1 \n " +
                 "> Node1: received an OK from Node2");
         ta.setEditable(false);
-        ta.minHeight(1100);
-        ta.setMaxWidth(302);
         ta.setPrefColumnCount(60);
         ta.setPrefRowCount(50);
+        int ta_width = 270;
+        ta.setMaxWidth(ta_width);
 
-        GridPane pane =  new GridPane(); // The "pane" containing the sequence-diagram.
-        pane.setHgap(2);
-        pane.setVgap(2);
-        pane.add(btn_import, 1,0);
-        pane.add(btn2, 2,        0);
-        pane.add(ta, 1, 3, 20, 20);
+        //Scales the application to the size of the window.
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
 
-        // Init's a draw object that handles graphical elements
-        Draw draw = new Draw(1190, 770);
-        draw.test(); // Only used to display an example.
+        BorderPane borderpane = new BorderPane();
 
         TabPane tabPane = new TabPane();
+
+        HBox hbox = new HBox();
+        hbox.getChildren().add(btn_import);
+        hbox.getChildren().add(btn2);
+        borderpane.setTop(hbox);
+        borderpane.setLeft(ta);
+
+        borderpane.setCenter(tabPane);
+
+        Scene main;
+        if (width < 1400) { // full screen
+            main = new Scene(borderpane,width, height);
+            primaryStage.setMaximized(true);
+        } else { // windowed
+            main = new Scene(borderpane,1280, 720);
+        }
+
+        primaryStage.setScene(main);
+        primaryStage.show();
+
+        // TODO rename and improve.
+        function_name_that_changes_properties_and_inits(primaryStage, tabPane);
+
+    }
+
+    public static void function_name_that_changes_properties_and_inits(Stage primaryStage, TabPane tabPane) {
+        System.out.println("Tab pane: " + tabPane.getWidth() + "x" + tabPane.getWidth());
+
+        // Init's a draw object that handles graphical elements
+        Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+        draw.test(); // Only used to display an example.
+
         DiagramView dv = new DiagramView(draw, "diagram name");
 
         tabPane.getTabs().add(dv.getTab());
@@ -75,16 +109,22 @@ public class Main extends Application {
         draw.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
         draw.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
 
-        pane.add(tabPane, 22, 3, 20, 20);
 
-        StackPane stack = new StackPane();
+        // Listener for when the window is resized.
+        ChangeListener<Number> stageSizeListener = (obserable, oldVal, newVal) ->
+        {
+            // re-render elements.
+            // Rip performance? TODO don't rip performance.
+            for (DiagramView d: DiagramView.list) {
+                System.out.println("1");
+                d.resize(obserable.toString(), obserable.getValue().intValue());
+            }
 
-        stack.getChildren().add(pane);
+        };
 
-        Scene main = new Scene(stack,1500, 837);
+        primaryStage.widthProperty().addListener(stageSizeListener);
+        primaryStage.heightProperty().addListener(stageSizeListener);
 
-        primaryStage.setScene(main);
-        primaryStage.setResizable(false);
-        primaryStage.show();
+
     }
 }

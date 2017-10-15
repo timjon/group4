@@ -2,6 +2,8 @@ package visuals;
 
 import javafx.scene.control.Tab;
 
+import java.util.ArrayList;
+
 /*
  * Handles a single tabbed diagram view and it's state
  * @version 0.1
@@ -11,10 +13,12 @@ public class DiagramView {
     private Draw draw;
     private String tabName;
     private State state = State.PAUSED;
+    public static ArrayList<DiagramView> list = new ArrayList<>(); // A list of all Diagram views.
 
     public DiagramView(Draw draw, String tabName) {
         this.draw = draw;
         this.tabName = tabName;
+        list.add(this);
     }
 
     public Tab getTab() {
@@ -23,6 +27,11 @@ public class DiagramView {
         tab.setContent(draw.getCanvas());
         return tab;
     }
+
+    public void resize(String observable, int value) {
+        draw.resize((observable.contains("width") ? "width":"height"), value);
+    }
+
 }
 
 enum State {
