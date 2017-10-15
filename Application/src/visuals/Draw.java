@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 /**
- * @version 0.2
+ * @version 0.3
  * @author Pontus Laestadius
+ * @contributor Sebastian Fransson
  */
 
 public class Draw {
@@ -18,6 +19,7 @@ public class Draw {
     private ArrayList<Renderable> items = new ArrayList<>(); // Why are we collecting everything here? Isn't it just inconvenient?
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>();
+    private static int offset;
 
     public Canvas getCanvas() {
         return canvas;
@@ -49,7 +51,9 @@ public class Draw {
         this.items.add(item);
     }
 
-    // Draws a Message.
+    /**
+     * Draws a Message on the canvas.
+     */
     public void addMessage(int fromNode, int toNode, String name){ // TODO
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
@@ -57,7 +61,8 @@ public class Draw {
         // toClass coordinates.
         Coordinates node2 = classes.get(toNode).getCoordinates();
 
-        Message message = new Message(node1, node2, name);
+        offset += 1;
+        Message message = new Message(node1, node2, name, offset);
         message.render(gc);
     }
 
@@ -129,7 +134,7 @@ public class Draw {
         System.out.println("Canvas: " + this.canvas.getWidth() + "x" + this.canvas.getHeight());
     }
 
-    public void renderMessage() {
+    public void renderMessage() { //TODO find out what this is for.
         //What? confusion is real...
     }
 
