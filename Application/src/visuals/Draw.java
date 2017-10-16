@@ -20,8 +20,6 @@ public class Draw {
     private Canvas canvas;
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>();
-    private boolean raw = true;
-    private boolean rendering = false;
 
     Canvas getCanvas() {
         return canvas;
@@ -29,15 +27,14 @@ public class Draw {
 
     Draw(int w, int h) {
         this.canvas = new Canvas(w, h);
-        init();
     }
 
     int getHeight() {
-        return (int)this.canvas.getHeight();
+        return (int)canvas.getHeight();
     }
 
     int getWidth() {
-        return (int)this.canvas.getHeight();
+        return (int)canvas.getHeight();
     }
 
     /**
@@ -49,18 +46,18 @@ public class Draw {
 
     // Draws a Message.
     public void addMessage(int fromNode, int toNode, String name){ // TODO
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
         // fromClass coordinates.
         Coordinates node1 = classes.get(fromNode).getCoordinates();
         // toClass coordinates.
         Coordinates node2 = classes.get(toNode).getCoordinates();
 
         Message message = new Message(node1, node2, name);
-        message.render(gc);
+        messages.add(message);
     }
 
     void render() {
-        if (!raw) return;
+        init();
         renderClass();
         renderMessage();
         renderContainer();
@@ -70,37 +67,25 @@ public class Draw {
     void resize(int w, int h) {
         if (w == getWidth() && h == getHeight())
             return;
-        this.canvas.setHeight(h);
-        this.canvas.setWidth(w);
-        redraw();
-    }
-
-    // Re renders all items.
-    private void redraw() {
-        init();
-        renderClass();
-        renderMessage();
-        renderContainer();
+        canvas.setHeight(h);
+        canvas.setWidth(w);
+        render();
     }
 
     void init() {
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        gc.clearRect(0,0,getWidth(),getHeight());
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0,0,getWidth(), getHeight());
         gc.setFill(Color.GREY);
         gc.strokeRoundRect(0,-1,getWidth(),getHeight()+1, 0,0);
         gc.setFill(Color.BLACK);
     }
 
     void renderContainer() {
-        if (rendering) return;
-        rendering = true;
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        GraphicsContext gc = canvas.getGraphicsContext2D();
         for (Renderable r: classes)
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
-        raw = false;
-        rendering = false;
     }
 
     void renderMessage() {
@@ -142,8 +127,8 @@ public class Draw {
         this.addClass("test8");
         this.addClass("test9");
         // Messages
-        //this.addMessage(0, 1, "Message 1");
-        //this.addMessage(3, 4, "Message 2");
+        this.addMessage(0, 1, "Message 1");
+        this.addMessage(3, 4, "Message 2");
     }
 
     public static void temp_generate_diagram() {

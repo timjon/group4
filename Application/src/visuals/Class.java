@@ -48,7 +48,7 @@ public class Class implements Renderable {
             gc.drawImage(pillar,x +size/4 -lifeline_width,y + size/6 +i,lifeline_width,scale);
         }
 
-        gc.drawImage(platform,x -size/8,y + size/2, size/2 + size/4,size/6);
+        gc.drawImage(platform,x -size/8,y + size/2 -size/8, size/2 + size/4,size/6);
 
         // Object
         gc.drawImage(image, x, y, size/2, size/2);
