@@ -31,11 +31,11 @@ public class DiagramView {
         return tab;
     }
 
-    void resize(int w, int h) {
+    void resize() {
         // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
         if (this.state == State.RESIZING) return;
         State tmp = setState(State.RESIZING);
-        draw.resize(w,h);
+        draw.resize(tabPane.getWidth(),tabPane.getHeight());
         this.state = tmp;
     }
 

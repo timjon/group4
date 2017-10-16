@@ -11,7 +11,7 @@ import java.util.Observable;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.5
+ * @version 0.55
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -26,7 +26,7 @@ public class Draw {
     }
 
     Draw(int w, int h) {
-        this.canvas = new Canvas(w, h);
+        canvas = new Canvas(w, h);
     }
 
     int getHeight() {
@@ -34,7 +34,7 @@ public class Draw {
     }
 
     int getWidth() {
-        return (int)canvas.getHeight();
+        return (int)canvas.getWidth();
     }
 
     /**
@@ -64,11 +64,13 @@ public class Draw {
     }
 
     // Always renders with a new specific resolution.
-    void resize(int w, int h) {
+    void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
-        canvas.setHeight(h);
+        System.out.println("w:" + w + " h:" + h);
         canvas.setWidth(w);
+        canvas.setHeight(h);
+        System.out.println("render: " + getWidth() + "x" + getHeight());
         render();
     }
 
@@ -97,14 +99,12 @@ public class Draw {
     }
 
     void renderClass() {
-        if (classes.size() == 0) return;
-        // The amount of space each class can use.
-        int x_offset = getWidth()/100;
-        int space = (getWidth()-x_offset*3)/this.classes.size();
-        int size = space/2;
+        if (classes.size() == 0) return; // There are no items to render
+        int space = (getWidth())/this.classes.size(); // The amount of space each class can use.
+        int size = space/2; // The size of the objects is half of it's given space.
         for(int i = 0; i < classes.size(); i++) {
-            int x = size+ (i*space) +x_offset;
-            int y = (i % 2 == 0 ? 70:73);
+            int x = size+ (i*space);
+            int y = (i % 2 == 0 ? 70:71);
             classes.get(i).place(new Coordinates(x,y), size);
         }
     }
@@ -117,27 +117,18 @@ public class Draw {
 
     void example_diagram() {
         // Classes
-        this.addClass("test1");
-        this.addClass("test2");
-        this.addClass("test3");
-        this.addClass("test4");
-        this.addClass("test5 long name");
-        this.addClass("test6");
-        this.addClass("test7");
-        this.addClass("test8");
-        this.addClass("test9");
+        for (int i = 0; i < 10; i++)
+            this.addClass("test" + i);
         // Messages
-        this.addMessage(0, 1, "Message 1");
-        this.addMessage(3, 4, "Message 2");
+        //this.addMessage(0, 1, "Message 1");
+        //this.addMessage(3, 4, "Message 2");
     }
 
-    public static void temp_generate_diagram() {
-        // Init's a draw object that handles graphical elements
+    public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
         Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
         draw.example_diagram(); // Only used to display an example.
         DiagramView dv = new DiagramView(draw, "diagram name");
         tabPane.getTabs().add(dv.getTab());
-        // Renders and displays the classes
-        draw.render();
+        draw.render(); // Renders and displays items
     }
 }
