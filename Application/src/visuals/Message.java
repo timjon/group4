@@ -43,7 +43,7 @@ public class Message implements Renderable{
 
     }
 
-       public void createMessage(GraphicsContext gc){ // TODO Modify for redraw and dynamic adding.
+       public void createMessage(GraphicsContext gc){ // TODO
 
         //gc.strokeLine(this.x1, this.y1, this.x2, this.y1);
 
