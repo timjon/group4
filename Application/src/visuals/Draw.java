@@ -11,7 +11,7 @@ import java.util.Observable;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.3
+ * @version 0.4
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -44,9 +44,6 @@ public class Draw {
         this.classes.add(new Class(name));
     }
 
-    /**
-     * Draws a Class on the provided canvas.
-     */
     private void add(Renderable item) {
         this.items.add(item);
     }
@@ -66,24 +63,12 @@ public class Draw {
         message.render(gc);
     }
 
-    /**
-     * Renders the classes that have been added on to the Canvas.
-     * Dynamically scales the size and position of all classes.
-     * Draws the classes as Castles.
-     * @author Pontus Laestadius
-     */
     void render() {
-
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
-
-        // If there are any classes that have not been processed.
         renderClass();
         renderMessage();
-
-        // Renders all the items on the canvas.
-        for (Renderable r: this.items) {
+        for (Renderable r: this.items)
             r.render(gc);
-        }
     }
 
     // TODO experimental feature
@@ -102,31 +87,31 @@ public class Draw {
         ArrayList<Renderable> cpy = this.items;
         this.items = new ArrayList<>();
 
-        // Removes all rendered items in to a copy class.
         for (int i = 0; i < cpy.size(); i++){
-            if (cpy.get(i) instanceof Class) {
+            Renderable item = cpy.get(i);
+            if (item instanceof Class) {
                 this.classes.add((Class) cpy.get(i));
-            } else if (cpy.get(i) instanceof Message) {
+            } else if (item instanceof Message) {
                 this.messages.add((Message) this.items.get(i));
             } else {
                 System.out.println("Unknown class: " + cpy.get(i).getClass());
             }
         }
-
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         gc.clearRect(0,0,this.canvas.getWidth(),this.canvas.getHeight());
         gc.setFill(Color.GREY);
         gc.strokeRoundRect(0,-1,this.canvas.getWidth(),this.canvas.getHeight()+1, 0,0);
         gc.setFill(Color.BLACK);
-        // Renders all the items on the canvas.
         render();
     }
 
-
     void renderMessage() {
         //What? confusion is real...
+        //---------------------------
+        // Ok, what you do is do all computing stuff here.
+        // And add the message to this.add(message)
+        // Then let magic do the rest.
     }
-
 
     void renderClass() {
         int x_offset = (int) (this.canvas.getWidth()/100);
@@ -149,7 +134,7 @@ public class Draw {
             // Empties the list.
             this.classes = new ArrayList<>();
         }
-    }      
+    }
 
     /**
      * renders an Object on the Canvas.
@@ -169,8 +154,7 @@ public class Draw {
         }
     }
 
-    // TODO remove, It's a test.
-    void test() {
+    void example_diagram() {
         // Classes
         this.addClass("test1");
         this.addClass("test2");
@@ -181,22 +165,18 @@ public class Draw {
         this.addClass("test7");
         this.addClass("test8");
         this.addClass("test9");
-
         // Messages
-
+        this.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
+        this.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
     }
 
     public static void temp_generate_diagram() {
         // Init's a draw object that handles graphical elements
         Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
-        draw.test(); // Only used to display an example.
+        draw.example_diagram(); // Only used to display an example.
         DiagramView dv = new DiagramView(draw, "diagram name");
         tabPane.getTabs().add(dv.getTab());
         // Renders and displays the classes
         draw.render();
-        draw.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
-        draw.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
-
     }
-
 }
