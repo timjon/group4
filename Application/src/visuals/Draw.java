@@ -44,7 +44,9 @@ public class Draw {
         classes.add(new Class(name));
     }
 
-    // Draws a Message.
+    /**
+     * Creates a message from and to given nodes with an attached name.
+     */
     public void addMessage(int fromNode, int toNode, String name){ // TODO
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
                 classes.get(toNode).getCoordinates(), name, fromNode, toNode));
@@ -104,6 +106,9 @@ public class Draw {
         }
     }
 
+    /**
+     * Renders the message when trying to resize the application.
+     */
     void renderMessage() {
         if(this.messages.size() > 0) {
             for (int i = 0; i < messages.size(); i++) {
