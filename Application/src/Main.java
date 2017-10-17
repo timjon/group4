@@ -13,6 +13,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 
+import java.io.DataInputStream;
 import java.util.Collection;
 
 public class Main extends Application {
@@ -36,6 +37,13 @@ public class Main extends Application {
                 // TODO remove print line and parse result (user story 5)
                 System.out.println(result);
                 server.SendMessage("{[a1, a2], [{a1, a2, hello}, {a2, a1, helloback}]}");
+                String temp = "";
+                while(temp != "simulation_finished"){
+
+                    temp = server.ReceiveMessage();
+                    System.out.println(temp);
+
+                }
             }
         });
 

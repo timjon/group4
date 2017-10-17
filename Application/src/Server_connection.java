@@ -1,5 +1,7 @@
+
 import java.io.*;
 import java.net.*;
+
 
 /**
  * @Author Tim Jonasson
@@ -11,8 +13,8 @@ import java.net.*;
 public class Server_connection {
     private static Socket socket = null;
     private static PrintWriter outputStream = null;
-    private static DataInputStream inputStream = null;
-    
+    private static BufferedReader inputStream = null;
+
     /**
      * Initializes the connection to the backend server
      */
@@ -27,7 +29,7 @@ public class Server_connection {
         try {
             socket = new Socket("10.0.151.42", 8040);
             outputStream =  new PrintWriter(socket.getOutputStream());
-            inputStream = new DataInputStream(socket.getInputStream());
+            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e) {
             System.err.println(e);
         } catch (IOException e) {
@@ -65,14 +67,14 @@ public class Server_connection {
     /**
      * Reads a message from the server
      */
-    public void ReceiveMessage() {
-        if (CheckConnection()) {
-            try {
-                inputStream = new DataInputStream(socket.getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public String ReceiveMessage() {
+        String temp =  "";
+        try {
+            inputStream.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return temp;
     }
 
     /**
