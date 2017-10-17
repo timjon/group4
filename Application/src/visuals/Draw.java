@@ -46,7 +46,8 @@ public class Draw {
 
     // Draws a Message.
     public void addMessage(int fromNode, int toNode, String name){ // TODO
-        this.messages.add(new Message(classes.get(fromNode).getCoordinates(), classes.get(toNode).getCoordinates(), name, fromNode, toNode));
+        this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
+                classes.get(toNode).getCoordinates(), name, fromNode, toNode));
        /*
          GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
@@ -102,11 +103,14 @@ public class Draw {
 
         Thread c = new Thread(new RenderHandler(gc,classes));
         c.start();
-        Thread m = new Thread(new RenderHandler(gc,messages));
-        m.start();
+        //Thread m = new Thread(new RenderHandler(gc,messages));
+        //m.start();
+        for (Renderable r: messages) {
+            r.render(gc);
+        }
 
         try {
-            m.join();
+            //m.join();
             c.join();
         } catch (InterruptedException e) {
             System.err.println(e.toString());
