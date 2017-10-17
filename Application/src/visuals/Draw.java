@@ -17,8 +17,8 @@ public class Draw {
 
     private Canvas canvas;
     private ArrayList<Class> classes = new ArrayList<>();
-    private ArrayList<Message> messages = new ArrayList<>();
-   // private static int offset;
+    private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
+   // private static int offset; // TODO
 
     Canvas getCanvas() {
         return canvas;
@@ -48,16 +48,6 @@ public class Draw {
     public void addMessage(int fromNode, int toNode, String name){ // TODO
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
                 classes.get(toNode).getCoordinates(), name, fromNode, toNode));
-       /*
-         GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        // fromClass coordinates.
-        Coordinates node1 = classes.get(fromNode).getCoordinates();
-        // toClass coordinates.
-        Coordinates node2 = items.get(toNode).getCoordinates();
-        offset += 1;
-        Message message = new Message(node1, node2, name, offset);
-        message.render(gc);
-        */
     }
 
     void render() {
@@ -123,7 +113,7 @@ public class Draw {
                 Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
                 Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
 
-                messages.get(i).Put(node1, node2);
+                messages.get(i).changeCoordinates(node1, node2);
             }
         }
     }
