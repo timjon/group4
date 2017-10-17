@@ -1,10 +1,12 @@
-package visuals;
+package visuals.handlers;
 
-public class AnimationHandler extends Thread {
+import visuals.Draw;
+
+public class Animation extends Thread {
     public static boolean run = false;
     Draw item;
 
-    AnimationHandler(Draw item) {
+    public Animation(Draw item) {
         this.item = item;
     }
 
@@ -18,10 +20,11 @@ public class AnimationHandler extends Thread {
     private void loop() {
         while (run) {
             try {
-                Thread.sleep(1000/8);
+                Thread.sleep(1000/3);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
             }
+            item.update();
             item.redraw();
         }
     }

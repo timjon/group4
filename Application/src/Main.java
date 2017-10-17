@@ -10,7 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import visuals.Draw;
-import visuals.Resizer;
+import visuals.handlers.Resizer;
 
 import java.awt.*;
 import java.util.Collection;

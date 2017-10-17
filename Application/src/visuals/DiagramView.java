@@ -31,7 +31,7 @@ public class DiagramView {
         return tab;
     }
 
-    void resize() {
+    public void resize() {
         // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
         if (this.state == State.RESIZING) return;
         State tmp = setState(State.RESIZING);
