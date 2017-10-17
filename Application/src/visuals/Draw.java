@@ -5,13 +5,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.Observable;
 
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.55
+ * @version 0.6
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -27,6 +25,7 @@ public class Draw {
 
     Draw(int w, int h) {
         canvas = new Canvas(w, h);
+        (new Thread(new AnimationHandler(this))).start();
     }
 
     int getHeight() {
@@ -67,27 +66,44 @@ public class Draw {
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
-        System.out.println("w:" + w + " h:" + h);
         canvas.setWidth(w);
         canvas.setHeight(h);
-        System.out.println("render: " + getWidth() + "x" + getHeight());
-        render();
+        redraw();
+    }
+
+    void redraw() {
+        renderClass();
+        renderMessage();
+        init();
+        long t1 = System.currentTimeMillis();
+        renderContainer();
+        System.out.println(System.currentTimeMillis()-t1);
     }
 
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0,0,getWidth(), getHeight());
-        gc.setFill(Color.GREY);
-        gc.strokeRoundRect(0,-1,getWidth(),getHeight()+1, 0,0);
-        gc.setFill(Color.BLACK);
+        gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
+        gc.setFill(Color.GREY); // Sets the color to GREY
+        gc.strokeRoundRect(0,-1,getWidth(),getHeight()+1, 0,0); // Draws a border
+        gc.setFill(Color.BLACK); // Resets the color to BLACK
     }
 
     void renderContainer() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        for (Renderable r: classes)
-            r.render(gc);
-        for (Renderable r: messages)
-            r.render(gc);
+        for (Class c: classes) // TODO new thing!
+            c.update();
+
+        Thread c = new Thread(new RenderHandler(gc,classes));
+        c.start();
+        Thread m = new Thread(new RenderHandler(gc,messages));
+        m.start();
+
+        try {
+            m.join();
+            c.join();
+        } catch (InterruptedException e) {
+            System.err.println(e.toString());
+        }
     }
 
     void renderMessage() {
