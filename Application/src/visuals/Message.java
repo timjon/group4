@@ -9,7 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 public class Message implements Renderable{
     String name;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
-   // private int offset;
+  //  private int offset = 20;
     private int fromNode, toNode;
 
     public Message(Coordinates node1, Coordinates node2, String name/*,int offset*/, int fromNode, int toNode){ // constructor.
@@ -43,10 +43,10 @@ public class Message implements Renderable{
         //toNode Coordinates.
         int x2 = this.node2.getX();
         int y2 = this.node2.getY();
-       // this.offset *= 1.5;
+        //this.offset += 10;
        // y1 += this.offset;
-        gc.strokeLine(x1, y1, x2, y1); // Message Line.
-        gc.fillText(this.name, x1+25, y1-10); // Message description.
+        gc.strokeLine(x1+10, y1+50, x2, y1+50); // Message Line.
+        gc.fillText(this.name, x1+25, y1+40); // Message description.
 
 
     }

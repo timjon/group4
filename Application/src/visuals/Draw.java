@@ -47,7 +47,8 @@ public class Draw {
 
     // Draws a Message.
     public void addMessage(int fromNode, int toNode, String name){ // TODO
-        this.messages.add(new Message(classes.get(fromNode).getCoordinates(), classes.get(toNode).getCoordinates(), name, fromNode, toNode));
+        this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
+                classes.get(toNode).getCoordinates(), name, fromNode, toNode));
        /*
          GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
@@ -95,7 +96,6 @@ public class Draw {
     }
 
     void renderMessage() {
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
         if(this.messages.size() > 0) {
             for (int i = 0; i < messages.size(); i++) {
                 Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
