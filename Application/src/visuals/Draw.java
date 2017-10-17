@@ -26,7 +26,7 @@ public class Draw {
 
     Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        (new Thread(new AnimationHandler(this))).start();
+        //(new Thread(new AnimationHandler(this))).start(); // TODO exerimental, not due for release.
     }
 
     int getHeight() {
@@ -61,8 +61,7 @@ public class Draw {
 
     void render() {
         init();
-        renderClass();
-        renderMessage();
+        renderItems();
         renderContainer();
     }
 
@@ -75,9 +74,13 @@ public class Draw {
         redraw();
     }
 
-    void redraw() {
+    void renderItems() {
         renderClass();
         renderMessage();
+    }
+
+    void redraw() {
+        renderItems();
         init();
         long t1 = System.currentTimeMillis();
         renderContainer();
@@ -120,12 +123,6 @@ public class Draw {
                 messages.get(i).Put(node1, node2);
             }
         }
-
-        //What? confusion is real...
-        //---------------------------
-        // Ok, what you do is do all computing stuff here.
-        // Then let magic do the rest.
-        // see renderClass for reference.
     }
 
     void renderClass() {

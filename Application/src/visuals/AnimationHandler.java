@@ -18,7 +18,7 @@ public class AnimationHandler extends Thread {
     private void loop() {
         while (run) {
             try {
-                Thread.sleep(1000/30);
+                Thread.sleep(1000/8);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
             }
