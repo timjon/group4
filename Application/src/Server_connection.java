@@ -12,26 +12,7 @@ public class Server_connection {
     private static Socket socket = null;
     private static PrintWriter outputStream = null;
     private static DataInputStream inputStream = null;
-
-    public static void main(String[] args){
-        Server_connection server = new Server_connection();
-        try {
-            socket = new Socket("10.0.151.42", 8040);
-            outputStream =  new PrintWriter(socket.getOutputStream());
-            inputStream = new DataInputStream(socket.getInputStream());
-        } catch (UnknownHostException e) {
-            System.err.println(e);
-        } catch (IOException e) {
-            System.err.println(e);
-        }
-        if (socket != null && outputStream != null && inputStream != null) {
-            outputStream.print("{[a1, a2], [{a1, a2, hello}]}");
-            outputStream.flush();
-
-        }
-        //server.SendMessage("{[a1, a2], [{a1, a2, hello}, {a2, a1, helloback}]}");
-
-    }
+    
     /**
      * Initializes the connection to the backend server
      */
