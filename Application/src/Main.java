@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import visuals.DiagramView;
 import visuals.Draw;
 import visuals.handlers.Animation;
 import visuals.handlers.Resizer;
@@ -59,16 +60,15 @@ public class Main extends Application {
         int ta_width = 270;
         ta.setMaxWidth(ta_width);
 
-        BorderPane borderpane = new BorderPane();
 
         tabPane = new TabPane();
 
+        BorderPane borderpane = new BorderPane();
         HBox hbox = new HBox();
         hbox.getChildren().add(btn_import);
         hbox.getChildren().add(btn2);
         borderpane.setTop(hbox);
         borderpane.setLeft(ta);
-
         borderpane.setCenter(tabPane);
 
         Scene main;
@@ -88,6 +88,5 @@ public class Main extends Application {
 
         Draw.temp_generate_diagram(); // TODO replace with actual parsing.
         Resizer.init(primaryStage);
-
     }
 }

@@ -21,13 +21,19 @@ public class Draw {
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
    // private static int offset; // TODO
+    private String name;
+
+    public String getName() {
+        return name;
+    }
 
     Canvas getCanvas() {
         return canvas;
     }
 
-    Draw(int w, int h) {
+    Draw(String n, int w, int h) {
         canvas = new Canvas(w, h);
+        name = n;
     }
 
     int getHeight() {
@@ -76,9 +82,7 @@ public class Draw {
     public void redraw() {
         renderItems();
         init();
-        long t1 = System.currentTimeMillis();
         renderContainer();
-        System.out.println(System.currentTimeMillis()-t1);
     }
 
     void init() {
@@ -94,9 +98,8 @@ public class Draw {
     }
 
     void renderContainer() {
+        if (!DiagramView.inView(name)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-
-
         Thread c = new Thread(new Render(gc,classes));
         c.start();
 
@@ -107,6 +110,7 @@ public class Draw {
             c.join();
         } catch (InterruptedException e) {
             System.err.println(e.toString());
+            System.out.println(e.toString());
         }
     }
 
@@ -161,16 +165,19 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+        String name = "diagram name";
+        Draw draw = new Draw(name, (int)tabPane.getWidth(), (int)tabPane.getHeight());
         draw.example_diagram(); // Only used to display an example.
-        DiagramView dv = new DiagramView(draw, "diagram name");
+        DiagramView dv = new DiagramView(draw, name);
         draw.animate();
         tabPane.getTabs().add(dv.getTab());
         draw.render(); // Renders and displays items
 
-        Draw draw2 = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+        name = "diagram name2";
+
+        Draw draw2 = new Draw(name, (int)tabPane.getWidth(), (int)tabPane.getHeight());
         draw2.example_diagram(); // Only used to display an example.
-        DiagramView dv2 = new DiagramView(draw2, "diagram name2");
+        DiagramView dv2 = new DiagramView(draw2, name);
         draw2.animate();
         tabPane.getTabs().add(dv2.getTab());
         draw2.render(); // Renders and displays items

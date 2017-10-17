@@ -18,12 +18,17 @@ public class Animation extends Thread {
     private void loop() {
         while (!DiagramView.list.isEmpty()) {
             try {
-                Thread.sleep(1000/60);
+                Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
+                System.out.println(e.toString());
             }
-            item.update();
-            item.redraw();
+
+            if (DiagramView.inView(item.getName())) {
+                item.update();
+                item.redraw();
+            }
+
         }
     }
 }

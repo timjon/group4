@@ -46,7 +46,7 @@ public class Message implements Renderable{
     public void update() {
         // Animate
         try {
-            if (coolvariable++ > this.node2.getX()-this.node1.getX()-2) coolvariable = 0;
+            if ((coolvariable+=10) > this.node2.getX()-this.node1.getX()-2) coolvariable = 0;
         } catch (Exception e) {}
     }
 

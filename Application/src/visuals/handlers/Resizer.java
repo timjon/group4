@@ -28,6 +28,7 @@ public class Resizer implements Runnable {
                 Thread.sleep(inc); // Sleep for the same time as timer increases
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
+                System.out.println(e.toString());
             }
         }
         for (DiagramView d: DiagramView.list) // For all opened diagrams:

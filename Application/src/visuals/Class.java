@@ -46,6 +46,8 @@ public class Class implements Renderable {
     }
 
     public void render(GraphicsContext gc) {
+        gc.setFill(Color.TRANSPARENT);
+
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
 
@@ -58,6 +60,7 @@ public class Class implements Renderable {
         gc.drawImage(platform,x -size/8,y + size/2 -size/8, size/2 + size/4,size/6);
         gc.drawImage(castle, x + anicontent[aniindex].getX(), y + anicontent[aniindex].getY(), size/2, size/2);
 
+        gc.setFill(Color.BLACK);
         int len = this.name.length();
         int pos_x = x + size/4 - len*2;
         gc.fillText(this.name, pos_x, y -15);
