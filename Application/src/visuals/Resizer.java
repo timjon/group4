@@ -4,33 +4,34 @@ import javafx.beans.value.ChangeListener;
 import javafx.stage.Stage;
 
 /**
- * The Resizer runs on a seperate thread and there can only exist one at a time.
- * It's in charge of when the canvases are meant to be resized after a certain time delay.
- * @version 0.4
+ * The Resizer runs on a separate thread and there can only exist one at a time.
+ * It's in charge of when the canvases are meant call resize after a certain time delay.
+ * @version 0.5
  * @author Pontus Laestadius
  */
 public class Resizer implements Runnable {
     private static Resizer th;
-    static int timer = 0;
+    private static int timer = 0;
+    private int inc = 5;
+    private int threashold = 45;
 
     public void run() {
-        if (th == null) {
-            th = this;
+        if (th == null) // Only allow one instance of the program to run at a time
             time();
-        }
     }
 
-    private void time(){ // lol how can somenoe void time? Timetraveled I guess.
-        while ((timer+=250) < 749) {
+    private void time(){
+        th = this;
+        while ((timer+=inc) < threashold) { // A 400ms delay in which the timer can be reset
             try {
-                Thread.sleep(250);
-            } catch (Exception e) {
+                Thread.sleep(inc); // Sleep for the same time as timer increases
+            } catch (InterruptedException e) {
                 System.err.println(e.toString());
             }
         }
-        for (DiagramView d: DiagramView.list)
-            d.resize();
-        th = null;
+        for (DiagramView d: DiagramView.list) // For all opened diagrams:
+            d.resize(); // Resize them
+        th = null; // Allows a new instance to start once this one is finished
     }
 
     /**

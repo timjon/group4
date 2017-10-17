@@ -4,6 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+import java.util.Iterator;
+
 /**
  * A class wrapper for coordinates with extra properties that implements Renderable.
  * @author Pontus Laestadius
@@ -13,13 +15,28 @@ public class Class implements Renderable {
     private int size;
     private String name;
 
+    private int aniindex = 0;
+    private Coordinates[] anicontent;
+
+    static Image image = new Image("resources/castle.png");
+    // Lifeline
+    static Image platform = new Image("resources/platform.png");
+    static Image pillar = new Image("resources/pillar.png");
+
     public Class(String name) {
         this.name = name;
+        anicontent = new Coordinates[1];
+        anicontent[0] = new Coordinates(0,0);
     }
 
     public void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
         this.size = size;
+    }
+
+    // @Override // TODO add to renderable
+    public void update() {
+        aniindex = aniindex == anicontent.length-1 ? 0: aniindex+1;
     }
 
     @Override
@@ -34,13 +51,10 @@ public class Class implements Renderable {
 
     @Override
     public void render(GraphicsContext gc) {
-        Image image = new Image("resources/castle.png");
+
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
 
-        // Lifeline
-        Image platform = new Image("resources/platform.png");
-        Image pillar = new Image("resources/pillar.png");
 
         int lifeline_width = size/12;
         int scale = (int) (pillar.getHeight()/lifeline_width);
@@ -51,7 +65,7 @@ public class Class implements Renderable {
         gc.drawImage(platform,x -size/8,y + size/2 -size/8, size/2 + size/4,size/6);
 
         // Object
-        gc.drawImage(image, x, y, size/2, size/2);
+        gc.drawImage(image, x + anicontent[aniindex].getX(), y + anicontent[aniindex].getY(), size/2, size/2);
 
         int len = this.name.length();
 
