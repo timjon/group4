@@ -1,9 +1,9 @@
 package visuals.handlers;
 
+import visuals.DiagramView;
 import visuals.Draw;
 
 public class Animation extends Thread {
-    public static boolean run = false;
     Draw item;
 
     public Animation(Draw item) {
@@ -12,15 +12,13 @@ public class Animation extends Thread {
 
     @Override
     public void run() {
-        if (run) return;
-        run = true;
-        loop();
+         loop();
     }
 
     private void loop() {
-        while (run) {
+        while (!DiagramView.list.isEmpty()) {
             try {
-                Thread.sleep(1000/3);
+                Thread.sleep(1000/60);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
             }

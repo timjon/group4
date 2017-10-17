@@ -28,7 +28,6 @@ public class Draw {
 
     Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        (new Thread(new Animation(this))).start();
     }
 
     int getHeight() {
@@ -126,7 +125,6 @@ public class Draw {
             for (int i = 0; i < messages.size(); i++) {
                 Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
                 Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
-
                 messages.get(i).changeCoordinates(node1, node2);
             }
         }
@@ -143,6 +141,10 @@ public class Draw {
         }
     }
 
+    void animate() {
+        (new Thread(new Animation(this))).start();
+
+    }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
     //----------------------------TEST CODE BELOW------------------------------------
@@ -162,7 +164,15 @@ public class Draw {
         Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
         draw.example_diagram(); // Only used to display an example.
         DiagramView dv = new DiagramView(draw, "diagram name");
+        draw.animate();
         tabPane.getTabs().add(dv.getTab());
         draw.render(); // Renders and displays items
+
+        Draw draw2 = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+        draw2.example_diagram(); // Only used to display an example.
+        DiagramView dv2 = new DiagramView(draw2, "diagram name2");
+        draw2.animate();
+        tabPane.getTabs().add(dv2.getTab());
+        draw2.render(); // Renders and displays items
     }
 }

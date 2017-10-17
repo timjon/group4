@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import visuals.Draw;
+import visuals.handlers.Animation;
 import visuals.handlers.Resizer;
 
 import java.awt.*;
@@ -21,6 +22,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
     @Override
     public void start(Stage primaryStage) {
 
