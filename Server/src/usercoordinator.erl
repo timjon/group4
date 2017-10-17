@@ -27,7 +27,7 @@ loop(Socket, Diagrams) ->
 	      end;
 		
 		{ok, {Did, send_message}} -> 
-		  send_message(Did, Diagrams, Port),
+		  %send_message(Did, Diagrams, Port),
 		  loop(Socket, Diagrams)
 
 	  end;
