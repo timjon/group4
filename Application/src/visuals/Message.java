@@ -3,42 +3,58 @@ package visuals;
 import javafx.scene.canvas.GraphicsContext;
 
 /**
- * Class for creating the messages to pass between classes.
+ * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
  */
 public class Message implements Renderable{
     String name;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
-   // private int offset;
     private int fromNode, toNode;
 
-    public Message(Coordinates node1, Coordinates node2, String name/*,int offset*/, int fromNode, int toNode){ // constructor.
+    /**
+     * Constructor
+     */
+    public Message(Coordinates node1, Coordinates node2, String name, int fromNode, int toNode){
         this.node1 = node1;
         this.node2 = node2;
         this.name = name;
-       // this.offset = offset;
         this.fromNode = fromNode;
         this.toNode = toNode;
     }
 
+    /**
+     * Retrieves the coordinates from the Message object.
+     */
     @Override
     public Coordinates getCoordinates() { return coordinates; }
 
+    /**
+     * Formatting method.
+     */
     @Override
     public String format() {
         return null;
     }
 
+    /**
+     * Method for animating the message.
+     */
     @Override
     public void update() {
         // Animate
     }
 
-    public void Put(Coordinates node1, Coordinates node2){
+    /**
+     * Gets the new coordinates from resizing the application.
+     */
+    public void changeCoordinates(Coordinates node1, Coordinates node2){
         this.node1 = node1;
         this.node2 = node2;
     }
 
+    /**
+     * Renders a message on the canvas using the provided coordinates.
+     */
     @Override
     public void render(GraphicsContext gc){
 
@@ -48,28 +64,24 @@ public class Message implements Renderable{
         //toNode Coordinates.
         int x2 = this.node2.getX();
         int y2 = this.node2.getY();
-       // this.offset *= 1.5;
-       // y1 += this.offset;
-        gc.strokeLine(x1, y1, x2, y1); // Message Line.
-        gc.fillText(this.name, x1+25, y1-10); // Message description.
+        gc.strokeLine(x1+10, y1+50, x2, y1+50); // Message Line.
+        gc.fillText(this.name, x1+25, y1+40); // Message description.
 
 
     }
 
+    /**
+     * Getter method for retrieving the beginning node of a message
+     */
     public int getFromNode(){
         return fromNode;
     }
 
+    /**
+     * Getter method for retrieving the end node of a message
+     */
     public int getToNode(){
         return toNode;
-    }
-
-       public void createMessage(GraphicsContext gc){ // TODO
-
-        //gc.strokeLine(this.x1, this.y1, this.x2, this.y1);
-
-        //gc.fillText(this.name, x1 + 25, y1-10);
-
     }
 
 }
