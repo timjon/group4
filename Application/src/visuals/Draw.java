@@ -21,7 +21,7 @@ public class Draw {
     private ArrayList<Renderable> items = new ArrayList<>(); // Why are we collecting everything here? Isn't it just inconvenient?
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>();
-    private static int offset;
+   // private static int offset;
 
     Canvas getCanvas() {
         return canvas;
@@ -49,18 +49,20 @@ public class Draw {
     }
 
     /**
-     * Draws a Message on the canvas.
+     * Adds a new message to the Message list for later access.
      */
     public void addMessage(int fromNode, int toNode, String name){ // TODO
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        this.messages.add(new Message(classes.get(fromNode).getCoordinates(), classes.get(toNode).getCoordinates(), name));
+       /*
+         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
         Coordinates node1 = items.get(fromNode).getCoordinates();
         // toClass coordinates.
         Coordinates node2 = items.get(toNode).getCoordinates();
-
         offset += 1;
         Message message = new Message(node1, node2, name, offset);
         message.render(gc);
+        */
     }
 
     void render() {
@@ -106,6 +108,14 @@ public class Draw {
     }
 
     void renderMessage() {
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        if(this.messages.size() > 0) {
+            for (Message m : this.messages) {
+                m.render(gc);
+                this.add(m);
+            }
+        }
+
         //What? confusion is real...
         //---------------------------
         // Ok, what you do is do all computing stuff here.
@@ -166,8 +176,8 @@ public class Draw {
         this.addClass("test8");
         this.addClass("test9");
         // Messages
-        this.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
-        this.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
+         this.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
+         this.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
     }
 
     public static void temp_generate_diagram() {
