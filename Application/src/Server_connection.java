@@ -68,17 +68,24 @@ public class Server_connection {
      * Reads a message from the server
      */
     public String ReceiveMessage() {
-        String temp =  "";
+        String response = "";
+        StringBuilder stringBuilder = new StringBuilder();
+        int value;
         try {
-            inputStream.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("you fucked up with this " + e);
+            while( (value = inputStream.read()) != '~') {
+                stringBuilder.append((char)value);
+            }
+            System.out.println(stringBuilder.toString());
+        } catch (IOException e1) {
+            e1.printStackTrace();
         }
-        return temp;
+
+        return response;
     }
 
-    /**
+
+
+        /**
      * Checks if the connection is open
      * @return True if the connection is open
      */
