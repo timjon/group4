@@ -20,7 +20,7 @@ public class Draw {
     private Canvas canvas;
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
-    private static int offset = 30; // TODO
+    private int offset = 30; // TODO
 
     Canvas getCanvas() {
         return canvas;
