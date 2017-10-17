@@ -9,7 +9,6 @@ init() ->
 loop(ListenSocket) -> 
   {ok, AcceptSocket} = gen_tcp:accept(ListenSocket),
   P = spawn(fun () -> usercoordinator:init(AcceptSocket) end),
-  P = usercoordinator:init(AcceptSocket),
   io:format("Proccess: ~p", [P]),
   gen_tcp:controlling_process(AcceptSocket, P),
   loop(ListenSocket).
