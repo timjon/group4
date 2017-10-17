@@ -1,6 +1,7 @@
 package visuals;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 /**
  * Class for creating the messages to pass between "classes".
@@ -11,6 +12,8 @@ public class Message implements Renderable{
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
     private int fromNode, toNode;
     private int offset;
+
+    int coolvariable = 0;
 
     /**
      * Constructor
@@ -44,6 +47,9 @@ public class Message implements Renderable{
     @Override
     public void update() {
         // Animate
+        try {
+            if (coolvariable++ > this.node2.getX()-this.node1.getX()-2) coolvariable = 0;
+        } catch (Exception e) {}
     }
 
     /**
@@ -71,7 +77,11 @@ public class Message implements Renderable{
         gc.strokeLine(x1+10, y1, x2, y1); // Message Line.
         gc.fillText(this.name, x1+25, y1); // Message description.
 
-
+        gc.setFill(Color.RED);
+        gc.fillRect(x1+coolvariable, y1+50, 7, 7);
+        gc.setFill(Color.GREEN);
+        gc.fillRect(x1+coolvariable +2, y1+50 +2, 3, 3);
+        gc.setFill(Color.BLACK);
     }
 
     /**

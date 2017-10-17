@@ -3,6 +3,8 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import visuals.handlers.Animation;
+import visuals.handlers.Render;
 
 import java.util.ArrayList;
 
@@ -26,7 +28,6 @@ public class Draw {
 
     Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        //(new Thread(new AnimationHandler(this))).start(); // TODO exerimental, not due for release.
     }
 
     int getHeight() {
@@ -73,7 +74,7 @@ public class Draw {
         renderMessage();
     }
 
-    void redraw() {
+    public void redraw() {
         renderItems();
         init();
         long t1 = System.currentTimeMillis();
@@ -84,17 +85,20 @@ public class Draw {
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
-        gc.setFill(Color.GREY); // Sets the color to GREY
-        gc.strokeRoundRect(0,-1,getWidth(),getHeight()+1, 0,0); // Draws a border
+
+        gc.setFill(Color.ALICEBLUE); // Sets the color to GREY
+        int split = getHeight()/2 +getHeight()/4;
+        gc.fillRect(0,0,getWidth(),split);
+        gc.setFill(Color.CORNFLOWERBLUE); // Sets the color to GREY
+        gc.fillRect(0,split,getWidth(), getHeight());
         gc.setFill(Color.BLACK); // Resets the color to BLACK
     }
 
     void renderContainer() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        for (Class c: classes) // TODO new thing!
-            c.update();
 
-        Thread c = new Thread(new RenderHandler(gc,classes));
+
+        Thread c = new Thread(new Render(gc,classes));
         c.start();
 
         for (Renderable r: messages)
@@ -107,6 +111,13 @@ public class Draw {
         }
     }
 
+    public void update() {
+        for (Renderable r: classes)
+            r.update();
+        for (Renderable r: messages)
+            r.update();
+    }
+
     /**
      * Renders the message when trying to resize the application.
      */
@@ -115,7 +126,6 @@ public class Draw {
             for (int i = 0; i < messages.size(); i++) {
                 Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
                 Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
-
                 messages.get(i).changeCoordinates(node1, node2);
             }
         }
@@ -132,6 +142,10 @@ public class Draw {
         }
     }
 
+    void animate() {
+        (new Thread(new Animation(this))).start();
+
+    }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
     //----------------------------TEST CODE BELOW------------------------------------
@@ -151,7 +165,15 @@ public class Draw {
         Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
         draw.example_diagram(); // Only used to display an example.
         DiagramView dv = new DiagramView(draw, "diagram name");
+        draw.animate();
         tabPane.getTabs().add(dv.getTab());
         draw.render(); // Renders and displays items
+
+        Draw draw2 = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+        draw2.example_diagram(); // Only used to display an example.
+        DiagramView dv2 = new DiagramView(draw2, "diagram name2");
+        draw2.animate();
+        tabPane.getTabs().add(dv2.getTab());
+        draw2.render(); // Renders and displays items
     }
 }

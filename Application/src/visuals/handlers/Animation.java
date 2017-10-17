@@ -1,27 +1,28 @@
-package visuals;
+package visuals.handlers;
 
-public class AnimationHandler extends Thread {
-    public static boolean run = false;
+import visuals.DiagramView;
+import visuals.Draw;
+
+public class Animation extends Thread {
     Draw item;
 
-    AnimationHandler(Draw item) {
+    public Animation(Draw item) {
         this.item = item;
     }
 
     @Override
     public void run() {
-        if (run) return;
-        run = true;
-        loop();
+         loop();
     }
 
     private void loop() {
-        while (run) {
+        while (!DiagramView.list.isEmpty()) {
             try {
-                Thread.sleep(1000/8);
+                Thread.sleep(1000/60);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
             }
+            item.update();
             item.redraw();
         }
     }

@@ -1,7 +1,8 @@
-package visuals;
+package visuals.handlers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.stage.Stage;
+import visuals.DiagramView;
 
 /**
  * The Resizer runs on a separate thread and there can only exist one at a time.

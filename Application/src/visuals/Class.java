@@ -18,8 +18,7 @@ public class Class implements Renderable {
     private int aniindex = 0;
     private Coordinates[] anicontent;
 
-    static Image image = new Image("resources/castle.png");
-    // Lifeline
+    static Image castle = new Image("resources/castle.png");
     static Image platform = new Image("resources/platform.png");
     static Image pillar = new Image("resources/pillar.png");
 
@@ -34,22 +33,18 @@ public class Class implements Renderable {
         this.size = size;
     }
 
-    @Override
     public void update() {
         aniindex = aniindex == anicontent.length-1 ? 0: aniindex+1;
     }
 
-    @Override
     public String format() {
         return null;
     }
 
-    @Override
     public Coordinates getCoordinates() {
         return coordinates;
     }
 
-    @Override
     public void render(GraphicsContext gc) {
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
@@ -61,14 +56,10 @@ public class Class implements Renderable {
         }
 
         gc.drawImage(platform,x -size/8,y + size/2 -size/8, size/2 + size/4,size/6);
-
-        // Object
-        gc.drawImage(image, x + anicontent[aniindex].getX(), y + anicontent[aniindex].getY(), size/2, size/2);
+        gc.drawImage(castle, x + anicontent[aniindex].getX(), y + anicontent[aniindex].getY(), size/2, size/2);
 
         int len = this.name.length();
-
         int pos_x = x + size/4 - len*2;
-
         gc.fillText(this.name, pos_x, y -15);
     }
 

@@ -1,14 +1,15 @@
-package visuals;
+package visuals.handlers;
 
 import javafx.scene.canvas.GraphicsContext;
+import visuals.Renderable;
 
 import java.util.ArrayList;
 
-public class RenderHandler<T extends Renderable> extends Thread {
+public class Render<T extends Renderable> extends Thread {
     ArrayList<T> list;
     GraphicsContext gc;
 
-    RenderHandler(GraphicsContext gc, ArrayList<T> list) {
+    public Render(GraphicsContext gc, ArrayList<T> list) {
         this.gc = gc;
         this.list = list;
     }
