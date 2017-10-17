@@ -1,15 +1,28 @@
 import java.io.*;
 import java.net.*;
 
+/**
+ * @Author Tim Jonasson
+ * @Version 1.0
+ * Handles the connection to the backend server
+ *
+ */
+
 public class Server_connection {
     private static Socket socket = null;
     private static PrintWriter outputStream = null;
     private static DataInputStream inputStream = null;
 
+    /**
+     * Initializes the connection to the backend server
+     */
     public void Init(){
        OpenConnection();
     }
 
+    /**
+     * Opens the connection to the port and ip
+     */
     public void OpenConnection(){
         try {
             socket = new Socket("10.0.151.42", 8040);
@@ -22,6 +35,9 @@ public class Server_connection {
         }
     }
 
+    /**
+     * Closes the connection to the server
+     */
     public void CloseConnection(){
         try {
             outputStream.close();
@@ -33,6 +49,10 @@ public class Server_connection {
 
     }
 
+    /**
+     * sends a message to the server
+     * @param Message The message sent to the server
+     */
     public void SendMessage(String Message) {
 
         if (CheckConnection()) {
@@ -42,40 +62,24 @@ public class Server_connection {
         }
     }
 
-    public void ReceiveMessage(){
-        try {
-            inputStream = new DataInputStream(socket.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
+    /**
+     * Reads a message from the server
+     */
+    public void ReceiveMessage() {
+        if (CheckConnection()) {
+            try {
+                inputStream = new DataInputStream(socket.getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
+    /**
+     * Checks if the connection is open
+     * @return True if the connection is open
+     */
     private boolean CheckConnection(){
             return socket != null && outputStream != null && inputStream != null;
     }
-
-
-    public static Socket getSocket() {
-        return socket;
-    }
-
-    public static void setSocket(Socket socket) {
-        Server_connection.socket = socket;
-    }
-
-    public static PrintWriter getOutputStream() {
-        return outputStream;
-    }
-
-    public static void setOutputStream(PrintWriter outputStream) {
-        Server_connection.outputStream = outputStream;
-    }
-
-    public static DataInputStream getInputStream() {
-        return inputStream;
-    }
-
-    public static void setInputStream(DataInputStream inputStream) {
-        Server_connection.inputStream = inputStream;
-    }
-
 }
