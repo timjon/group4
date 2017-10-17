@@ -18,7 +18,7 @@ public class Draw {
     private Canvas canvas;
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
-   // private static int offset; // TODO
+    private static int offset = 30; // TODO
 
     Canvas getCanvas() {
         return canvas;
@@ -48,8 +48,9 @@ public class Draw {
      * Creates a message from and to given nodes with an attached name.
      */
     public void addMessage(int fromNode, int toNode, String name){ // TODO
+        offset += 10;
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
-                classes.get(toNode).getCoordinates(), name, fromNode, toNode));
+                classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset));
     }
 
     void render() {
