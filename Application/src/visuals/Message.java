@@ -8,21 +8,23 @@ import javafx.scene.paint.Color;
  * @author Sebastian Fransson
  */
 public class Message implements Renderable{
-    String name;
+    private String name;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
     private int fromNode, toNode;
+    private int offset;
 
     int coolvariable = 0;
 
     /**
      * Constructor
      */
-    public Message(Coordinates node1, Coordinates node2, String name, int fromNode, int toNode){
+    public Message(Coordinates node1, Coordinates node2, String name, int fromNode, int toNode, int offset){
         this.node1 = node1;
         this.node2 = node2;
         this.name = name;
         this.fromNode = fromNode;
         this.toNode = toNode;
+        this.offset = offset;
     }
 
     /**
@@ -70,8 +72,10 @@ public class Message implements Renderable{
         //toNode Coordinates.
         int x2 = this.node2.getX();
         int y2 = this.node2.getY();
-        gc.strokeLine(x1+10, y1+50, x2, y1+50); // Message Line.
-        gc.fillText(this.name, x1+25, y1+40); // Message description.
+
+        y1 += offset;
+        gc.strokeLine(x1+10, y1, x2, y1); // Message Line.
+        gc.fillText(this.name, x1+25, y1); // Message description.
 
         gc.setFill(Color.RED);
         gc.fillRect(x1+coolvariable, y1+50, 7, 7);
