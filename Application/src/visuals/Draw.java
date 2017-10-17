@@ -18,6 +18,7 @@ public class Draw {
     private Canvas canvas;
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>();
+   // private static int offset;
 
     Canvas getCanvas() {
         return canvas;
@@ -45,14 +46,17 @@ public class Draw {
 
     // Draws a Message.
     public void addMessage(int fromNode, int toNode, String name){ // TODO
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+        this.messages.add(new Message(classes.get(fromNode).getCoordinates(), classes.get(toNode).getCoordinates(), name, fromNode, toNode));
+       /*
+         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
         Coordinates node1 = classes.get(fromNode).getCoordinates();
         // toClass coordinates.
-        Coordinates node2 = classes.get(toNode).getCoordinates();
-
-        Message message = new Message(node1, node2, name);
-        messages.add(message);
+        Coordinates node2 = items.get(toNode).getCoordinates();
+        offset += 1;
+        Message message = new Message(node1, node2, name, offset);
+        message.render(gc);
+        */
     }
 
     void render() {
@@ -107,6 +111,16 @@ public class Draw {
     }
 
     void renderMessage() {
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        if(this.messages.size() > 0) {
+            for (int i = 0; i < messages.size(); i++) {
+                Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
+                Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
+
+                messages.get(i).Put(node1, node2);
+            }
+        }
+
         //What? confusion is real...
         //---------------------------
         // Ok, what you do is do all computing stuff here.
@@ -136,8 +150,8 @@ public class Draw {
         for (int i = 0; i < 10; i++)
             this.addClass("test" + i);
         // Messages
-        //this.addMessage(0, 1, "Message 1");
-        //this.addMessage(3, 4, "Message 2");
+        this.addMessage(0, 1, "Message 1");
+        this.addMessage(3, 4, "Message 2");
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
