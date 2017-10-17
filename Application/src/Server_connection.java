@@ -68,7 +68,6 @@ public class Server_connection {
      * Reads a message from the server
      */
     public String ReceiveMessage() {
-        String response = "";
         StringBuilder stringBuilder = new StringBuilder();
         int value;
         try {
@@ -80,7 +79,7 @@ public class Server_connection {
             e1.printStackTrace();
         }
 
-        return response;
+        return stringBuilder.toString();
     }
 
 

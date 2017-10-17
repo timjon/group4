@@ -15,8 +15,10 @@ import javafx.scene.shape.ArcType;
 
 import java.io.DataInputStream;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends Application {
+    static int tempnum = 0;
     public static void main(String[] args) {
         launch(args);
     }
@@ -36,8 +38,30 @@ public class Main extends Application {
 
                 // TODO remove print line and parse result (user story 5)
                 System.out.println(result);
-                server.SendMessage("{1, [a1, a2], [{a1, a2, hello}, {a2, a1, helloback}]}");
+                server.SendMessage("{1, [\"gateway:g\",\"user:u1\",\"user:u2\",\"user:u3\"],[{\"user:u1\",\"gateway:g\",[fwd, u2, msg1]},{\"user:u3\",\"gateway:g\",[fwd, u1, msg2]},{\"gateway:g\",\"user:u2\",[fwd, u2, msg1]},{\"gateway:g\",\"user:u1\",[fwd, u1, msg2]}]}");
                 String temp = server.ReceiveMessage();
+                server.SendMessage("{1, next_message}");
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                server.SendMessage("{1, next_message}");
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                server.SendMessage("{1, next_message}");
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                server.SendMessage("{1, next_message}");
+
+
+
 
             }
         });

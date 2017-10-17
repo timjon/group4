@@ -1,5 +1,5 @@
 -module(diagramcoordinator).
--export([find_pid/2, spawn_nodes/1, spawn_node/1, kill_message/1, send_message/1, init/1]).
+-export([find_pid/2, spawn_nodes/1, spawn_node/1, kill_message/1, init/1]).
 %-import(node, [init/1]).
 
 %%Author: Tim Jonasson
@@ -15,18 +15,26 @@ init({L, Messages}) ->
   
   
 %Sends and receives messages until the list of messages is empty  
-loop(Pids, []) -> simulation_finished;
+loop(Pids, []) -> 
+  io:format("Simulation finished ~n "),
+  simulation_finished;
 loop(Pids, [L|Ls]) -> 
-  {From, To, Message} = L,
-  send_message(find_pid(Pids, From)),
-  io:format("~p", [From]),
-  io:format(" sent a message to ~p", [To]),
-  io:format("~n"),
-  receive_message(find_pid(Pids, To)),
-  io:format("~p", [To]),
-  io:format(" received a message from ~p", [From]),
-  io:format("~n"),
+  receive
+    {next_message, Pid} -> 
+	  Pid ! ok,
+      {From, To, Message} = L,
+	   io:format("hello fuckface ~n"),
+       send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To)),
+       io:format("~p", [From]),
+       io:format(" sent a message to ~p", [To]),
+       io:format("~n"),
+       receive
+	     {message_done, From, To, Message} ->
+		   io:format("message_sent")
+	   end
+  end,
   loop(Pids, Ls).
+  
 
 
 %checks if a class has a process and spawns it if it doesnt exist
@@ -42,12 +50,17 @@ spawn_node(Class_name) ->
   {node:init(self()), Class_name}.
 
 %sends a message to the given node
-send_message(Receiver) ->
-  Receiver ! {send_message},
+send_message(Receiver, From, To, Message, To_pid) ->
+  io:format("im getting tired of this bullshit~n"),
+  Receiver ! {send_message, self(), From, To, Message, To_pid},
+  io:format("wait a minute~n"),
   receive
     {send_reply} -> 
 	  send_reply_received
-  end.
+  end,
+  io:format("REALLY~n").
+  
+  
   
 %Receives a message to the given node
 receive_message(Receiver) ->

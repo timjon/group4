@@ -3,38 +3,48 @@
 
 init(Socket) -> 
   inet:setopts(Socket, [{active, true}]),
-  case inet:peername(Socket) of 
-    {ok, {Ip, Port}} -> 
-	        io:format("ip ~p, port ~p~n", [Ip, Port]),
-			gen_tcp:connect(Ip, Port, {active, true});
-    {error, Error} ->
-            io:format("error ~p~n", [Error])
-  end,
+  io:format("hello"),
+ 
+  io:format("hello ~p", [inet:peername(Socket)]),
+    
   loop(Socket, []).
   
 loop(Socket, Diagrams) -> 
   io:format("Parsed this"),
   receive
-    {tcp, Port, Info} -> io:format("Received this: ~p", [Info]),
+    {tcp, Port, Info} -> io:format("Received this: ~n ~p", [Info]),
 	  {ok, Scanned, _} = erl_scan:string(binary_to_list(Info)),
-	  case erl_parse:parse_term(Scanned ++ [{dot,0}]) of
-	    
+	  case erl_parse:parse_term(Scanned ++ [{dot,0}]) of 
+	    {ok, {N, next_message}} -> 
+		    io:format("printing stuff ~n"),
+		    case find_diagram(N, Diagrams) of
+			  not_created -> rip;
+			  Pid         -> 
+			    io:format("Matched with pid ~n"),
+				Pid ! {next_message, self()},
+			  receive
+			    ok -> ok
+			  end,
+			  io:format("Received ok ~n")
+			end,
+			loop(Socket, Diagrams);
 		{ok, {Did, Classes, Messages}} ->
 	      io:format("Parsed this ~p", [{Classes, Messages}]),
+	  
+	      X = io_lib:format("~p", [Classes]) ++ "~",
+	      gen_tcp:send(Port, X),
+	  
 	      case find_diagram(Did, Diagrams) of 
 	        not_created -> loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init({Classes, Messages}) end)}| Diagrams]);
 	        _           -> loop(Socket, Diagrams)
-	      end;
-		
-		{ok, {Did, send_message}} -> 
-		  %send_message(Did, Diagrams, Port),
-		  loop(Socket, Diagrams)
-
+	      end
 	  end;
+
 	{tcp_closed, Port} -> 
 	  io:format("Closed ~p", [Port])
   end.
 
+ 
 find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
