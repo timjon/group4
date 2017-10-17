@@ -20,6 +20,5 @@ loop(Coordinator) ->
       Coordinator ! {kill_reply},
 	  io:format("Killed ~n")
 	after 500 -> 
-	  io:format("Terminating the process ~p", [self()]),
-	  io:format("~n")
+	  io:format("~nTerminating the process~p", [self()])
   end.

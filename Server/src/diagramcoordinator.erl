@@ -1,15 +1,15 @@
 -module(diagramcoordinator).
--export([find_pid/2, spawn_nodes/1, spawn_node/1, kill_message/1, send_message/1, init/2]).
--import(node, [init/1]).
+-export([find_pid/2, spawn_nodes/1, spawn_node/1, kill_message/1, send_message/1, init/1]).
+%-import(node, [init/1]).
 
 %%Author: Tim Jonasson
 
 
 
 %Initializes the diagram coordinator by running the function that spawns the nodes and then it starts the loop
-init([], _) -> no_classes;
-init(L, []) -> {no_messages, L};
-init(L, Messages) -> 
+init({[], _}) -> no_classes;
+init({L, []}) -> {no_messages, L};
+init({L, Messages}) -> 
   Pids = spawn_nodes(L),
   loop(Pids, Messages).
   
@@ -30,7 +30,7 @@ loop(Pids, [L|Ls]) ->
 
 
 %checks if a class has a process and spawns it if it doesnt exist
-find_pid([], Name)                          -> spawn_node(Name);
+%find_pid([], Name)                          -> spawn_node(Name);
 find_pid([{Pid, Class_name}|_], Class_name) -> Pid;
 find_pid([_|Ls], Name)                      -> find_pid(Ls, Name). 
 
