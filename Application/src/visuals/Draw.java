@@ -11,14 +11,13 @@ import java.util.Observable;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.4
+ * @version 0.55
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
 public class Draw {
 
     private Canvas canvas;
-    private ArrayList<Renderable> items = new ArrayList<>(); // Why are we collecting everything here? Isn't it just inconvenient?
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>();
    // private static int offset;
@@ -28,35 +27,31 @@ public class Draw {
     }
 
     Draw(int w, int h) {
-        this.canvas = new Canvas(w, h);
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        canvas = new Canvas(w, h);
+    }
 
-        // Draws a single pixel border around the canvas.
-        gc.setFill(Color.GREY);
-        gc.strokeRoundRect(0,-1,w,h+1, 0,0);
-        gc.setFill(Color.BLACK);
+    int getHeight() {
+        return (int)canvas.getHeight();
+    }
+
+    int getWidth() {
+        return (int)canvas.getWidth();
     }
 
     /**
      * Draws a Class on the provided canvas.
      */
     private void addClass(String name) {
-        this.classes.add(new Class(name));
+        classes.add(new Class(name));
     }
 
-    private void add(Renderable item) {
-        this.items.add(item);
-    }
-
-    /**
-     * Adds a new message to the Message list for later access.
-     */
+    // Draws a Message.
     public void addMessage(int fromNode, int toNode, String name){ // TODO
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(), classes.get(toNode).getCoordinates(), name));
        /*
          GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
-        Coordinates node1 = items.get(fromNode).getCoordinates();
+        Coordinates node1 = classes.get(fromNode).getCoordinates();
         // toClass coordinates.
         Coordinates node2 = items.get(toNode).getCoordinates();
         offset += 1;
@@ -66,45 +61,37 @@ public class Draw {
     }
 
     void render() {
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        init();
         renderClass();
         renderMessage();
-        for (Renderable r: this.items)
-            r.render(gc);
+        renderContainer();
     }
 
-    // TODO experimental feature
     // Always renders with a new specific resolution.
-    void resize(int w, int h) {
-        if (w == (int)this.canvas.getWidth() && h == (int)this.canvas.getHeight() || this.items.size() < 1) {
+    void resize(double w, double h) {
+        if (w == getWidth() && h == getHeight())
             return;
-        } // Return if there is nothing to change/display.
-        this.canvas.setHeight(h);
-        this.canvas.setWidth(w);
-        rerender();
+        System.out.println("w:" + w + " h:" + h);
+        canvas.setWidth(w);
+        canvas.setHeight(h);
+        System.out.println("render: " + getWidth() + "x" + getHeight());
+        render();
     }
 
-    // Re renders all items.
-    private void rerender() {
-        ArrayList<Renderable> cpy = this.items;
-        this.items = new ArrayList<>();
-
-        for (int i = 0; i < cpy.size(); i++){
-            Renderable item = cpy.get(i);
-            if (item instanceof Class) {
-                this.classes.add((Class) cpy.get(i));
-            } else if (item instanceof Message) {
-                this.messages.add((Message) this.items.get(i));
-            } else {
-                System.out.println("Unknown class: " + cpy.get(i).getClass());
-            }
-        }
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        gc.clearRect(0,0,this.canvas.getWidth(),this.canvas.getHeight());
+    void init() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0,0,getWidth(), getHeight());
         gc.setFill(Color.GREY);
-        gc.strokeRoundRect(0,-1,this.canvas.getWidth(),this.canvas.getHeight()+1, 0,0);
+        gc.strokeRoundRect(0,-1,getWidth(),getHeight()+1, 0,0);
         gc.setFill(Color.BLACK);
-        render();
+    }
+
+    void renderContainer() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        for (Renderable r: classes)
+            r.render(gc);
+        for (Renderable r: messages)
+            r.render(gc);
     }
 
     void renderMessage() {
@@ -119,74 +106,41 @@ public class Draw {
         //What? confusion is real...
         //---------------------------
         // Ok, what you do is do all computing stuff here.
-        // And add the message to this.add(message)
         // Then let magic do the rest.
+        // see renderClass for reference.
     }
 
     void renderClass() {
-        int x_offset = (int) (this.canvas.getWidth()/100);
-        int width = (int) this.canvas.getWidth();        // The width of the canvas
-        if (this.classes.size() > 0) {
-
-            // The amount of space each class can use.
-            int space = (width-x_offset*3)/this.classes.size();
-            int size = space/2;
-
-            int offset = 0;
-            for (Class c: this.classes) {
-                int x = size+ (offset++*space) +x_offset;
-                // Offsets half of the classes y coordinates.
-                int y = (this.classes.size() % 2 == 0 ? 70:73);
-
-                c.place(new Coordinates(x,y), size);
-                this.add(c);
-            }
-            // Empties the list.
-            this.classes = new ArrayList<>();
+        if (classes.size() == 0) return; // There are no items to render
+        int space = (getWidth())/this.classes.size(); // The amount of space each class can use.
+        int size = space/2; // The size of the objects is half of it's given space.
+        for(int i = 0; i < classes.size(); i++) {
+            int x = size+ (i*space);
+            int y = (i % 2 == 0 ? 70:71);
+            classes.get(i).place(new Coordinates(x,y), size);
         }
     }
 
-    /**
-     * renders an Object on the Canvas.
-     * @param instance a Object which implements Renderable
-     */
-    public void render(Renderable instance) {
-        instance.render(this.canvas.getGraphicsContext2D());
-    }
-
-    /**
-     * renders several Object on the Canvas.
-     * @param instance a Object which implements Renderable
-     */
-    public void render(Renderable instance[]) {
-        for (Renderable i: instance) {
-            i.render(this.canvas.getGraphicsContext2D());
-        }
-    }
+    //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    //----------------------------TEST CODE BELOW------------------------------------
+    //-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
 
     void example_diagram() {
         // Classes
-        this.addClass("test1");
-        this.addClass("test2");
-        this.addClass("test3");
-        this.addClass("test4");
-        this.addClass("test5 long name");
-        this.addClass("test6");
-        this.addClass("test7");
-        this.addClass("test8");
-        this.addClass("test9");
+        for (int i = 0; i < 10; i++)
+            this.addClass("test" + i);
         // Messages
-         this.addMessage(0, 1, "Message 1"); //TODO Remove, Just a test.
-         this.addMessage(3, 4, "Message 2"); //TODO Remove, Just a test.
+        //this.addMessage(0, 1, "Message 1");
+        //this.addMessage(3, 4, "Message 2");
     }
 
-    public static void temp_generate_diagram() {
-        // Init's a draw object that handles graphical elements
+    public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
         Draw draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
         draw.example_diagram(); // Only used to display an example.
         DiagramView dv = new DiagramView(draw, "diagram name");
         tabPane.getTabs().add(dv.getTab());
-        // Renders and displays the classes
-        draw.render();
+        draw.render(); // Renders and displays items
     }
 }
