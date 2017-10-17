@@ -47,7 +47,7 @@ public class Draw {
 
     // Draws a Message.
     public void addMessage(int fromNode, int toNode, String name){ // TODO
-        this.messages.add(new Message(classes.get(fromNode).getCoordinates(), classes.get(toNode).getCoordinates(), name));
+        this.messages.add(new Message(classes.get(fromNode).getCoordinates(), classes.get(toNode).getCoordinates(), name, fromNode, toNode));
        /*
          GraphicsContext gc = this.canvas.getGraphicsContext2D();
         // fromClass coordinates.
@@ -97,9 +97,11 @@ public class Draw {
     void renderMessage() {
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
         if(this.messages.size() > 0) {
-            for (Message m : this.messages) {
-                m.render(gc);
-                this.add(m);
+            for (int i = 0; i < messages.size(); i++) {
+                Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
+                Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
+
+                messages.get(i).Put(node1, node2);
             }
         }
 
@@ -132,8 +134,8 @@ public class Draw {
         for (int i = 0; i < 10; i++)
             this.addClass("test" + i);
         // Messages
-        //this.addMessage(0, 1, "Message 1");
-        //this.addMessage(3, 4, "Message 2");
+        this.addMessage(0, 1, "Message 1");
+        this.addMessage(3, 4, "Message 2");
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements

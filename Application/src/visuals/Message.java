@@ -10,12 +10,15 @@ public class Message implements Renderable{
     String name;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
    // private int offset;
+    private int fromNode, toNode;
 
-    public Message(Coordinates node1, Coordinates node2, String name/*,int offset*/){ // constructor.
+    public Message(Coordinates node1, Coordinates node2, String name/*,int offset*/, int fromNode, int toNode){ // constructor.
         this.node1 = node1;
         this.node2 = node2;
         this.name = name;
        // this.offset = offset;
+        this.fromNode = fromNode;
+        this.toNode = toNode;
     }
 
     @Override
@@ -24,6 +27,11 @@ public class Message implements Renderable{
     @Override
     public String format() {
         return null;
+    }
+
+    public void Put(Coordinates node1, Coordinates node2){
+        this.node1 = node1;
+        this.node2 = node2;
     }
 
     @Override
@@ -41,6 +49,14 @@ public class Message implements Renderable{
         gc.fillText(this.name, x1+25, y1-10); // Message description.
 
 
+    }
+
+    public int getFromNode(){
+        return fromNode;
+    }
+
+    public int getToNode(){
+        return toNode;
     }
 
        public void createMessage(GraphicsContext gc){ // TODO
