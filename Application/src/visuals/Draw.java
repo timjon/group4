@@ -103,14 +103,11 @@ public class Draw {
 
         Thread c = new Thread(new RenderHandler(gc,classes));
         c.start();
-        //Thread m = new Thread(new RenderHandler(gc,messages));
-        //m.start();
-        for (Renderable r: messages) {
+
+        for (Renderable r: messages)
             r.render(gc);
-        }
 
         try {
-            //m.join();
             c.join();
         } catch (InterruptedException e) {
             System.err.println(e.toString());
@@ -148,7 +145,7 @@ public class Draw {
 
     void example_diagram() {
         // Classes
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 8; i++)
             this.addClass("test" + i);
         // Messages
         this.addMessage(0, 1, "Message 1");
