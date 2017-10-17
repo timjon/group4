@@ -27,7 +27,7 @@ public class Server_connection {
      */
     public void OpenConnection(){
         try {
-            socket = new Socket("10.0.151.42", 8040);
+            socket = new Socket("192.168.0.24", 8040);
             outputStream =  new PrintWriter(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e) {
@@ -70,9 +70,10 @@ public class Server_connection {
     public String ReceiveMessage() {
         String temp =  "";
         try {
-            inputStream.readLine();
+            inputStream.read();
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("you fucked up with this " + e);
         }
         return temp;
     }

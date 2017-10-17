@@ -36,14 +36,13 @@ public class Main extends Application {
 
                 // TODO remove print line and parse result (user story 5)
                 System.out.println(result);
-                server.SendMessage("{[a1, a2], [{a1, a2, hello}, {a2, a1, helloback}]}");
+                server.SendMessage("{1, [a1, a2], [{a1, a2, hello}, {a2, a1, helloback}]}");
                 String temp = "";
-                while(temp != "simulation_finished"){
-
-                    temp = server.ReceiveMessage();
+                temp = server.ReceiveMessage();
+                if(temp != "") {
                     System.out.println(temp);
-
                 }
+
             }
         });
 
