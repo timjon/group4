@@ -18,6 +18,18 @@ public class DiagramView {
     public static ArrayList<DiagramView> list = new ArrayList<>(); // A list of all Diagram views.
     public static TabPane tabPane;
 
+    public Draw getDraw() {
+        return draw;
+    }
+
+    public static String inView() {
+        return tabPane.getSelectionModel().getSelectedItem().getText();
+    }
+
+    public static boolean inView(String name) {
+        return tabPane.getSelectionModel().getSelectedItem().getText().equals(name);
+    }
+
     public DiagramView(Draw draw, String tabName) {
         this.draw = draw;
         this.tabName = tabName;
