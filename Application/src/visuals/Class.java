@@ -34,7 +34,7 @@ public class Class implements Renderable {
         this.size = size;
     }
 
-    // @Override // TODO add to renderable
+    @Override
     public void update() {
         aniindex = aniindex == anicontent.length-1 ? 0: aniindex+1;
     }
@@ -51,10 +51,8 @@ public class Class implements Renderable {
 
     @Override
     public void render(GraphicsContext gc) {
-
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
-
 
         int lifeline_width = size/12;
         int scale = (int) (pillar.getHeight()/lifeline_width);

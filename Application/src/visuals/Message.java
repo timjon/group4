@@ -29,7 +29,12 @@ public class Message implements Renderable{
         return null;
     }
 
-    public void changeCoordinates(Coordinates node1, Coordinates node2){
+    @Override
+    public void update() {
+        // Animate
+    }
+
+    public void Put(Coordinates node1, Coordinates node2){
         this.node1 = node1;
         this.node2 = node2;
     }
