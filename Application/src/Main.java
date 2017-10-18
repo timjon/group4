@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 
 import visuals.DiagramView;
 import visuals.Draw;
-import visuals.handlers.Animation;
 import visuals.handlers.Resizer;
 
 import java.awt.*;

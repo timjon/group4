@@ -23,6 +23,7 @@ public class Draw {
     private int offset = 30;
     private int size;
     private String name;
+    private int class_size = 0;
 
     public String getName() {
         return name;
@@ -144,6 +145,7 @@ public class Draw {
         if (classes.size() == 0) return; // There are no items to render
         int space = (getWidth())/this.classes.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
+        class_size = size;
         for(int i = 0; i < classes.size(); i++) {
             int x = size+ (i*space);
             int y = (i % 2 == 0 ? 70:71);
