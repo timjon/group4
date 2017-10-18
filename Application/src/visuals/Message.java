@@ -77,11 +77,13 @@ public class Message implements Renderable{
         gc.strokeLine(x1+10, y1, x2, y1); // Message Line.
         gc.fillText(this.name, x1+25, y1); // Message description.
 
+        /* TODO this is not for this sprint!
         gc.setFill(Color.RED);
         gc.fillRect(x1+coolvariable, y1+50, 7, 7);
         gc.setFill(Color.GREEN);
         gc.fillRect(x1+coolvariable +2, y1+50 +2, 3, 3);
         gc.setFill(Color.BLACK);
+        */
     }
 
     /**

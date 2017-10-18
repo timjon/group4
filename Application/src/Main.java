@@ -1,8 +1,11 @@
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
@@ -62,6 +65,18 @@ public class Main extends Application {
 
 
         tabPane = new TabPane();
+
+        // When you switch tabs, renders the tabs again after they were frozen.
+        tabPane.getSelectionModel().selectedItemProperty().addListener(
+                new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
+                        for (DiagramView dv: DiagramView.list) {
+                            dv.redraw();
+                        }
+                    }
+                }
+        );
 
         BorderPane borderpane = new BorderPane();
         HBox hbox = new HBox();

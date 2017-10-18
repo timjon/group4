@@ -36,11 +36,21 @@ public class DiagramView {
         list.add(this);
     }
 
+    public DiagramView(String tabName) {
+        this.draw = new Draw(tabName, (int)tabPane.getWidth(), (int)tabPane.getHeight());
+        this.tabName = tabName;
+        list.add(this);
+    }
+
     public Tab getTab() {
         this.tab = new Tab();
         tab.setText(this.tabName);
         tab.setContent(draw.getCanvas());
         return tab;
+    }
+
+    public void redraw() {
+        draw.redraw();
     }
 
     public void resize() {
