@@ -23,8 +23,7 @@ loop(Pids, [L|Ls]) ->
     {next_message, Pid} -> 
 	  Pid ! ok,
       {From, To, Message} = L,
-	   io:format("hello fuckface ~n"),
-       send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To)),
+	   send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To)),
        io:format("~p", [From]),
        io:format(" sent a message to ~p", [To]),
        io:format("~n"),
@@ -51,15 +50,11 @@ spawn_node(Class_name) ->
 
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid) ->
-  io:format("im getting tired of this bullshit~n"),
   Receiver ! {send_message, self(), From, To, Message, To_pid},
-  io:format("wait a minute~n"),
   receive
     {send_reply} -> 
 	  send_reply_received
-  end,
-  io:format("REALLY~n").
-  
+  end.
   
   
 %Receives a message to the given node

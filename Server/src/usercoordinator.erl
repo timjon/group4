@@ -3,20 +3,17 @@
 
 init(Socket) -> 
   inet:setopts(Socket, [{active, true}]),
-  io:format("hello"),
- 
+
   io:format("hello ~p", [inet:peername(Socket)]),
     
   loop(Socket, []).
   
 loop(Socket, Diagrams) -> 
-  io:format("Parsed this"),
   receive
     {tcp, Port, Info} -> io:format("Received this: ~n ~p", [Info]),
 	  {ok, Scanned, _} = erl_scan:string(binary_to_list(Info)),
 	  case erl_parse:parse_term(Scanned ++ [{dot,0}]) of 
 	    {ok, {N, next_message}} -> 
-		    io:format("printing stuff ~n"),
 		    case find_diagram(N, Diagrams) of
 			  not_created -> rip;
 			  Pid         -> 
@@ -29,8 +26,7 @@ loop(Socket, Diagrams) ->
 			end,
 			loop(Socket, Diagrams);
 		{ok, {Did, Classes, Messages}} ->
-	      io:format("Parsed this ~p", [{Classes, Messages}]),
-	  
+	      
 	      X = io_lib:format("~p", [Classes]) ++ "~",
 	      gen_tcp:send(Port, X),
 	  

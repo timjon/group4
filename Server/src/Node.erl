@@ -11,9 +11,7 @@ init(Coordinator) ->
 loop(Coordinator) ->
   receive
     {send_message, From_pid, From, To, Message, To_pid} ->
-	  io:format("is this it? ~n "),
-      To_pid ! {receive_message, From, To, Message},
-	  io:format("Well fuck~n "),
+	  To_pid ! {receive_message, From, To, Message},
 	  From_pid ! {send_reply},
       loop(Coordinator);
     {receive_message, From, To, Message} ->
