@@ -12,7 +12,7 @@ public class Message implements Renderable{
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
     private int fromNode, toNode;
     private int offset;
-    private int size;
+    private int class_size;
     int coolvariable = 0;
 
     /**
@@ -25,7 +25,7 @@ public class Message implements Renderable{
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.offset = offset;
-        this.size = size;
+        this.class_size = size;
     }
 
     /**
@@ -56,9 +56,10 @@ public class Message implements Renderable{
     /**
      * Gets the new coordinates from resizing the application.
      */
-    public void changeCoordinates(Coordinates node1, Coordinates node2){
+    public void changeCoordinates(Coordinates node1, Coordinates node2, int class_size){
         this.node1 = node1;
         this.node2 = node2;
+        this.class_size = class_size;
     }
 
     /**
@@ -73,13 +74,13 @@ public class Message implements Renderable{
         //toNode Coordinates.
         int x2 = this.node2.getX();
         int y2 = this.node2.getY(); // Not used atm.
-        System.out.println(this.size);
+        System.out.println(this.class_size);
 
         y1 += offset; // Sets an offset from the previous message.
         int messageX = (x1+x2)/2; // Always start in the middle of the message line.
 
-        gc.strokeLine(x1+5, y1 + (this.size/2), x2+10, y1 + (this.size/2)); // Message Line.
-        gc.fillText(this.name, messageX, y1); // Message description.
+        gc.strokeLine(x1+this.class_size/2, y1 + (this.class_size), x2+this.class_size/2, y1 + (this.class_size)); // Message Line.
+        gc.fillText(this.name, messageX, y1 + (this.class_size - 2)); // Message description.
 
         /* TODO this is not for this sprint!
         gc.setFill(Color.RED);
