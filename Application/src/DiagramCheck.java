@@ -9,15 +9,16 @@ import java.util.Collection;
 
 public class DiagramCheck {
 	// Supported diagram types.
-    private static String[] allowedDiagrams = {"sequence_diagram"};
+	public static String diagrams = "sequence_diagram\n";
 	
 	/**
     * Checks if the JSON file contains a diagram type supported by the application.
     * @return diagram type.
-    * @param s collection of Strings that make up the JSON file
+    * @param collection of Strings that make up the JSON file
     */
     public static String ContainsDiagram(Collection<String> s){
 		// Supported diagram types. Allows for future expansion.
+        String[] allowedDiagrams = {"sequence_diagram"};
         for(String string: s) {
             for (String diagramType : allowedDiagrams) {
 				// If the collection contains a supported type, return it.
@@ -27,25 +28,21 @@ public class DiagramCheck {
             }
         }
 		// Set error message for the dialog box.
-        disp("Error", "Invalid diagram");
+        disp("Error", "The imported file does not contain one of the supported diagram types, " +
+                "the supported diagram types are: \n" + diagrams, "Invalid diagram");
         return "Invalid diagram";
     }
 	
 	/**
     * Displays a dialog notifying the user the diagram type is not supported.
-    * @param frameName The name of the frame shown to the user.
     * @param title of the dialog window.
+    * @param content message to be displayed.
     */
-    private static void disp(String frameName, String title) {
+    private static void disp(String frameName, String content, String title) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(frameName);
         alert.setHeaderText(title + " imported");
-        String diagrams = "";
-        for(String d : allowedDiagrams){
-            diagrams += d + "\n";
-        }
-        alert.setContentText("The imported file does not contain one of the supported diagram types, " +
-                "the supported diagram types are: \n" + diagrams);
+        alert.setContentText(content);
         alert.show();
     }
 

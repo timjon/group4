@@ -12,8 +12,7 @@ import model.sequenceDiagramParser.SequenceDiagramObject;
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * @version 1.0
  * @since 2017-10-16
-<<<<<<< HEAD
-=======
+
  *
  * Made with usage of Gson library for parsing json into Java objects
  * https://github.com/google/gson
@@ -32,8 +31,8 @@ import model.sequenceDiagramParser.SequenceDiagramObject;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
->>>>>>> 66faf1d... comments, fixes adhering with code review requested changes
  */
+
 
 public class Parser {
 
@@ -69,8 +68,12 @@ public class Parser {
 
 
     /**
+<<<<<<< HEAD
      * Parses the imported JSON files if they contain a sequence diagram adheres with the predetermined JSON format
      *
+=======
+     * Parses the imported JSON files and prints it to the console
+>>>>>>> a804e35... added comments, integrated with diagramCheck
      * @param inputJSON the imported collection of Strings that make up the JSON files
      */
 
@@ -127,13 +130,21 @@ public class Parser {
         } catch (NullPointerException e) {
             syntaxErrorMessage();
 
+<<<<<<< HEAD
         }
     }
+=======
+    /**
+     * gives a String containing the first diagram which is formatted in a specific way to be handled by the backend
+     * @return FirstSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
+     */
+>>>>>>> a804e35... added comments, integrated with diagramCheck
 
     /**
      * displays a frame notifying the user that the imported file contains unrecognisable syntax
      */
 
+<<<<<<< HEAD
     private void syntaxErrorMessage() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Import failed");
@@ -162,12 +173,17 @@ public class Parser {
 
         String FirstSequenceDiagram = "{" + counter + ",[" + processesString + "]," + "[" + classNamesString + "]," + "[" + firstDiagramString + "]}";
         // increase the counter by 2 since it is always an odd number and it started with 1
+=======
+        String FirstSequenceDiagram = "{" + counter + ",[" + properProcesses + "]," + "["+ properFirstDiagram + "]}";
+        // increase the counter by 2 since it is always an even number
+>>>>>>> a804e35... added comments, integrated with diagramCheck
         counter = counter + 2;
 
         return FirstSequenceDiagram;
     }
 
     /**
+<<<<<<< HEAD
 <<<<<<< HEAD
      * gives a String containing the second (i.e parallel) diagram which is formatted in a specific way to be handled by the backend
      * @return ParallelSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
@@ -186,6 +202,16 @@ public class Parser {
 
         String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + processesString + "]," + "[" + classNamesString + "]," + "[" + parallelDiagramString + "]}";
         // increase the parallelCounter by 2 since it is always an even number and it started with 0
+=======
+     * gives a String containing the second (i.e parallel) diagram which is formatted in a specific way to be handled by the backend
+     * @return ParallelSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
+     */
+
+    public static String getParallelSequenceDiagram(){
+
+        String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + properProcesses + "]," + "["+ ProperParallelDiagram + "]}";
+        // increase the parallelCounter by 2 since it is always an even number
+>>>>>>> a804e35... added comments, integrated with diagramCheck
         parallelCounter = parallelCounter + 2;
 
         return ParallelSequenceDiagram;
