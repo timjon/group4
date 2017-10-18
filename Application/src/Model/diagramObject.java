@@ -3,13 +3,23 @@ package Model;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
+/**
+ * @author Rashad Kamsheh & Isabelle Törnqvist
+ * @since 2017-10-16
+ */
+
 public class diagramObject {
-
-
 
 
     //handle diagram's meta
     private Meta meta;
+    //handle the Type of the diagram
+    private String type;
+    //handle the Processes of the diagram
+    private List<Processes> processes = null;
+    //handle the messages of the diagram
+    private Diagram diagram;
+
 
     public Meta getMeta() {
         return meta;
@@ -20,9 +30,6 @@ public class diagramObject {
     }
 
 
-    //handle the Type of the diagram
-    private String type;
-
     public void setType(String type) {
         this.type = type;
     }
@@ -32,9 +39,6 @@ public class diagramObject {
     }
 
 
-    //handle the Processes of the diagram
-    private List<Processes> processes = null;
-
     public void setProcesses(List<Processes> processes) {
         this.processes = processes;
     }
@@ -43,9 +47,6 @@ public class diagramObject {
         return processes;
     }
 
-
-    //handle the messages of the diagram
-    private Diagram diagram;
 
     public Diagram getDiagram() {
         return diagram;
@@ -91,7 +92,9 @@ public class diagramObject {
 
     public class Processes {
 
-
+        /*The string was named "class1" instead of "class" because the word class is protected in java,
+        *the @SerializedName annotation will make the Gson library see "class" instead of "class1" when matching and parsing.
+         */
         @SerializedName("class")
         private String class1;
 

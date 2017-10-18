@@ -30,12 +30,16 @@ public class Main extends Application {
             public void handle(ActionEvent event) {
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
-                // Parse the element
-                for (String element : result ) {
-                    Parser.Parser(element);
+
+				// Check if the JSON file contains a supported diagram type.
+                System.out.println(DiagramCheck.ContainsDiagram(result));
+                // Parse the element if it contains a sequence_diagram
+				if (DiagramCheck.ContainsDiagram(result) == "sequence_diagram" ){
+                    for (String element : result ) {
+                        Parser.Parser(element);
                 }
             }
-        });
+		}});
 
         Button btn2 = new Button();
         btn2.setText("Settings");
