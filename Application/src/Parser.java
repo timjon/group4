@@ -1,8 +1,10 @@
 import Model.diagramObject;
 import com.google.gson.Gson;
 
-
-
+/**
+ * @author Rashad Kamsheh & Isabelle Törnqvist
+ * @since 2017-10-16
+ */
 
 public class Parser {
 
@@ -21,6 +23,10 @@ public class Parser {
     static String ProperParallelDiagram = "";
 
 
+    /**
+     * Parses the imported JSON files and prints it to the console
+     * @param inputJSON the imported collection of Strings that make up the JSON files
+     */
 
     public static void Parser(String inputJSON){
         Gson gson = new Gson();
@@ -62,19 +68,30 @@ public class Parser {
 	}
 
 
+    /**
+     * gives a String containing the first diagram which is formatted in a specific way to be handled by the backend
+     * @return FirstSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
+     */
 
     public static String getFirstSequenceDiagram(){
 
         String FirstSequenceDiagram = "{" + counter + ",[" + properProcesses + "]," + "["+ properFirstDiagram + "]}";
-        counter++;
+        // increase the counter by 2 since it is always an even number
+        counter = counter + 2;
 
         return FirstSequenceDiagram;
     }
 
+    /**
+     * gives a String containing the second (i.e parallel) diagram which is formatted in a specific way to be handled by the backend
+     * @return ParallelSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
+     */
+
     public static String getParallelSequenceDiagram(){
 
         String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + properProcesses + "]," + "["+ ProperParallelDiagram + "]}";
-        parallelCounter++;
+        // increase the parallelCounter by 2 since it is always an even number
+        parallelCounter = parallelCounter + 2;
 
         return ParallelSequenceDiagram;
     }

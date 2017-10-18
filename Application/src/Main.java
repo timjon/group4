@@ -35,12 +35,13 @@ public class Main extends Application {
 
 				// Check if the JSON file contains a supported diagram type.
                 System.out.println(DiagramCheck.ContainsDiagram(result));
-                // Parse the element
+                // Parse the element if it contains a sequence_diagram
+				if (DiagramCheck.ContainsDiagram(result) == "sequence_diagram" ){
                 for (String element : result ) {
                     Parser.Parser(element);
                 }
             }
-        });
+		}});
 
         Button btn2 = new Button();
         btn2.setText("Settings");
