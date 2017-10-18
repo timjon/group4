@@ -74,11 +74,10 @@ public class Message implements Renderable{
         //toNode Coordinates.
         int x2 = this.node2.getX();
         int y2 = this.node2.getY(); // Not used atm.
-        System.out.println(this.class_size);
 
         y1 += offset; // Sets an offset from the previous message.
         int messageX = (x1+x2)/2; // Always start in the middle of the message line.
-        int maxW = (x2 + this.class_size/2) - (x1 + this.class_size/2);
+        int maxW = (x2 + this.class_size/2) - (x1 + this.class_size/2); // Max width of the fillText
         gc.strokeLine(x1+this.class_size/2, y1 + (this.class_size), x2+this.class_size/2, y1 + (this.class_size)); // Message Line.
         gc.fillText(this.name, messageX, y1 + (this.class_size - 2), maxW); // Message description.
 

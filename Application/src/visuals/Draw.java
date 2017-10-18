@@ -33,6 +33,9 @@ public class Draw {
         return canvas;
     }
 
+    /**
+     * Constructor
+     */
     Draw(String n, int w, int h) {
         canvas = new Canvas(w, h);
         name = n;
@@ -63,11 +66,6 @@ public class Draw {
 
     }
 
-    void render() {
-        init();
-        renderItems();
-        renderContainer();
-    }
 
     // Always renders with a new specific resolution.
     void resize(double w, double h) {
@@ -78,17 +76,26 @@ public class Draw {
         redraw();
     }
 
+    /**
+     * remakes the "Items", reffering to messages and classes
+     */
     void renderItems() {
         renderClass();
         renderMessage();
     }
 
+    /**
+     * redraws the simulation canvas with all elements.
+     */
     public void redraw() {
         renderItems();
         init();
         renderContainer();
     }
 
+    /**
+     * initializes the simulation canvas with background colours.
+     */
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
@@ -101,6 +108,9 @@ public class Draw {
         gc.setFill(Color.BLACK); // Resets the color to BLACK
     }
 
+    /**
+     * Renders classes in a new thread as well as the messages.
+     */
     void renderContainer() {
         if (!DiagramView.inView(name)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -141,6 +151,9 @@ public class Draw {
         }
     }
 
+    /**
+     * Updates the class to fit the resized window.
+     */
     void renderClass() {
         if (classes.size() == 0) return; // There are no items to render
         int space = (getWidth())/this.classes.size(); // The amount of space each class can use.
@@ -153,6 +166,9 @@ public class Draw {
         }
     }
 
+    /**
+     * Animates on a new thread.
+     */
     void animate() {
         //(new Thread(new Animation(this))).start(); // TODO animations are not for this sprint!
     }
