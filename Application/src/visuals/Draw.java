@@ -20,7 +20,7 @@ public class Draw {
     private Canvas canvas;
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
-    private int offset = 30; // TODO
+    private int offset = 30;
     private String name;
 
     public String getName() {
@@ -54,7 +54,7 @@ public class Draw {
     /**
      * Creates a message from and to given nodes with an attached name.
      */
-    public void addMessage(int fromNode, int toNode, String name){ // TODO
+    public void addMessage(int fromNode, int toNode, String name){
         offset += 10;
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
                 classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset));
@@ -115,6 +115,9 @@ public class Draw {
         }
     }
 
+    /**
+     * Updates the Renderables.
+     */
     public void update() {
         for (Renderable r: classes)
             r.update();

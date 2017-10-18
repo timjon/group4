@@ -82,6 +82,8 @@ public class Message implements Renderable{
         gc.setFill(Color.GREEN);
         gc.fillRect(x1+coolvariable +2, y1+50 +2, 3, 3);
         gc.setFill(Color.BLACK);
+
+       // gc.drawImage(image,x1+coolvariable, y1+50, 7, 7 ); // Dragon Image thats going to represent the messages.
     }
 
     /**
