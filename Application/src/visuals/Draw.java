@@ -21,6 +21,7 @@ public class Draw {
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset = 30;
+    private int size;
     private String name;
 
     public String getName() {
@@ -57,7 +58,8 @@ public class Draw {
     public void addMessage(int fromNode, int toNode, String name){
         offset += 10;
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
-                classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset));
+                classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset, classes.get(fromNode).getSize()));
+
     }
 
     void render() {
@@ -163,9 +165,9 @@ public class Draw {
         for (int i = 0; i < nr; i++)
             this.addClass("Class " + i);
         // Messages
-        this.addMessage(0, 1, "Message 1");
+        this.addMessage(0, 1, "Msg1");
         if (nr > 4)
-            this.addMessage(3, 4, "Message 2");
+            this.addMessage(3, 4, "Msg2");
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
