@@ -100,7 +100,20 @@ public class Main extends Application {
         primaryStage.setScene(main);
         primaryStage.show();
 
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            System.err.println(e.toString());
+            System.out.println(e.toString());
+        }
+
         Draw.temp_generate_diagram(); // TODO replace with actual parsing.
+        try {
+            Thread.sleep(200); 
+        } catch (InterruptedException e) {
+            System.err.println(e.toString());
+            System.out.println(e.toString());
+        }
         Resizer.init(primaryStage);
     }
 }
