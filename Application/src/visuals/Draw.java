@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.6
+ * @version 0.65
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -150,8 +150,7 @@ public class Draw {
     }
 
     void animate() {
-        (new Thread(new Animation(this))).start();
-
+        //(new Thread(new Animation(this))).start(); // TODO animations are not for this sprint!
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -159,31 +158,22 @@ public class Draw {
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
 
-    void example_diagram() {
+    void example_diagram(int nr) {
         // Classes
-        for (int i = 0; i < 8; i++)
-            this.addClass("test" + i);
+        for (int i = 0; i < nr; i++)
+            this.addClass("Class " + i);
         // Messages
         this.addMessage(0, 1, "Message 1");
-        this.addMessage(3, 4, "Message 2");
+        if (nr > 4)
+            this.addMessage(3, 4, "Message 2");
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        String name = "diagram name";
-        Draw draw = new Draw(name, (int)tabPane.getWidth(), (int)tabPane.getHeight());
-        draw.example_diagram(); // Only used to display an example.
-        DiagramView dv = new DiagramView(draw, name);
-        draw.animate();
-        tabPane.getTabs().add(dv.getTab());
-        draw.render(); // Renders and displays items
-
-        name = "diagram name2";
-
-        Draw draw2 = new Draw(name, (int)tabPane.getWidth(), (int)tabPane.getHeight());
-        draw2.example_diagram(); // Only used to display an example.
-        DiagramView dv2 = new DiagramView(draw2, name);
-        draw2.animate();
-        tabPane.getTabs().add(dv2.getTab());
-        draw2.render(); // Renders and displays items
+        for (int i = 1; i <= 10; i++) {
+            String name = "diagram " + i;
+            DiagramView dv = new DiagramView(name);
+            dv.getDraw().example_diagram(i*2); // Only used to display an example.
+            tabPane.getTabs().add(dv.getTab());
+        }
     }
 }
