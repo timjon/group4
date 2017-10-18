@@ -20,7 +20,8 @@ public class Draw {
     private Canvas canvas;
     private ArrayList<Class> classes = new ArrayList<>();
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
-    private int offset = 30; // TODO
+    private int offset;
+    private int size;
     private String name;
     private int class_size = 0;
 
@@ -55,10 +56,11 @@ public class Draw {
     /**
      * Creates a message from and to given nodes with an attached name.
      */
-    public void addMessage(int fromNode, int toNode, String name){ // TODO
+    public void addMessage(int fromNode, int toNode, String name){
         offset += 10;
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
-                classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset));
+                classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
+
     }
 
     void render() {
@@ -116,6 +118,9 @@ public class Draw {
         }
     }
 
+    /**
+     * Updates the Renderables.
+     */
     public void update() {
         for (Renderable r: classes)
             r.update();
@@ -131,7 +136,7 @@ public class Draw {
             for (int i = 0; i < messages.size(); i++) {
                 Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
                 Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
-                messages.get(i).changeCoordinates(node1, node2);
+                messages.get(i).changeCoordinates(node1, node2, class_size);
             }
         }
     }
@@ -140,10 +145,10 @@ public class Draw {
         if (classes.size() == 0) return; // There are no items to render
         int space = (getWidth())/this.classes.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
-        class_size = size;
+        class_size = size/2;
         for(int i = 0; i < classes.size(); i++) {
             int x = size+ (i*space);
-            int y = (i % 2 == 0 ? 70:71);
+            int y = 40;
             classes.get(i).place(new Coordinates(x,y), size);
         }
     }
@@ -162,9 +167,9 @@ public class Draw {
         for (int i = 0; i < nr; i++)
             this.addClass("Class " + i);
         // Messages
-        this.addMessage(0, 1, "Message 1");
+        this.addMessage(0, 1, "Msg1");
         if (nr > 4)
-            this.addMessage(3, 4, "Message 2");
+            this.addMessage(3, 4, "Msg2");
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
