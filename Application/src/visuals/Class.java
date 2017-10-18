@@ -49,6 +49,11 @@ public class Class implements Renderable {
         return coordinates;
     }
 
+
+    /**
+     * Renders the class on the canvas
+     * @param gc GraphicalContext for a canvas.
+     */
     public void render(GraphicsContext gc) {
         gc.setFill(Color.TRANSPARENT);
 

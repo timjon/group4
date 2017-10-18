@@ -16,6 +16,9 @@ public class Resizer implements Runnable {
     private int inc = 5;
     private int threashold = 45;
 
+    /**
+     *
+     */
     public void run() {
         if (th == null) // Only allow one instance of the program to run at a time
             time();

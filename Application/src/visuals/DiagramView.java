@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 /*
  * Handles a single tabbed diagram view and it's state
- * @version 0.3
+ * @version 0.4
  * @author Pontus Laestadius
  */
 public class DiagramView {
@@ -22,18 +22,12 @@ public class DiagramView {
         return draw;
     }
 
-    public static String inView() {
-        return tabPane.getSelectionModel().getSelectedItem().getText();
-    }
-
+    /**
+     * @param name the name to match.
+     * @return true if the provided name is the selected tab.
+     */
     public static boolean inView(String name) {
         return tabPane.getSelectionModel().getSelectedItem().getText().equals(name);
-    }
-
-    public DiagramView(Draw draw, String tabName) {
-        this.draw = draw;
-        this.tabName = tabName;
-        list.add(this);
     }
 
     public DiagramView(String tabName) {
@@ -53,6 +47,9 @@ public class DiagramView {
         draw.redraw();
     }
 
+    /**
+     * Resizes the Draw object to with tabpane's dimensions.
+     */
     public void resize() {
         // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
         if (this.state == State.RESIZING) return;

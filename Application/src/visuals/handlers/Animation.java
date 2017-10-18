@@ -3,6 +3,11 @@ package visuals.handlers;
 import visuals.DiagramView;
 import visuals.Draw;
 
+/**
+ * Handles refreshing and animating draw objects.7
+ * @version 0.1
+ * @author Pontus Laestadius
+ */
 public class Animation extends Thread {
     Draw item;
 
