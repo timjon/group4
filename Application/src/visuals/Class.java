@@ -28,6 +28,10 @@ public class Class implements Renderable {
         anicontent[0] = new Coordinates(0,0);
     }
 
+    public int getSize() {
+        return size;
+    }
+
     public void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
         this.size = size;
@@ -51,14 +55,14 @@ public class Class implements Renderable {
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
 
-        int lifeline_width = (int) (size/3.5);
+        int lifeline_width = size/8;
         int scale = (int) (pillar.getHeight()/lifeline_width);
         for (int i = 0; i < 1000; i+=scale) {
             gc.drawImage(pillar,x +size/4 -lifeline_width/2,y + size/6 +i,lifeline_width,scale);
         }
 
         gc.drawImage(platform,x -size/8,y + size/2 -size/8, size/2 + size/4,size/6);
-        gc.drawImage(castle, x + anicontent[aniindex].getX(), y + anicontent[aniindex].getY(), size/2, size/2);
+        gc.drawImage(castle, x, y, size/2, size/2);
 
         gc.setFill(Color.BLACK);
         int len = this.name.length();
