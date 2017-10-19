@@ -17,13 +17,12 @@ import static visuals.DiagramView.tabPane;
 
 public class Draw {
 
-    private Canvas canvas;
-    private ArrayList<Class> classes = new ArrayList<>();
+    private Canvas canvas; // Draws and handles graphical context
+    private ArrayList<Class> classes = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
-    private int offset;
-    private int size;
-    private String name;
-    private int class_size = 0;
+    private int offset; // Used for message ordering
+    private String name; // Name of the Draw object
+    private int class_size = 0; // Used for message positioning
 
     public String getName() {
         return name;

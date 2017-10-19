@@ -15,40 +15,52 @@ public class Class implements Renderable {
     private int size;
     private String name;
 
-    private int aniindex = 0;
-    private Coordinates[] anicontent;
+    // Animations
+    private int aniindex = 0; // Animation index used for writing the state of the animating sequence.
+    private Coordinates[] anicontent; // The sequence that the object follows when animated.
 
-    static Image castle = new Image("resources/castle.png");
-    static Image platform = new Image("resources/platform.png");
-    static Image pillar = new Image("resources/pillar.png");
+    private static Image castle = new Image("resources/castle.png");
+    private static Image platform = new Image("resources/platform.png");
+    private static Image pillar = new Image("resources/pillar.png");
 
-    public Class(String name) {
+    Class(String name) {
         this.name = name;
         anicontent = new Coordinates[1];
         anicontent[0] = new Coordinates(0,0);
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public void place(Coordinates coordinates, int size) {
+    /**
+     * Places the Class with specific coordinates and size.
+     * @param coordinates the position of the Class.
+     * @param size the size for the class and it's graphics.
+     */
+    void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
         this.size = size;
     }
 
+    /**
+     * From: Renderable
+     * Handles animation processing.
+     */
     public void update() {
         aniindex = aniindex == anicontent.length-1 ? 0: aniindex+1;
     }
 
+    /**
+     * From: Renderable
+     * @return nothing, as it's not in use.
+     */
     public String format() {
         return null;
     }
 
+    /**
+     * @return the Class coordinates
+     */
     public Coordinates getCoordinates() {
         return coordinates;
     }
-
 
     /**
      * Renders the class on the canvas
@@ -60,24 +72,33 @@ public class Class implements Renderable {
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
 
-        int lifeline_width = size/8;
-        int scale = (int) (pillar.getHeight()/lifeline_width);
-        for (int i = 0; i < 1000; i+=scale) {
-            gc.drawImage(pillar,x +size/4 -lifeline_width/2,y + size/6 +i,lifeline_width,scale);
-        }
+        int size_class    = size/2;
+        int size_lifeline = size_class/4;
+        int size_platform = size_class + size_class/2;
 
-        gc.drawImage(platform,x -size/8,y + size/2 -size/8, size/2 + size/4,size/6);
-        gc.drawImage(castle, x, y, size/2, size/2);
+        // Draws the pillar.
+            int scale = (int) (pillar.getHeight()/size_lifeline); // Used for scaling the pillar to the size of the class.
 
-        gc.setFill(Color.BLACK);
-        int len = this.name.length();
-        int pos_x = x + size/4 - len*2;
-        gc.fillText(this.name, pos_x, y -15);
+            // Draws the pillar from the height of the class until the end of the canvas.
+            for (int i = 0; i < gc.getCanvas().getHeight()-y; i+=scale) // Iterates over scale to the end of the canvas.
+            /* Draws the pillar: The x position needs to be the center of the class minus half of the width of the pillar
+             * we are drawing, This gives us (x +size_class/2 -size_lifeline/2). The y only has to be provided a increased
+             * starting position as to start from below the class drawn, and then in each iteration add the scale to i to
+             * create a solid pillar.*/
+                gc.drawImage(pillar, x +size_class/2 -size_lifeline/2,y + size/4 +i, size_lifeline, scale);
+
+        // Draws the platform.
+            gc.drawImage(platform,x -size/8,y +size/2 -size/8, size_platform,size/6);
+
+        // Draws the Class.
+            gc.drawImage(castle, x, y, size/2, size/2);
+
+        // Draws the name of the class.
+            gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.
+            gc.fillText(
+                    this.name, // Sets the text to be the name of the class.
+                    x + size_class/2 -this.name.length()*2, // Dynamically determines the x position.
+                    y -15, // Does not need to be dynamic, as all elements scale downwards.
+                    size +size_class); // Sets a max width as to not bother the other classes texts.
     }
-
-    public String getName() {
-        return name;
-    }
-
-
 }

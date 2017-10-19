@@ -30,17 +30,25 @@ public class DiagramView {
         return tabPane.getSelectionModel().getSelectedItem().getText().equals(name);
     }
 
+    /**
+     * Creates a DiagramView with an Initial new Draw object with the size of the static TabPane.
+     * Adds it to the list of DiagramViews and
+     * @param tabName the diagram name.
+     */
     public DiagramView(String tabName) {
         this.draw = new Draw(tabName, (int)tabPane.getWidth(), (int)tabPane.getHeight());
         this.tabName = tabName;
         list.add(this);
-    }
-
-    public Tab getTab() {
         this.tab = new Tab();
         tab.setText(this.tabName);
         tab.setContent(draw.getCanvas());
-        return tab;
+    }
+
+    /**
+     * @return the tab containing the Draw object handled by the DiagramView.
+     */
+    public Tab getTab() {
+        return this.tab;
     }
 
     public void redraw() {

@@ -77,43 +77,30 @@ public class Main extends Application {
                 }
         );
 
-        BorderPane borderpane = new BorderPane();
-        HBox hbox = new HBox();
-        hbox.getChildren().add(btn_import);
-        hbox.getChildren().add(btn2);
-        borderpane.setTop(hbox);
-        borderpane.setLeft(ta);
-        borderpane.setCenter(tabPane);
+        BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
+        HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
+        menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
+        menu.getChildren().add(btn2);
+        borderpane.setTop(menu); // Gets the menu to be at the top of the window.
+        borderpane.setLeft(ta); // Sets the Execution log to be on the left side.
+        borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
 
         Scene main;
         //Scales the application to the size of the window or displays it in a maximized view.
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        double width = screenSize.getWidth();
-        double height = screenSize.getHeight();
-        if (width < 1400) { // full screen
+        double width = screenSize.getWidth(); // Gets the width of the screen.
+        double height = screenSize.getHeight(); // Gets the height of the screen.
+        if (width < 1400) { // When the width is smaller than a certain width, Start as maximized.
             main = new Scene(borderpane,width, height);
             primaryStage.setMaximized(true);
-        } else { // windowed
+        } else { // All other cases, the width should be set to 720p.
             main = new Scene(borderpane,1280, 720);
         }
 
         primaryStage.setScene(main);
         primaryStage.show();
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            System.err.println(e.toString());
-            System.out.println(e.toString());
-        }
-
         Draw.temp_generate_diagram(); // TODO replace with actual parsing.
-        try {
-            Thread.sleep(200); 
-        } catch (InterruptedException e) {
-            System.err.println(e.toString());
-            System.out.println(e.toString());
-        }
-        Resizer.init(primaryStage);
+        Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
     }
 }
