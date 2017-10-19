@@ -38,7 +38,7 @@ public class Main extends Application {
                 // Parse the element if it contains a sequence_diagram
 				if (DiagramCheck.ContainsDiagram(result) == "sequence_diagram" ){
                 for (String element : result ) {
-                    Parser.Parser(element);
+                    Parser.parse(element);
                 }
             }
 		}});

@@ -8,6 +8,10 @@ import com.google.gson.Gson;
 
 public class Parser {
 
+    /** defining two different counter variables that will increment each time the diagram calling method
+    *that they are is called in order to differentiate between the imported diagrams
+    *odd number for the First Diagram counter
+    */
     // odd number for the First Diagram counter
     static int counter = 1;
     // even number for the parallel Diagram counter
@@ -24,11 +28,11 @@ public class Parser {
 
 
     /**
-     * Parses the imported JSON files and prints it to the console
+     * Parses the imported JSON files
      * @param inputJSON the imported collection of Strings that make up the JSON files
      */
 
-    public static void Parser(String inputJSON){
+    public static void parse(String inputJSON){
         Gson gson = new Gson();
         diagramObject parsedDiagram;
         parsedDiagram = gson.fromJson(inputJSON, Model.diagramObject.class);
@@ -69,7 +73,7 @@ public class Parser {
 
 
     /**
-     * gives a String containing the first diagram which is formatted in a specific way to be handled by the backend
+     * gives a String containing the first diagram to be handled by the backend
      * @return FirstSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
      */
 
@@ -83,7 +87,7 @@ public class Parser {
     }
 
     /**
-     * gives a String containing the second (i.e parallel) diagram which is formatted in a specific way to be handled by the backend
+     * gives a String containing the second (i.e parallel) diagram to be handled by the backend
      * @return ParallelSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
      */
 
