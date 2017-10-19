@@ -92,11 +92,11 @@ public class diagramObject {
 
     public class Processes {
 
-        /*The string was named "class1" instead of "class" because the word class is protected in java,
-        *the @SerializedName annotation will make the Gson library see "class" instead of "class1" when matching and parsing.
+        /*The string was named "sequenceDiagramClass" instead of "class" because the word class is protected in java,
+        *the @SerializedName annotation will make the Gson library see "class" instead of "sequenceDiagramClass" when matching and parsing.
          */
         @SerializedName("class")
-        private String class1;
+        private String sequenceDiagramClass;
 
         private String name;
 
@@ -108,12 +108,12 @@ public class diagramObject {
             this.name = name;
         }
 
-        public String getClass1() {
-            return class1;
+        public String getSequenceDiagramClass() {
+            return sequenceDiagramClass;
         }
 
-        public void setClass1(String class1) {
-            this.class1 = class1;
+        public void getSequenceDiagramClass(String class1) {
+            this.sequenceDiagramClass = class1;
         }
 
 
