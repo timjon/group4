@@ -39,6 +39,7 @@ public class Main extends Application {
                             parse.parseSequenceDiagram(element);
                         }
                         break;
+
                 }
                 // if the diagram is not included in the switch case, check if the diagram is invalid
                 DiagramCheck.ContainsDiagram(result);

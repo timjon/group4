@@ -68,12 +68,8 @@ public class Parser {
 
 
     /**
-<<<<<<< HEAD
      * Parses the imported JSON files if they contain a sequence diagram adheres with the predetermined JSON format
      *
-=======
-     * Parses the imported JSON files and prints it to the console
->>>>>>> a804e35... added comments, integrated with diagramCheck
      * @param inputJSON the imported collection of Strings that make up the JSON files
      */
 
