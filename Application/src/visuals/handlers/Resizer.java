@@ -17,13 +17,16 @@ public class Resizer implements Runnable {
     private int threashold = 45;
 
     /**
-     *
+     * Runs when the thread starts.
      */
     public void run() {
         if (th == null) // Only allow one instance of the program to run at a time
             time();
     }
 
+    /**
+     * I bet tim wont read this, But just complains about no comments.
+     */
     private void time(){
         th = this;
         while ((timer+=inc) < threashold) { // A 400ms delay in which the timer can be reset
