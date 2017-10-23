@@ -1,5 +1,5 @@
 -module(diagramcoordinator).
--export([find_pid/2, spawn_nodes/1, spawn_node/1, kill_message/1, init/1]).
+-export([find_pid/2, spawn_nodes/1, spawn_node/1, kill_message/1, init/2]).
 %-import(node, [init/1]).
 
 %%Author: Tim Jonasson
@@ -7,32 +7,41 @@
 
 
 %Initializes the diagram coordinator by running the function that spawns the nodes and then it starts the loop
-init({[], _}) -> no_classes;
-init({L, []}) -> {no_messages, L};
-init({L, Messages}) -> 
+init(_, {[], _}) -> no_classes;
+init(_, {L, []}) -> no_messages;
+init(Parent_pid, {L, Messages}) -> 
+  io:format("hello1, ~p~n", [Parent_pid]),
   Pids = spawn_nodes(L),
-  loop(Pids, Messages).
+  loop(Parent_pid, Pids, Messages, 1).
   
   
 %Sends and receives messages until the list of messages is empty  
-loop(Pids, []) -> 
-  io:format("Simulation finished ~n "),
-  simulation_finished;
-loop(Pids, [L|Ls]) -> 
+loop(Parent_pid, Pids, [], Message_number) ->
   receive
     {next_message, Pid} -> 
 	  Pid ! ok,
+      io:format("Simulation finished ~n "),
+      io:format("hello3, ~p~n", [Parent_pid]),
+      Pid ! {simulation_done, Message_number},
+      io:format("hello4, ~p~n", [Parent_pid]),
+      io:format("bye~n")
+	end;
+loop(Parent_pid, Pids, [L|Ls], Message_number) -> 
+  receive
+    {next_message, Pid} -> 
+	  io:format("hello2 ~p ~n", [Pid]),
+	  Pid ! ok,
       {From, To, Message} = L,
-	   send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To)),
-       io:format("~p", [From]),
-       io:format(" sent a message to ~p", [To]),
-       io:format("~n"),
-       receive
-	     {message_done, From, To, Message} ->
-		   io:format("message_sent")
-	   end
-  end,
-  loop(Pids, Ls).
+	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To)),
+      io:format("~p", [From]),
+      io:format(" sent a message to ~p", [To]),
+      io:format("~n"),
+      receive
+	    {message_done, From, To, Message} ->
+		  Parent_pid ! {message_sent, From, To, Message, Message_number}
+	  end,
+	  loop(Parent_pid, Pids, Ls, Message_number + 1)
+  end.
   
 
 

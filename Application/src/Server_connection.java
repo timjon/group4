@@ -27,7 +27,7 @@ public class Server_connection {
      */
     public void OpenConnection(){
         try {
-            socket = new Socket("10.0.151.42", 8040);
+            socket = new Socket("192.168.1.19", 8040);
             outputStream =  new PrintWriter(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e) {
@@ -74,11 +74,9 @@ public class Server_connection {
             while( (value = inputStream.read()) != '~') {
                 stringBuilder.append((char)value);
             }
-            System.out.println(stringBuilder.toString());
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-
         return stringBuilder.toString();
     }
 
