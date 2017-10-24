@@ -1,10 +1,11 @@
-import javafx.scene.control.Alert;
-import java.util.Collection;
+package Model;
+
+import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 /**
- * @version 0.1
- * @author Tim Jonasson & Kosara Golemshinska
- * @since 2017-10-10
+ * @author Rashad Kamsheh & Isabelle Törnqvist
+ * @since 2017-10-16
  */
 
 public class DiagramCheck {
