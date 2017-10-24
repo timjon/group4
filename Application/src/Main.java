@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import static visuals.DiagramView.tabPane;
 
 public class Main extends Application {
-    static int tempnum = 0;
     public static void main(String[] args) {
         launch(args);
     }
