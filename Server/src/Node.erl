@@ -2,7 +2,7 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 1
+%%Version: 1.1
 
 %Initialized the process for the node
 init(Coordinator) ->
@@ -11,16 +11,16 @@ init(Coordinator) ->
 loop(Coordinator) ->
   receive
     %Case for when the node sends a message for another node
-	{send_message, From_pid, From, To, Message, To_pid} ->
+	{send_message, From, To, Message, To_pid} ->
 	  To_pid ! {receive_message, From, To, Message},
-	  From_pid ! {send_reply},
+	  Coordinator ! {send_reply},
       loop(Coordinator);
     
-	%Case for when the node is receives a message from another node
+	%Case for when the node receives a message from another node
 	{receive_message, From, To, Message} ->
       Coordinator ! {message_done, From, To, Message},
       loop(Coordinator)
 	  
-	after 50000 -> 
+	after 60000 -> 
 	  io:format("~nTerminating the process~p", [self()])
   end.

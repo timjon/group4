@@ -2,11 +2,13 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 1
+%%Version: 1.1
 
-%Initializes the diagram coordinator by running the function that spawns the nodes and then it starts the loop
+%Returns no_classes when there was no classes in the given diagram 
 init({[], _}) -> no_classes;
+%Returns no_messages when there was no messages in the given diagram 
 init({_, []}) -> no_messages;
+%Spawns and Initializes the diagram coordinator
 init({L, Messages}) -> 
   Pids = spawn_nodes(L),
   loop(Pids, Messages, 1).
@@ -18,6 +20,7 @@ loop(_, [], Message_number) ->
 	  Pid ! ok,
       Pid ! {simulation_done, Message_number}
   end;
+%This loop runs until the list is empty (when there are no more messages)
 loop(Pids, [L|Ls], Message_number) -> 
   receive
     {next_message, Pid} -> 

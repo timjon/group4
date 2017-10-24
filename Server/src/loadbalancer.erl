@@ -2,7 +2,7 @@
 -export([init/0]).
 
 %%Author: Tim Jonasson
-%%Version: 1
+%%Version: 1.0
 
 %Initializes the server
 init() -> 

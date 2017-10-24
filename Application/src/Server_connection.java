@@ -11,9 +11,9 @@ import java.net.*;
  */
 
 public class Server_connection {
-    private static Socket socket = null;
-    private static PrintWriter outputStream = null;
-    private static BufferedReader inputStream = null;
+    private Socket socket = null;
+    private PrintWriter outputStream = null;
+    private BufferedReader inputStream = null;
 
     /**
      * Initializes the connection to the backend server
@@ -27,7 +27,7 @@ public class Server_connection {
      */
     public void OpenConnection(){
         try {
-            socket = new Socket("10.0.151.42", 8040);
+            socket = new Socket("127.0.0.1", 8040);
             outputStream =  new PrintWriter(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e) {
@@ -56,7 +56,6 @@ public class Server_connection {
      * @param Message The message sent to the server
      */
     public void SendMessage(String Message) {
-
         if (CheckConnection()) {
             outputStream.print(Message);
             outputStream.flush();
@@ -71,6 +70,7 @@ public class Server_connection {
         StringBuilder stringBuilder = new StringBuilder();
         int value;
         try {
+            //The character ~ is used as the stop character so the client knows when to stop reading from the input stream
             while( (value = inputStream.read()) != '~') {
                 stringBuilder.append((char)value);
             }
@@ -80,11 +80,9 @@ public class Server_connection {
         return stringBuilder.toString();
     }
 
-
-
-        /**
+    /**
      * Checks if the connection is open
-     * @return True if the connection is open
+     * @return true if the connection is open
      */
     private boolean CheckConnection(){
             return socket != null && outputStream != null && inputStream != null;

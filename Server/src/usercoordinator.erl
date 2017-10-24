@@ -2,7 +2,7 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 1
+%%Version: 1.1
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -23,7 +23,7 @@ loop(Socket, Diagrams) ->
 		{ok, {N, next_message}} -> 
 		    %Checks if the diagram exists
 			case find_diagram(N, Diagrams) of
-			  not_created -> rip;
+			  not_created -> not_ok;
 			  Pid         -> 
 				%Makes the server simulate the next message
 				Pid ! {next_message, self()},
@@ -35,19 +35,21 @@ loop(Socket, Diagrams) ->
 			    receive
 		          {message_sent, From, To, Message, Message_number} -> 
 				    %Turns the result into binary
-					Temp = io_lib:format("~p", [{From, To, Message, Message_number}]) ++ "~",
+					%The character ~ is used as the stop character for when the client should stop reading from the tcp connection
+					Temporary_variable_for_saving_the_result_from_the_format_call = io_lib:format("~p", [{From, To, Message, Message_number}]) ++ "~",
 		            %Sends it to the client
-					gen_tcp:send(Port, [Temp]);
+					gen_tcp:send(Port, [Temporary_variable_for_saving_the_result_from_the_format_call]);
 				  {simulation_done, Message_number} -> 
 					%Turns the result into binary
-					Temp = io_lib:format("~p", ["simulation_finished, " ++ integer_to_list(Message_number)]),
+					Temporary_variable_for_saving_the_result_from_the_format_call = io_lib:format("~p", ["simulation_finished, " ++ integer_to_list(Message_number)]),
 	                %Sends it to the client
-					gen_tcp:send(Port, [Temp ++ "~"])
+					gen_tcp:send(Port, [Temporary_variable_for_saving_the_result_from_the_format_call ++ "~"])
 	            end
 			end;
 		%This will be selected if its a new diagram selected
 		{ok, {Did, Class_names, Classes, Messages}} ->
 	      %Sends the class names and messages to the client
+		  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
 		  X = io_lib:format("~p", [{Class_names, Messages}]) ++ "~",
 	      gen_tcp:send(Port, X),
 		  Usercoordinator_pid = self(),
