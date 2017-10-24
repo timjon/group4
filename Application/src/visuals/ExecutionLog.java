@@ -1,49 +1,60 @@
 package visuals;
 
-import javafx.scene.web.HTMLEditor;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.paint.Color;
+import javafx.scene.control.ListView;
+import javafx.scene.text.Font;
 
-import java.util.ArrayList;
+/**
+ * @author Pontus Laestadius
+ * @version 0.1
+ */
+public class ExecutionLog extends ListView {
+    ListView<String> listView = new ListView<>();
+    ObservableList<String> data = FXCollections.observableArrayList
+            ("----- Start of Execution -----");
 
-public class ExecutionLog extends HTMLEditor {
-    ArrayList<String> lines = new ArrayList<>();
-    // https://www.w3schools.com/cssref/pr_dim_line-height.asp
-    private final String HEADER =
-            " <!DOCTYPE html><html>" +
-                "<head style=\"" +
-                    "p {line-height:80%;} " +
-                    "body {background-color:black; color:white;}" +
-                    //"font-family: \"Courier New\", Courier, monospace" +
-                "\">" +
-                    encapsulate("title", "Execution Log") +
-                "</head>" +
-            "<body>";
-    private final String FOOTER = "</body></html>";
+    static Font font = new Font("courier", 12);
 
     public ExecutionLog() {
+        this.setEditable(false);
+        this.setWidth(250);
+
+        Color c = Color.BLACK;
+        BackgroundFill bgf = new BackgroundFill(c, null,null);
+        Background bg = new Background(bgf);
+        this.listView.setBackground(bg);
     }
 
-    public void newLine(String line) {
-        lines.add(line);
-        StringBuilder sb = new StringBuilder();
-        sb.append(HEADER);
-        sb.append("<div contentEditable=\"false\">");   // https://www.w3schools.com/tags/att_global_contenteditable.asp
-        sb.append("<p>");
-        for (int i = 0; i < lines.size()-1; i++) {
-            sb.append(lines.get(i));
-            sb.append("<br>");
-        }
-        sb.append("</p>");
-        sb.append("<h4 style=\"margin-top:-12px; background-color:#002309;\">");
-        sb.append(lines.get(lines.size()-1));
-        sb.append("</h4>");
-        sb.append("</div>");
-        sb.append(FOOTER);
-        System.out.println(sb.toString());
-        this.setHtmlText(sb.toString());
+    /**
+     * Adds an item to the ExecutionLog.
+     * Forwards
+     */
+    public void fwd(String line) {
+        data.add(line);
+        update();
     }
 
-    private static String encapsulate(String tag, String content) {
-        return "<" + tag + ">" + content + "</" + tag + ">";
+    /**
+     * Backwards
+     */
+    public void bwd() {
+        data.remove(data.size()-1);
+        update();
     }
 
+    private void update() {
+        this.listView.setItems(data);
+        this.listView.scrollTo(data.size()-1);
+        SelectionModel<String> model = this.listView.getSelectionModel();
+        model.selectLast();
+    }
+
+    public ListView<String> getContainer() {
+        return this.listView;
+    }
 }

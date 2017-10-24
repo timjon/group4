@@ -10,10 +10,12 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import visuals.DiagramView;
 import visuals.Draw;
+import visuals.ExecutionLog;
 import visuals.handlers.Resizer;
 
 import java.awt.*;
@@ -52,17 +54,15 @@ public class Main extends Application {
                 System.out.println("Settings"); } // Settings button handler.
         });
 
-        TextArea ta = new TextArea("Execution Log: \n " +  // Execution log text-box and it's current contents.
-                "> Node1: sent a message to Node2 \n " +
-                "> Node2: received message from Node1 \n " +
-                "> Node2: sent a OK to Node1 \n " +
-                "> Node1: received an OK from Node2");
-        ta.setEditable(false);
-        ta.setPrefColumnCount(60);
-        ta.setPrefRowCount(50);
-        int ta_width = 270;
-        ta.setMaxWidth(ta_width);
+        ExecutionLog executionLog = new ExecutionLog();
 
+        // -----Example code -------
+
+        for (int i = 0; i < 50; i++) {
+            executionLog.fwd("line {" + i + "}");
+        }
+
+        // -------------------------
 
         tabPane = new TabPane();
 
@@ -83,7 +83,7 @@ public class Main extends Application {
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
         menu.getChildren().add(btn2);
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
-        borderpane.setLeft(ta); // Sets the Execution log to be on the left side.
+        borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
 
         Scene main;
