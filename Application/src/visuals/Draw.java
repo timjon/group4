@@ -187,7 +187,7 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             String name = "diagram " + i;
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.

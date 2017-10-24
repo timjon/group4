@@ -17,9 +17,9 @@ public class DiagramClass implements Renderable {
     private int aniindex = 0; // Animation index used for writing the state of the animating sequence.
     private Coordinates[] anicontent; // The sequence that the object follows when animated.
 
-    private static Image castle = new Image("resources/castle.png");
-    private static Image platform = new Image("resources/platform.png");
-    private static Image pillar = new Image("resources/pillar.png");
+    private static Image castle = new Image("resources/castle_default.png");
+    private static Image platform = new Image("resources/platform_default.png");
+    private static Image pillar = new Image("resources/pillar_default.png");
 
     DiagramClass(String name) {
         this.name = name;
@@ -75,7 +75,7 @@ public class DiagramClass implements Renderable {
         int size_platform = size_DiagramClass + size_DiagramClass/2;
 
         // Draws the pillar.
-            int scale = (int) (pillar.getHeight()/size_lifeline); // Used for scaling the pillar to the size of the DiagramClass.
+            int scale = (int) (pillar.getHeight()/size_lifeline) +1; // Used for scaling the pillar to the size of the DiagramClass.
 
             // Draws the pillar from the height of the DiagramClass until the end of the canvas.
             for (int i = 0; i < gc.getCanvas().getHeight()-y; i+=scale) // Iterates over scale to the end of the canvas.
@@ -86,7 +86,7 @@ public class DiagramClass implements Renderable {
                 gc.drawImage(pillar, x +size_DiagramClass/2 -size_lifeline/2,y + size/4 +i, size_lifeline, scale);
 
         // Draws the platform.
-            gc.drawImage(platform,x -size/8,y +size/2 -size/8, size_platform,size/6);
+            gc.drawImage(platform,x -size/8,y +size/2 -size/8, size_platform,size/5);
 
         // Draws the DiagramClass.
             gc.drawImage(castle, x, y, size/2, size/2);
