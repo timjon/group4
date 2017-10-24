@@ -10,7 +10,10 @@ public class Parser {
 
     /** defining two different counter variables that will increment each time the diagram calling method
     *that they are is called in order to differentiate between the imported diagrams
-    *odd number for the First Diagram counter
+    *odd number for the First
+     *
+     *
+     *          Diagram counter
     */
     // odd number for the First Diagram counter
     static int counter = 1;
@@ -44,8 +47,8 @@ public class Parser {
 
         System.out.println("\n" + "Processes: \n");
         for (diagramObject.Processes processesElement : parsedDiagram.getProcesses()) {
-            System.out.println(processesElement.getClass1() + " : " + processesElement.getName() + " \n ");
-            Processes += processesElement.getClass1() + ":" + processesElement.getName() + ",";
+            System.out.println(processesElement.getSequenceDiagramClass() + " : " + processesElement.getName() + " \n ");
+            Processes += processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + ",";
             properProcesses = (Processes.substring(0, Processes.length() - 1));
         }
 
