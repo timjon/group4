@@ -38,42 +38,6 @@ public class Main extends Application {
 
                 // TODO remove print line and parse result (user story 5)
                 System.out.println(result);
-                String temp;
-                for(int i = 0; i < 1; i++) {
-                    server.SendMessage("{" + i + ", [\"gateway:g\",\"user:u1\",\"user:u2\",\"user:u3\"], [g, u1, u2, u3], [{u1, g,[fwd, u2, msg1]},{u3, g,[fwd, u1, msg2]},{ g, u2,[fwd, u2, msg1]},{g, u1,[fwd, u1, msg2]}]}");
-                    temp = server.ReceiveMessage();
-                    System.out.println(temp);
-                }
-                for(int i = 0; i < 1; i++) {
-
-                    server.SendMessage("{" + i + ", next_message}");
-                    temp = server.ReceiveMessage();
-                    System.out.println(temp);
-                }
-                for(int i = 0; i < 1; i++) {
-                    server.SendMessage("{" + i + ", next_message}");
-
-                    temp = server.ReceiveMessage();
-                    System.out.println(temp);
-                }
-                for(int i = 0; i < 1; i++) {
-                    server.SendMessage("{" + i + ", next_message}");
-
-                    temp = server.ReceiveMessage();
-                    System.out.println(temp);
-                }
-                for(int i = 0; i < 1; i++) {
-                    server.SendMessage("{" + i + ", next_message}");
-
-                    temp = server.ReceiveMessage();
-                    System.out.println(temp);
-                }
-                for(int i = 0; i < 1; i++) {
-                    server.SendMessage("{" + i +", next_message}");
-
-                    temp = server.ReceiveMessage();
-                    System.out.println(temp);
-                }
             }
         });
 
