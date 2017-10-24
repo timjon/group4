@@ -36,26 +36,25 @@ loop(Socket, Diagrams) ->
 		          {message_sent, From, To, Message, Message_number} -> 
 				    %Turns the result into binary
 					%The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-					Temporary_variable_for_saving_the_result_from_the_format_call = io_lib:format("~p", [{From, To, Message, Message_number}]) ++ "~",
+					Format_result = io_lib:format("~p", [{From, To, Message, Message_number}]) ++ "~",
 		            %Sends it to the client
-					gen_tcp:send(Port, [Temporary_variable_for_saving_the_result_from_the_format_call]);
+					gen_tcp:send(Port, [Format_result]);
 				  {simulation_done, Message_number} -> 
 					%Turns the result into binary
-					Temporary_variable_for_saving_the_result_from_the_format_call = io_lib:format("~p", ["simulation_finished, " ++ integer_to_list(Message_number)]),
+					Format_result = io_lib:format("~p", ["simulation_finished, " ++ integer_to_list(Message_number)]),
 	                %Sends it to the client
-					gen_tcp:send(Port, [Temporary_variable_for_saving_the_result_from_the_format_call ++ "~"])
+					gen_tcp:send(Port, [Format_result ++ "~"])
 	            end
 			end;
 		%This will be selected if its a new diagram selected
 		{ok, {Did, Class_names, Classes, Messages}} ->
 	      %Sends the class names and messages to the client
 		  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-		  X = io_lib:format("~p", [{Class_names, Messages}]) ++ "~",
-	      gen_tcp:send(Port, X),
-		  Usercoordinator_pid = self(),
+		  Format_result = io_lib:format("~p", [{Class_names, Messages}]) ++ "~",
+	      gen_tcp:send(Port, Format_result),
 	      %Spawns a diagram coordinator for this diagram if it doesnt exist already 
 		  case find_diagram(Did, Diagrams) of 
-	        not_created -> loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Usercoordinator_pid, {Classes, Messages}) end)}| Diagrams])
+	        not_created -> loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init({Classes, Messages}) end)}| Diagrams])
 	      end
 	  end;
 

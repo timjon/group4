@@ -47,7 +47,7 @@ spawn_node(Class_name) ->
 
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid) ->
-  Receiver ! {send_message, self(), From, To, Message, To_pid},
+  Receiver ! {send_message, From, To, Message, To_pid},
   receive
     {send_reply} -> 
 	  send_reply_received
