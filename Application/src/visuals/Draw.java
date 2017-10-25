@@ -168,8 +168,8 @@ public class Draw {
     /**
      * Animates on a new thread.
      */
-    void animate() {
-        (new Thread(new Animation(this))).start();
+    static void animate() {
+        (new Thread(new Animation())).start();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ public class Draw {
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
-            dv.getDraw().animate();
         }
+        Draw.animate();
     }
 }

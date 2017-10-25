@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 /*
  * Handles a single tabbed diagram view and it's state
- * @version 0.4
+ * @version 0.5
  * @author Pontus Laestadius
  */
 public class DiagramView {
@@ -23,11 +23,25 @@ public class DiagramView {
     }
 
     /**
-     * @param name the name to match.
+     * @param name to match.
      * @return true if the provided name is the selected tab.
      */
     public static boolean inView(String name) {
-        return tabPane.getSelectionModel().getSelectedItem().getText().equals(name);
+        return getInView().equals(name);
+    }
+
+    public static String getInView() {
+        return tabPane.getSelectionModel().getSelectedItem().getText();
+    }
+
+    // TODO this might animate the wrong tab if they have the same name.
+    public static Draw getDrawInView() {
+        for (DiagramView d: list) {
+            if (d.getDraw().getName().equals(getInView())) {
+                return d.getDraw();
+            }
+        }
+        return null;
     }
 
     /**

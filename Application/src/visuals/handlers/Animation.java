@@ -5,35 +5,35 @@ import visuals.Draw;
 
 /**
  * Handles refreshing and animating draw objects.7
- * @version 0.1
+ * @version 0.5
  * @author Pontus Laestadius
  */
 public class Animation extends Thread {
-    Draw item;
+    Thread th;
 
-    public Animation(Draw item) {
-        this.item = item;
-    }
+    public Animation() {}
 
     @Override
     public void run() {
-         loop();
+        if (th == null) {
+            th = this;
+            loop();
+        }
     }
 
     private void loop() {
         while (true) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
                 System.out.println(e.toString());
             }
 
-            if (DiagramView.inView(item.getName())) {
-                item.update();
-                item.redraw();
-            }
-
+            Draw draw = DiagramView.getDrawInView();
+            if (draw == null) continue;
+            draw.update();
+            draw.redraw();
         }
     }
 }

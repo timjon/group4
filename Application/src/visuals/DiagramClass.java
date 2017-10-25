@@ -13,14 +13,16 @@ public class DiagramClass implements Renderable {
     private int size;
     private String name;
 
-    // Animations
-    private int aniindex = 0; // Animation index used for writing the state of the animating sequence.
 
     private static Image castle = new Image("resources/castle_default.png");
     private static Image castle2 = new Image("resources/castle_default2.png");
     private static Image platform = new Image("resources/platform_default.png");
     private static Image connector = new Image("resources/connector_default.png");
     private static Image pillar = new Image("resources/pillar_default.png");
+
+    // Animations
+    private Image[] states = {castle, castle2};
+    private double aniindex = 0.0; // Animation index used for writing the state of the animating sequence.
 
     DiagramClass(String name) {
         this.name = name;
@@ -41,10 +43,9 @@ public class DiagramClass implements Renderable {
      * Handles animation processing.
      */
     public void update() {
-        aniindex += 1;
-        if (aniindex > 10) {
+        aniindex += 0.25;
+        if (aniindex >= states.length)
             aniindex = 0;
-        }
     }
 
     /**
@@ -94,18 +95,16 @@ public class DiagramClass implements Renderable {
         placeGraphicCentered(gc, platform, size_platform, 0, size_platform/2);
         // Draws the DiagramClass.
 
-        if (aniindex > 4) {
-            placeGraphicCentered(gc, castle2, size_DiagramClass,0, 0);
-        } else {
-            placeGraphicCentered(gc, castle, size_DiagramClass,0, 0);
-        }
+        Image castle_state = states[(int)aniindex];
+        placeGraphicCentered(gc, castle_state, size_DiagramClass,0, 0);
+
 
         // Draws the name of the DiagramClass.
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.
             gc.fillText(
                     this.name, // Sets the text to be the name of the DiagramClass.
-                    x + size_DiagramClass/2 -this.name.length()*2, // Dynamically determines the x position.
-                    y -15, // Does not need to be dynamic, as all elements scale downwards.
+                    x + size_DiagramClass/4 -this.name.length()*2, // Dynamically determines the x position.
+                    y -size_DiagramClass/2, // Does not need to be dynamic, as all elements scale downwards.
                     size +size_DiagramClass); // Sets a max width as to not bother the other DiagramClasses texts.
     }
 
