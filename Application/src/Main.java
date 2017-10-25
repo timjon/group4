@@ -72,6 +72,8 @@ public class Main extends Application {
 
                 temp = server.ReceiveMessage();
                 System.out.println(temp);
+                server.SendMessage("{1,['Gateway:g','User:u1','User:u2','User:u3'],[g,u1,u2,u3],[{u1,g,[fwd, u2, msg1]},{u3,g,[fwd, u1, msg2]},{g,u2,[fwd, u2, msg1]},{g,u1,[fwd, u1, msg2]}]}");
+
             }
         });
 
