@@ -11,9 +11,11 @@ import javafx.scene.text.Font;
 
 /**
  * @author Pontus Laestadius
- * @version 0.1
+ * @version 0.3
  */
 public class ExecutionLog extends ListView {
+    public static ExecutionLog elog;
+
     ListView<String> listView = new ListView<>();
     ObservableList<String> data = FXCollections.observableArrayList
             ("----- Start of Execution -----");
@@ -21,6 +23,7 @@ public class ExecutionLog extends ListView {
     static Font font = new Font("courier", 12);
 
     public ExecutionLog() {
+        elog = this;
         this.setEditable(false);
         this.setWidth(250);
 
@@ -48,13 +51,13 @@ public class ExecutionLog extends ListView {
     }
 
     private void update() {
-        this.listView.setItems(data);
-        this.listView.scrollTo(data.size()-1);
-        SelectionModel<String> model = this.listView.getSelectionModel();
+        listView.setItems(data);
+        listView.scrollTo(data.size()-1);
+        SelectionModel<String> model = listView.getSelectionModel();
         model.selectLast();
     }
 
     public ListView<String> getContainer() {
-        return this.listView;
+        return listView;
     }
 }

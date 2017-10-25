@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -7,14 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.DataInputStream;
-
+import net.Net;
 import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
@@ -22,7 +20,6 @@ import visuals.handlers.Resizer;
 
 import java.awt.*;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 import static visuals.DiagramView.tabPane;
 
@@ -37,37 +34,20 @@ public class Main extends Application {
         primaryStage.setTitle("FUML");
         Button btn_import = new Button();
         btn_import.setText("Import");
-        Server_connection server = new Server_connection();
-        server.Init();
-        btn_import.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) { // Import button action handler.
-                Collection<String> result = Import.file(primaryStage);
-                if (result == null) return;
-				// Check if the JSON file contains a supported diagram type.
-                System.out.println(DiagramCheck.ContainsDiagram(result));
-                // TODO remove print line and parse result (user story 5)
-                System.out.println(result);
-            }
+        btn_import.setOnAction((ActionEvent event) -> {
+            Collection<String> result = Import.file(primaryStage);
+            if (result == null) return;
+            // Check if the JSON file contains a supported diagram type.
+            System.out.println(DiagramCheck.ContainsDiagram(result));
+            // TODO remove print line and parse result (user story 5)
+            System.out.println(result);
         });
 
         Button btn2 = new Button();
         btn2.setText("Settings");
-        btn2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Settings"); } // Settings button handler.
+        btn2.setOnAction((ActionEvent event) ->{
+            System.out.println("Settings");  // Settings button handler.
         });
-
-        ExecutionLog executionLog = new ExecutionLog();
-
-        // -----Example code -------
-
-        for (int i = 0; i < 50; i++) {
-            executionLog.fwd("line {" + i + "}");
-        }
-
-        // -------------------------
 
         tabPane = new TabPane();
 
@@ -83,13 +63,15 @@ public class Main extends Application {
                 }
         );
 
+        ExecutionLog executionLog = new ExecutionLog();
+
         BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
         HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
         menu.getChildren().add(btn2);
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
-        borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
+        borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
 
         Scene main;
         //Scales the application to the size of the window or displays it in a maximized view.
@@ -106,7 +88,16 @@ public class Main extends Application {
         primaryStage.setScene(main);
         primaryStage.show();
 
-        Draw.temp_generate_diagram(); // TODO replace with actual parsing.
-        Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
+        // https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm
+        // https://stackoverflow.com/questions/21083945/how-to-avoid-not-on-fx-application-thread-currentthread-javafx-application-th
+        // https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable-
+        Platform.setImplicitExit(true);
+        Platform.runLater(() -> {
+            Draw.temp_generate_diagram(); // TODO replace with actual parsing.
+            Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
+            Net.init();
+        });
+
     }
+
 }
