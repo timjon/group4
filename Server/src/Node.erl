@@ -16,7 +16,7 @@ loop(Coordinator) ->
 	  Coordinator ! {send_reply},
       loop(Coordinator);
     
-	%Case for when the node receives a message from another node
+	%Case for when the node receives a message from another node 
 	{receive_message, From, To, Message} ->
       Coordinator ! {message_done, From, To, Message},
       loop(Coordinator)
