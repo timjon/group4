@@ -3,6 +3,7 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import visuals.handlers.Animation;
 import visuals.handlers.Render;
 
 import java.util.ArrayList;
@@ -168,7 +169,7 @@ public class Draw {
      * Animates on a new thread.
      */
     void animate() {
-        //(new Thread(new Animation(this))).start(); // TODO animations are not for this sprint!
+        (new Thread(new Animation(this))).start();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -192,6 +193,7 @@ public class Draw {
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
+            dv.getDraw().animate();
         }
     }
 }

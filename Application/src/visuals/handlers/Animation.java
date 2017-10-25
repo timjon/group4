@@ -21,9 +21,9 @@ public class Animation extends Thread {
     }
 
     private void loop() {
-        while (!DiagramView.list.isEmpty()) {
+        while (true) {
             try {
-                Thread.sleep(250);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
                 System.out.println(e.toString());

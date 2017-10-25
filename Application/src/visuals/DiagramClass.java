@@ -15,17 +15,15 @@ public class DiagramClass implements Renderable {
 
     // Animations
     private int aniindex = 0; // Animation index used for writing the state of the animating sequence.
-    private Coordinates[] anicontent; // The sequence that the object follows when animated.
 
     private static Image castle = new Image("resources/castle_default.png");
+    private static Image castle2 = new Image("resources/castle_default2.png");
     private static Image platform = new Image("resources/platform_default.png");
     private static Image connector = new Image("resources/connector_default.png");
     private static Image pillar = new Image("resources/pillar_default.png");
 
     DiagramClass(String name) {
         this.name = name;
-        anicontent = new Coordinates[1];
-        anicontent[0] = new Coordinates(0,0);
     }
 
     /**
@@ -43,7 +41,10 @@ public class DiagramClass implements Renderable {
      * Handles animation processing.
      */
     public void update() {
-        aniindex = aniindex == anicontent.length-1 ? 0: aniindex+1;
+        aniindex += 1;
+        if (aniindex > 10) {
+            aniindex = 0;
+        }
     }
 
     /**
@@ -92,7 +93,12 @@ public class DiagramClass implements Renderable {
         // Draws the platform.
         placeGraphicCentered(gc, platform, size_platform, 0, size_platform/2);
         // Draws the DiagramClass.
-        placeGraphicCentered(gc, castle, size_DiagramClass,0, 0);
+
+        if (aniindex > 4) {
+            placeGraphicCentered(gc, castle2, size_DiagramClass,0, 0);
+        } else {
+            placeGraphicCentered(gc, castle, size_DiagramClass,0, 0);
+        }
 
         // Draws the name of the DiagramClass.
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.
