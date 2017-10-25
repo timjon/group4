@@ -13,6 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.DataInputStream;
+
 import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
@@ -20,6 +22,7 @@ import visuals.handlers.Resizer;
 
 import java.awt.*;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import static visuals.DiagramView.tabPane;
 
@@ -34,6 +37,8 @@ public class Main extends Application {
         primaryStage.setTitle("FUML");
         Button btn_import = new Button();
         btn_import.setText("Import");
+        Server_connection server = new Server_connection();
+        server.Init();
         btn_import.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) { // Import button action handler.
