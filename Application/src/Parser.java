@@ -60,6 +60,8 @@ public class Parser {
             // get the Meta data
             diagramObject.Meta metaElement = parsedDiagram.getMeta();
 
+            // get the diagram type
+            parsedDiagram.getType();
 
             // get the Processes which contains the class names
             for (diagramObject.Processes processesElement : parsedDiagram.getProcesses()) {
@@ -83,15 +85,17 @@ public class Parser {
         }
 
         catch (NullPointerException e) {
-            errorMessage();
+            syntaxErrorMessage();
 
         }
     }
 
     // displays a frame notifying the user that the imported file contains unrecognisable syntax
-    private static void errorMessage() {
+    private static void syntaxErrorMessage() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("The imported file contains unrecognisable syntax");
+        alert.setTitle("Import failed");
+        alert.setHeaderText("Unknown syntax");
+        alert.setContentText("The selected file contains unrecognisable syntax");
         alert.show();
     }
 
@@ -111,7 +115,7 @@ public class Parser {
 
     /**
      * gives a String containing the second (i.e parallel) diagram to be handled by the backend
-     * @return ParallelSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
+     * @return ParallelSequenceDiagram which contains a counter, the class names, the parallel diagram's messages and content.
      */
 
     public static String getParallelSequenceDiagram(){

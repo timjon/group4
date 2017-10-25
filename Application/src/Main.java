@@ -31,17 +31,13 @@ public class Main extends Application {
                 Collection<String> result = Import.file(primaryStage);
                 if (result == null) return;
 
-                
-
-				// Check if the JSON file contains a supported diagram type.
-                System.out.println(DiagramCheck.ContainsDiagram(result));
                 // Parse the element if it contains a sequence_diagram
-				if (DiagramCheck.ContainsDiagram(result).equals("sequence_diagram")){
-                for (String element : result ) {
-                    Parser.parse(element);
+                if (DiagramCheck.ContainsDiagram(result).equals("sequence_diagram")){
+                    for (String element : result ) {
+                        Parser.parse(element);
+                    }
                 }
-            }
-		}});
+            }});
 
         Button btn2 = new Button();
         btn2.setText("Settings");
