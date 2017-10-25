@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
+ * @version 0.40
  */
 public class Message implements Renderable{
     private String name;
@@ -44,7 +45,7 @@ public class Message implements Renderable{
     }
 
     /**
-     * Method for animating the message.
+     * Method for animating the message in both directions.
      */
     @Override
     public void update() {
@@ -55,7 +56,7 @@ public class Message implements Renderable{
            }
 
            else if(keepAnimating == true && node1.getX() > node2.getX()){ // Sending return message.
-               if((coolvariable -= 10) < (this.node2.getX() + 2)  - this.node1.getX()) keepAnimating = false;
+               if((coolvariable -= 10) < (this.node2.getX())  - this.node1.getX()) keepAnimating = false;
            }
         } catch (Exception e) {e.printStackTrace();}
     }
@@ -88,11 +89,11 @@ public class Message implements Renderable{
         gc.strokeLine(x1+this.class_size/2, y1 + (this.class_size), x2+this.class_size/2, y1 + (this.class_size)); // Message Line.
         gc.fillText(this.name, messageX, y1 + (this.class_size - 2), maxW); // Message description.
 
-        // TODO this is not for this sprint!
+        // Temporary graphics before we have dragons.
         gc.setFill(Color.RED);
         gc.fillRect(x1+coolvariable, y1 + (this.class_size), 7, 7);
         gc.setFill(Color.GREEN);
-        gc.fillRect(x1+coolvariable +2, y1 + (this.class_size) +2, 3, 3);
+        gc.fillRect(x1+coolvariable , y1 + (this.class_size) +2, 3, 3);
         gc.setFill(Color.BLACK);
 
        // gc.drawImage(image,x1+coolvariable, y1+50, 7, 7 ); // Dragon Image thats going to represent the messages.

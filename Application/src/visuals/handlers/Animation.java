@@ -5,7 +5,7 @@ import visuals.Draw;
 
 /**
  * Handles refreshing and animating draw objects.7
- * @version 0.1
+ * @version 0.2
  * @author Pontus Laestadius
  */
 public class Animation extends Thread {
@@ -23,7 +23,7 @@ public class Animation extends Thread {
     private void loop() {
         while (!DiagramView.list.isEmpty()) {
             try {
-                Thread.sleep(250);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
                 System.out.println(e.toString());
