@@ -35,14 +35,17 @@ public class Parser {
     // even number for the parallel Diagram counter
     static int parallelCounter = 2;
 
-    static String Processes = "";
+    static String processes = "";
     static String properProcesses = "";
 
-    static String FirstDiagram = "";
+    static String classNames = "";
+    static String properClassNames = "";
+
+    static String firstDiagram = "";
     static String properFirstDiagram = "";
 
-    static String ParallelDiagram= "";
-    static String ProperParallelDiagram = "";
+    static String parallelDiagram = "";
+    static String properParallelDiagram = "";
 
 
     /**
@@ -55,7 +58,7 @@ public class Parser {
 
         try {
             diagramObject parsedDiagram;
-            parsedDiagram = gson.fromJson(inputJSON, Model.diagramObject.class);
+            parsedDiagram = gson.fromJson(inputJSON, diagramObject.class);
 
             // get the Meta data
             diagramObject.Meta metaElement = parsedDiagram.getMeta();
@@ -63,25 +66,27 @@ public class Parser {
             // get the diagram type
             parsedDiagram.getType();
 
-            // get the Processes which contains the class names
+            // get the processes which contains the class names
             for (diagramObject.Processes processesElement : parsedDiagram.getProcesses()) {
-                Processes += "'" + processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + "',";
-                properProcesses = (Processes.substring(0, Processes.length() - 1));
+                processes += "'" + processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + "',";
+                properProcesses = (processes.substring(0, processes.length() - 1));
+                // yield only the names of the classes
+                classNames += processesElement.getName() + ",";
+                properClassNames = (classNames.substring(0, classNames.length() - 1));
             }
 
             // get the elements of the First Diagram
             for (diagramObject.ContentArray diagramElement : parsedDiagram.getDiagram().getContent().get(0).getContent()) {
-                FirstDiagram += "{" + diagramElement.getFrom() + "," + diagramElement.getTo() + ",[" + diagramElement.getMessage().get(0) + ", " + diagramElement.getMessage().get(1) + ", " + diagramElement.getMessage().get(2) + "]" + "}" + ",";
-                properFirstDiagram = (FirstDiagram.substring(0, FirstDiagram.length() - 1));
+                firstDiagram += "{" + diagramElement.getFrom() + "," + diagramElement.getTo() + ",[" + diagramElement.getMessage().get(0) + ", " + diagramElement.getMessage().get(1) + ", " + diagramElement.getMessage().get(2) + "]" + "}" + ",";
+                properFirstDiagram = (firstDiagram.substring(0, firstDiagram.length() - 1));
             }
 
 
             // get the elements of the Parallel Diagram
             for (diagramObject.ContentArray parallelDiagramElement : parsedDiagram.getDiagram().getContent().get(1).getContent()) {
-                ParallelDiagram += "{" + parallelDiagramElement.getFrom() + "," + parallelDiagramElement.getTo() + ",[" + parallelDiagramElement.getMessage().get(0) + "]" + "}" + ",";
-                ProperParallelDiagram = (ParallelDiagram.substring(0, ParallelDiagram.length() - 1));
+                parallelDiagram += "{" + parallelDiagramElement.getFrom() + "," + parallelDiagramElement.getTo() + ",[" + parallelDiagramElement.getMessage().get(0) + "]" + "}" + ",";
+                properParallelDiagram = (parallelDiagram.substring(0, parallelDiagram.length() - 1));
             }
-
         }
 
         catch (NullPointerException e) {
@@ -101,12 +106,12 @@ public class Parser {
 
     /**
      * gives a String containing the first diagram to be handled by the backend
-     * @return FirstSequenceDiagram which contains a counter, the class names, the first diagram's messages and content.
+     * @return FirstSequenceDiagram which contains a counter, the processes, the class names, the first diagram's messages and content.
      */
 
     public static String getFirstSequenceDiagram(){
 
-        String FirstSequenceDiagram = "{" + counter + ",[" + properProcesses + "]," + "["+ properFirstDiagram + "]}";
+        String FirstSequenceDiagram = "{" + counter + ",[" + properProcesses + "]," + "["+ properClassNames +"],"+ "["+ properFirstDiagram + "]}";
         // increase the counter by 2 since it is always an even number
         counter = counter + 2;
 
@@ -115,12 +120,12 @@ public class Parser {
 
     /**
      * gives a String containing the second (i.e parallel) diagram to be handled by the backend
-     * @return ParallelSequenceDiagram which contains a counter, the class names, the parallel diagram's messages and content.
+     * @return ParallelSequenceDiagram which contains a counter, the processes, the class names, the parallel diagram's messages and content.
      */
 
     public static String getParallelSequenceDiagram(){
 
-        String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + properProcesses + "]," + "["+ ProperParallelDiagram + "]}";
+        String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + properProcesses + "]," + "["+ properClassNames +"],"+ "["+ properParallelDiagram + "]}";
         // increase the parallelCounter by 2 since it is always an even number
         parallelCounter = parallelCounter + 2;
 
