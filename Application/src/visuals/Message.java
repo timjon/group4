@@ -11,9 +11,10 @@ public class Message implements Renderable{
     private String name;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
     private int fromNode, toNode;
-    private int offset;
-    private int class_size;
+    private int offset; // offset for the message "ordering".
+    private int class_size; // identifier for the current class size so that messages can scale.
     int coolvariable = 0;
+    boolean keepAnimating = true; // State of the animation. Beginning or ending.
 
     /**
      * Constructor
@@ -49,8 +50,14 @@ public class Message implements Renderable{
     public void update() {
         // Animate
         try {
-            if ((coolvariable+=10) > this.node2.getX()-this.node1.getX()-2) coolvariable = 0;
-        } catch (Exception e) {}
+           if(keepAnimating == true && node2.getX() > node1.getX()) { // Sending a message.
+               if ((coolvariable += 10) > this.node2.getX() - this.node1.getX()) keepAnimating = false;
+           }
+
+           else if(keepAnimating == true && node1.getX() > node2.getX()){ // Sending return message.
+               if((coolvariable -= 10) < (this.node2.getX() + 2)  - this.node1.getX()) keepAnimating = false;
+           }
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     /**
@@ -81,16 +88,16 @@ public class Message implements Renderable{
         gc.strokeLine(x1+this.class_size/2, y1 + (this.class_size), x2+this.class_size/2, y1 + (this.class_size)); // Message Line.
         gc.fillText(this.name, messageX, y1 + (this.class_size - 2), maxW); // Message description.
 
-        /* TODO this is not for this sprint!
+        // TODO this is not for this sprint!
         gc.setFill(Color.RED);
-        gc.fillRect(x1+coolvariable, y1+50, 7, 7);
+        gc.fillRect(x1+coolvariable, y1 + (this.class_size), 7, 7);
         gc.setFill(Color.GREEN);
-        gc.fillRect(x1+coolvariable +2, y1+50 +2, 3, 3);
+        gc.fillRect(x1+coolvariable +2, y1 + (this.class_size) +2, 3, 3);
         gc.setFill(Color.BLACK);
 
        // gc.drawImage(image,x1+coolvariable, y1+50, 7, 7 ); // Dragon Image thats going to represent the messages.
 
-       */
+
     }
 
     /**

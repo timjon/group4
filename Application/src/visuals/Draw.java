@@ -59,7 +59,7 @@ public class Draw {
      * Creates a message from and to given nodes with an attached name.
      */
     public void addMessage(int fromNode, int toNode, String name){
-        offset += 10;
+        offset += 8;
         this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
                 classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
@@ -119,6 +119,7 @@ public class Draw {
         for (Renderable r: messages)
             r.render(gc);
 
+
         try {
             c.join();
         } catch (InterruptedException e) {
@@ -141,11 +142,12 @@ public class Draw {
      * Renders the message when trying to resize the application.
      */
     void renderMessage() {
+        if(messages.size() == 0) return; // There are no messages in the list.
         if(this.messages.size() > 0) {
-            for (int i = 0; i < messages.size(); i++) {
+            for (int i = 0; i < messages.size(); i++) { //Messages exist and will now be be re-placed.
                 Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
                 Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
-                messages.get(i).changeCoordinates(node1, node2, class_size);
+                messages.get(i).changeCoordinates(node1, node2, class_size); // Changes the coordinates of the messages.
             }
         }
     }
@@ -169,7 +171,7 @@ public class Draw {
      * Animates on a new thread.
      */
     void animate() {
-        //(new Thread(new Animation(this))).start(); // TODO animations are not for this sprint!
+        (new Thread(new Animation(this))).start(); // Adds the animation on a separate thread.
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -183,8 +185,11 @@ public class Draw {
             this.addClass("Class " + i);
         // Messages
         this.addMessage(0, 1, "Msg1");
-        if (nr > 4)
+        if (nr > 4) {
             this.addMessage(3, 4, "Msg2");
+            this.addMessage(4, 3, "Msg3");
+        }
+        animate(); // Animates all example messages at once. in the real execution messages would be sent in iterations, so ordering is of no issue.
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
@@ -193,6 +198,7 @@ public class Draw {
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
+
         }
     }
 }
