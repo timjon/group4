@@ -20,7 +20,7 @@ public class Resizer implements Runnable {
      * Runs when the thread starts.
      */
     public void run() {
-        if (th == null) // Only allow one instance of the program to run at a time
+        if (th == null) // Only allow one instance to run at a time
             time();
     }
 

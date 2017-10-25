@@ -27,6 +27,7 @@ public class Net implements Runnable {
             con.openConnection();
             con.sendMessage(temp);
             while (con.checkConnection()) {
+                ExecutionLog.elog.clear();
                 String result = con.receiveMessage();
 
                 while (ExecutionLog.elog == null);
@@ -41,8 +42,14 @@ public class Net implements Runnable {
                 }
                 con.sendMessage("{1, next_message}");
             }
+
+            Platform.runLater(() -> {
+                ExecutionLog.elog.clear();
+                ExecutionLog.elog.fwd("No connection established");
+            });
+
             try {
-                Thread.sleep(700); // Sleep for the same time as timer increases
+                Thread.sleep(3000); // Sleep for the same time as timer increases
             } catch (InterruptedException e) {
                 System.err.println(e);
             }

@@ -17,8 +17,7 @@ public class ExecutionLog extends ListView {
     public static ExecutionLog elog;
 
     ListView<String> listView = new ListView<>();
-    ObservableList<String> data = FXCollections.observableArrayList
-            ("----- Start of Execution -----");
+    ObservableList<String> data = FXCollections.observableArrayList();
 
     static Font font = new Font("courier", 12);
 
@@ -47,6 +46,11 @@ public class ExecutionLog extends ListView {
      */
     public void bwd() {
         data.remove(data.size()-1);
+        update();
+    }
+
+    public void clear() {
+        data = FXCollections.observableArrayList();
         update();
     }
 
