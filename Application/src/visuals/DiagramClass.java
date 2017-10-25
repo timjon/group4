@@ -76,16 +76,16 @@ public class DiagramClass implements Renderable {
         int size_platform = size_DiagramClass + size_DiagramClass/5;
 
         // Draws the pillar.
-            int scale = (int) (pillar.getHeight()/size_lifeline); // Used for scaling the pillar to the size of the DiagramClass.
-            if (scale == 0) scale = 1;
+            double scale = (pillar.getHeight()/pillar.getWidth()); // Used for scaling the pillar to the size of the DiagramClass.
+            int pillar_height = (int) (scale*size_lifeline);
 
-            // Draws the pillar from the height of the DiagramClass until the end of the canvas.
-            for (int i = 0; i < gc.getCanvas().getHeight()-y; i+=scale) // Iterates over scale to the end of the canvas.
+        // Draws the pillar from the height of the DiagramClass until the end of the canvas.
+            for (int i = 0; i < gc.getCanvas().getHeight()-y; i+=pillar_height) // Iterates over scale to the end of the canvas.
             /* Draws the pillar: The x position needs to be the center of the DiagramClass minus half of the width of the pillar
              * we are drawing, This gives us (x +size_DiagramClass/2 -size_lifeline/2). The y only has to be provided a increased
              * starting position as to start from below the DiagramClass drawn, and then in each iteration add the scale to i to
              * create a solid pillar.*/
-                gc.drawImage(pillar, x -size_lifeline/2, y+i, size_lifeline, scale);
+                gc.drawImage(pillar, x -size_lifeline/2, y+i, size_lifeline, pillar_height);
 
         // Draws the connector.
         placeGraphicCentered(gc, connector, size_lifeline*2, 0, size_DiagramClass -size_lifeline/2);
