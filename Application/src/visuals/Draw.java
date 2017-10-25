@@ -3,7 +3,6 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import visuals.handlers.Animation;
 import visuals.handlers.Render;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import static visuals.DiagramView.tabPane;
 public class Draw {
 
     private Canvas canvas; // Draws and handles graphical context
-    private ArrayList<Class> classes = new ArrayList<>(); // Stores the classes
+    private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
     private String name; // Name of the Draw object
@@ -52,7 +51,7 @@ public class Draw {
      * Draws a Class on the provided canvas.
      */
     private void addClass(String name) {
-        classes.add(new Class(name));
+        diagramClasses.add(new DiagramClass(name));
     }
 
     /**
@@ -60,8 +59,8 @@ public class Draw {
      */
     public void addMessage(int fromNode, int toNode, String name){
         offset += 10;
-        this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
-                classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
+        this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
+                diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
     }
 
@@ -113,7 +112,7 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(name)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Thread c = new Thread(new Render(gc,classes));
+        Thread c = new Thread(new Render(gc, diagramClasses));
         c.start();
 
         for (Renderable r: messages)
@@ -131,7 +130,7 @@ public class Draw {
      * Updates the Renderables.
      */
     public void update() {
-        for (Renderable r: classes)
+        for (Renderable r: diagramClasses)
             r.update();
         for (Renderable r: messages)
             r.update();
@@ -143,8 +142,8 @@ public class Draw {
     void renderMessage() {
         if(this.messages.size() > 0) {
             for (int i = 0; i < messages.size(); i++) {
-                Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
-                Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
+                Coordinates node1 = diagramClasses.get(messages.get(i).getFromNode()).getCoordinates();
+                Coordinates node2 = diagramClasses.get(messages.get(i).getToNode()).getCoordinates();
                 messages.get(i).changeCoordinates(node1, node2, class_size);
             }
         }
@@ -154,14 +153,14 @@ public class Draw {
      * Updates the class to fit the resized window.
      */
     void renderClass() {
-        if (classes.size() == 0) return; // There are no items to render
-        int space = (getWidth())/this.classes.size(); // The amount of space each class can use.
+        if (diagramClasses.size() == 0) return; // There are no items to render
+        int space = (getWidth())/this.diagramClasses.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
-        for(int i = 0; i < classes.size(); i++) {
+        for(int i = 0; i < diagramClasses.size(); i++) {
             int x = size+ (i*space);
             int y = 40;
-            classes.get(i).place(new Coordinates(x,y), size);
+            diagramClasses.get(i).place(new Coordinates(x,y), size);
         }
     }
 
