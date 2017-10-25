@@ -159,7 +159,7 @@ public class Draw {
         class_size = size/2;
         for(int i = 0; i < diagramClasses.size(); i++) {
             int x = size+ (i*space);
-            int y = 40;
+            int y = 80;
             diagramClasses.get(i).place(new Coordinates(x,y), size);
         }
     }

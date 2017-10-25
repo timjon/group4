@@ -19,6 +19,7 @@ public class DiagramClass implements Renderable {
 
     private static Image castle = new Image("resources/castle_default.png");
     private static Image platform = new Image("resources/platform_default.png");
+    private static Image connector = new Image("resources/connector_default.png");
     private static Image pillar = new Image("resources/pillar_default.png");
 
     DiagramClass(String name) {
@@ -72,10 +73,11 @@ public class DiagramClass implements Renderable {
 
         int size_DiagramClass    = size/2;
         int size_lifeline = size_DiagramClass/4;
-        int size_platform = size_DiagramClass + size_DiagramClass/2;
+        int size_platform = size_DiagramClass + size_DiagramClass/5;
 
         // Draws the pillar.
-            int scale = (int) (pillar.getHeight()/size_lifeline) +1; // Used for scaling the pillar to the size of the DiagramClass.
+            int scale = (int) (pillar.getHeight()/size_lifeline); // Used for scaling the pillar to the size of the DiagramClass.
+            if (scale == 0) scale = 1;
 
             // Draws the pillar from the height of the DiagramClass until the end of the canvas.
             for (int i = 0; i < gc.getCanvas().getHeight()-y; i+=scale) // Iterates over scale to the end of the canvas.
@@ -83,13 +85,14 @@ public class DiagramClass implements Renderable {
              * we are drawing, This gives us (x +size_DiagramClass/2 -size_lifeline/2). The y only has to be provided a increased
              * starting position as to start from below the DiagramClass drawn, and then in each iteration add the scale to i to
              * create a solid pillar.*/
-                gc.drawImage(pillar, x +size_DiagramClass/2 -size_lifeline/2,y + size/4 +i, size_lifeline, scale);
+                gc.drawImage(pillar, x -size_lifeline/2, y+i, size_lifeline, scale);
 
+        // Draws the connector.
+        placeGraphicCentered(gc, connector, size_lifeline*2, 0, size_DiagramClass -size_lifeline/2);
         // Draws the platform.
-            gc.drawImage(platform,x -size/8,y +size/2 -size/8, size_platform,size/5);
-
+        placeGraphicCentered(gc, platform, size_platform, 0, size_platform/2);
         // Draws the DiagramClass.
-            gc.drawImage(castle, x, y, size/2, size/2);
+        placeGraphicCentered(gc, castle, size_DiagramClass,0, 0);
 
         // Draws the name of the DiagramClass.
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.
@@ -98,5 +101,14 @@ public class DiagramClass implements Renderable {
                     x + size_DiagramClass/2 -this.name.length()*2, // Dynamically determines the x position.
                     y -15, // Does not need to be dynamic, as all elements scale downwards.
                     size +size_DiagramClass); // Sets a max width as to not bother the other DiagramClasses texts.
+    }
+
+    private void placeGraphicCentered(GraphicsContext gc, Image img, int size, int offsetX, int offsetY) {
+        gc.drawImage(
+                img,
+                this.coordinates.getX() -size/2 + offsetX,
+                this.coordinates.getY() -size/2 + offsetY,
+                size,
+                size*(img.getHeight()/img.getWidth()));
     }
 }
