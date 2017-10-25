@@ -1,67 +1,84 @@
+<<<<<<< HEAD
 import Model.diagramObject;
+=======
+import model.sequenceDiagramParser.Processes;
+import model.sequenceDiagramParser.ContentArray;
+import javafx.scene.control.Alert;
+>>>>>>> 6db1ebc... refactoring, bug fixes, comments
 import com.google.gson.Gson;
+import model.sequenceDiagramParser.SequenceDiagramObject;
 
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
+ * @Version 1.0
  * @since 2017-10-16
  */
 
 public class Parser {
 
     // odd number for the First Diagram counter
-    static int counter = 1;
+    private static int counter = 1;
     // even number for the parallel Diagram counter
-    static int parallelCounter = 2;
+    private static int parallelCounter = 2;
 
-    static String processes = "";
-    static String properProcesses = "";
+    /**
+     * static decelerations of String variables along with their proper formatting (to be returned for the backend)
+     */
+    private static String processes = "";
+    private static String properProcesses = "";
 
-    static String classNames = "";
-    static String properClassNames = "";
+    private static String classNames = "";
+    private static String properClassNames = "";
 
-    static String firstDiagram = "";
-    static String properFirstDiagram = "";
+    private static String firstDiagram = "";
+    private static String properFirstDiagram = "";
 
-    static String parallelDiagram = "";
-    static String properParallelDiagram = "";
+    private static String parallelDiagram = "";
+    private static String properParallelDiagram = "";
 
 
     /**
-     * Parses the imported JSON files and prints it to the console
+     * Parses the imported JSON files if they contain a sequence diagram and it is made to adhere with a predetermined JSON format
      * @param inputJSON the imported collection of Strings that make up the JSON files
      */
 
-    public static void Parser(String inputJSON){
+    public static void parseSequenceDiagram(String inputJSON) {
         Gson gson = new Gson();
         diagramObject parsedDiagram;
         parsedDiagram = gson.fromJson(inputJSON, Model.diagramObject.class);
 
         try {
-            diagramObject parsedDiagram;
-            parsedDiagram = gson.fromJson(inputJSON, diagramObject.class);
+            SequenceDiagramObject parsedDiagram;
+            parsedDiagram = gson.fromJson(inputJSON, SequenceDiagramObject.class);
 
-            // get the Meta data
-            diagramObject.Meta metaElement = parsedDiagram.getMeta();
+            // get the Diagram data
+            parsedDiagram.getMeta();
 
-            // get the processes which contains the class names
-            for (diagramObject.Processes processesElement : parsedDiagram.getProcesses()) {
+            // get the Diagram type
+            parsedDiagram.getType();
+
+            // get the processes which contain the class names
+            for (Processes processesElement : parsedDiagram.getProcesses()) {
                 processes += "'" + processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + "',";
                 properProcesses = (processes.substring(0, processes.length() - 1));
                 // yield only the names of the classes
                 classNames += processesElement.getName() + ",";
+                //removing extra comma
                 properClassNames = (classNames.substring(0, classNames.length() - 1));
             }
 
             // get the elements of the First Diagram
-            for (diagramObject.ContentArray diagramElement : parsedDiagram.getDiagram().getContent().get(0).getContent()) {
+            for (ContentArray diagramElement : parsedDiagram.getDiagram().getContent().get(0).getContent()) {
                 firstDiagram += "{" + diagramElement.getFrom() + "," + diagramElement.getTo() + ",[" + diagramElement.getMessage().get(0) + ", " + diagramElement.getMessage().get(1) + ", " + diagramElement.getMessage().get(2) + "]" + "}" + ",";
+                //removing extra comma
                 properFirstDiagram = (firstDiagram.substring(0, firstDiagram.length() - 1));
             }
 
 
             // get the elements of the Parallel Diagram
-            for (diagramObject.ContentArray parallelDiagramElement : parsedDiagram.getDiagram().getContent().get(1).getContent()) {
+            for (ContentArray parallelDiagramElement : parsedDiagram.getDiagram().getContent().get(1).getContent()) {
                 parallelDiagram += "{" + parallelDiagramElement.getFrom() + "," + parallelDiagramElement.getTo() + ",[" + parallelDiagramElement.getMessage().get(0) + "]" + "}" + ",";
+                //removing extra comma
                 properParallelDiagram = (parallelDiagram.substring(0, parallelDiagram.length() - 1));
             }
         }
@@ -86,7 +103,7 @@ public class Parser {
     public static String getFirstSequenceDiagram(){
 
         String FirstSequenceDiagram = "{" + counter + ",[" + properProcesses + "]," + "["+ properClassNames +"],"+ "["+ properFirstDiagram + "]}";
-        // increase the counter by 2 since it is always an even number
+        // increase the counter by 2 since it is always an odd number and it started with 1
         counter = counter + 2;
 
         return FirstSequenceDiagram;
@@ -105,7 +122,7 @@ public class Parser {
     public static String getParallelSequenceDiagram(){
 
         String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + properProcesses + "]," + "["+ properClassNames +"],"+ "["+ properParallelDiagram + "]}";
-        // increase the parallelCounter by 2 since it is always an even number
+        // increase the parallelCounter by 2 since it is always an even number and it started with 0
         parallelCounter = parallelCounter + 2;
 
         return ParallelSequenceDiagram;
