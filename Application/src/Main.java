@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import visuals.DiagramView;
 import visuals.Draw;
@@ -30,6 +31,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
         primaryStage.setTitle("FUML");
+		primaryStage.getIcons().add(new Image("resources/logo.png"));
         Button btn_import = new Button();
         btn_import.setText("Import");
         btn_import.setOnAction(new EventHandler<ActionEvent>() {
