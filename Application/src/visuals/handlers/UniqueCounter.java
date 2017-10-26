@@ -4,13 +4,13 @@ package visuals.handlers;
  * Holds a static unique counter that increments on every call.
  */
 public class UniqueCounter {
-    private static int c;
+    private static int count;
 
     /**
      * @return a unique integer that can be used as an identifier.
      */
     public static int get() {
-        return c++;
+        return count++;
     }
 
     /**

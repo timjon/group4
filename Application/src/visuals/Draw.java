@@ -21,19 +21,13 @@ public class Draw {
     private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
-    private String name; // Name of the Draw object
     private int class_size = 0; // Used for message positioning
 
     /**
      * Constructor
      */
-    Draw(String n, int w, int h) {
+    Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        name = n;
-    }
-
-    public String getName() {
-        return name;
     }
 
     Canvas getCanvas() {

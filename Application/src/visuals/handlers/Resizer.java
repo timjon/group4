@@ -37,7 +37,7 @@ public class Resizer implements Runnable {
                 System.out.println(e.toString());
             }
         }
-        for (DiagramView d: DiagramView.list) // For all opened diagrams:
+        for (DiagramView d: DiagramView.diagramViews) // For all opened diagrams:
             d.resize(); // Resize them
         th = null; // Allows a new instance to start once this one is finished
     }

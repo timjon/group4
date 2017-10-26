@@ -16,7 +16,7 @@ public class DiagramView {
     private String tabName;
     private State state = State.PAUSED;
     private Tab tab;
-    public static ArrayList<DiagramView> list = new ArrayList<>(); // A list of all Diagram views.
+    public static ArrayList<DiagramView> diagramViews = new ArrayList<>(); // A diagramViews of all Diagram views.
     public static TabPane tabPane;
 
     /**
@@ -47,7 +47,7 @@ public class DiagramView {
      * @return the DiagramView that is currently being viewed. null if none.
      */
     public static DiagramView getDiagramViewInView() {
-        for (DiagramView d: list) {
+        for (DiagramView d: diagramViews) {
             Tab t = d.getTab();
             String id = t.getId();
             if (id.equals(getInView())) {
@@ -59,13 +59,13 @@ public class DiagramView {
 
     /**
      * Creates a DiagramView with an Initial new Draw object with the size of the static TabPane.
-     * Adds it to the list of DiagramViews and
+     * Adds it to the diagramViews of DiagramViews and
      * @param tabName the diagram name.
      */
     public DiagramView(String tabName) {
-        this.draw = new Draw(tabName, (int)tabPane.getWidth(), (int)tabPane.getHeight());
+        this.draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
         this.tabName = tabName;
-        list.add(this);
+        diagramViews.add(this);
         this.tab = new Tab();
         tab.setId(UniqueCounter.getString());
         tab.setText(this.tabName);
@@ -103,9 +103,9 @@ public class DiagramView {
      * @return the previous state
      */
     private State setState(State state) {
-        State tmp = this.state;
+        State previousState = this.state;
         this.state = state;
-        return tmp;
+        return previousState;
     }
 }
 
