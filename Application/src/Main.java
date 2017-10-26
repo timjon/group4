@@ -59,7 +59,6 @@ public class Main extends Application {
                         for (DiagramView dv: DiagramView.list) {
                             dv.redraw();
                         }
-                        DiagramView.
                     }
                 }
         );
