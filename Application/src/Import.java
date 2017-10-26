@@ -42,7 +42,7 @@ public class Import {
 
             // If the file is not a .json.
             if (!file.toString().endsWith(".json")) {
-                // Removes from the valid list and moves to the invalid list.
+                // Removes from the valid diagramViews and moves to the invalid diagramViews.
                 files_invalid.add(file);
             } else { // If it is a .json.
 
@@ -60,7 +60,7 @@ public class Import {
                     // Any unexpected exceptions.
                 } catch (IOException e) {
 
-                    // Removes from the valid list and moves to the invalid list.
+                    // Removes from the valid diagramViews and moves to the invalid diagramViews.
                     files_invalid.add(file);
 
                     continue;

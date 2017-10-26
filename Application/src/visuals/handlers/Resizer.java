@@ -7,20 +7,18 @@ import visuals.DiagramView;
 /**
  * The Resizer runs on a separate thread and there can only exist one at a time.
  * It's in charge of when the canvases are meant call resize after a certain time delay.
- * @version 0.5
+ * @version 0.55
  * @author Pontus Laestadius
  */
 public class Resizer implements Runnable {
     private static Resizer th;
     private static int timer = 0;
-    private int inc = 5;
-    private int threashold = 45;
 
     /**
      * Runs when the thread starts.
      */
     public void run() {
-        if (th == null) // Only allow one instance of the program to run at a time
+        if (th == null) // Only allow one instance to run at a time
             time();
     }
 
@@ -29,15 +27,15 @@ public class Resizer implements Runnable {
      */
     private void time(){
         th = this;
-        while ((timer+=inc) < threashold) { // A 400ms delay in which the timer can be reset
+        while ((timer+=5) < 45) { // A 400ms delay in which the timer can be reset
             try {
-                Thread.sleep(inc); // Sleep for the same time as timer increases
+                Thread.sleep(5); // Sleep for the same time as timer increases
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
                 System.out.println(e.toString());
             }
         }
-        for (DiagramView d: DiagramView.list) // For all opened diagrams:
+        for (DiagramView d: DiagramView.diagramViews) // For all opened diagrams:
             d.resize(); // Resize them
         th = null; // Allows a new instance to start once this one is finished
     }

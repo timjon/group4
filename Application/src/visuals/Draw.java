@@ -3,14 +3,14 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import visuals.handlers.Render;
+import visuals.handlers.Animation;
 
 import java.util.ArrayList;
 
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.65
+ * @version 0.8
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -20,23 +20,17 @@ public class Draw {
     private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
-    private String name; // Name of the Draw object
     private int class_size = 0; // Used for message positioning
-
-    public String getName() {
-        return name;
-    }
-
-    Canvas getCanvas() {
-        return canvas;
-    }
 
     /**
      * Constructor
      */
-    Draw(String n, int w, int h) {
+    Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        name = n;
+    }
+
+    Canvas getCanvas() {
+        return canvas;
     }
 
     int getHeight() {
@@ -63,7 +57,6 @@ public class Draw {
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
     }
-
 
     // Always renders with a new specific resolution.
     void resize(double w, double h) {
@@ -110,20 +103,12 @@ public class Draw {
      * Renders classes in a new thread as well as the messages.
      */
     void renderContainer() {
-        if (!DiagramView.inView(name)) return;
+        if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Thread c = new Thread(new Render(gc, diagramClasses));
-        c.start();
-
+        for (Renderable r: diagramClasses)
+            r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
-
-        try {
-            c.join();
-        } catch (InterruptedException e) {
-            System.err.println(e.toString());
-            System.out.println(e.toString());
-        }
     }
 
     /**
@@ -159,16 +144,16 @@ public class Draw {
         class_size = size/2;
         for(int i = 0; i < diagramClasses.size(); i++) {
             int x = size+ (i*space);
-            int y = 40;
+            int y = 25 +size/4;
             diagramClasses.get(i).place(new Coordinates(x,y), size);
         }
     }
 
     /**
-     * Animates on a new thread.
+     * Starts the global Animation thread for all Draw objects and views.
      */
-    void animate() {
-        //(new Thread(new Animation(this))).start(); // TODO animations are not for this sprint!
+    static void animate() {
+        (new Thread(new Animation())).start();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -187,11 +172,12 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             String name = "diagram " + i;
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
         }
+        Draw.animate();
     }
 }
