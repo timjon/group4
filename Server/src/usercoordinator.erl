@@ -39,6 +39,11 @@ loop(Socket, Diagrams) ->
 					Format_result = io_lib:format("~p", [{From, To, Message, Message_number}]) ++ "~",
 		            %Sends it to the client
 					gen_tcp:send(Port, [Format_result]);
+					
+					%Isaplebstuff
+					Format_executionlog_result = io_lib:format("~p", [{From, To, Message, Message_number}]) ++ "~",
+					gen_tcp:send(Port, [Format_executionlog_result]);
+					
 				  {simulation_done, Message_number} -> 
 					%Turns the result into binary
 					Format_result = io_lib:format("~p", ["simulation_finished, " ++ integer_to_list(Message_number)]),
