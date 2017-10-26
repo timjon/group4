@@ -23,8 +23,8 @@ public class DiagramClass implements Renderable {
 
     // Animations
 
-    // The states of the castle.
-    private Image[] states = {castle1, castle2};
+    // The castleStates of the castle.
+    private Image[] castleStates = {castle1, castle2};
     private double aniindex = 0.0; // Animation index used for writing the state of the animating sequence.
 
     /**
@@ -50,7 +50,7 @@ public class DiagramClass implements Renderable {
      */
     public void update() {
         aniindex += 0.25;
-        if (aniindex >= states.length)
+        if (aniindex >= castleStates.length)
             aniindex = 0;
     }
 
@@ -101,7 +101,7 @@ public class DiagramClass implements Renderable {
         placeGraphicCentered(gc, platform, size_platform, 0, size_platform/2);
         // Draws the DiagramClass.
 
-        Image castle_state = states[(int)aniindex];
+        Image castle_state = castleStates[(int)aniindex];
         placeGraphicCentered(gc, castle_state, size_DiagramClass,0, 0);
 
 
