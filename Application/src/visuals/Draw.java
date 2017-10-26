@@ -24,20 +24,20 @@ public class Draw {
     private String name; // Name of the Draw object
     private int class_size = 0; // Used for message positioning
 
-    public String getName() {
-        return name;
-    }
-
-    Canvas getCanvas() {
-        return canvas;
-    }
-
     /**
      * Constructor
      */
     Draw(String n, int w, int h) {
         canvas = new Canvas(w, h);
         name = n;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    Canvas getCanvas() {
+        return canvas;
     }
 
     int getHeight() {
@@ -64,7 +64,6 @@ public class Draw {
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
     }
-
 
     // Always renders with a new specific resolution.
     void resize(double w, double h) {
@@ -111,7 +110,7 @@ public class Draw {
      * Renders classes in a new thread as well as the messages.
      */
     void renderContainer() {
-        if (!DiagramView.inView(name)) return;
+        if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
         Thread c = new Thread(new Render(gc, diagramClasses));
         c.start();

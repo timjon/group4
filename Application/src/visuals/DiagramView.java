@@ -2,6 +2,7 @@ package visuals;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import visuals.handlers.UniqueCounter;
 
 import java.util.ArrayList;
 
@@ -22,23 +23,21 @@ public class DiagramView {
         return draw;
     }
 
-    /**
-     * @param name to match.
-     * @return true if the provided name is the selected tab.
-     */
-    public static boolean inView(String name) {
-        return getInView().equals(name);
+    public static boolean inView(Draw draw) {
+        DiagramView dv = getDiagramViewInView();
+        return dv != null && dv.getDraw() == draw;
     }
 
     public static String getInView() {
-        return tabPane.getSelectionModel().getSelectedItem().getText();
+        return tabPane.getSelectionModel().getSelectedItem().getId();
     }
 
-    // TODO this might animate the wrong tab if they have the same name.
-    public static Draw getDrawInView() {
+    public static DiagramView getDiagramViewInView() {
         for (DiagramView d: list) {
-            if (d.getDraw().getName().equals(getInView())) {
-                return d.getDraw();
+            Tab t = d.getTab();
+            String id = t.getId();
+            if (id.equals(getInView())) {
+                return d;
             }
         }
         return null;
@@ -54,6 +53,7 @@ public class DiagramView {
         this.tabName = tabName;
         list.add(this);
         this.tab = new Tab();
+        tab.setId(UniqueCounter.getString());
         tab.setText(this.tabName);
         tab.setContent(draw.getCanvas());
     }

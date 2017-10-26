@@ -5,11 +5,11 @@ import visuals.Draw;
 
 /**
  * Handles refreshing and animating draw objects.7
- * @version 0.5
+ * @version 0.6
  * @author Pontus Laestadius
  */
 public class Animation extends Thread {
-    Thread th;
+    private Thread th;
 
     public Animation() {}
 
@@ -27,11 +27,11 @@ public class Animation extends Thread {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
-                System.out.println(e.toString());
             }
 
-            Draw draw = DiagramView.getDrawInView();
-            if (draw == null) continue;
+            DiagramView dv = DiagramView.getDiagramViewInView();
+            if (dv == null) continue;
+            Draw draw = dv.getDraw();
             draw.update();
             draw.redraw();
         }
