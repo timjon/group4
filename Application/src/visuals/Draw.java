@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.65
+ * @version 0.7
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -165,7 +165,7 @@ public class Draw {
     }
 
     /**
-     * Animates on a new thread.
+     * Starts the global Animation thread for all Draw objects and views.
      */
     static void animate() {
         (new Thread(new Animation())).start();

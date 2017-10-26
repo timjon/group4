@@ -9,21 +9,27 @@ import javafx.scene.paint.Color;
  * @author Pontus Laestadius
  */
 public class DiagramClass implements Renderable {
-    private Coordinates coordinates;
-    private int size;
-    private String name;
+    private Coordinates coordinates; // The coordinates of the object.
+    private int size; // Size of the Object.
+    private String name; // The class name.
 
-
-    private static Image castle = new Image("resources/castle_default.png");
+    // The images retrieved.
+    private static Image castle1 = new Image("resources/castle_default.png");
     private static Image castle2 = new Image("resources/castle_default2.png");
+
     private static Image platform = new Image("resources/platform_default.png");
     private static Image connector = new Image("resources/connector_default.png");
     private static Image pillar = new Image("resources/pillar_default.png");
 
     // Animations
-    private Image[] states = {castle, castle2};
+
+    // The states of the castle.
+    private Image[] states = {castle1, castle2};
     private double aniindex = 0.0; // Animation index used for writing the state of the animating sequence.
 
+    /**
+     * @param name the class name.
+     */
     DiagramClass(String name) {
         this.name = name;
     }
@@ -108,6 +114,14 @@ public class DiagramClass implements Renderable {
                     size +size_DiagramClass); // Sets a max width as to not bother the other DiagramClasses texts.
     }
 
+    /**
+     * Places an Image in the center position of the x and y coordinates.
+     * @param gc the GraphicalContext where to draw the Image.
+     * @param img an Image of what to be displayed.
+     * @param size the Size in width, the height is determined based on the scaling of size.
+     * @param offsetX the offset in the x position from the placement.
+     * @param offsetY the offset in the y position from the placement.
+     */
     private void placeGraphicCentered(GraphicsContext gc, Image img, int size, int offsetX, int offsetY) {
         gc.drawImage(
                 img,

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 /*
  * Handles a single tabbed diagram view and it's state
- * @version 0.5
+ * @version 0.7
  * @author Pontus Laestadius
  */
 public class DiagramView {
@@ -19,19 +19,33 @@ public class DiagramView {
     public static ArrayList<DiagramView> list = new ArrayList<>(); // A list of all Diagram views.
     public static TabPane tabPane;
 
+    /**
+     * @return a Draw Object.
+     */
     public Draw getDraw() {
         return draw;
     }
 
-    public static boolean inView(Draw draw) {
+    /**
+     * Returns if the input Draw Object is currently being viewed.
+     * @param draw a Draw Object to match with.
+     * @return true if it is in view. false if a DiagramView does not exist for the Draw or if it is not in view.
+     */
+    static boolean inView(Draw draw) {
         DiagramView dv = getDiagramViewInView();
         return dv != null && dv.getDraw() == draw;
     }
 
-    public static String getInView() {
+    /**
+     * @return the id of the current selected tab.
+     */
+    static String getInView() {
         return tabPane.getSelectionModel().getSelectedItem().getId();
     }
 
+    /**
+     * @return the DiagramView that is currently being viewed. null if none.
+     */
     public static DiagramView getDiagramViewInView() {
         for (DiagramView d: list) {
             Tab t = d.getTab();
@@ -65,6 +79,9 @@ public class DiagramView {
         return this.tab;
     }
 
+    /**
+     * Calls the internal redraw method of the Draw Object.
+     */
     public void redraw() {
         draw.redraw();
     }
@@ -80,14 +97,21 @@ public class DiagramView {
         this.state = tmp;
     }
 
-    State setState(State state) {
+    /**
+     * Sets the state to the provided one and returns the previously allocated state.
+     * @param state the new state
+     * @return the previous state
+     */
+    private State setState(State state) {
         State tmp = this.state;
         this.state = state;
         return tmp;
     }
-
 }
 
+/**
+ * Lists all the States of the DiagramView.
+ */
 enum State {
     WAITING, // Waiting for a response from the server.
     PAUSED, // Manually paused, no action is being performed.
