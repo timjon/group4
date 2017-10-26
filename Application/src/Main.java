@@ -33,15 +33,16 @@ public class Main extends Application {
 
 
                 // Parse the element if it contains a supported diagram
+                Parser parse = new Parser();
                 switch(DiagramCheck.ContainsDiagram(result)) {
                     case "sequence_diagram" :
-                        for (String element : result ) {
-                            Parser.parseSequenceDiagram(element);
+                        for (String element : result) {
+                            parse.parseSequenceDiagram(element);
                         }
                         break;
-                    case "class_diagram" : //TODO
-                    case "deployment_diagram" : //TODO
                 }
+                // if the diagram is not included in the switch case, check if the diagram is invalid
+                DiagramCheck.ContainsDiagram(result);
 
             }});
 
