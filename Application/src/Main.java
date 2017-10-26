@@ -61,6 +61,8 @@ public class Main extends Application {
                         for (DiagramView dv: DiagramView.diagramViews) {
                             dv.redraw();
                         }
+                        DiagramView dv = DiagramView.getDiagramViewInView();
+                        if (dv != null) dv.focus();
                     }
                 }
         );

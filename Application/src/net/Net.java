@@ -26,28 +26,31 @@ public class Net implements Runnable {
         while (true) {
             con.openConnection();
             con.sendMessage(temp);
+            ExecutionLog executionLog = ExecutionLog.getInstance();
             while (con.checkConnection()) {
-
+                // Blocks until a message is recieved.
                 String result = con.receiveMessage();
 
-                while (ExecutionLog.elog == null);
                 Platform.runLater(() -> {
-                    ExecutionLog.elog.fwd(result);
+                    executionLog.fwd(result);
                 });
 
+
                 try {
-                    Thread.sleep(700); // Sleep for the same time as timer increases
+                    Thread.sleep(1000); // Sleep for the same time as timer increases
                 } catch (InterruptedException e) {
                     System.err.println(e);
                 }
+
                 con.sendMessage("{1, next_message}");
             }
 
             Platform.runLater(() -> {
-                ExecutionLog.elog.clear();
-                ExecutionLog.elog.fwd("No connection established");
+                executionLog.clear();
+                executionLog.fwd("No connection established");
             });
 
+            // Sleep for for a longer duration before attempting to reconnect.
             try {
                 Thread.sleep(3000); // Sleep for the same time as timer increases
             } catch (InterruptedException e) {

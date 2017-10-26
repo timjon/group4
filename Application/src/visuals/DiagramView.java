@@ -1,5 +1,6 @@
 package visuals;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
@@ -114,8 +115,18 @@ public class DiagramView {
         return previousState;
     }
 
+    /**
+     * Allocates and displays the ExecutionLog for the current DiagramView.
+     */
     public void focus() {
-        ExecutionLog.elog.setData(logData);
+        // TODO figure out why if these are commented out, it works.
+        //DiagramView dv = getDiagramViewInView();
+        //if (dv == null) return;
+        //dv.setlogData(ExecutionLog.elog.getData());
+        Platform.runLater(() -> {
+            ExecutionLog.getInstance().setData(logData);
+        });
+
     }
 
     public void setlogData(ObservableList<String> logData) {

@@ -11,19 +11,24 @@ import javafx.scene.control.ListView;
 /**
  * Displays any information given in to a ListView.
  * @author Pontus Laestadius
- * @version 0.5
+ * @version 0.6
  */
 public class ExecutionLog extends ListView {
-    public static ExecutionLog elog;
+    private static ExecutionLog elog;
     private ListView<String> listView = new ListView<>();
     private ObservableList<String> data = FXCollections.observableArrayList();
+
+
+    public static ExecutionLog getInstance() {
+        return elog;
+    }
 
     public ExecutionLog() {
         if (elog != null) return; // Only allow a single ExecutionLog view.
         elog = this;
         this.setEditable(false);
         this.setWidth(250);
-        Color c = Color.BLACK;
+        Color c = Color.TRANSPARENT;
         BackgroundFill bgf = new BackgroundFill(c, null,null);
         Background bg = new Background(bgf);
         this.listView.setBackground(bg);
@@ -72,13 +77,18 @@ public class ExecutionLog extends ListView {
         return listView;
     }
 
+    /**
+     * @param data sets content of the ExecutionLog.
+     */
     void setData(ObservableList<String> data) {
         this.data = data;
         update();
     }
 
+    /**
+     * @return a List of the content of the ExecutionLog.
+     */
     public ObservableList<String> getData() {
         return data;
     }
 }
-
