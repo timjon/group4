@@ -3,14 +3,13 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import visuals.handlers.Render;
 
 import java.util.ArrayList;
 
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.65
+ * @version 0.68
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -112,18 +111,10 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(name)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Thread c = new Thread(new Render(gc, diagramClasses));
-        c.start();
-
+        for (Renderable r: diagramClasses)
+            r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
-
-        try {
-            c.join();
-        } catch (InterruptedException e) {
-            System.err.println(e.toString());
-            System.out.println(e.toString());
-        }
     }
 
     /**

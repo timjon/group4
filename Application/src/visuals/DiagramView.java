@@ -1,5 +1,7 @@
 package visuals;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
@@ -11,12 +13,15 @@ import java.util.ArrayList;
  * @author Pontus Laestadius
  */
 public class DiagramView {
+    public static ArrayList<DiagramView> list = new ArrayList<>(); // A list of all Diagram views.
+    public static TabPane tabPane;
+
     private Draw draw;
     private String tabName;
     private State state = State.PAUSED;
     private Tab tab;
-    public static ArrayList<DiagramView> list = new ArrayList<>(); // A list of all Diagram views.
-    public static TabPane tabPane;
+    // Stores the execution log data for this diagram.
+    private ObservableList<String> logData = FXCollections.observableArrayList();
 
     public Draw getDraw() {
         return draw;
@@ -72,6 +77,13 @@ public class DiagramView {
         return tmp;
     }
 
+    public void focus() {
+        ExecutionLog.elog.setData(logData);
+    }
+
+    public void setlogData(ObservableList<String> logData) {
+        this.logData = logData;
+    }
 }
 
 enum State {
@@ -79,5 +91,4 @@ enum State {
     PAUSED, // Manually paused, no action is being performed.
     EXECUTING, // Executing the visual aspects.
     RESIZING, // While resizing to avoid concurrency issues.
-
 }

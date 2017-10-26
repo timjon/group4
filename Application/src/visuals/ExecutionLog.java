@@ -9,8 +9,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.control.ListView;
 
 /**
+ * Displays any information given in to a ListView.
  * @author Pontus Laestadius
- * @version 0.4
+ * @version 0.5
  */
 public class ExecutionLog extends ListView {
     public static ExecutionLog elog;
@@ -18,10 +19,10 @@ public class ExecutionLog extends ListView {
     private ObservableList<String> data = FXCollections.observableArrayList();
 
     public ExecutionLog() {
+        if (elog != null) return; // Only allow a single ExecutionLog view.
         elog = this;
         this.setEditable(false);
         this.setWidth(250);
-
         Color c = Color.BLACK;
         BackgroundFill bgf = new BackgroundFill(c, null,null);
         Background bg = new Background(bgf);
@@ -58,10 +59,10 @@ public class ExecutionLog extends ListView {
      * Updates the data in the ListView.
      */
     private void update() {
-        listView.setItems(data);
-        listView.scrollTo(data.size()-1);
+        listView.setItems(data); // Updates the content of the list.
+        listView.scrollTo(data.size()-1); // Scrolls to the bottom of the list.
         SelectionModel<String> model = listView.getSelectionModel();
-        model.selectLast();
+        model.selectLast(); // Selects the last item in the list.
     }
 
     /**
@@ -69,6 +70,15 @@ public class ExecutionLog extends ListView {
      */
     public ListView<String> getContainer() {
         return listView;
+    }
+
+    void setData(ObservableList<String> data) {
+        this.data = data;
+        update();
+    }
+
+    public ObservableList<String> getData() {
+        return data;
     }
 }
 
