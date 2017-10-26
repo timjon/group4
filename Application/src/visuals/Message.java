@@ -14,7 +14,7 @@ public class Message implements Renderable{
     private int fromNode, toNode;
     private int offset; // offset for the message "ordering".
     private int class_size; // identifier for the current class size so that messages can scale.
-    int coolvariable = 0;
+    int animationBounds = 0;
     boolean keepAnimating = true; // State of the animation. Beginning or ending.
 
     /**
@@ -52,17 +52,17 @@ public class Message implements Renderable{
         // Animate
         try {
            if(keepAnimating == true && node2.getX() > node1.getX()) { // Sending a message.
-               if ((coolvariable += 10) > this.node2.getX() - this.node1.getX()) keepAnimating = false;
+               if ((animationBounds += 8) > this.node2.getX() - this.node1.getX()) keepAnimating = false;
            }
 
            else if(keepAnimating == true && node1.getX() > node2.getX()){ // Sending return message.
-               if((coolvariable -= 10) < (this.node2.getX())  - this.node1.getX()) keepAnimating = false;
+               if((animationBounds -= 8) < (this.node2.getX() + 10)  - this.node1.getX()) keepAnimating = false;
            }
         } catch (Exception e) {e.printStackTrace();}
     }
 
     /**
-     * Gets the new coordinates from resizing the application.
+     * Gets the new coordinates from resizing the application and redraws messages with these coordinates.
      */
     public void changeCoordinates(Coordinates node1, Coordinates node2, int class_size){
         this.node1 = node1;
@@ -91,9 +91,9 @@ public class Message implements Renderable{
 
         // Temporary graphics before we have dragons.
         gc.setFill(Color.RED);
-        gc.fillRect(x1+coolvariable, y1 + (this.class_size), 7, 7);
+        gc.fillRect(x1+animationBounds, y1 + (this.class_size), 7, 7);
         gc.setFill(Color.GREEN);
-        gc.fillRect(x1+coolvariable , y1 + (this.class_size) +2, 3, 3);
+        gc.fillRect(x1+animationBounds , y1 + (this.class_size) +2, 3, 3);
         gc.setFill(Color.BLACK);
 
        // gc.drawImage(image,x1+coolvariable, y1+50, 7, 7 ); // Dragon Image thats going to represent the messages.
