@@ -60,9 +60,8 @@ use_input({ok, {Did, next_message}}, Socket, Diagrams) ->
 	  loop(Socket, Diagrams)
   end;
   
-%This will be selected if its a new diagram selected
+%This patter will match when the first argument is in the format of a new diagram
 use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
-  %This will be selected if its a new diagram selected
   %Spawns a diagram coordinator for this diagram if it doesnt exist already 
   case find_diagram(Did, Diagrams) of 
     not_created -> 
