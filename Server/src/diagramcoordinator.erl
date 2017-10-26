@@ -26,7 +26,7 @@ loop(Pids, [L|Ls], Message_number) ->
     {next_message, Pid} -> 
 	  Pid ! ok,
       {From, To, Message} = L,
-	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To)),
+	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Pid),
       receive
 	    {message_done, From, To, Message} ->
 		  Pid ! {message_sent, From, To, Message, Message_number}
@@ -46,9 +46,10 @@ spawn_node(Class_name) ->
   {node:init(self()), Class_name}.
 
 %sends a message to the given node
-send_message(Receiver, From, To, Message, To_pid) ->
-  Receiver ! {send_message, From, To, Message, To_pid},
+send_message(Receiver, From, To, Message, To_pid, Pid) ->
+  Receiver ! {send_message, From, To, Message, To_pid}
   receive
-    {send_reply} -> 
-	  send_reply_received
+    {send_reply, From} -> 
+	  Pid ! {send_reply_received, From, To},
+	  io:format("Some string")
   end.
