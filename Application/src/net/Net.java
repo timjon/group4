@@ -27,7 +27,7 @@ public class Net implements Runnable {
             con.openConnection();
             con.sendMessage(temp);
             while (con.checkConnection()) {
-                ExecutionLog.elog.clear();
+
                 String result = con.receiveMessage();
 
                 while (ExecutionLog.elog == null);

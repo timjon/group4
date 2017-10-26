@@ -7,19 +7,15 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ListView;
-import javafx.scene.text.Font;
 
 /**
  * @author Pontus Laestadius
- * @version 0.3
+ * @version 0.4
  */
 public class ExecutionLog extends ListView {
     public static ExecutionLog elog;
-
-    ListView<String> listView = new ListView<>();
-    ObservableList<String> data = FXCollections.observableArrayList();
-
-    static Font font = new Font("courier", 12);
+    private ListView<String> listView = new ListView<>();
+    private ObservableList<String> data = FXCollections.observableArrayList();
 
     public ExecutionLog() {
         elog = this;
@@ -33,8 +29,8 @@ public class ExecutionLog extends ListView {
     }
 
     /**
-     * Adds an item to the ExecutionLog.
      * Forwards
+     * Adds an item to the ListView.
      */
     public void fwd(String line) {
         data.add(line);
@@ -43,17 +39,24 @@ public class ExecutionLog extends ListView {
 
     /**
      * Backwards
+     * Removes the last item from the ListView.
      */
     public void bwd() {
         data.remove(data.size()-1);
         update();
     }
 
+    /**
+     * Removes all items from the ListView.
+     */
     public void clear() {
         data = FXCollections.observableArrayList();
         update();
     }
 
+    /**
+     * Updates the data in the ListView.
+     */
     private void update() {
         listView.setItems(data);
         listView.scrollTo(data.size()-1);
@@ -61,7 +64,11 @@ public class ExecutionLog extends ListView {
         model.selectLast();
     }
 
+    /**
+     * @return a container ListView.
+     */
     public ListView<String> getContainer() {
         return listView;
     }
 }
+
