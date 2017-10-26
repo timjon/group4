@@ -11,6 +11,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.io.DataInputStream;
 
@@ -33,6 +34,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) {
 
         primaryStage.setTitle("FUML");
+		primaryStage.getIcons().add(new Image("resources/logo.png"));
         Button btn_import = new Button();
         btn_import.setText("Import");
         Server_connection server = new Server_connection();
@@ -76,7 +78,7 @@ public class Main extends Application {
                 new ChangeListener<Tab>() {
                     @Override
                     public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
-                        for (DiagramView dv: DiagramView.list) {
+                        for (DiagramView dv: DiagramView.diagramViews) {
                             dv.redraw();
                         }
                     }

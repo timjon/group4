@@ -3,21 +3,33 @@ package visuals;
 /**
  * Holds x and y positions
  * @author Pontus Laestadius
+ * @version 1.0
  */
-public class Coordinates {
+class Coordinates {
     private int x;
     private int y;
 
+    /**
+     * Initializes the object with all fields.
+     * @param x the position relative to the horizontal alignment.
+     * @param y the position relative to the vertical alignment.
+     */
     Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public int getX() {
+    /**
+     * @return the x coordinate.
+     */
+    int getX() {
         return x;
     }
 
-    public int getY() {
+    /**
+     * @return the y coordinate.
+     */
+    int getY() {
         return y;
     }
 }
