@@ -9,12 +9,12 @@ import visuals.Draw;
  * @author Pontus Laestadius
  */
 public class Animation extends Thread {
-    private static Thread th;
+    private static Thread singletonAnimationThread;
 
     @Override
     public void run() {
-        if (th == null) { // Only allow a single Animation thread.
-            th = this; // If none exists, reserve it for this thread.
+        if (singletonAnimationThread == null) { // Only allow a single Animation thread.
+            singletonAnimationThread = this; // If none exists, reserve it for this thread.
             loop(); // Animation handling.
         }
     }
@@ -24,8 +24,8 @@ public class Animation extends Thread {
      * Updates and redraws the canvas.
      */
     private void loop() {
-        while (th != null) { // Makes terminating the thread externally possible.
-            try { // SLeeps for the time in between updates.
+        while (singletonAnimationThread != null) { // Makes terminating the thread externally possible.
+            try { // Sleeps for the time in between updates.
                 Thread.sleep(1000/5); // 5 frames per second.
             } catch (InterruptedException e) {
                 System.err.println(e.toString());

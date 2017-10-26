@@ -73,7 +73,7 @@ public class Main extends Application {
                 new ChangeListener<Tab>() {
                     @Override
                     public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
-                        for (DiagramView dv: DiagramView.list) {
+                        for (DiagramView dv: DiagramView.diagramViews) {
                             dv.redraw();
                         }
                     }
