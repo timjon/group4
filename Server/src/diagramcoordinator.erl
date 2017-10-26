@@ -1,37 +1,38 @@
 -module(diagramcoordinator).
--export([init/1]).
+-export([init/2]).
 
 %%Author: Tim Jonasson
-%%Version: 1.1
+%%Version: 1.2
 
 %Returns no_classes when there was no classes in the given diagram 
-init({[], _}) -> no_classes;
+init(_Usercoordinator, {[], _}) -> no_classes;
 %Returns no_messages when there was no messages in the given diagram 
-init({_, []}) -> no_messages;
+init(_Usercoordinator, {_, []}) -> no_messages;
 %Spawns and Initializes the diagram coordinator
-init({L, Messages}) -> 
+init(Usercoordinator, {L, Messages}) -> 
   Pids = spawn_nodes(L),
-  loop(Pids, Messages, 1).
+  loop(Usercoordinator, Pids, Messages, 1).
   
 %Sends and receives messages until the list of messages is empty  
-loop(_, [], Message_number) ->
+loop(Usercoordinator, _, [], Message_number) ->
   receive
     {next_message, Pid} -> 
 	  Pid ! ok,
       Pid ! {simulation_done, Message_number}
   end;
 %This loop runs until the list is empty (when there are no more messages)
-loop(Pids, [L|Ls], Message_number) -> 
+loop(Usercoordinator, Pids, [L|Ls], Message_number) -> 
   receive
-    {next_message, Pid} -> 
-	  Pid ! ok,
+    {next_message, Usercoordinator} -> 
+	  Usercoordinator ! ok,
       {From, To, Message} = L,
-	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To)),
+	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number),
+	  
       receive
-	    {message_done, From, To, Message} ->
-		  Pid ! {message_sent, From, To, Message, Message_number}
+	    {message_done, From, To, Message, Message_number} ->
+		  Usercoordinator ! {message_sent, From, To, Message, Message_number}
 	  end,
-	  loop(Pids, Ls, Message_number + 1)
+	  loop(Usercoordinator, Pids, Ls, Message_number + 1)
   end.
   
 %checks if a class has a process and spawns it if it doesnt exist
@@ -43,11 +44,12 @@ spawn_nodes(List) ->[spawn_node(Class) || Class <- List].
 
 %spawns a node and returns a tuple with the pid and the class name
 spawn_node(Class_name) -> 
-  {node:init(self()), Class_name}.
+  Self = self(),
+  {node:init(Self), Class_name}.
 
 %sends a message to the given node
-send_message(Receiver, From, To, Message, To_pid) ->
-  Receiver ! {send_message, From, To, Message, To_pid},
+send_message(Receiver, From, To, Message, To_pid, Message_number) ->
+  Receiver ! {send_message, From, To, Message, To_pid, Message_number},
   receive
     {send_reply} -> 
 	  send_reply_received
