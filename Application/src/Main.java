@@ -45,7 +45,6 @@ public class Main extends Application {
 
             }});
 
-
         Button btn2 = new Button();
         btn2.setText("Settings");
         btn2.setOnAction(new EventHandler<ActionEvent>() {
