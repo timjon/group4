@@ -45,6 +45,14 @@ public class DiagramClass implements Renderable {
     }
 
     /**
+     * @return the given name and not the class name of this DiagramClass.
+     */
+    public String getName() {
+        String[] s = name.split(":");
+        return s[1];
+    }
+
+    /**
      * From: Renderable
      * Handles animation processing.
      */

@@ -59,6 +59,21 @@ public class Draw {
 
     }
 
+
+    /**
+     *
+     * @param name class name to match.
+     * @return the index the DiagramClass is located at.
+     */
+    public int messageNameToMessageInt(String name){
+        for (int i = 0; i < diagramClasses.size(); i++) {
+            System.out.println("match: '" + diagramClasses.get(i).getName() + "' with '" + name + "'");
+            if (diagramClasses.get(i).getName().equals(name))
+                return i;
+        }
+        return -1;
+    }
+
     // Always renders with a new specific resolution.
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
