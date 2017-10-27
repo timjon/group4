@@ -18,26 +18,20 @@ import static visuals.DiagramView.tabPane;
 public class Draw {
 
     private Canvas canvas; // Draws and handles graphical context
-    private ArrayList<Class> classes = new ArrayList<>(); // Stores the classes
+    private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
-    private String name; // Name of the Draw object
     private int class_size = 0; // Used for message positioning
-
-    public String getName() {
-        return name;
-    }
-
-    Canvas getCanvas() {
-        return canvas;
-    }
 
     /**
      * Constructor
      */
-    Draw(String n, int w, int h) {
+    Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        name = n;
+    }
+
+    Canvas getCanvas() {
+        return canvas;
     }
 
     int getHeight() {
@@ -52,7 +46,7 @@ public class Draw {
      * Draws a Class on the provided canvas.
      */
     private void addClass(String name) {
-        classes.add(new Class(name));
+        diagramClasses.add(new DiagramClass(name));
     }
 
     /**
@@ -64,7 +58,6 @@ public class Draw {
                 classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
     }
-
 
     // Always renders with a new specific resolution.
     void resize(double w, double h) {
@@ -111,9 +104,9 @@ public class Draw {
      * Renders classes in a new thread as well as the messages.
      */
     void renderContainer() {
-        if (!DiagramView.inView(name)) return;
+        if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Thread c = new Thread(new Render(gc,classes));
+        Thread c = new Thread(new Render(gc, diagramClasses));
         c.start();
 
         for (Renderable r: messages)
@@ -132,7 +125,7 @@ public class Draw {
      * Updates the Renderables.
      */
     public void update() {
-        for (Renderable r: classes)
+        for (Renderable r: diagramClasses)
             r.update();
         for (Renderable r: messages)
             r.update();
@@ -156,22 +149,22 @@ public class Draw {
      * Updates the class to fit the resized window.
      */
     void renderClass() {
-        if (classes.size() == 0) return; // There are no items to render
-        int space = (getWidth())/this.classes.size(); // The amount of space each class can use.
+        if (diagramClasses.size() == 0) return; // There are no items to render
+        int space = (getWidth())/this.diagramClasses.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
-        for(int i = 0; i < classes.size(); i++) {
+        for(int i = 0; i < diagramClasses.size(); i++) {
             int x = size+ (i*space);
-            int y = 40;
-            classes.get(i).place(new Coordinates(x,y), size);
+            int y = 25 +size/4;
+            diagramClasses.get(i).place(new Coordinates(x,y), size);
         }
     }
 
     /**
-     * Animates on a new thread.
+     * Starts the global Animation thread for all Draw objects and views.
      */
-    void animate() {
-        (new Thread(new Animation(this))).start(); // Adds the animation on a separate thread.
+    static void animate() {
+        (new Thread(new Animation())).start();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -193,12 +186,13 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             String name = "diagram " + i;
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
 
         }
+        Draw.animate();
     }
 }
