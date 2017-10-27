@@ -9,11 +9,13 @@ import java.util.Collection;
 
 public class DiagramCheck {
 	// Supported diagram types.
+
     private static String[] allowedDiagrams = {"sequence_diagram"};
 	
 	/**
     * Checks if the JSON file contains a diagram type supported by the application.
     * @return diagram type.
+
     * @param s collection of Strings that make up the JSON file
     */
     public static String ContainsDiagram(Collection<String> s){
@@ -27,6 +29,7 @@ public class DiagramCheck {
             }
         }
 		// Set error message for the dialog box.
+
         disp("Error", "Invalid diagram");
         return "Invalid diagram";
     }
