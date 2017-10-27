@@ -4,8 +4,8 @@ import java.util.List;
 
 /**
  * This Class is part Sequence Diagram Object for the parser from JSON to POJO (Plain Old Java Objects)
- * The getters and setters and their decelerations are made to adhere with a predetermined JSON format
- *
+ * The getters and setters and their declarations are made to adhere with a predetermined JSON format
+ declarations
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * @version 1.0
  * @since 2017-10-16
