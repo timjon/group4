@@ -1,17 +1,29 @@
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
+import javafx.scene.image.Image;
+
+import java.io.DataInputStream;
+
+import visuals.DiagramView;
+import visuals.Draw;
+import visuals.handlers.Resizer;
+
+import java.awt.*;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
+import static visuals.DiagramView.tabPane;
 
 import java.util.Collection;
 
@@ -19,10 +31,12 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
     @Override
     public void start(Stage primaryStage) {
 
         primaryStage.setTitle("FUML");
+
         Button btn_import = new Button();
         btn_import.setText("Import");
         btn_import.setOnAction(new EventHandler<ActionEvent>() {
@@ -46,70 +60,66 @@ public class Main extends Application {
 
             }});
 
+
         Button btn2 = new Button();
         btn2.setText("Settings");
         btn2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("Settings");
-            }
+                System.out.println("Settings"); } // Settings button handler.
         });
 
-        TextArea ta = new TextArea("Execution Log: \n " +
+        TextArea ta = new TextArea("Execution Log: \n " +  // Execution log text-box and it's current contents.
                 "> Node1: sent a message to Node2 \n " +
                 "> Node2: received message from Node1 \n " +
                 "> Node2: sent a OK to Node1 \n " +
                 "> Node1: received an OK from Node2");
         ta.setEditable(false);
-        ta.minHeight(1100);
-        ta.setMaxWidth(302);
         ta.setPrefColumnCount(60);
         ta.setPrefRowCount(50);
 
-        GridPane pane =  new GridPane();
-        pane.setHgap(5);
-        pane.setVgap(5);
-        pane.add(btn_import, 1,0);
-        pane.add(btn2, 2,        0);
-        pane.add(ta, 1, 3, 20, 20);
+        int ta_width = 270;
+        ta.setMaxWidth(ta_width);
 
-        Group root = new Group();
-        Canvas canvas = new Canvas(600, 300);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        drawShapes(gc);
-        pane.add(canvas, 22, 3, 20, 20);
 
-        StackPane stack = new StackPane();
+        tabPane = new TabPane();
 
-        stack.getChildren().add(pane);
+        // When you switch tabs, renders the tabs again after they were frozen.
+        tabPane.getSelectionModel().selectedItemProperty().addListener(
+                new ChangeListener<Tab>() {
+                    @Override
+                    public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
+                        for (DiagramView dv: DiagramView.diagramViews) {
+                            dv.redraw();
+                        }
+                    }
+                }
+        );
 
-        Scene main = new Scene(stack,1200, 840);
+        BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
+        HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
+        menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
+        menu.getChildren().add(btn2);
+        borderpane.setTop(menu); // Gets the menu to be at the top of the window.
+        borderpane.setLeft(ta); // Sets the Execution log to be on the left side.
+        borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
+
+        Scene main;
+        //Scales the application to the size of the window or displays it in a maximized view.
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth(); // Gets the width of the screen.
+        double height = screenSize.getHeight(); // Gets the height of the screen.
+        if (width < 1400) { // When the width is smaller than a certain width, Start as maximized.
+            main = new Scene(borderpane,width, height);
+            primaryStage.setMaximized(true);
+        } else { // All other cases, the width should be set to 720p.
+            main = new Scene(borderpane,1280, 720);
+        }
 
         primaryStage.setScene(main);
         primaryStage.show();
-    }
 
-
-    private void drawShapes(GraphicsContext gc) {
-        gc.setFill(Color.GREEN);
-        gc.setStroke(Color.BLUE);
-        gc.setLineWidth(5);
-        gc.strokeLine(40, 10, 10, 40);
-        gc.fillOval(10, 60, 30, 30);
-        gc.strokeOval(60, 60, 30, 30);
-        gc.fillRoundRect(110, 60, 30, 30, 10, 10);
-        gc.strokeRoundRect(160, 60, 30, 30, 10, 10);
-        gc.fillArc(10, 110, 30, 30, 45, 240, ArcType.OPEN);
-        gc.fillArc(60, 110, 30, 30, 45, 240, ArcType.CHORD);
-        gc.fillArc(110, 110, 30, 30, 45, 240, ArcType.ROUND);
-        gc.strokeArc(10, 160, 30, 30, 45, 240, ArcType.OPEN);
-        gc.strokeArc(60, 160, 30, 30, 45, 240, ArcType.CHORD);
-        gc.strokeArc(110, 160, 30, 30, 45, 240, ArcType.ROUND);
-        gc.fillPolygon(new double[]{10, 40, 10, 40},
-                new double[]{210, 210, 240, 240}, 4);
-        gc.strokePolygon(new double[]{60, 90, 60, 90},
-                new double[]{210, 210, 240, 240}, 4);
-        gc.strokePolyline(new double[]{110, 140, 110, 140},
-                new double[]{210, 210, 240, 240}, 4);
+        Draw.temp_generate_diagram(); // TODO replace with actual parsing.
+        Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
     }
 }
