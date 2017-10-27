@@ -67,7 +67,7 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
     not_created -> 
 	  %Sends the class names and messages to the client
       %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-      Format_result = io_lib:format("~p", [{Did, Class_names, Messages}]) ++ "~",
+      Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
       gen_tcp:send(Socket, Format_result),
 	  Self = self(),
 	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
