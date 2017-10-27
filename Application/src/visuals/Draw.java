@@ -3,6 +3,7 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.Net;
 import visuals.handlers.Animation;
 
 import java.util.ArrayList;
@@ -152,8 +153,11 @@ public class Draw {
     /**
      * Starts the global Animation thread for all Draw objects and views.
      */
-    static void animate() {
-        (new Thread(new Animation())).start();
+    static void animate(boolean active) {
+        if (active)
+            (new Thread(new Animation())).start();
+        else
+            Animation.cancel();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -178,6 +182,7 @@ public class Draw {
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
         }
-        Draw.animate();
+        Draw.animate(true);
+        Net.test();
     }
 }
