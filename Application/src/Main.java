@@ -34,8 +34,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.getIcons().add(new Image("resources/logo.png"));
 
         primaryStage.setTitle("FUML");
+        Server_connection server = new Server_connection();
+        server.Init();
 
         Button btn_import = new Button();
         btn_import.setText("Import");
