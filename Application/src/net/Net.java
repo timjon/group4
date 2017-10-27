@@ -1,5 +1,6 @@
 package net;
 
+import visuals.DiagramView;
 import visuals.ExecutionLog;
 import javafx.application.Platform;
 import visuals.handlers.Animation;
@@ -48,9 +49,10 @@ public class Net implements Runnable {
                 // Blocks until a message is received.
                 String result = con.receiveMessage();
 
-                // Updates the ExecutionLog.
                 Platform.runLater(() -> {
-                    executionLog.fwd(result);
+                    // Decodes the message and executions it's result.
+                    Decode decode = new Decode(result);
+                    decode.execute();
                 });
             }
 
@@ -72,8 +74,7 @@ public class Net implements Runnable {
         Net.push("{1, [\"gateway:g\",\"user:u1\",\"user:u2 \",\"user:u3\"], [g, u1, u2, u3], [{u1, g,[fwd, u2, msg1]},{u3, g,[fwd, u1, msg2]},{ g, u2,[fwd, u2, msg1]},{g, u1,[fwd, u1, msg2]}]}");
 
         for (int i = 0; i < 5; i++) {
-            Net.push("{1, send_message}");
+            Net.push("{1, next_message}");
         }
-
     }
 }

@@ -45,7 +45,7 @@ public class Draw {
     /**
      * Draws a Class on the provided canvas.
      */
-    private void addClass(String name) {
+    public void addClass(String name) {
         diagramClasses.add(new DiagramClass(name));
     }
 
@@ -176,6 +176,11 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
+        Net.test();
+        Draw.animate(true);
+    }
+
+    public static void old_generate_diagram() {
         for (int i = 1; i <= 5; i++) {
             String name = "diagram " + i;
             DiagramView dv = new DiagramView(name);
