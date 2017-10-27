@@ -16,9 +16,9 @@ init(Usercoordinator, Did, {L, Messages}) ->
 %Sends and receives messages until the list of messages is empty  
 loop(Usercoordinator, Did, _, [], Message_number) ->
   receive
-    {next_message, Pid} -> 
-	  Pid ! ok,
-      Pid ! {simulation_done, Did, Message_number}
+    {next_message, Usercoordinator} -> 
+	  Usercoordinator ! ok,
+      Usercoordinator ! {simulation_done, Did, Message_number}
   end;
 %This loop runs until the list is empty (when there are no more messages)
 loop(Usercoordinator, Did, Pids, [L|Ls], Message_number) -> 
