@@ -9,6 +9,7 @@ import static visuals.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
+ * @version 0.1
  */
 class Decode {
     String raw;
@@ -20,52 +21,32 @@ class Decode {
 
     void execute() {
         if (raw == null) return;
+        int id_index = raw.indexOf(",");
+        String id_string = raw.substring(1, id_index);
+        int id = Integer.decode(id_string);
 
-        if (raw.contains("simulation_finished")) {
-            // Clears the ExecutionLog and prints no connection, if you are disconnected.
-            write(raw);
+        if (raw.contains("simulation_finished")) { // If the simulation is finished.
+            write("Simulation finished");
+
         } else if (raw.contains("print_information")) { // If it's a statement to only print.
             write(raw);
             // TODO needs proper ID.
             Net.push("{1, send_message}");
 
         } else { // If it's a message or a list of classes.
-
-            System.out.println("raw:" + raw);
             int msg_start = raw.indexOf("[");
             int msg_end = raw.indexOf("]");
             String msg = raw.substring(msg_start, msg_end);
 
             String values = raw.replace(msg, "");
-            String[] split_values = values.split(",");
-
             byte[] bytes = raw.getBytes();
 
             if (bytes[bytes.length-2] >= (byte)'0' && bytes[bytes.length-2] <= (byte)'9') { // Message
-                Platform.runLater(() -> {
-                    Draw d = DiagramView.getDiagramViewInView().getDraw();
-                    int from = d.messageNameToMessageInt(removeCharactersFromString(split_values[1], ' '));
-                    int to = d.messageNameToMessageInt(removeCharactersFromString(split_values[2], ' '));
-                    d.addMessage(from, to, msg);// TODO string to numberings.
-                });
-
+                message(msg, values.split(","));
             } else { // New Diagram
-                // TODO check if diagram_id is unique
-
-                DiagramView dv = new DiagramView("diagram 1");
-                tabPane.getTabs().add(dv.getTab());
-
-                Platform.runLater(() -> {
-                    draw = dv.getDraw();
-                    for (String s: msg.split(",")) {
-                        draw.addClass(removeCharactersFromString(s, '[', ']', '\"'));
-                    }
-                    tabPane.getTabs().add(dv.getTab());
-                });
-
+                diagramClasses(msg);
             }
         }
-
     }
 
     /**
@@ -76,12 +57,47 @@ class Decode {
      */
     private String removeCharactersFromString(String string, char... characters) {
         StringBuilder sb = new StringBuilder();
+        boolean e = false;
         for (char ch: string.toCharArray()) {
-            for (char ch2: characters)
-                if (ch == ch2) break;
-            sb.append(ch);
+            for (char ch2: characters) {
+                if (ch == ch2) {
+                    e = true;
+                    break;
+                }
+            }
+            if (!e)
+                sb.append(ch);
+            e = false;
         }
         return sb.toString();
+    }
+
+    /**
+     * Given a string following the network protocol, will create a new diagram with the provided classes.
+     * @param classes to draw up the diagram with.
+     */
+    private void diagramClasses(String classes) {
+        // TODO check if diagram_id is unique
+
+        DiagramView dv = new DiagramView("diagram 1");
+        tabPane.getTabs().add(dv.getTab());
+        draw = dv.getDraw();
+
+        Platform.runLater(() -> {
+            for (String s: classes.split(",")) {
+                draw.addClass(removeCharactersFromString(s, '[', ']', '\"'));
+            }
+        });
+    }
+
+    private void message(String message, String[] values) {
+        Draw d = DiagramView.getDiagramViewInView().getDraw();
+        int from = d.messageNameToMessageInt(removeCharactersFromString(values[1], ' '));
+        int to = d.messageNameToMessageInt(removeCharactersFromString(values[2], ' '));
+        Platform.runLater(() -> {
+            write(from + " -> " + to + "msg: " + message);
+            d.addMessage(from, to, message);
+        });
     }
 
     /**
