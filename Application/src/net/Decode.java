@@ -42,7 +42,7 @@ class Decode {
             byte[] bytes = raw.getBytes();
 
             if (bytes[bytes.length-2] >= (byte)'0' && bytes[bytes.length-2] <= (byte)'9') { // Message
-                message(msg, values.split(","));
+                message(DiagramView.getDiagramViewInView().getDraw(), msg, values.split(","));
             } else { // New Diagram
                 diagramClasses(msg);
             }
@@ -90,10 +90,9 @@ class Decode {
         });
     }
 
-    private void message(String message, String[] values) {
-        Draw d = DiagramView.getDiagramViewInView().getDraw();
-        int from = d.messageNameToMessageInt(removeCharactersFromString(values[1], ' '));
-        int to = d.messageNameToMessageInt(removeCharactersFromString(values[2], ' '));
+    private void message(Draw d, String message, String[] values) {
+        int from = d.findClassIndex(removeCharactersFromString(values[1], ' '));
+        int to = d.findClassIndex(removeCharactersFromString(values[2], ' '));
         Platform.runLater(() -> {
             write(from + " -> " + to + "msg: " + message);
             d.addMessage(from, to, message);

@@ -34,8 +34,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("FUML");
 		primaryStage.getIcons().add(new Image("resources/logo.png"));
-        Button btn_import = new Button();
-        btn_import.setText("Import");
+        Button btn_import = new Button("Import");
         btn_import.setOnAction((ActionEvent event) -> {
             Collection<String> result = Import.file(primaryStage);
             if (result == null) return;
@@ -45,10 +44,15 @@ public class Main extends Application {
             System.out.println(result);
         });
 
-        Button btn2 = new Button();
-        btn2.setText("Settings");
+        Button btn2 = new Button("Settings");
         btn2.setOnAction((ActionEvent event) ->{
             System.out.println("Settings");  // Settings button handler.
+        });
+
+        Button btn3 = new Button("Next");
+        btn3.setOnAction((ActionEvent event) ->{
+            Net.push("{1, next_message}");
+
         });
 
         tabPane = new TabPane();
@@ -62,7 +66,7 @@ public class Main extends Application {
                             dv.redraw();
                         }
                         DiagramView dv = DiagramView.getDiagramViewInView();
-                        if (dv != null) dv.focus();
+                        dv.focus();
                     }
                 }
         );
@@ -73,6 +77,7 @@ public class Main extends Application {
         HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
         menu.getChildren().add(btn2);
+        menu.getChildren().add(btn3);
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
         borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.

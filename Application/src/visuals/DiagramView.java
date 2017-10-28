@@ -18,7 +18,6 @@ public class DiagramView {
     public static TabPane tabPane;
 
     private Draw draw;
-    private String tabName;
     private State state = State.PAUSED;
     private Tab tab;
 
@@ -40,7 +39,7 @@ public class DiagramView {
      */
     static boolean inView(Draw draw) {
         DiagramView dv = getDiagramViewInView();
-        return dv != null && dv.getDraw() == draw;
+        return dv.getDraw() == draw;
     }
 
     /**
@@ -53,15 +52,13 @@ public class DiagramView {
     /**
      * @return the DiagramView that is currently being viewed. null if none.
      */
-    public static DiagramView getDiagramViewInView() {
-        for (DiagramView d: diagramViews) {
-            Tab t = d.getTab();
-            String id = t.getId();
-            if (id.equals(getInView())) {
+    public static DiagramView getDiagramViewInView() throws IllegalStateException {
+        if (diagramViews.size() == 0)
+            throw new IllegalStateException("No views exist");
+        for (DiagramView d: diagramViews)
+            if (d.getTab().getId().equals(getInView()))
                 return d;
-            }
-        }
-        return null;
+        throw new IllegalStateException("View not in view list");
     }
 
     /**
@@ -71,11 +68,10 @@ public class DiagramView {
      */
     public DiagramView(String tabName) {
         this.draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
-        this.tabName = tabName;
         diagramViews.add(this);
         this.tab = new Tab();
         tab.setId(UniqueCounter.getString());
-        tab.setText(this.tabName);
+        tab.setText(tabName);
         tab.setContent(draw.getCanvas());
     }
 

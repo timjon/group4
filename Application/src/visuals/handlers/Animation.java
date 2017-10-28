@@ -48,12 +48,15 @@ public class Animation extends Thread {
             }
 
             long t1 = System.currentTimeMillis();
-            // Retrieves the draw that is in view and updates and redraws it.
-            DiagramView dv = DiagramView.getDiagramViewInView();
-            if (dv == null) continue; // If a View is not established. Skip.
-            Draw draw = dv.getDraw(); // Get the Draw object from the view.
-            draw.update(); // Updates the states of the Renderable objects.
-            draw.redraw(); // Redraws their graphics on the canvas.
+
+            try { // Catches if there is not view.
+                // Retrieves the draw that is in view and updates and redraws it.
+                Draw draw = DiagramView.getDiagramViewInView().getDraw(); // Get the Draw object from the view.
+                draw.update(); // Updates the states of the Renderable objects.
+                draw.redraw(); // Redraws their graphics on the canvas.
+            } catch (IllegalStateException ex) {
+                continue;
+            }
 
             timeSinceLastUpdate = (System.currentTimeMillis() -t1 > 1000/framesPerSecond ?
                     0 : System.currentTimeMillis() -t1);
