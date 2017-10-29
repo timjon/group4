@@ -3,6 +3,7 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import visuals.handlers.Animation;
 import visuals.handlers.Render;
 
@@ -11,8 +12,8 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.7
- * @author Pontus Laestadius, Sebastian Fransson
+ * @version 0.10
+ * @author Pontus Laestadius, Sebastian Fransson, Rashad Kamsheh
  */
 
 public class Draw {
@@ -22,6 +23,9 @@ public class Draw {
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
     private int class_size = 0; // Used for message positioning
+	
+    //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
+    private static Image animatedBackground = new Image("resources/SkyGIF.gif");
 
     /**
      * Constructor
@@ -86,19 +90,15 @@ public class Draw {
     }
 
     /**
-     * initializes the simulation canvas with background colours.
+     * initializes the simulation canvas with an animated 8-bit sky/ocean background .
      */
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
-
-        gc.setFill(Color.ALICEBLUE); // Sets the color to GREY
-        int split = getHeight()/2 +getHeight()/4;
-        gc.fillRect(0,0,getWidth(),split);
-        gc.setFill(Color.CORNFLOWERBLUE); // Sets the color to GREY
-        gc.fillRect(0,split,getWidth(), getHeight());
-        gc.setFill(Color.BLACK); // Resets the color to BLACK
+        // adds an animated gif file to the canvas with proper height and width
+        gc.drawImage(animatedBackground,10,10,this.canvas.getHeight()*2,this.canvas.getWidth()/1.5);
     }
+
 
     /**
      * Renders classes in a new thread as well as the messages.
