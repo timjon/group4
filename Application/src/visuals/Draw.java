@@ -59,6 +59,11 @@ public class Draw {
 
     }
 
+    public void removeMessage() {
+        if (messages.isEmpty()) return;
+        messages.remove(messages.size()-1);
+    }
+
 
     /**
      *

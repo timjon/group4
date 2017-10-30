@@ -60,14 +60,15 @@ public class Main extends Application {
             }});
 
 
-        Button btn3 = new Button("Previous");
-        btn3.setOnAction((ActionEvent event) ->{
+        Button button_previous = new Button("Previous");
+        button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{1, previous_message}");
             ExecutionLog.getInstance().bwd();
+            DiagramView.getDiagramViewInView().getDraw().removeMessage();
         });
 
-        Button btn3 = new Button("Next");
-        btn3.setOnAction((ActionEvent event) ->{
+        Button button_next = new Button("Next");
+        button_next.setOnAction((ActionEvent event) ->{
             Net.push("{1, next_message}");
         });
 
@@ -92,8 +93,8 @@ public class Main extends Application {
         BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
         HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
-        menu.getChildren().add(btn2);
-        menu.getChildren().add(btn3);
+        menu.getChildren().add(button_previous); // Adds next button
+        menu.getChildren().add(button_next); // Adds previous button
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
         borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
