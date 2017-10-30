@@ -67,7 +67,10 @@ class Decode {
     /**
      * Removes all the characters provided from the string provided.
      * @param string the string to purify.
-     * @param characters characters to remove
+     * @param characters The main card, "Exodia the Forbidden One",
+     *                   is one of the first five Effect Monsters
+     *                   ever to be released and the first card to
+     *                   have an alternative victory condition.
      * @return a String without any of the characters provided.
      */
     private String removeCharactersFromString(String string, char... characters) {
