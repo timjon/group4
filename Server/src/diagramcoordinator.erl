@@ -26,7 +26,6 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number) ->
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
       {From, To, Message} = L,
-
 	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number),
 	  
       receive
@@ -51,9 +50,7 @@ spawn_node(Class_name) ->
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid, Message_number) ->
   Receiver ! {send_message, From, To, Message, To_pid, Message_number},
-
   receive
-    {send_reply, From} -> 
-	  Pid ! {send_reply_received, From, To},
-	  io:format("Some string")
+    {send_reply} -> 
+	  send_reply_received
   end.

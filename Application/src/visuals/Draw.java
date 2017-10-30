@@ -67,7 +67,6 @@ public class Draw {
      */
     public int findClassIndex(String name){
         for (int i = 0; i < diagramClasses.size(); i++) {
-            System.out.println("match: '" + diagramClasses.get(i).getName() + "' with '" + name + "'");
             if (diagramClasses.get(i).getName().equals(name))
                 return i;
         }

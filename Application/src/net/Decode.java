@@ -20,6 +20,7 @@ class Decode {
     }
 
     void execute() {
+        System.out.println(raw);
         if (raw == null) return;
         int id_index = raw.indexOf(",");
         String id_string = raw.substring(1, id_index);
@@ -31,7 +32,7 @@ class Decode {
         } else if (raw.contains("print_information")) { // If it's a statement to only print.
             write(raw);
             // TODO needs proper ID.
-            Net.push("{1, send_message}");
+            Net.push("{" + id + ", send_message}");
 
         } else { // If it's a message or a list of classes.
             int msg_start = raw.indexOf("[");
@@ -83,11 +84,14 @@ class Decode {
         tabPane.getTabs().add(dv.getTab());
         draw = dv.getDraw();
 
+
         Platform.runLater(() -> {
             for (String s: classes.split(",")) {
                 draw.addClass(removeCharactersFromString(s, '[', ']', '\"'));
             }
         });
+
+        write(classes);
     }
 
     private void message(Draw d, String message, String[] values) {

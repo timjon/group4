@@ -41,13 +41,22 @@ public class Net implements Runnable {
             con.openConnection();
             ExecutionLog executionLog = ExecutionLog.getInstance();
             while (con.checkConnection()) {
+
+                try { // This makes the application work. It may not be touched.
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    System.err.println(e);
+                }
+
                 // Only do anything if there is a message to send.
                 if (queue.isEmpty()) continue;
 
+                // Sends the first message in queue.
                 con.sendMessage(queue.remove(0));
 
                 // Blocks until a message is received.
                 String result = con.receiveMessage();
+
 
                 Platform.runLater(() -> {
                     // Decodes the message and executions it's result.
@@ -70,6 +79,7 @@ public class Net implements Runnable {
         }
     }
 
+    // Test example to send a diagram to the server.
     public static void test() {
         Net.push("{1, [\"gateway:g\",\"user:u1\",\"user:u2 \",\"user:u3\"], [g, u1, u2, u3], [{u1, g,[fwd, u2, msg1]},{u3, g,[fwd, u1, msg2]},{ g, u2,[fwd, u2, msg1]},{g, u1,[fwd, u1, msg2]}]}");
     }
