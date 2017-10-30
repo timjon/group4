@@ -38,7 +38,7 @@ loop(Socket, Diagrams) ->
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
 	  loop(Socket, Diagrams);
 	  
-	  %%Executionlog stuff
+	%This case happens when there are messages to print to the execution log
 	{Did, print_information, Msg}->
 		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
 		gen_tcp:send(Socket, [Format_result ++ "~"]),
