@@ -24,6 +24,8 @@ import java.util.Collection;
 
 import static visuals.DiagramView.tabPane;
 
+import java.util.Collection;
+
 public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -31,18 +33,32 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.getIcons().add(new Image("resources/logo.png"));
 
         primaryStage.setTitle("FUML");
-		primaryStage.getIcons().add(new Image("resources/logo.png"));
-        Button btn_import = new Button("Import");
-        btn_import.setOnAction((ActionEvent event) -> {
-            Collection<String> result = Import.file(primaryStage);
-            if (result == null) return;
-            // Check if the JSON file contains a supported diagram type.
-            System.out.println(DiagramCheck.ContainsDiagram(result));
-            // TODO remove print line and parse result (user story 5)
-            System.out.println(result);
-        });
+        Button btn_import = new Button();
+        btn_import.setText("Import");
+        btn_import.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Collection<String> result = Import.file(primaryStage);
+                if (result == null) return;
+
+                // Parse the element if it contains a supported diagram
+                Parser parse = new Parser();
+                switch(DiagramCheck.ContainsDiagram(result)) {
+                    case "sequence_diagram" :
+                        for (String element : result) {
+                            parse.parseSequenceDiagram(element);
+                        }
+                        break;
+
+                }
+                // if the diagram is not included in the switch case, check if the diagram is invalid
+                DiagramCheck.ContainsDiagram(result);
+
+            }});
+
 
         Button btn2 = new Button("Settings");
         btn2.setOnAction((ActionEvent event) ->{
@@ -52,7 +68,6 @@ public class Main extends Application {
         Button btn3 = new Button("Next");
         btn3.setOnAction((ActionEvent event) ->{
             Net.push("{1, next_message}");
-
         });
 
         tabPane = new TabPane();
@@ -108,5 +123,4 @@ public class Main extends Application {
         });
 
     }
-
 }
