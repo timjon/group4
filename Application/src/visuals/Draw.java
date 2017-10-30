@@ -191,8 +191,8 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        //Net.test();
-        old_generate_diagram();
+        Net.test();
+        //old_generate_diagram();
         Draw.animate(true);
     }
 

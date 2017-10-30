@@ -71,6 +71,6 @@ public class Net implements Runnable {
     }
 
     public static void test() {
-        Net.push("{1, [\"gateway:g\",\"user:u1\",\"user:u2 \",\"user:u3\"], [g, u1, u2, u3], [{1, u1, g,[fwd, u2, msg1]},{1, u3, g,[fwd, u1, msg2]},{1, g, u2,[fwd, u2, msg1]},{1, g, u1,[fwd, u1, msg2]}]}");
+        Net.push("{1, [\"gateway:g\",\"user:u1\",\"user:u2 \",\"user:u3\"], [g, u1, u2, u3], [{u1, g,[fwd, u2, msg1]},{u3, g,[fwd, u1, msg2]},{ g, u2,[fwd, u2, msg1]},{g, u1,[fwd, u1, msg2]}]}");
     }
 }
