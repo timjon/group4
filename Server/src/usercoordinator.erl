@@ -2,7 +2,7 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 2.0
+%%Version: 2.1
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -22,18 +22,18 @@ loop(Socket, Diagrams) ->
 	  shut_down;
 	
 	%This case happens when a message has been sent in a diagram and the info is supposed to be sent to the client
-	{message_sent, From, To, Message, Message_number} -> 
+	{message_sent, Did, From, To, Message, Message_number} -> 
 	  %Turns the result into binary
 	  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-	  Format_result = io_lib:format("~p", [{From, To, Message, Message_number}]) ++ "~",
+	  Format_result = io_lib:format("~p", [{Did, From, To, Message, Message_number}]) ++ "~",
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result]),
 	  loop(Socket, Diagrams);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
-	{simulation_done, Message_number} -> 
+	{simulation_done, Did, Message_number} -> 
 	  %Turns the result into binary
-	  Format_result = io_lib:format("~p", ["simulation_finished, " ++ integer_to_list(Message_number)]),
+	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
 	  loop(Socket, Diagrams)
@@ -67,9 +67,9 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
     not_created -> 
 	  %Sends the class names and messages to the client
       %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-      Format_result = io_lib:format("~p", [{Class_names, Messages}]) ++ "~",
+      Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
       gen_tcp:send(Socket, Format_result),
 	  Self = self(),
-	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, {Classes, Messages}) end)}| Diagrams]);
+	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
 	_           -> already_created
   end.

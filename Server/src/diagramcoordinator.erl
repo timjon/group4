@@ -1,27 +1,27 @@
 -module(diagramcoordinator).
--export([init/2]).
+-export([init/3]).
 
 %%Author: Tim Jonasson
-%%Version: 1.2
+%%Version: 1.3
 
 %Returns no_classes when there was no classes in the given diagram 
-init(_Usercoordinator, {[], _}) -> no_classes;
+init(_Usercoordinator, _Did, {[], _}) -> no_classes;
 %Returns no_messages when there was no messages in the given diagram 
-init(_Usercoordinator, {_, []}) -> no_messages;
+init(_Usercoordinator, _Did, {_, []}) -> no_messages;
 %Spawns and Initializes the diagram coordinator
-init(Usercoordinator, {L, Messages}) -> 
+init(Usercoordinator, Did, {L, Messages}) -> 
   Pids = spawn_nodes(L),
-  loop(Usercoordinator, Pids, Messages, 1).
+  loop(Usercoordinator, Did, Pids, Messages, 1).
   
 %Sends and receives messages until the list of messages is empty  
-loop(Usercoordinator, _, [], Message_number) ->
+loop(Usercoordinator, Did, _, [], Message_number) ->
   receive
-    {next_message, Pid} -> 
-	  Pid ! ok,
-      Pid ! {simulation_done, Message_number}
+    {next_message, Usercoordinator} -> 
+	  Usercoordinator ! ok,
+      Usercoordinator ! {simulation_done, Did, Message_number}
   end;
 %This loop runs until the list is empty (when there are no more messages)
-loop(Usercoordinator, Pids, [L|Ls], Message_number) -> 
+loop(Usercoordinator, Did, Pids, [L|Ls], Message_number) -> 
   receive
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
@@ -30,9 +30,9 @@ loop(Usercoordinator, Pids, [L|Ls], Message_number) ->
 	  
       receive
 	    {message_done, From, To, Message, Message_number} ->
-		  Usercoordinator ! {message_sent, From, To, Message, Message_number}
+		  Usercoordinator ! {message_sent, Did, From, To, Message, Message_number}
 	  end,
-	  loop(Usercoordinator, Pids, Ls, Message_number + 1)
+	  loop(Usercoordinator, Did, Pids, Ls, Message_number + 1)
   end.
   
 %checks if a class has a process and spawns it if it doesnt exist
