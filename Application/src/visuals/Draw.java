@@ -3,15 +3,15 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.Net;
 import visuals.handlers.Animation;
-import visuals.handlers.Render;
 
 import java.util.ArrayList;
 
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.80
+ * @version 0.8
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -45,7 +45,7 @@ public class Draw {
     /**
      * Draws a Class on the provided canvas.
      */
-    private void addClass(String name) {
+    public void addClass(String name) {
         diagramClasses.add(new DiagramClass(name));
     }
 
@@ -57,6 +57,20 @@ public class Draw {
         this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
+    }
+
+
+    /**
+     *
+     * @param name class name to match.
+     * @return the index the DiagramClass is located at.
+     */
+    public int findClassIndex(String name){
+        for (int i = 0; i < diagramClasses.size(); i++) {
+            if (diagramClasses.get(i).getName().equals(name))
+                return i;
+        }
+        return -1;
     }
 
     // Always renders with a new specific resolution.
@@ -106,19 +120,10 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Thread c = new Thread(new Render(gc, diagramClasses));
-        c.start();
-
+        for (Renderable r: diagramClasses)
+            r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
-
-
-        try {
-            c.join();
-        } catch (InterruptedException e) {
-            System.err.println(e.toString());
-            System.out.println(e.toString());
-        }
     }
 
     /**
@@ -163,8 +168,11 @@ public class Draw {
     /**
      * Starts the global Animation thread for all Draw objects and views.
      */
-    static void animate() {
-        (new Thread(new Animation())).start();
+    static void animate(boolean active) {
+        if (active)
+            (new Thread(new Animation())).start();
+        else
+            Animation.cancel();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -186,6 +194,12 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
+        Net.test();
+        //old_generate_diagram();
+        Draw.animate(true);
+    }
+
+    public static void old_generate_diagram() {
         for (int i = 1; i <= 5; i++) {
             String name = "diagram " + i;
             DiagramView dv = new DiagramView(name);
@@ -193,6 +207,5 @@ public class Draw {
             tabPane.getTabs().add(dv.getTab());
 
         }
-        Draw.animate();
     }
 }

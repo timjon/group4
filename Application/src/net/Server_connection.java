@@ -1,3 +1,4 @@
+package net;
 
 import java.io.*;
 import java.net.*;
@@ -18,14 +19,14 @@ public class Server_connection {
     /**
      * Initializes the connection to the backend server
      */
-    public void Init(){
-       OpenConnection();
+    public void init(){
+       openConnection();
     }
 
     /**
      * Opens the connection to the port and ip
      */
-    public void OpenConnection(){
+    public void openConnection(){
         try {
             socket = new Socket("127.0.0.1", 8040);
             outputStream =  new PrintWriter(socket.getOutputStream());
@@ -40,7 +41,7 @@ public class Server_connection {
     /**
      * Closes the connection to the server
      */
-    public void CloseConnection(){
+    public void closeConnection(){
         try {
             outputStream.close();
             inputStream.close();
@@ -55,8 +56,8 @@ public class Server_connection {
      * sends a message to the server
      * @param Message The message sent to the server
      */
-    public void SendMessage(String Message) {
-        if (CheckConnection()) {
+    public void sendMessage(String Message) {
+        if (checkConnection()) {
             outputStream.print(Message);
             outputStream.flush();
 
@@ -66,7 +67,7 @@ public class Server_connection {
     /**
      * Reads a message from the server
      */
-    public String ReceiveMessage() {
+    public String receiveMessage() {
         StringBuilder stringBuilder = new StringBuilder();
         int value;
         try {
@@ -84,7 +85,7 @@ public class Server_connection {
      * Checks if the connection is open
      * @return true if the connection is open
      */
-    private boolean CheckConnection(){
+    boolean checkConnection(){
             return socket != null && outputStream != null && inputStream != null;
     }
 }
