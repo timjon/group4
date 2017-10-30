@@ -115,10 +115,6 @@ public class DiagramView {
      * Allocates and displays the ExecutionLog for the current DiagramView.
      */
     public void focus() {
-        // TODO figure out why if these are commented out, it works.
-        //DiagramView dv = getDiagramViewInView();
-        //if (dv == null) return;
-        //dv.setlogData(ExecutionLog.elog.getData());
         Platform.runLater(() -> {
             ExecutionLog.getInstance().setData(logData);
         });
