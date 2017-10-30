@@ -191,7 +191,8 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        Net.test();
+        //Net.test();
+        old_generate_diagram();
         Draw.animate(true);
     }
 
@@ -202,7 +203,5 @@ public class Draw {
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
         }
-        Draw.animate(true);
-        Net.test();
     }
 }
