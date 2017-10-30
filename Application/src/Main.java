@@ -60,9 +60,10 @@ public class Main extends Application {
             }});
 
 
-        Button btn2 = new Button("Settings");
-        btn2.setOnAction((ActionEvent event) ->{
-            System.out.println("Settings");  // Settings button handler.
+        Button btn3 = new Button("Previous");
+        btn3.setOnAction((ActionEvent event) ->{
+            Net.push("{1, previous_message}");
+            ExecutionLog.getInstance().bwd();
         });
 
         Button btn3 = new Button("Next");

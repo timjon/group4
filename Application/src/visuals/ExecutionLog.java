@@ -48,6 +48,7 @@ public class ExecutionLog extends ListView {
      * Removes the last item from the ListView.
      */
     public void bwd() {
+        if (data.isEmpty()) return;
         data.remove(data.size()-1);
         update();
     }
