@@ -26,8 +26,9 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number) ->
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
       {From, To, Message} = L,
-	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number),
-	  
+	  %----Changed
+	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Usercoordinator, Did),
+	  %----Changed	  
       receive
 	    {message_done, From, To, Message, Message_number} ->
 		  Usercoordinator ! {message_sent, Did, From, To, Message, Message_number}
@@ -47,10 +48,13 @@ spawn_node(Class_name) ->
   Self = self(),
   {node:init(Self), Class_name}.
 
+  %----This has been changed!
 %sends a message to the given node
-send_message(Receiver, From, To, Message, To_pid, Message_number) ->
+send_message(Receiver, From, To, Message, To_pid, Message_number, Usercoordinator, Did) ->
   Receiver ! {send_message, From, To, Message, To_pid, Message_number},
+  Usercoordinator !  {Did, print_information, ["Node " ++ atom_to_list(From) ++ " sent a message to " ++ atom_to_list(To)]},
   receive
-    {send_reply} -> 
-	  send_reply_received
-  end.
+    {send_reply, From, To, Message, To_pid, Message_number} -> 
+		%I wanna send this info up, so that I can send it via tcp to the frontend	
+		Usercoordinator ! {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]} 
+		end.

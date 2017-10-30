@@ -36,7 +36,14 @@ loop(Socket, Diagrams) ->
 	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
-	  loop(Socket, Diagrams)
+	  loop(Socket, Diagrams);
+	  
+	  %%Executionlog stuff
+	{Did, print_information, Msg}->
+		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
+		gen_tcp:send(Socket, [Format_result ++ "~"]),
+		loop(Socket, Diagrams)
+	  
   end.
  
 %Finds the correct diagram from the given list
