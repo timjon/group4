@@ -54,8 +54,8 @@ public class Draw {
      */
     public void addMessage(int fromNode, int toNode, String name){
         offset += 8;
-        this.messages.add(new Message(classes.get(fromNode).getCoordinates(),
-                classes.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
+        this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
+                diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
     }
 
@@ -138,8 +138,8 @@ public class Draw {
         if(messages.size() == 0) return; // There are no messages in the list.
         if(this.messages.size() > 0) {
             for (int i = 0; i < messages.size(); i++) { //Messages exist and will now be be re-placed.
-                Coordinates node1 = classes.get(messages.get(i).getFromNode()).getCoordinates();
-                Coordinates node2 = classes.get(messages.get(i).getToNode()).getCoordinates();
+                Coordinates node1 = diagramClasses.get(messages.get(i).getFromNode()).getCoordinates();
+                Coordinates node2 = diagramClasses.get(messages.get(i).getToNode()).getCoordinates();
                 messages.get(i).changeCoordinates(node1, node2, class_size); // Changes the coordinates of the messages.
             }
         }

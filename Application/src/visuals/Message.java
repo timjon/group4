@@ -2,11 +2,13 @@ package visuals;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import visuals.handlers.Animation;
 
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * @version 0.40
+ * @version 0.45
  */
 public class Message implements Renderable{
     private String name;
@@ -14,8 +16,13 @@ public class Message implements Renderable{
     private int fromNode, toNode;
     private int offset; // offset for the message "ordering".
     private int class_size; // identifier for the current class size so that messages can scale.
-    int animationBounds = 0;
-    boolean keepAnimating = true; // State of the animation. Beginning or ending.
+    private int animationBounds = 0;
+    private boolean keepAnimating = true; // State of the animation. Beginning or ending.
+    private boolean switchImage;
+    //Images for dragon animation.
+    private static Image dragonMessage = new Image("resources/DammitDrag.png");
+    private static Image dragonMessage2 = new Image("resources/logo.png");
+    private static Image dragonMessageRev = new Image("resources/DammitDragRev.png");
 
     /**
      * Constructor
@@ -72,10 +79,10 @@ public class Message implements Renderable{
 
     /**
      * Renders a message on the canvas using the provided coordinates.
+     * Updates the message image and placing for simulation.
      */
     @Override
     public void render(GraphicsContext gc){
-
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
@@ -84,17 +91,40 @@ public class Message implements Renderable{
         int y2 = this.node2.getY(); // Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
-        int messageX = (x1+x2)/2; // Always start in the middle of the message line.
+       // int messageX = (x1+x2)/2; // Always start in the middle of the message line. //TODO:Remove
         int maxW = (x2 + this.class_size/2) - (x1 + this.class_size/2); // Max width of the fillText
-        gc.strokeLine(x1+this.class_size/2, y1 + (this.class_size), x2+this.class_size/2, y1 + (this.class_size)); // Message Line.
-        gc.fillText(this.name, messageX, y1 + (this.class_size - 2), maxW); // Message description.
+        gc.strokeLine(x1, y1 + (this.class_size), x2, y1 + (this.class_size)); // Message Line. //TODO:Remove
+
+        //TODO: stupid if's, i don't like you.
+        if(keepAnimating==true) {
+            gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2), maxW); // Message description.
+            if (switchImage == true && fromNode < toNode) {
+                gc.drawImage(dragonMessage, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                switchImage = false;
+            } else if (switchImage == false && fromNode < toNode) {
+                gc.drawImage(dragonMessage2, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                switchImage = true;
+            }
+            else if(switchImage==true){
+                gc.drawImage(dragonMessageRev, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                switchImage = false;
+            }
+            else{
+                gc.drawImage(dragonMessage2, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                switchImage = true;
+            }
+
+        }
+
 
         // Temporary graphics before we have dragons.
+        /* Inactive while testing drawImage.
         gc.setFill(Color.RED);
         gc.fillRect(x1+animationBounds, y1 + (this.class_size), 7, 7);
         gc.setFill(Color.GREEN);
         gc.fillRect(x1+animationBounds , y1 + (this.class_size) +2, 3, 3);
         gc.setFill(Color.BLACK);
+        */
 
        // gc.drawImage(image,x1+coolvariable, y1+50, 7, 7 ); // Dragon Image thats going to represent the messages.
 

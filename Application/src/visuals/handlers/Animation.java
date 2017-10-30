@@ -26,7 +26,7 @@ public class Animation extends Thread {
     private void loop() {
         while (singletonAnimationThread != null) { // Makes terminating the thread externally possible.
             try { // Sleeps for the time in between updates.
-                Thread.sleep(1000/5); // 5 frames per second.
+                Thread.sleep(1000/2); // 5 frames per second.
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
             }
