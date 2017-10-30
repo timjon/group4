@@ -45,7 +45,11 @@ spawn_nodes(List) ->[spawn_node(Class) || Class <- List].
 %spawns a node and returns a tuple with the pid and the class name
 spawn_node(Class_name) -> 
   Self = self(),
-  {node:init(Self), Class_name}.
+  {Pid, Class_name} = {node:init(Self), Class_name},
+  % Link the node process to the diagram coordinator
+  % so that if the node crashes, the former also crashes.
+  link(Pid),
+  {Pid, Class_name}.
 
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid, Message_number) ->
