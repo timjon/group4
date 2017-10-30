@@ -63,8 +63,10 @@ public class Main extends Application {
         Button button_previous = new Button("Previous");
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{1, previous_message}");
-            ExecutionLog.getInstance().bwd();
-            DiagramView.getDiagramViewInView().getDraw().removeMessage();
+            // Only go back if you can remove a message.
+            if (DiagramView.getDiagramViewInView().getDraw().removeMessage())
+                // Remove a line from the execution log.
+                ExecutionLog.getInstance().bwd();
         });
 
         Button button_next = new Button("Next");
