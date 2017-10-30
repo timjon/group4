@@ -1,4 +1,4 @@
-﻿﻿# [FUML: Making UML Fun]
+# [FUML: Making UML Fun]
  
  <img width="200" height="200" src="https://github.com/timjon/group4/blob/develop/Application/src/resources/logo.png">
  
