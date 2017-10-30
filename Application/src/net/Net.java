@@ -37,7 +37,7 @@ public class Net implements Runnable {
 
     private void inner_loop() {
         Server_connection con = new Server_connection();
-        while (true) {
+        while (true) { // Handles connecting and reconnecting, Should always run.
             con.openConnection();
             ExecutionLog executionLog = ExecutionLog.getInstance();
             while (con.checkConnection()) {
