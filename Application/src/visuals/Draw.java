@@ -105,7 +105,7 @@ public class Draw {
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
-
+        Animation.setFramesPerSecond(3);
         gc.setFill(Color.ALICEBLUE); // Sets the color to GREY
         int split = getHeight()/2 +getHeight()/4;
         gc.fillRect(0,0,getWidth(),split);
@@ -190,12 +190,12 @@ public class Draw {
             this.addMessage(3, 4, "Msg2");
             this.addMessage(4, 3, "Msg3");
         }
-        animate(); // Animates all example messages at once. in the real execution messages would be sent in iterations, so ordering is of no issue.
+        animate(true); // Animates all example messages at once. in the real execution messages would be sent in iterations, so ordering is of no issue.
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        Net.test();
-        //old_generate_diagram();
+        //Net.test();
+        old_generate_diagram();
         Draw.animate(true);
     }
 

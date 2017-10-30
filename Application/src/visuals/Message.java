@@ -59,11 +59,11 @@ public class Message implements Renderable{
         // Animate
         try {
            if(keepAnimating == true && node2.getX() > node1.getX()) { // Sending a message.
-               if ((animationBounds += 8) > this.node2.getX() - this.node1.getX()) keepAnimating = false;
+               if ((animationBounds += class_size/6) > this.node2.getX() - this.node1.getX()) keepAnimating = false;
            }
 
            else if(keepAnimating == true && node1.getX() > node2.getX()){ // Sending return message.
-               if((animationBounds -= 8) < (this.node2.getX() + 10)  - this.node1.getX()) keepAnimating = false;
+               if((animationBounds -= class_size/6) < (this.node2.getX())  - this.node1.getX()) keepAnimating = false;
            }
         } catch (Exception e) {e.printStackTrace();}
     }
@@ -91,13 +91,10 @@ public class Message implements Renderable{
         int y2 = this.node2.getY(); // Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
-       // int messageX = (x1+x2)/2; // Always start in the middle of the message line. //TODO:Remove
-        int maxW = (x2 + this.class_size/2) - (x1 + this.class_size/2); // Max width of the fillText
-        gc.strokeLine(x1, y1 + (this.class_size), x2, y1 + (this.class_size)); // Message Line. //TODO:Remove
 
         //TODO: stupid if's, i don't like you.
         if(keepAnimating==true) {
-            gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2), maxW); // Message description.
+            gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2)); // Message description.
             if (switchImage == true && fromNode < toNode) {
                 gc.drawImage(dragonMessage, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
                 switchImage = false;
@@ -115,20 +112,6 @@ public class Message implements Renderable{
             }
 
         }
-
-
-        // Temporary graphics before we have dragons.
-        /* Inactive while testing drawImage.
-        gc.setFill(Color.RED);
-        gc.fillRect(x1+animationBounds, y1 + (this.class_size), 7, 7);
-        gc.setFill(Color.GREEN);
-        gc.fillRect(x1+animationBounds , y1 + (this.class_size) +2, 3, 3);
-        gc.setFill(Color.BLACK);
-        */
-
-       // gc.drawImage(image,x1+coolvariable, y1+50, 7, 7 ); // Dragon Image thats going to represent the messages.
-
-
     }
 
     /**
