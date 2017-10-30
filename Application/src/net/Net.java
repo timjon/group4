@@ -30,6 +30,10 @@ public class Net implements Runnable {
             (new Thread(new Net())).start();
     }
 
+    /**
+     * Pushes a string to queue which will be processed in the order they are received.
+     * @param string to be sent to the server.
+     */
     public static void push(String string) {
         // TODO validate message here.
         queue.add(string);
@@ -56,7 +60,6 @@ public class Net implements Runnable {
 
                 // Blocks until a message is received.
                 String result = con.receiveMessage();
-
 
                 Platform.runLater(() -> {
                     // Decodes the message and executions it's result.

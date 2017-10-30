@@ -12,38 +12,52 @@ import static visuals.DiagramView.tabPane;
  * @version 0.1
  */
 class Decode {
-    String raw;
-    static Draw draw;
+    String raw; // Raw string to be decoded.
 
+    /**
+     * @param string string to decode.
+     */
     Decode(String string) {
         raw = string;
     }
 
+    /**
+     * Decodes the raw string and allocates it to it's associated diagram.
+     */
     void execute() {
         System.out.println(raw);
+
+        // If no string has been allocated, abort.
         if (raw == null) return;
+
+        // Split the raw string in to fields.
         int id_index = raw.indexOf(",");
-        String id_string = raw.substring(1, id_index);
-        int id = Integer.decode(id_string);
+
+        String id_string = raw.substring(1, id_index);  // Retrieves the Diagram_ID.
+        int id = Integer.decode(id_string); // String to Integer.
 
         if (raw.contains("simulation_finished")) { // If the simulation is finished.
-            write("Simulation finished");
+            write("Simulation finished"); // Write Simulation finished in the execution log.
 
         } else if (raw.contains("print_information")) { // If it's a statement to only print.
-            write(raw);
-            // TODO needs proper ID.
+            write(raw); // Writes the raw data TODO replace with statement provided.
             Net.push("{" + id + ", send_message}");
 
         } else { // If it's a message or a list of classes.
-            int msg_start = raw.indexOf("[");
-            int msg_end = raw.indexOf("]");
-            String msg = raw.substring(msg_start, msg_end);
+            int msg_start = raw.indexOf("["); // Finds the end of the message content.
+            int msg_end = raw.indexOf("]"); // Finds the start of the message content.
+            String msg = raw.substring(msg_start, msg_end); // Message content. as a substring.
+            String values = raw.replace(msg, ""); // Removes the message content from raw.
+            byte[] bytes = raw.getBytes(); // Gets the raw message as bytes.
 
-            String values = raw.replace(msg, "");
-            byte[] bytes = raw.getBytes();
-
+            // Identifies if it's a message or a new diagram by the next to last byte being a integer or not.
             if (bytes[bytes.length-2] >= (byte)'0' && bytes[bytes.length-2] <= (byte)'9') { // Message
-                message(DiagramView.getDiagramViewInView().getDraw(), msg, values.split(","));
+
+                // Adds message to the DiagramView.
+                message(
+                        DiagramView.getDiagramViewInView().getDraw(),// TODO change if you want multiple diagrams.
+                        msg, // The message content.
+                        values.split(",")); // Split the fields remaining.
             } else { // New Diagram
                 diagramClasses(msg);
             }
@@ -82,8 +96,7 @@ class Decode {
 
         DiagramView dv = new DiagramView("diagram 1");
         tabPane.getTabs().add(dv.getTab());
-        draw = dv.getDraw();
-
+        Draw draw = dv.getDraw();
 
         Platform.runLater(() -> {
             for (String s: classes.split(",")) {
@@ -94,9 +107,19 @@ class Decode {
         write(classes);
     }
 
+    /**
+     * Adds a message to a Draw object.
+     * @param d draw to add the message too.
+     * @param message content and what to display to send.
+     * @param values includes the nodes it traverses.
+     */
     private void message(Draw d, String message, String[] values) {
+        // Remove spaces from the From.
         int from = d.findClassIndex(removeCharactersFromString(values[1], ' '));
+        // Removes spaces from the To.
         int to = d.findClassIndex(removeCharactersFromString(values[2], ' '));
+
+        // Adds the message and notifies the execution log.
         Platform.runLater(() -> {
             write(from + " -> " + to + "msg: " + message);
             d.addMessage(from, to, message);
@@ -109,6 +132,7 @@ class Decode {
      */
     private void write(String string) {
         Platform.runLater(() -> {
+            // Gets the instance and writes a new line.
             ExecutionLog.getInstance().fwd(string);
         });
     }
