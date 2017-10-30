@@ -73,7 +73,7 @@ public class Draw {
     }
 
     /**
-     * remakes the "Items", reffering to messages and classes
+     * remakes the "Items", referring to messages and classes
      */
     void renderItems() {
         renderClass();
