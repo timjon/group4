@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.10
+ * @version 0.8
  * @author Pontus Laestadius, Sebastian Fransson, Rashad Kamsheh
  */
 
