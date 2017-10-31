@@ -78,10 +78,7 @@ public class Draw {
         for (int i = 0; i < diagramClasses.size(); i++) {
             if (diagramClasses.get(i).getName().equals(name))
                 return i;
-            else
-                System.out.println(diagramClasses.get(i).getName() + "!=" + name);
         }
-        System.out.println("no match");
         return -1;
     }
 

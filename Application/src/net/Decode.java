@@ -96,14 +96,13 @@ class Decode {
         tabPane.getTabs().add(diagramView.getTab());
         Draw draw = diagramView.getDraw();
 
-
         Platform.runLater(() -> {
             int numberOfClasses = 0;
             for (String s: classes.split(",")) {
                 draw.addClass(removeCharactersFromString(s, '[', ']', '\"'));
                 numberOfClasses+=1;
             }
-            write("Added " + numberOfClasses + " classes");
+            write("CREATED: Added " + numberOfClasses + " classes");
 
         });
 
