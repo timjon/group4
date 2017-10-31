@@ -2,10 +2,8 @@
 -export([init/3]).
 
 %%Author: Tim Jonasson
-%%Version: 1.3
-
-%%Colaborator: Isabelle Törnqvist 2017-10-30
-%%Version ??
+%%Collaborator: Isabelle Törnqvist 2017-10-30
+%%Version: 1.4
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Usercoordinator, _Did, {[], _}) -> no_classes;
@@ -32,7 +30,7 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number) ->
       receive
 	    {message_done, From, To, Message, Message_number} ->
 		  Usercoordinator ! {message_sent, Did, From, To, Message, Message_number},
-		  %Sends info to the usercoordinator that a message has been received
+		  %Sends info to the usercoordinator that a message has been received by a node. To be printed in the executionlog
 		  Usercoordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
 	  loop(Usercoordinator, Did, Pids, Ls, Message_number + 1)
@@ -48,7 +46,7 @@ spawn_nodes(List, Did, Usercoordinator) ->[spawn_node(Class, Did, Usercoordinato
 %spawns a node and returns a tuple with the pid and the class name
 spawn_node(Class_name, Did, Usercoordinator) -> 
   Self = self(),
-  %Sends info to the usercoordinator, that a node has been spawned
+  %Sends info to the usercoordinator, that a node has been spawned. To be printed in the executionlog
   Usercoordinator ! {Did, print_information, ["Spawned node " ++ atom_to_list(Class_name)]},
   {node:init(Self), Class_name}.
 
@@ -57,6 +55,6 @@ send_message(Receiver, From, To, Message, To_pid, Message_number, Usercoordinato
   Receiver ! {send_message, From, To, Message, To_pid, Message_number},
   receive
     {send_reply, From, To, Message, To_pid, Message_number} -> 
-		%Sends info to the usercoordinator, that the node sucessfully sent a message	
+		%Sends info to the usercoordinator, that the node sucessfully sent a message. To be printed in the executionlog	
 		Usercoordinator ! {Did, print_information, ["Node " ++ atom_to_list(From) ++ " sent a message to " ++ atom_to_list(To)]} 
 		end.
