@@ -5,39 +5,64 @@ import javafx.stage.Stage;
 import visuals.DiagramView;
 
 /**
- * The Resizer runs on a separate thread and there can only exist one at a time.
- * It's in charge of when the canvases are meant call resize after a certain time delay.
+ * The Resizer runs on a separate thread and there can only exist one at a waitAndResize.
+ * It's in charge of when the canvases are meant call resize after a certain waitAndResize delay.
  * @author Pontus Laestadius
  * @version 1.0
  */
 public class Resizer implements Runnable {
-    private static Resizer th;
+
+    // A single thread which runs a resizing operation.
+    private static Resizer singletonResizer;
+
+    // The current time the resizer has waited since the last resize.
     private static int timer = 0;
+
+    // The time in milliseconds before each check of the timer value.
+    private static int increment = 5;
+
+    // The amount of time in milliseconds the resizer has to wait.
+    private static int finished = 40;
 
     /**
      * Runs when the thread starts.
      */
     public void run() {
-        if (th == null) // Only allow one instance to run at a time
-            time();
+
+        // Only allow one instance to run at a waitAndResize
+        if (singletonResizer == null)
+            waitAndResize();
     }
 
     /**
-     * I bet tim wont read this, But just complains about no comments.
+     * Handles a single instance in which it waits a specific time before calling for a resize.
      */
-    private void time(){
-        th = this;
-        while ((timer+=5) < 45) { // A 400ms delay in which the timer can be reset
+    private void waitAndResize(){
+
+        // Reserves the instance to this object.
+        singletonResizer = this;
+
+        // A delay in which the timer can be reset.
+        while ((timer+=increment) < finished) {
+
+            // Sleep for the same waitAndResize as timer increases
             try {
-                Thread.sleep(5); // Sleep for the same time as timer increases
+                Thread.sleep(increment);
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
                 System.out.println(e.toString());
             }
+
         }
-        for (DiagramView d: DiagramView.diagramViews) // For all opened diagrams:
-            d.resize(); // Resize them
-        th = null; // Allows a new instance to start once this one is finished
+
+        // For all opened diagrams:
+        for (DiagramView d: DiagramView.diagramViews)
+
+            // Resize them
+            d.resize();
+
+        // Allows a new instance to start once this one is finished.
+        singletonResizer = null;
     }
 
     /**
@@ -45,12 +70,24 @@ public class Resizer implements Runnable {
      * @param primaryStage the stage to add the listener too.
      */
     public static void init(Stage primaryStage) {
+
+        // Listens for changes in stage size.
         ChangeListener<Number> stageSizeListener = (obserable, oldVal, newVal) -> {
+
+            // Set the timer to 0 to reset the time since the last resize.
             timer = 0;
-            if (th == null)
+
+            // Check if there is an instance already running.
+            if (singletonResizer == null)
+
+                // Start a new resizer thread.
                 (new Thread(new Resizer())).start();
         };
+
+        // Adds the listener for the width and height properties of the provided stage.
         primaryStage.widthProperty().addListener(stageSizeListener);
         primaryStage.heightProperty().addListener(stageSizeListener);
+
     }
+
 }

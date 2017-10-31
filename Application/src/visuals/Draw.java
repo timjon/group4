@@ -75,17 +75,24 @@ public class Draw {
      * @return the index the DiagramClass is located at.
      */
     public int findClassIndex(String name){
+
+        // Iterate over the existing diagram classes
         for (int i = 0; i < diagramClasses.size(); i++) {
+
             if (diagramClasses.get(i).getName().equals(name))
+
+                // Return the index in the array.
                 return i;
         }
+
+        // Return a number that can't exist if the class does not. Thus a negative number.
         return -1;
     }
 
     /**
      * Always renders with a new specific resolution.
      * @param w the new width of the canvas.
-     * @param h he new height of the canvas.
+     * @param h the new height of the canvas.
      */
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
