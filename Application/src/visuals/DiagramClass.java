@@ -45,6 +45,14 @@ public class DiagramClass implements Renderable {
     }
 
     /**
+     * @return the given name and not the class name of this DiagramClass.
+     */
+    public String getName() {
+        String[] s = name.split(":");
+        return s[1];
+    }
+
+    /**
      * From: Renderable
      * Handles animation processing.
      */
@@ -103,7 +111,6 @@ public class DiagramClass implements Renderable {
 
         Image castle_state = castleStates[(int)aniindex];
         placeGraphicCentered(gc, castle_state, size_DiagramClass,0, 0);
-
 
         // Draws the name of the DiagramClass.
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.

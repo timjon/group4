@@ -3,15 +3,15 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.Net;
 import visuals.handlers.Animation;
-import visuals.handlers.Render;
 
 import java.util.ArrayList;
 
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.7
+ * @version 0.8
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -30,14 +30,23 @@ public class Draw {
         canvas = new Canvas(w, h);
     }
 
+    /**
+     * Gets the active canvas.
+     */
     Canvas getCanvas() {
         return canvas;
     }
 
+    /**
+     * Gets the active canvas height.
+     */
     int getHeight() {
         return (int)canvas.getHeight();
     }
 
+    /**
+     * Gets the active canvas width
+     */
     int getWidth() {
         return (int)canvas.getWidth();
     }
@@ -45,7 +54,7 @@ public class Draw {
     /**
      * Draws a Class on the provided canvas.
      */
-    private void addClass(String name) {
+    public void addClass(String name) {
         diagramClasses.add(new DiagramClass(name));
     }
 
@@ -53,13 +62,27 @@ public class Draw {
      * Creates a message from and to given nodes with an attached name.
      */
     public void addMessage(int fromNode, int toNode, String name){
-        offset += 10;
+        offset += 8;
         this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
     }
 
-    // Always renders with a new specific resolution.
+
+    /**
+     *
+     * @param name class name to match.
+     * @return the index the DiagramClass is located at.
+     */
+    public int findClassIndex(String name){
+        for (int i = 0; i < diagramClasses.size(); i++) {
+            if (diagramClasses.get(i).getName().equals(name))
+                return i;
+        }
+        return -1;
+    }
+
+    //Always renders with a new specific resolution.
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
@@ -86,12 +109,12 @@ public class Draw {
     }
 
     /**
-     * initializes the simulation canvas with background colours.
+     * initializes the simulation canvas with background colours and frame rate.
      */
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
-
+        Animation.setFramesPerSecond(3); // Sets the desired frames per second.
         gc.setFill(Color.ALICEBLUE); // Sets the color to GREY
         int split = getHeight()/2 +getHeight()/4;
         gc.fillRect(0,0,getWidth(),split);
@@ -106,18 +129,10 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Thread c = new Thread(new Render(gc, diagramClasses));
-        c.start();
-
+        for (Renderable r: diagramClasses)
+            r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
-
-        try {
-            c.join();
-        } catch (InterruptedException e) {
-            System.err.println(e.toString());
-            System.out.println(e.toString());
-        }
     }
 
     /**
@@ -134,11 +149,12 @@ public class Draw {
      * Renders the message when trying to resize the application.
      */
     void renderMessage() {
+        if(messages.size() == 0) return; // There are no messages in the list.
         if(this.messages.size() > 0) {
-            for (int i = 0; i < messages.size(); i++) {
+            for (int i = 0; i < messages.size(); i++) { //Messages exist and will now be be re-placed.
                 Coordinates node1 = diagramClasses.get(messages.get(i).getFromNode()).getCoordinates();
                 Coordinates node2 = diagramClasses.get(messages.get(i).getToNode()).getCoordinates();
-                messages.get(i).changeCoordinates(node1, node2, class_size);
+                messages.get(i).changeCoordinates(node1, node2, class_size); // Changes the coordinates of the messages.
             }
         }
     }
@@ -161,8 +177,11 @@ public class Draw {
     /**
      * Starts the global Animation thread for all Draw objects and views.
      */
-    static void animate() {
-        (new Thread(new Animation())).start();
+    static void animate(boolean active) {
+        if (active)
+            (new Thread(new Animation())).start();
+        else
+            Animation.cancel();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -176,17 +195,26 @@ public class Draw {
             this.addClass("Class " + i);
         // Messages
         this.addMessage(0, 1, "Msg1");
-        if (nr > 4)
+        if (nr > 4) {
             this.addMessage(3, 4, "Msg2");
+            this.addMessage(4, 3, "Msg3");
+        }
+        animate(true); // Animates all example messages at once. in the real execution messages would be sent in iterations, so ordering is of no issue.
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
+        //Net.test();
+        old_generate_diagram();
+        Draw.animate(true);
+    }
+
+    public static void old_generate_diagram() {
         for (int i = 1; i <= 5; i++) {
             String name = "diagram " + i;
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
+
         }
-        Draw.animate();
     }
 }

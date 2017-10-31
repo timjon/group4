@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -7,21 +8,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-import java.io.DataInputStream;
-
+import net.Net;
 import visuals.DiagramView;
 import visuals.Draw;
+import visuals.ExecutionLog;
 import visuals.handlers.Resizer;
 
 import java.awt.*;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 import static visuals.DiagramView.tabPane;
 
@@ -37,9 +36,6 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image("resources/logo.png"));
 
         primaryStage.setTitle("FUML");
-        Server_connection server = new Server_connection();
-        server.Init();
-
         Button btn_import = new Button();
         btn_import.setText("Import");
         btn_import.setOnAction(new EventHandler<ActionEvent>() {
@@ -64,26 +60,15 @@ public class Main extends Application {
             }});
 
 
-        Button btn2 = new Button();
-        btn2.setText("Settings");
-        btn2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Settings"); } // Settings button handler.
+        Button btn2 = new Button("Settings");
+        btn2.setOnAction((ActionEvent event) ->{
+            System.out.println("Settings");  // Settings button handler.
         });
 
-        TextArea ta = new TextArea("Execution Log: \n " +  // Execution log text-box and it's current contents.
-                "> Node1: sent a message to Node2 \n " +
-                "> Node2: received message from Node1 \n " +
-                "> Node2: sent a OK to Node1 \n " +
-                "> Node1: received an OK from Node2");
-        ta.setEditable(false);
-        ta.setPrefColumnCount(60);
-        ta.setPrefRowCount(50);
-
-        int ta_width = 270;
-        ta.setMaxWidth(ta_width);
-
+        Button btn3 = new Button("Next");
+        btn3.setOnAction((ActionEvent event) ->{
+            Net.push("{1, next_message}");
+        });
 
         tabPane = new TabPane();
 
@@ -95,17 +80,22 @@ public class Main extends Application {
                         for (DiagramView dv: DiagramView.diagramViews) {
                             dv.redraw();
                         }
+                        DiagramView dv = DiagramView.getDiagramViewInView();
+                        dv.focus();
                     }
                 }
         );
+
+        ExecutionLog executionLog = new ExecutionLog();
 
         BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
         HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
         menu.getChildren().add(btn2);
+        menu.getChildren().add(btn3);
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
-        borderpane.setLeft(ta); // Sets the Execution log to be on the left side.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
+        borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
 
         Scene main;
         //Scales the application to the size of the window or displays it in a maximized view.
@@ -122,7 +112,15 @@ public class Main extends Application {
         primaryStage.setScene(main);
         primaryStage.show();
 
-        Draw.temp_generate_diagram(); // TODO replace with actual parsing.
-        Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
+        // https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm
+        // https://stackoverflow.com/questions/21083945/how-to-avoid-not-on-fx-application-thread-currentthread-javafx-application-th
+        // https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable-
+        Platform.setImplicitExit(true);
+        Platform.runLater(() -> {
+            Draw.temp_generate_diagram(); // TODO replace with actual parsing.
+            Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
+            Net.init();
+        });
+
     }
 }
