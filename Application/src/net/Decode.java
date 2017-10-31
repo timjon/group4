@@ -12,7 +12,8 @@ import static visuals.DiagramView.tabPane;
  * @version 1.0
  */
 class Decode {
-    String raw; // Raw string to be decoded.
+    // Raw string to be decoded.
+    String raw;
 
     /**
      * @param string string to decode.
@@ -62,10 +63,7 @@ class Decode {
     /**
      * Removes all the characters provided from the string provided.
      * @param string the string to purify.
-     * @param characters The main card, "Exodia the Forbidden One",
-     *                   is one of the first five Effect Monsters
-     *                   ever to be released and the first card to
-     *                   have an alternative victory condition.
+     * @param characters to be excluded from the result string.
      * @return a String without any of the characters provided.
      */
     private String removeCharactersFromString(String string, char... characters) {
@@ -102,7 +100,7 @@ class Decode {
                 draw.addClass(removeCharactersFromString(s, '[', ']', '\"'));
                 numberOfClasses+=1;
             }
-            write("CREATED: Added " + numberOfClasses + " classes");
+            write("CREATED: " + numberOfClasses + " classes");
 
         });
 
@@ -151,8 +149,8 @@ class Decode {
     }
 
     private String retrieveMessage(String string) {
-        int msg_start = string.indexOf("["); // Finds the end of the message content.
-        int msg_end = string.indexOf("]"); // Finds the start of the message content.
+        int msg_start = string.indexOf("["); // Finds the start of the message content.
+        int msg_end = string.indexOf("]"); // Finds the end of the message content.
         return string.substring(msg_start+1, msg_end); // Message content. as a substring.
     }
 }

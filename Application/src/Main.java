@@ -79,11 +79,11 @@ public class Main extends Application {
                 new ChangeListener<Tab>() {
                     @Override
                     public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
-                        for (DiagramView dv: DiagramView.diagramViews) {
-                            dv.redraw();
+                        for (DiagramView diagramView: DiagramView.diagramViews) {
+                            diagramView.redraw();
                         }
-                        DiagramView dv = DiagramView.getDiagramViewInView();
-                        dv.focus();
+                        DiagramView diagramView = DiagramView.getDiagramViewInView();
+                        diagramView.focus();
                     }
                 }
         );
@@ -126,10 +126,8 @@ public class Main extends Application {
         // Run Later adds the code to an event queue where they get processed when the program reaches it.
         // This is done to avoid changing UI elements on noneFX threads and is used in several places in the application.
         Platform.runLater(() -> {
-            Draw.temp_generate_diagram(); // TODO replace with actual parsing.
             Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
             Net.init();
         });
-
     }
 }

@@ -38,8 +38,8 @@ public class DiagramView {
      * @return true if it is in view. false if a DiagramView does not exist for the Draw or if it is not in view.
      */
     static boolean inView(Draw draw) {
-        DiagramView dv = getDiagramViewInView();
-        return dv.getDraw() == draw;
+        DiagramView diagramView = getDiagramViewInView();
+        return diagramView.getDraw() == draw;
     }
 
     /**
