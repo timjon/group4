@@ -16,7 +16,7 @@ init(Socket) ->
 % get its Pid and link to it. This way, error
 % propagation is ensured.  
 loop(Socket, Diagrams) -> 
-  if length(Diagrams) =/= 0 ->
+  if length(Diagrams) > 0 ->
 		 {_Diagram_id, Pid} = hd(Diagrams),
 		 link(Pid)
   end,
