@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborator: Isabelle Törnqvist 2017-10-30
-%%Version: 1.4
+%%Version: 1.5
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Usercoordinator, _Did, {[], _}) -> no_classes;
@@ -11,8 +11,10 @@ init(_Usercoordinator, _Did, {[], _}) -> no_classes;
 init(_Usercoordinator, _Did, {_, []}) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Usercoordinator, Did, {L, Messages}) -> 
-  Pids = spawn_nodes(L, Did, Usercoordinator),
-  loop(Usercoordinator, Did, Pids, Messages, 1). 
+	%Sending information that the usercoordinator has been spawned. To be printed in the executionlog
+	Usercoordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
+	Pids = spawn_nodes(L, Did, Usercoordinator),
+	loop(Usercoordinator, Did, Pids, Messages, 1). 
 %Sends and receives messages until the list of messages is empty  
 loop(Usercoordinator, Did, _, [], Message_number) ->
   receive
