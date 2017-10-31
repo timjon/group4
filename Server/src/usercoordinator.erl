@@ -12,13 +12,15 @@ init(Socket) ->
   process_flag(trap_exit, true),
   loop(Socket, []).
 
-% If the diagram list has at least 1 item,
-% get its Pid and link to it. This way, error
-% propagation is ensured.  
+ 
 loop(Socket, Diagrams) -> 
+  % If the diagram list has at least 1 item,
+  % get its Pid and link to it. This way, error
+  % propagation is ensured. 
   if length(Diagrams) > 0 ->
 		 {_Diagram_id, Pid} = hd(Diagrams),
-		 link(Pid)
+		 link(Pid);
+	 true -> loop(Socket, Diagrams)
   end,
   receive
     {tcp, Socket, Info} -> 

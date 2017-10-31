@@ -7,10 +7,8 @@
 
 %Initialized the process for the node
 init(Coordinator) ->
-  Pid = spawn(fun () ->  loop(Coordinator) end),
-  % Link the current process to the child Node.
-  link(Pid),
-  Pid.
+  % Create a node process and link to it.
+  spawn_link(fun () -> loop(Coordinator) end).
 
 loop(Coordinator) ->
   receive
