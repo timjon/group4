@@ -8,7 +8,7 @@ import visuals.handlers.Animation;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * @version 0.45
+ * @version 1.0
  */
 public class Message implements Renderable{
     private String name;
@@ -16,13 +16,15 @@ public class Message implements Renderable{
     private int fromNode, toNode;
     private int offset; // offset for the message "ordering".
     private int class_size; // identifier for the current class size so that messages can scale.
-    private int animationBounds = 0;
+    private int animationBounds = 0; //Starts and stops the animation at the correct bounds.
     private boolean keepAnimating = true; // State of the animation. Beginning or ending.
-    private boolean switchImage;
+    private boolean switchImage; // Keeps track of which image to show.
+
     //Images for dragon animation.
-    private static Image dragonMessage = new Image("resources/DammitDrag.png");
-    private static Image dragonMessage2 = new Image("resources/logo.png");
-    private static Image dragonMessageRev = new Image("resources/DammitDragRev.png");
+    private static Image dragonMessage = new Image("resources/DragonBro.png"); //Wings Up
+    private static Image dragonMessage2 = new Image("resources/DragonBro2.png"); //Wings Down
+    private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
+    private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
     /**
      * Constructor
@@ -52,18 +54,19 @@ public class Message implements Renderable{
     }
 
     /**
-     * Method for animating the message in both directions.
+     * Method for animating the message and setting the image size for messages in both directions.
      */
     @Override
     public void update() {
-        // Animate
         try {
            if(keepAnimating == true && node2.getX() > node1.getX()) { // Sending a message.
-               if ((animationBounds += class_size/6) > this.node2.getX() - this.node1.getX()) keepAnimating = false;
+               if ((animationBounds += class_size/6) > this.node2.getX() - this.node1.getX())
+                   keepAnimating = false;
            }
 
-           else if(keepAnimating == true && node1.getX() > node2.getX()){ // Sending return message.
-               if((animationBounds -= class_size/6) < (this.node2.getX())  - this.node1.getX()) keepAnimating = false;
+           else if(keepAnimating == true && node1.getX() > node2.getX()){ // Sending a return message.
+               if((animationBounds -= class_size/6) < (this.node2.getX())  - this.node1.getX())
+                   keepAnimating = false;
            }
         } catch (Exception e) {e.printStackTrace();}
     }
@@ -88,26 +91,29 @@ public class Message implements Renderable{
         int y1 = this.node1.getY();
         //toNode Coordinates.
         int x2 = this.node2.getX();
-        int y2 = this.node2.getY(); // Not used atm.
+        int y2 = this.node2.getY();
 
         y1 += offset; // Sets an offset from the previous message.
 
-        //TODO: stupid if's, i don't like you.
         if(keepAnimating==true) {
             gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2)); // Message description.
             if (switchImage == true && fromNode < toNode) {
-                gc.drawImage(dragonMessage, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                gc.drawImage(dragonMessage, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/1.5, class_size/1.5); //Message State Wings Up.
                 switchImage = false;
             } else if (switchImage == false && fromNode < toNode) {
-                gc.drawImage(dragonMessage2, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                gc.drawImage(dragonMessage2, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/1.5, class_size/1.5); //Message state Wings Down.
                 switchImage = true;
             }
             else if(switchImage==true){
-                gc.drawImage(dragonMessageRev, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                gc.drawImage(dragonMessageRev, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/1.5, class_size/1.5); //Return Message State Wings Up.
                 switchImage = false;
             }
             else{
-                gc.drawImage(dragonMessage2, x1 + animationBounds, y1 + (this.class_size), class_size/3, class_size/3);
+                gc.drawImage(dragonMessageRev2, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/1.5, class_size/1.5); // Return Message State Wings Down.
                 switchImage = true;
             }
 

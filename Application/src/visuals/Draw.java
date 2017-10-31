@@ -30,14 +30,23 @@ public class Draw {
         canvas = new Canvas(w, h);
     }
 
+    /**
+     * Gets the active canvas.
+     */
     Canvas getCanvas() {
         return canvas;
     }
 
+    /**
+     * Gets the active canvas height.
+     */
     int getHeight() {
         return (int)canvas.getHeight();
     }
 
+    /**
+     * Gets the active canvas width
+     */
     int getWidth() {
         return (int)canvas.getWidth();
     }
@@ -73,7 +82,7 @@ public class Draw {
         return -1;
     }
 
-    // Always renders with a new specific resolution.
+    //Always renders with a new specific resolution.
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
@@ -100,12 +109,12 @@ public class Draw {
     }
 
     /**
-     * initializes the simulation canvas with background colours.
+     * initializes the simulation canvas with background colours and frame rate.
      */
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
-        Animation.setFramesPerSecond(3);
+        Animation.setFramesPerSecond(3); // Sets the desired frames per second.
         gc.setFill(Color.ALICEBLUE); // Sets the color to GREY
         int split = getHeight()/2 +getHeight()/4;
         gc.fillRect(0,0,getWidth(),split);
