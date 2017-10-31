@@ -2,7 +2,8 @@
 -export([init/3]).
 
 %%Author: Tim Jonasson
-%%Version: 1.3
+%%Version: 1.4
+%%@collaborator Kosara Golemshinska
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Usercoordinator, _Did, {[], _}) -> no_classes;
@@ -46,8 +47,8 @@ spawn_nodes(List) ->[spawn_node(Class) || Class <- List].
 spawn_node(Class_name) -> 
   Self = self(),
   {Pid, Class_name} = {node:init(Self), Class_name},
-  % Link the node process to the diagram coordinator
-  % so that if the node crashes, the former also crashes.
+  % Link the node process to the diagram coordinator so
+  % that if the node crashes, the coordinator also crashes.
   link(Pid),
   {Pid, Class_name}.
 
