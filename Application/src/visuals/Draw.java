@@ -14,7 +14,7 @@ import static visuals.DiagramView.tabPane;
 /**
  * @version 0.8
  * @author Pontus Laestadius, Sebastian Fransson
- * @collaborator Rashad
+ *  -collaborator Rashad Kamsheh
  */
 
 public class Draw {
