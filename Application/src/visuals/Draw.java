@@ -13,7 +13,8 @@ import static visuals.DiagramView.tabPane;
 
 /**
  * @version 0.8
- * @author Pontus Laestadius, Sebastian Fransson, Rashad Kamsheh
+ * @author Pontus Laestadius, Sebastian Fransson
+ * @collaborator Rashad
  */
 
 public class Draw {
@@ -96,7 +97,7 @@ public class Draw {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(animatedBackground,10,10,this.canvas.getHeight()*2,this.canvas.getWidth()/1.5);
+        gc.drawImage(animatedBackground,10,10, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
 
