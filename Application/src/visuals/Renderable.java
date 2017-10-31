@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 /**
  * Implementing this assures the class can be rendered through generics.
+ * @version 1.0
  */
 public interface Renderable {
 

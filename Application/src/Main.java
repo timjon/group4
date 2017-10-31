@@ -24,8 +24,6 @@ import java.util.Collection;
 
 import static visuals.DiagramView.tabPane;
 
-import java.util.Collection;
-
 public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -95,7 +93,7 @@ public class Main extends Application {
         BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
         HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
-        menu.getChildren().add(button_previous); // Adds next button
+        // menu.getChildren().add(button_previous); // Adds next button
         menu.getChildren().add(button_next); // Adds previous button
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
@@ -116,10 +114,17 @@ public class Main extends Application {
         primaryStage.setScene(main);
         primaryStage.show();
 
-        // https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm
-        // https://stackoverflow.com/questions/21083945/how-to-avoid-not-on-fx-application-thread-currentthread-javafx-application-th
-        // https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable-
+        /*
+        Resources used to figure out the following code:
+        https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm
+        https://stackoverflow.com/questions/21083945/how-to-avoid-not-on-fx-application-thread-currentthread-javafx-application-th
+        https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable-
+         */
+        // Sets a flag to true to terminate if the last window has been closed.
         Platform.setImplicitExit(true);
+
+        // Run Later adds the code to an event queue where they get processed when the program reaches it.
+        // This is done to avoid changing UI elements on noneFX threads and is used in several places in the application.
         Platform.runLater(() -> {
             Draw.temp_generate_diagram(); // TODO replace with actual parsing.
             Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.

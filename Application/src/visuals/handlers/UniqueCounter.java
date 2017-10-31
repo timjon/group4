@@ -2,6 +2,8 @@ package visuals.handlers;
 
 /**
  * Holds a static unique counter that increments on every call.
+ * @author Pontus Laestadius
+ * @version 1.0
  */
 public class UniqueCounter {
     private static int count;

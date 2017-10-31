@@ -58,6 +58,7 @@ public class Animation extends Thread {
                 continue;
             }
 
+            // Sets the time since last update to be the render time. And if it's bigger than the delay time. Set to 0.
             timeSinceLastUpdate = (System.currentTimeMillis() -t1 > 1000/framesPerSecond ?
                     0 : System.currentTimeMillis() -t1);
         }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.8
+ * @version 1.0
  * @author Pontus Laestadius, Sebastian Fransson
  */
 
@@ -59,6 +59,10 @@ public class Draw {
 
     }
 
+    /**
+     * Removes the last message in the messages list.
+     * @return true if it removed a message, false if the message list is empty.
+     */
     public boolean removeMessage() {
         if (messages.isEmpty()) return false;
         messages.remove(messages.size()-1);
@@ -67,7 +71,6 @@ public class Draw {
 
 
     /**
-     *
      * @param name class name to match.
      * @return the index the DiagramClass is located at.
      */
@@ -75,11 +78,18 @@ public class Draw {
         for (int i = 0; i < diagramClasses.size(); i++) {
             if (diagramClasses.get(i).getName().equals(name))
                 return i;
+            else
+                System.out.println(diagramClasses.get(i).getName() + "!=" + name);
         }
+        System.out.println("no match");
         return -1;
     }
 
-    // Always renders with a new specific resolution.
+    /**
+     * Always renders with a new specific resolution.
+     * @param w the new width of the canvas.
+     * @param h he new height of the canvas.
+     */
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;

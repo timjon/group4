@@ -7,14 +7,16 @@ import visuals.handlers.Animation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * @author Pontus Laestadius
- * @version 0.6
+ * @version 1.0
  */
 public class Net implements Runnable {
     private static Server_connection con = null;
-    private static List<String> queue = new ArrayList<>();
+    private static Queue<String> queue = new PriorityQueue<>();
 
     @Override
     public void run() {
@@ -56,7 +58,7 @@ public class Net implements Runnable {
                 if (queue.isEmpty()) continue;
 
                 // Sends the first message in queue.
-                con.sendMessage(queue.remove(0));
+                con.sendMessage(queue.poll());
 
                 // Blocks until a message is received.
                 String result = con.receiveMessage();
@@ -84,6 +86,7 @@ public class Net implements Runnable {
 
     // Test example to send a diagram to the server.
     public static void test() {
-        Net.push("{1, [\"gateway:g\",\"user:u1\",\"user:u2 \",\"user:u3\"], [g, u1, u2, u3], [{u1, g,[fwd, u2, msg1]},{u3, g,[fwd, u1, msg2]},{ g, u2,[fwd, u2, msg1]},{g, u1,[fwd, u1, msg2]}]}");
+        Net.push("{1, [\"gateway:g\",\"user:u1\",\"user:u2\",\"user:u3\"], " +
+                "[g, u1, u2, u3], [{u1, g,[fwd, u2, msg1]},{u3, g,[fwd, u1, msg2]},{g, u2,[fwd, u2, msg1]},{g, u1,[fwd, u1, msg2]}]}");
     }
 }

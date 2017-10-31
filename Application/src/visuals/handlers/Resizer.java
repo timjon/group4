@@ -7,7 +7,7 @@ import visuals.DiagramView;
 /**
  * The Resizer runs on a separate thread and there can only exist one at a time.
  * It's in charge of when the canvases are meant call resize after a certain time delay.
- * @version 0.55
+ * @version 1.0
  * @author Pontus Laestadius
  */
 public class Resizer implements Runnable {
