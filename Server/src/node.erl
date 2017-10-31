@@ -2,11 +2,13 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 1.2
+%%Version: 1.3
+%%@collaborator Kosara Golemshinska
 
 %Initialized the process for the node
 init(Coordinator) ->
-  spawn(fun () ->  loop(Coordinator) end).
+  % Create a node process and link to it.
+  spawn_link(fun () -> loop(Coordinator) end).
 
 loop(Coordinator) ->
   receive

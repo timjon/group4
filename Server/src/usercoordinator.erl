@@ -2,15 +2,26 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 2.1
+%%Version: 2.2
+%%@collaborator Kosara Golemshinska
 
 %Initializes the usercoordinator
 init(Socket) -> 
   inet:setopts(Socket, [{active, true}]),
+  % Start trapping exits.
+  process_flag(trap_exit, true),
   loop(Socket, []).
 
-  
+ 
 loop(Socket, Diagrams) -> 
+  % If the diagram list has at least 1 item,
+  % get its Pid and link to it. This way, error
+  % propagation is ensured. 
+  if length(Diagrams) > 0 ->
+		 {_Diagram_id, Pid} = hd(Diagrams),
+		 link(Pid);
+	 true -> loop(Socket, Diagrams)
+  end,
   receive
     {tcp, Socket, Info} -> 
 	  %Scans the info read from the tcp connection
@@ -36,7 +47,13 @@ loop(Socket, Diagrams) ->
 	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
-	  loop(Socket, Diagrams)
+	  loop(Socket, Diagrams);
+	  
+	% If the user coordinator process gets an exit
+ 	% message, it either terminates, or restarts
+	% itself based on the exit reason.
+	{'EXIT', _From, normal} -> ok;
+    {'EXIT', _P, _Reason} -> loop(Socket, Diagrams) 
   end.
  
 %Finds the correct diagram from the given list
