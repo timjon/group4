@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 /**
  * A DiagramClass wrapper for coordinates with extra properties that implements Renderable.
  * @author Pontus Laestadius
+ * @version 1.0
  */
 public class DiagramClass implements Renderable {
     private Coordinates coordinates; // The coordinates of the object.
@@ -42,6 +43,14 @@ public class DiagramClass implements Renderable {
     void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
         this.size = size;
+    }
+
+    /**
+     * @return the given name and not the class name of this DiagramClass.
+     */
+    public String getName() {
+        String[] s = name.split(":");
+        return s[1];
     }
 
     /**
@@ -103,7 +112,6 @@ public class DiagramClass implements Renderable {
 
         Image castle_state = castleStates[(int)aniindex];
         placeGraphicCentered(gc, castle_state, size_DiagramClass,0, 0);
-
 
         // Draws the name of the DiagramClass.
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.

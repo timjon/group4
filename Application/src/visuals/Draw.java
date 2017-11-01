@@ -3,16 +3,19 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+
+import net.Net;
+
 import javafx.scene.image.Image;
+
 import visuals.handlers.Animation;
-import visuals.handlers.Render;
 
 import java.util.ArrayList;
 
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.8
+ * @version 1.0
  * @author Pontus Laestadius, Sebastian Fransson
  *  -collaborator Rashad Kamsheh
  */
@@ -50,7 +53,7 @@ public class Draw {
     /**
      * Draws a Class on the provided canvas.
      */
-    private void addClass(String name) {
+    public void addClass(String name) {
         diagramClasses.add(new DiagramClass(name));
     }
 
@@ -64,7 +67,41 @@ public class Draw {
 
     }
 
-    // Always renders with a new specific resolution.
+    /**
+     * Removes the last message in the messages list.
+     * @return true if it removed a message, false if the message list is empty.
+     */
+    public boolean removeMessage() {
+        if (messages.isEmpty()) return false;
+        messages.remove(messages.size()-1);
+        return true;
+    }
+
+
+    /**
+     * @param name class name to match.
+     * @return the index the DiagramClass is located at.
+     */
+    public int findClassIndex(String name){
+
+        // Iterate over the existing diagram classes
+        for (int i = 0; i < diagramClasses.size(); i++) {
+
+            if (diagramClasses.get(i).getName().equals(name))
+
+                // Return the index in the array.
+                return i;
+        }
+
+        // Return a number that can't exist if the class does not. Thus a negative number.
+        return -1;
+    }
+
+    /**
+     * Always renders with a new specific resolution.
+     * @param w the new width of the canvas.
+     * @param h the new height of the canvas.
+     */
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
@@ -107,18 +144,10 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Thread c = new Thread(new Render(gc, diagramClasses));
-        c.start();
-
+        for (Renderable r: diagramClasses)
+            r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
-
-        try {
-            c.join();
-        } catch (InterruptedException e) {
-            System.err.println(e.toString());
-            System.out.println(e.toString());
-        }
     }
 
     /**
@@ -162,8 +191,11 @@ public class Draw {
     /**
      * Starts the global Animation thread for all Draw objects and views.
      */
-    static void animate() {
-        (new Thread(new Animation())).start();
+    static void animate(boolean active) {
+        if (active)
+            (new Thread(new Animation())).start();
+        else
+            Animation.cancel();
     }
     //-------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -182,12 +214,16 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
+        old_generate_diagram();
+        Draw.animate(true);
+    }
+
+    public static void old_generate_diagram() {
         for (int i = 1; i <= 5; i++) {
             String name = "diagram " + i;
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
         }
-        Draw.animate();
     }
 }

@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -7,25 +8,21 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-import java.io.DataInputStream;
-
+import net.Net;
 import visuals.DiagramView;
 import visuals.Draw;
+import visuals.ExecutionLog;
 import visuals.handlers.Resizer;
 
 import java.awt.*;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 
 import static visuals.DiagramView.tabPane;
-
-import java.util.Collection;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -37,9 +34,6 @@ public class Main extends Application {
         primaryStage.getIcons().add(new Image("resources/logo.png"));
 
         primaryStage.setTitle("FUML");
-        Server_connection server = new Server_connection();
-        server.Init();
-
         Button btn_import = new Button();
         btn_import.setText("Import");
         btn_import.setOnAction(new EventHandler<ActionEvent>() {
@@ -64,26 +58,19 @@ public class Main extends Application {
             }});
 
 
-        Button btn2 = new Button();
-        btn2.setText("Settings");
-        btn2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Settings"); } // Settings button handler.
+        Button button_previous = new Button("Previous");
+        button_previous.setOnAction((ActionEvent event) ->{
+            Net.push("{1, previous_message}");
+            // Only go back if you can remove a message.
+            if (DiagramView.getDiagramViewInView().getDraw().removeMessage())
+                // Remove a line from the execution log.
+                ExecutionLog.getInstance().bwd();
         });
 
-        TextArea ta = new TextArea("Execution Log: \n " +  // Execution log text-box and it's current contents.
-                "> Node1: sent a message to Node2 \n " +
-                "> Node2: received message from Node1 \n " +
-                "> Node2: sent a OK to Node1 \n " +
-                "> Node1: received an OK from Node2");
-        ta.setEditable(false);
-        ta.setPrefColumnCount(60);
-        ta.setPrefRowCount(50);
-
-        int ta_width = 270;
-        ta.setMaxWidth(ta_width);
-
+        Button button_next = new Button("Next");
+        button_next.setOnAction((ActionEvent event) ->{
+            Net.push("{1, next_message}");
+        });
 
         tabPane = new TabPane();
 
@@ -92,20 +79,25 @@ public class Main extends Application {
                 new ChangeListener<Tab>() {
                     @Override
                     public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
-                        for (DiagramView dv: DiagramView.diagramViews) {
-                            dv.redraw();
+                        for (DiagramView diagramView: DiagramView.diagramViews) {
+                            diagramView.redraw();
                         }
+                        DiagramView diagramView = DiagramView.getDiagramViewInView();
+                        diagramView.focus();
                     }
                 }
         );
 
+        ExecutionLog executionLog = new ExecutionLog();
+
         BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
         HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
-        menu.getChildren().add(btn2);
+        // menu.getChildren().add(button_previous); // Adds next button
+        menu.getChildren().add(button_next); // Adds previous button
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
-        borderpane.setLeft(ta); // Sets the Execution log to be on the left side.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
+        borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
 
         Scene main;
         //Scales the application to the size of the window or displays it in a maximized view.
@@ -122,7 +114,20 @@ public class Main extends Application {
         primaryStage.setScene(main);
         primaryStage.show();
 
-        Draw.temp_generate_diagram(); // TODO replace with actual parsing.
-        Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
+        /*
+        Resources used to figure out the following code:
+        https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm
+        https://stackoverflow.com/questions/21083945/how-to-avoid-not-on-fx-application-thread-currentthread-javafx-application-th
+        https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable-
+         */
+        // Sets a flag to true to terminate if the last window has been closed.
+        Platform.setImplicitExit(true);
+
+        // Run Later adds the code to an event queue where they get processed when the program reaches it.
+        // This is done to avoid changing UI elements on noneFX threads and is used in several places in the application.
+        Platform.runLater(() -> {
+            Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
+            Net.init();
+        });
     }
 }

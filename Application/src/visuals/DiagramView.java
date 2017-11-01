@@ -1,23 +1,29 @@
 package visuals;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import visuals.handlers.UniqueCounter;
 
 import java.util.ArrayList;
 
-/*
+/**
  * Handles a single tabbed diagram view and it's state
- * @version 0.7
  * @author Pontus Laestadius
+ * @version 1.0
  */
 public class DiagramView {
+    public static TabPane tabPane;
+
     private Draw draw;
-    private String tabName;
     private State state = State.PAUSED;
     private Tab tab;
+
+    // Stores the execution log data for this diagram.
+    private ObservableList<String> logData = FXCollections.observableArrayList();
     public static ArrayList<DiagramView> diagramViews = new ArrayList<>(); // A diagramViews of all Diagram views.
-    public static TabPane tabPane;
 
     /**
      * @return a Draw Object.
@@ -32,8 +38,8 @@ public class DiagramView {
      * @return true if it is in view. false if a DiagramView does not exist for the Draw or if it is not in view.
      */
     static boolean inView(Draw draw) {
-        DiagramView dv = getDiagramViewInView();
-        return dv != null && dv.getDraw() == draw;
+        DiagramView diagramView = getDiagramViewInView();
+        return diagramView.getDraw() == draw;
     }
 
     /**
@@ -46,15 +52,19 @@ public class DiagramView {
     /**
      * @return the DiagramView that is currently being viewed. null if none.
      */
-    public static DiagramView getDiagramViewInView() {
-        for (DiagramView d: diagramViews) {
-            Tab t = d.getTab();
-            String id = t.getId();
-            if (id.equals(getInView())) {
+    public static DiagramView getDiagramViewInView() throws IllegalStateException {
+        // If there are no diagrams added to the view list.
+        if (diagramViews.size() == 0)
+            throw new IllegalStateException("No views exist");
+
+        // Iterate over all the available lists.
+        for (DiagramView d: diagramViews)
+            // Compare the tab id with the tab id of selected (in view) tab.
+            if (d.getTab().getId().equals(getInView()))
                 return d;
-            }
-        }
-        return null;
+
+        // If the view is not in the view list.
+        throw new IllegalStateException("View not in view list");
     }
 
     /**
@@ -64,11 +74,11 @@ public class DiagramView {
      */
     public DiagramView(String tabName) {
         this.draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
-        this.tabName = tabName;
         diagramViews.add(this);
         this.tab = new Tab();
+        // Get a unique number for the ID.
         tab.setId(UniqueCounter.getString());
-        tab.setText(this.tabName);
+        tab.setText(tabName);
         tab.setContent(draw.getCanvas());
     }
 
@@ -107,6 +117,23 @@ public class DiagramView {
         this.state = state;
         return previousState;
     }
+
+    /**
+     * Allocates and displays the ExecutionLog for the current DiagramView.
+     */
+    public void focus() {
+        Platform.runLater(() -> {
+            // Sets the execution log to display the data of this diagram view log.
+            ExecutionLog.getInstance().setData(logData);
+        });
+    }
+
+    /**
+     * @param logData data for the execution log.
+     */
+    public void setLogData(ObservableList<String> logData) {
+        this.logData = logData;
+    }
 }
 
 /**
@@ -117,5 +144,4 @@ enum State {
     PAUSED, // Manually paused, no action is being performed.
     EXECUTING, // Executing the visual aspects.
     RESIZING, // While resizing to avoid concurrency issues.
-
 }
