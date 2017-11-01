@@ -47,6 +47,7 @@ public class Draw {
 
     /**
      * Gets the active canvas height.
+     * @return canvas height
      */
     int getHeight() {
         return (int)canvas.getHeight();
@@ -54,6 +55,7 @@ public class Draw {
 
     /**
      * Gets the active canvas width
+     * @return canvas width
      */
     int getWidth() {
         return (int)canvas.getWidth();
@@ -176,10 +178,11 @@ public class Draw {
     void renderMessage() {
         if(messages.size() == 0) return; // There are no messages in the list.
         if(this.messages.size() > 0) {
-            for (int i = 0; i < messages.size(); i++) { //Messages exist and will now be be re-placed.
-                Coordinates node1 = diagramClasses.get(messages.get(i).getFromNode()).getCoordinates();
-                Coordinates node2 = diagramClasses.get(messages.get(i).getToNode()).getCoordinates();
-                messages.get(i).changeCoordinates(node1, node2, class_size); // Changes the coordinates of the messages.
+            for (Message message: messages) { //Messages exist and will now be be re-placed.
+                Coordinates node1 = diagramClasses.get(message.getFromNode()).getCoordinates();
+                Coordinates node2 = diagramClasses.get(message.getToNode()).getCoordinates();
+                // Changes the coordinates of the messages.
+                message.changeCoordinates(node1, node2, class_size);
             }
         }
     }
