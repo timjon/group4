@@ -2,18 +2,30 @@ package visuals;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+import visuals.handlers.Animation;
 
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
+ * @version 1.0
  */
 public class Message implements Renderable{
     private String name;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
     private int fromNode, toNode;
-    private int offset;
-    private int class_size;
-    int coolvariable = 0;
+    private int offset; // offset for the message "ordering".
+    private int class_size; // identifier for the current class size so that messages can scale.
+    private int animationBounds = 0; //Starts and stops the animation at the correct bounds.
+    private boolean keepAnimating = true; // State of the animation. Beginning or ending.
+    private boolean switchImage; // Keeps track of which image to show.
+    private double messageScale = 1.5;
+
+    //Images for dragon animation.
+    private static Image dragonMessage = new Image("resources/DragonBro.png"); //Wings Up
+    private static Image dragonMessage2 = new Image("resources/DragonBro2.png"); //Wings Down
+    private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
+    private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
     /**
      * Constructor
@@ -30,12 +42,14 @@ public class Message implements Renderable{
 
     /**
      * Retrieves the coordinates from the Message object.
+     * @return coordinates
      */
     @Override
     public Coordinates getCoordinates() { return coordinates; }
 
     /**
      * Formatting method.
+     * @return null
      */
     @Override
     public String format() {
@@ -43,18 +57,24 @@ public class Message implements Renderable{
     }
 
     /**
-     * Method for animating the message.
+     * Method for animating the message and setting the image size for messages in both directions.
      */
     @Override
     public void update() {
-        // Animate
-        try {
-            if ((coolvariable+=10) > this.node2.getX()-this.node1.getX()-2) coolvariable = 0;
-        } catch (Exception e) {}
+            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+           if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
+               if ((animationBounds += class_size/6) > this.node2.getX() - this.node1.getX())
+                   keepAnimating = false;
+           }
+            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+           else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
+               if((animationBounds -= class_size/6) < (this.node2.getX())  - this.node1.getX())
+                   keepAnimating = false;
+           }
     }
 
     /**
-     * Gets the new coordinates from resizing the application.
+     * Gets the new coordinates from resizing the application and redraws messages with these coordinates.
      */
     public void changeCoordinates(Coordinates node1, Coordinates node2, int class_size){
         this.node1 = node1;
@@ -64,37 +84,62 @@ public class Message implements Renderable{
 
     /**
      * Renders a message on the canvas using the provided coordinates.
+     * Updates the message image and placing for simulation.
      */
     @Override
     public void render(GraphicsContext gc){
-
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
         //toNode Coordinates.
-        int x2 = this.node2.getX();
-        int y2 = this.node2.getY(); // Not used atm.
+        // int x2 = this.node2.getX(); //Not used atm.
+        // int y2 = this.node2.getY(); //Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
-        int messageX = (x1+x2)/2; // Always start in the middle of the message line.
-        int maxW = (x2 + this.class_size/2) - (x1 + this.class_size/2); // Max width of the fillText
-        gc.strokeLine(x1+this.class_size/2, y1 + (this.class_size), x2+this.class_size/2, y1 + (this.class_size)); // Message Line.
-        gc.fillText(this.name, messageX, y1 + (this.class_size - 2), maxW); // Message description.
 
-        /* TODO this is not for this sprint!
-        gc.setFill(Color.RED);
-        gc.fillRect(x1+coolvariable, y1+50, 7, 7);
-        gc.setFill(Color.GREEN);
-        gc.fillRect(x1+coolvariable +2, y1+50 +2, 3, 3);
-        gc.setFill(Color.BLACK);
+        // Checks if we are supposed to be animating the message.
+        if(keepAnimating) {
+            //Sets the message text centered above the "dragon".
+            gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2)); // Message description.
 
-       // gc.drawImage(image,x1+coolvariable, y1+50, 7, 7 ); // Dragon Image thats going to represent the messages.
+            // Checks if up image is supposed to be shown and if we are sending a message and not a return.
+            if (switchImage && fromNode < toNode) {
+                //sets the dimensions of the dragon according to the current class size.
+                gc.drawImage(dragonMessage, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Up.
+                switchImage = false;
+            }
 
-       */
+            // Checks if down image is supposed to be shown and if we are sending a message and not a return.
+            else if (!switchImage && fromNode < toNode) {
+                //sets the dimensions of the dragon according to the current class size.
+                gc.drawImage(dragonMessage2, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
+                switchImage = true;
+            }
+
+            //Checks if up image is supposed to be shown. if this one is used it is a return message.
+            else if(switchImage){
+                //sets the dimensions of the dragon according to the current class size.
+                gc.drawImage(dragonMessageRev, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
+                switchImage = false;
+            }
+
+            //Checks if down image is supposed to be shown. if this one is used we are sending a return message.
+            else{
+                //sets the dimensions of the dragon according to the current class size.
+                gc.drawImage(dragonMessageRev2, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
+                switchImage = true;
+            }
+
+        }
     }
 
     /**
      * Getter method for retrieving the beginning node of a message
+     * @return fromNode
      */
     public int getFromNode(){
         return fromNode;
@@ -102,6 +147,7 @@ public class Message implements Renderable{
 
     /**
      * Getter method for retrieving the end node of a message
+     * @return toNode
      */
     public int getToNode(){
         return toNode;
