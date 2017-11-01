@@ -40,6 +40,7 @@ public class Draw {
 
     /**
      * Gets the active canvas.
+     * @return canvas
      */
     Canvas getCanvas() {
         return canvas;
