@@ -2,8 +2,9 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 2.2
-%%collaborator Kosara Golemshinska
+%%Collaborator: Isabelle Törnqvist 2017-10-30
+%%Collaborator: Kosara Golemshinska 2017-11-31
+%%Version: 2.3
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -12,7 +13,7 @@ init(Socket) ->
   process_flag(trap_exit, true),
   loop(Socket, []).
 
- 
+  
 loop(Socket, Diagrams) -> 
   % If the diagram list has at least 1 item,
   % get its Pid and link to it. This way, error
@@ -49,11 +50,20 @@ loop(Socket, Diagrams) ->
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
 	  loop(Socket, Diagrams);
 	  
+	%This case happens when there are messages to print to the execution log
+	{Did, print_information, Msg}->
+		%Turns the message into binary
+		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
+		%Sends the result to client
+		gen_tcp:send(Socket, [Format_result ++ "~"]),
+		loop(Socket, Diagrams);
+	  
 	% If the user coordinator process gets an exit
  	% message, it either terminates, or restarts
 	% itself based on the exit reason.
 	{'EXIT', _From, normal} -> ok;
-    {'EXIT', _P, _Reason} -> loop(Socket, Diagrams) 
+    {'EXIT', _P, _Reason} -> loop(Socket, Diagrams)
+	  
   end.
  
 %Finds the correct diagram from the given list

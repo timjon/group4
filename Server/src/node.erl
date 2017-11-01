@@ -2,8 +2,8 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 1.3
-%%collaborator Kosara Golemshinska
+%%Collaborator: Kosara Golemshinska 2017-11-31
+%%Version: 1.4
 
 %Initialized the process for the node
 init(Coordinator) ->
@@ -15,7 +15,8 @@ loop(Coordinator) ->
     %Case for when the node sends a message for another node
 	{send_message, From, To, Message, To_pid, Message_number} ->
 	  To_pid ! {receive_message, From, To, Message, Message_number},
-	  Coordinator ! {send_reply},
+	  %Line bellow changed from "Coordinator ! {send_reply},"
+	  Coordinator ! {send_reply, From, To, Message, To_pid, Message_number},
       loop(Coordinator);
     
 	%Case for when the node receives a message from another node 
