@@ -21,7 +21,7 @@ public class Draw {
     private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
-    private int class_size = 0; // Used for message positioning
+    private int class_size = 0; // Used for message positioning and scaling
 
     /**
      * Constructor
