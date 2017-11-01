@@ -38,14 +38,26 @@ public class Draw {
         canvas = new Canvas(w, h);
     }
 
+    /**
+     * Gets the active canvas.
+     * @return canvas
+     */
     Canvas getCanvas() {
         return canvas;
     }
 
+    /**
+     * Gets the active canvas height.
+     * @return canvas height
+     */
     int getHeight() {
         return (int)canvas.getHeight();
     }
 
+    /**
+     * Gets the active canvas width
+     * @return canvas width
+     */
     int getWidth() {
         return (int)canvas.getWidth();
     }
@@ -61,7 +73,7 @@ public class Draw {
      * Creates a message from and to given nodes with an attached name.
      */
     public void addMessage(int fromNode, int toNode, String name){
-        offset += 10;
+        offset += 8;
         this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
@@ -134,7 +146,8 @@ public class Draw {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
+        gc.drawImage(animatedBackground,10,10, this.canvas.getWidth(), this.canvas.getHeight());
+        Animation.setFramesPerSecond(3); // Sets the desired frames per second.
     }
 
 
@@ -164,11 +177,13 @@ public class Draw {
      * Renders the message when trying to resize the application.
      */
     void renderMessage() {
+        if(messages.size() == 0) return; // There are no messages in the list.
         if(this.messages.size() > 0) {
-            for (int i = 0; i < messages.size(); i++) {
-                Coordinates node1 = diagramClasses.get(messages.get(i).getFromNode()).getCoordinates();
-                Coordinates node2 = diagramClasses.get(messages.get(i).getToNode()).getCoordinates();
-                messages.get(i).changeCoordinates(node1, node2, class_size);
+            for (Message message: messages) { //Messages exist and will now be be re-placed.
+                Coordinates node1 = diagramClasses.get(message.getFromNode()).getCoordinates();
+                Coordinates node2 = diagramClasses.get(message.getToNode()).getCoordinates();
+                // Changes the coordinates of the messages.
+                message.changeCoordinates(node1, node2, class_size);
             }
         }
     }
@@ -209,8 +224,11 @@ public class Draw {
             this.addClass("Class " + i);
         // Messages
         this.addMessage(0, 1, "Msg1");
-        if (nr > 4)
+        if (nr > 4) {
             this.addMessage(3, 4, "Msg2");
+            this.addMessage(4, 3, "Msg3");
+        }
+        animate(true); // Animates all example messages at once. in the real execution messages would be sent in iterations, so ordering is of no issue.
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
@@ -224,6 +242,7 @@ public class Draw {
             DiagramView dv = new DiagramView(name);
             dv.getDraw().example_diagram(i*2); // Only used to display an example.
             tabPane.getTabs().add(dv.getTab());
+
         }
     }
 }
