@@ -62,13 +62,16 @@ loop(Socket, Diagrams) ->
 	% message, it either terminates, or restarts
 	% itself based on the exit reason.
 	{'EXIT', _From, normal} -> ok;
-	{'EXIT', _P, _Reason} -> loop(Socket, Diagrams)
-	  
+	{'EXIT', P, _Reason} -> 
+		% Remove the crashed diagram coordinator from
+		% the diagram list and restart the loop.
+		Diagram_list = [{Did, Pid, Classes, Messages} || {Did, Pid, Classes, Messages} <- Diagrams, Pid =/= P], 
+		loop(Socket, Diagram_list)  
   end.
  
 %Finds the correct diagram from the given list
 find_diagram(_, []) -> not_created;
-find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
+find_diagram(Diagram_id, [{Diagram_id, Pid, Classes, Messages} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
 %If the message is the Diagram id and the atom next_message
@@ -97,6 +100,8 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
       Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
       gen_tcp:send(Socket, Format_result),
 	  Self = self(),
-	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
+	  loop(Socket, [{Did, spawn(fun () -> 
+	  		diagramcoordinator:init(Self, Did, {Classes, Messages}) end), 
+					 Classes, Messages}| Diagrams]);
 	_           -> already_created
   end.
