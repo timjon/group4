@@ -59,10 +59,10 @@ loop(Socket, Diagrams) ->
 		loop(Socket, Diagrams);
 	  
 	% If the user coordinator process gets an exit
- 	% message, it either terminates, or restarts
+	% message, it either terminates, or restarts
 	% itself based on the exit reason.
 	{'EXIT', _From, normal} -> ok;
-    {'EXIT', _P, _Reason} -> loop(Socket, Diagrams)
+	{'EXIT', _P, _Reason} -> loop(Socket, Diagrams)
 	  
   end.
  

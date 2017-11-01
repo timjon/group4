@@ -51,11 +51,7 @@ spawn_node(Class_name, Did, Usercoordinator) ->
   Self = self(),
   %Sends info to the usercoordinator, that a node has been spawned. To be printed in the executionlog
   Usercoordinator ! {Did, print_information, ["Spawned node " ++ atom_to_list(Class_name)]},
-  {Pid, Class_name} = {node:init(Self), Class_name},
-  % Link the node process to the diagram coordinator so
-  % that if the node crashes, the coordinator also crashes.
-  link(Pid),
-  {Pid, Class_name}.
+  {node:init(Self), Class_name},
 
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid, Message_number, Usercoordinator, Did) ->
