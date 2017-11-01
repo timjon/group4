@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
 /**
  * A DiagramClass wrapper for coordinates with extra properties that implements Renderable.
  * @author Pontus Laestadius
+ * @version 1.0
  */
 public class DiagramClass implements Renderable {
     private Coordinates coordinates; // The coordinates of the object.

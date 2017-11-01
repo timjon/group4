@@ -9,14 +9,21 @@ import visuals.Draw;
  * @author Pontus Laestadius
  */
 public class Animation extends Thread {
+
+    // The thread the animations are updated from.
     private static Thread singletonAnimationThread;
-    private long timeSinceLastUpdate = 0; // Variable used to pinpoint the update time so it's always the same.
-    private static int framesPerSecond = 6; // Defaults framesPerSecond the application updates in.
+
+    // Variable used to pinpoint the update time so it's always the same.
+    private long timeSinceLastUpdate = 0;
+
+    // Defaults framesPerSecond the application updates in.
+    private static int framesPerSecond = 6;
 
     /**
      * Stops the Animation thread at the end of the next iteration.
      */
     public static void cancel() {
+        // Sets this thread to null.
         singletonAnimationThread = null;
     }
 
@@ -29,10 +36,17 @@ public class Animation extends Thread {
 
     @Override
     public void run() {
-        if (singletonAnimationThread == null) { // Only allow a single Animation thread.
-            singletonAnimationThread = this; // If none exists, reserve it for this thread.
-            loop(); // Animation handling.
+
+        // Only allow a single Animation thread.
+        if (singletonAnimationThread == null) {
+
+            // If none exists, reserve it for this thread.
+            singletonAnimationThread = this;
+
+            // Animation handling.
+            loop();
         }
+
     }
 
     /**
@@ -40,26 +54,55 @@ public class Animation extends Thread {
      * Updates and redraws the canvas.
      */
     private void loop() {
-        while (singletonAnimationThread != null) { // Makes terminating the thread externally possible.
-            try { // Sleeps for the time in between updates.
-                Thread.sleep(1000/framesPerSecond -timeSinceLastUpdate); // 5 frames per second.
+
+        // Makes terminating the thread externally possible.
+        while (singletonAnimationThread != null) {
+
+            // Sleeps for the time in between updates.
+            try {
+
+                // Sleep for the time in between frames, minus the time the last frame took to render.
+                // To keep the frame times consistent.
+                Thread.sleep(1000/framesPerSecond -timeSinceLastUpdate);
+
+                // If the thread gets interrupted.
             } catch (InterruptedException e) {
                 System.err.println(e.toString());
-            }
 
-            long t1 = System.currentTimeMillis();
-
-            try { // Catches if there is not view.
-                // Retrieves the draw that is in view and updates and redraws it.
-                Draw draw = DiagramView.getDiagramViewInView().getDraw(); // Get the Draw object from the view.
-                draw.update(); // Updates the states of the Renderable objects.
-                draw.redraw(); // Redraws their graphics on the canvas.
-            } catch (IllegalStateException ex) {
+                // Try again.
                 continue;
             }
 
-            timeSinceLastUpdate = (System.currentTimeMillis() -t1 > 1000/framesPerSecond ?
-                    0 : System.currentTimeMillis() -t1);
+            // Gets the time before animating a frame.
+            long currentTimeBeforeThisAnimationFrame = System.currentTimeMillis();
+
+            // Catches if there is not view.
+            try {
+                // Retrieves the draw that is in view and updates and redraws it.
+
+                // Get the Draw object from the view.
+                Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+                // Updates the states of the Renderable objects.
+                draw.update();
+
+                // Redraws their graphics on the canvas.
+                draw.redraw();
+
+                // If there is no view.
+            } catch (IllegalStateException ex) {
+
+                // Try again.
+                continue;
+            }
+
+            // Sets the time since last update to be the render time.
+            // And if it's bigger than the delay time. Set to 0.
+            timeSinceLastUpdate =
+                    (System.currentTimeMillis() -currentTimeBeforeThisAnimationFrame > 1000/framesPerSecond ?
+                    0 : System.currentTimeMillis() -currentTimeBeforeThisAnimationFrame);
         }
+
     }
+
 }

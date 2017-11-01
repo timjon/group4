@@ -24,8 +24,6 @@ import java.util.Collection;
 
 import static visuals.DiagramView.tabPane;
 
-import java.util.Collection;
-
 public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -60,13 +58,17 @@ public class Main extends Application {
             }});
 
 
-        Button btn2 = new Button("Settings");
-        btn2.setOnAction((ActionEvent event) ->{
-            System.out.println("Settings");  // Settings button handler.
+        Button button_previous = new Button("Previous");
+        button_previous.setOnAction((ActionEvent event) ->{
+            Net.push("{1, previous_message}");
+            // Only go back if you can remove a message.
+            if (DiagramView.getDiagramViewInView().getDraw().removeMessage())
+                // Remove a line from the execution log.
+                ExecutionLog.getInstance().bwd();
         });
 
-        Button btn3 = new Button("Next");
-        btn3.setOnAction((ActionEvent event) ->{
+        Button button_next = new Button("Next");
+        button_next.setOnAction((ActionEvent event) ->{
             Net.push("{1, next_message}");
         });
 
@@ -77,11 +79,11 @@ public class Main extends Application {
                 new ChangeListener<Tab>() {
                     @Override
                     public void changed(ObservableValue<? extends Tab> ov, Tab t, Tab t1) {
-                        for (DiagramView dv: DiagramView.diagramViews) {
-                            dv.redraw();
+                        for (DiagramView diagramView: DiagramView.diagramViews) {
+                            diagramView.redraw();
                         }
-                        DiagramView dv = DiagramView.getDiagramViewInView();
-                        dv.focus();
+                        DiagramView diagramView = DiagramView.getDiagramViewInView();
+                        diagramView.focus();
                     }
                 }
         );
@@ -91,8 +93,8 @@ public class Main extends Application {
         BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
         HBox menu = new HBox(); // A HBox holds items horizontally like a menu.
         menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
-        menu.getChildren().add(btn2);
-        menu.getChildren().add(btn3);
+        // menu.getChildren().add(button_previous); // Adds next button
+        menu.getChildren().add(button_next); // Adds previous button
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
         borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
@@ -112,15 +114,20 @@ public class Main extends Application {
         primaryStage.setScene(main);
         primaryStage.show();
 
-        // https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm
-        // https://stackoverflow.com/questions/21083945/how-to-avoid-not-on-fx-application-thread-currentthread-javafx-application-th
-        // https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable-
+        /*
+        Resources used to figure out the following code:
+        https://docs.oracle.com/javafx/2/threads/jfxpub-threads.htm
+        https://stackoverflow.com/questions/21083945/how-to-avoid-not-on-fx-application-thread-currentthread-javafx-application-th
+        https://docs.oracle.com/javase/8/javafx/api/javafx/application/Platform.html#runLater-java.lang.Runnable-
+         */
+        // Sets a flag to true to terminate if the last window has been closed.
         Platform.setImplicitExit(true);
+
+        // Run Later adds the code to an event queue where they get processed when the program reaches it.
+        // This is done to avoid changing UI elements on noneFX threads and is used in several places in the application.
         Platform.runLater(() -> {
-            Draw.temp_generate_diagram(); // TODO replace with actual parsing.
             Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
             Net.init();
         });
-
     }
 }

@@ -9,10 +9,10 @@ import visuals.handlers.UniqueCounter;
 
 import java.util.ArrayList;
 
-/*
+/**
  * Handles a single tabbed diagram view and it's state
- * @version 0.7
  * @author Pontus Laestadius
+ * @version 1.0
  */
 public class DiagramView {
     public static TabPane tabPane;
@@ -38,8 +38,8 @@ public class DiagramView {
      * @return true if it is in view. false if a DiagramView does not exist for the Draw or if it is not in view.
      */
     static boolean inView(Draw draw) {
-        DiagramView dv = getDiagramViewInView();
-        return dv.getDraw() == draw;
+        DiagramView diagramView = getDiagramViewInView();
+        return diagramView.getDraw() == draw;
     }
 
     /**
@@ -53,11 +53,17 @@ public class DiagramView {
      * @return the DiagramView that is currently being viewed. null if none.
      */
     public static DiagramView getDiagramViewInView() throws IllegalStateException {
+        // If there are no diagrams added to the view list.
         if (diagramViews.size() == 0)
             throw new IllegalStateException("No views exist");
+
+        // Iterate over all the available lists.
         for (DiagramView d: diagramViews)
+            // Compare the tab id with the tab id of selected (in view) tab.
             if (d.getTab().getId().equals(getInView()))
                 return d;
+
+        // If the view is not in the view list.
         throw new IllegalStateException("View not in view list");
     }
 
@@ -70,6 +76,7 @@ public class DiagramView {
         this.draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
         diagramViews.add(this);
         this.tab = new Tab();
+        // Get a unique number for the ID.
         tab.setId(UniqueCounter.getString());
         tab.setText(tabName);
         tab.setContent(draw.getCanvas());
@@ -115,17 +122,16 @@ public class DiagramView {
      * Allocates and displays the ExecutionLog for the current DiagramView.
      */
     public void focus() {
-        // TODO figure out why if these are commented out, it works.
-        //DiagramView dv = getDiagramViewInView();
-        //if (dv == null) return;
-        //dv.setlogData(ExecutionLog.elog.getData());
         Platform.runLater(() -> {
+            // Sets the execution log to display the data of this diagram view log.
             ExecutionLog.getInstance().setData(logData);
         });
-
     }
 
-    public void setlogData(ObservableList<String> logData) {
+    /**
+     * @param logData data for the execution log.
+     */
+    public void setLogData(ObservableList<String> logData) {
         this.logData = logData;
     }
 }

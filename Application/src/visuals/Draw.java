@@ -3,7 +3,11 @@ package visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+
 import net.Net;
+
+import javafx.scene.image.Image;
+
 import visuals.handlers.Animation;
 
 import java.util.ArrayList;
@@ -11,8 +15,9 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 0.8
+ * @version 1.0
  * @author Pontus Laestadius, Sebastian Fransson
+ *  -collaborator Rashad Kamsheh
  */
 
 public class Draw {
@@ -21,7 +26,10 @@ public class Draw {
     private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
-    private int class_size = 0; // Used for message positioning and scaling
+    private int class_size = 0; // Used for message positioning
+	
+    //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
+    private static Image animatedBackground = new Image("resources/SkyGIF.gif");
 
     /**
      * Constructor
@@ -68,21 +76,41 @@ public class Draw {
 
     }
 
+    /**
+     * Removes the last message in the messages list.
+     * @return true if it removed a message, false if the message list is empty.
+     */
+    public boolean removeMessage() {
+        if (messages.isEmpty()) return false;
+        messages.remove(messages.size()-1);
+        return true;
+    }
+
 
     /**
-     *
      * @param name class name to match.
      * @return the index the DiagramClass is located at.
      */
     public int findClassIndex(String name){
+
+        // Iterate over the existing diagram classes
         for (int i = 0; i < diagramClasses.size(); i++) {
+
             if (diagramClasses.get(i).getName().equals(name))
+
+                // Return the index in the array.
                 return i;
         }
+
+        // Return a number that can't exist if the class does not. Thus a negative number.
         return -1;
     }
 
-    //Always renders with a new specific resolution.
+    /**
+     * Always renders with a new specific resolution.
+     * @param w the new width of the canvas.
+     * @param h the new height of the canvas.
+     */
     void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
@@ -92,7 +120,7 @@ public class Draw {
     }
 
     /**
-     * remakes the "Items", reffering to messages and classes
+     * remakes the "Items", referring to messages and classes
      */
     void renderItems() {
         renderClass();
@@ -109,19 +137,16 @@ public class Draw {
     }
 
     /**
-     * initializes the simulation canvas with background colours and frame rate.
+     * initializes the simulation canvas with an animated 8-bit sky/ocean background .
      */
     void init() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
+        // adds an animated gif file to the canvas with proper height and width
+        gc.drawImage(animatedBackground,10,10, this.canvas.getWidth(), this.canvas.getHeight());
         Animation.setFramesPerSecond(3); // Sets the desired frames per second.
-        gc.setFill(Color.ALICEBLUE); // Sets the color to GREY
-        int split = getHeight()/2 +getHeight()/4;
-        gc.fillRect(0,0,getWidth(),split);
-        gc.setFill(Color.CORNFLOWERBLUE); // Sets the color to GREY
-        gc.fillRect(0,split,getWidth(), getHeight());
-        gc.setFill(Color.BLACK); // Resets the color to BLACK
     }
+
 
     /**
      * Renders classes in a new thread as well as the messages.
@@ -203,7 +228,6 @@ public class Draw {
     }
 
     public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        //Net.test();
         old_generate_diagram();
         Draw.animate(true);
     }

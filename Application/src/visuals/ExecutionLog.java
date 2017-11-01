@@ -11,18 +11,25 @@ import javafx.scene.control.ListView;
 /**
  * Displays any information given in to a ListView.
  * @author Pontus Laestadius
- * @version 0.6
+ * @version 1.0
  */
 public class ExecutionLog extends ListView {
-    private static ExecutionLog elog;
-    private ListView<String> listView = new ListView<>();
-    private ObservableList<String> data = FXCollections.observableArrayList();
+    private static ExecutionLog elog; // Static singleton implementation.
+    private ListView<String> listView = new ListView<>(); // Contains the content of the log.
+    private ObservableList<String> data = FXCollections.observableArrayList(); // Contains the data of the fields.
 
-
+    /**
+     * @return the static instance of the Execution Log.
+     */
     public static ExecutionLog getInstance() {
         return elog;
     }
 
+    /**
+     * Only available constructor.
+     * Creates a new execution log if one has not been initiated.
+     * Sets it's visual properties.
+     */
     public ExecutionLog() {
         if (elog != null) return; // Only allow a single ExecutionLog view.
         elog = this;
@@ -48,6 +55,7 @@ public class ExecutionLog extends ListView {
      * Removes the last item from the ListView.
      */
     public void bwd() {
+        if (data.size() < 2) return;
         data.remove(data.size()-1);
         update();
     }

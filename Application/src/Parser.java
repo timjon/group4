@@ -7,7 +7,7 @@ import model.sequenceDiagramParser.SequenceDiagramObject;
 
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.0
+ * @version 1.1
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects
@@ -104,7 +104,7 @@ public class Parser {
                 //removing extra comma
                 parallelDiagramString = (tempParallelDiagram.substring(0, tempParallelDiagram.length() - 1));
             }
-            System.out.println(getFirstSequenceDiagram());
+
         } catch (NullPointerException e) {
             syntaxErrorMessage();
 
@@ -147,7 +147,7 @@ public class Parser {
     public String getParallelSequenceDiagram() {
 
         String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + processesString + "]," + "[" + classNamesString + "]," + "[" + parallelDiagramString + "]}";
-        // increase the parallelCounter by 2 since it is always an even number and it started with 0
+        // increase the parallelCounter by 2 since it is always an even number and it started with 2
         parallelCounter = parallelCounter + 2;
 
         return ParallelSequenceDiagram;

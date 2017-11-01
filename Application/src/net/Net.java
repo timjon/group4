@@ -1,20 +1,22 @@
 package net;
 
-import visuals.DiagramView;
 import visuals.ExecutionLog;
 import javafx.application.Platform;
-import visuals.handlers.Animation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * @author Pontus Laestadius
- * @version 0.6
+ * @version 1.0
  */
 public class Net implements Runnable {
-    private static Server_connection con = null;
-    private static List<String> queue = new ArrayList<>();
+
+    // A single static connection. Handled with a level of abstraction with this class.
+    private static Server_connection singletonServer_connection = null;
+
+    // A message queue for sending messages to the server.
+    private static Queue<String> queue = new PriorityQueue<>();
 
     @Override
     public void run() {
@@ -26,23 +28,44 @@ public class Net implements Runnable {
      * Starts a new Net thread.
      */
     public static void init() {
-        if (con == null && Platform.isFxApplicationThread())
+        // Only run if it's on an FX thread, meaning it will become a worker / background thread.
+        // And if there is no existing connection.
+        if (singletonServer_connection == null && Platform.isFxApplicationThread())
             (new Thread(new Net())).start();
     }
 
+    /**
+     * Pushes a string to queue which will be processed in the order they are received.
+     * @param string to be sent to the server.
+     */
     public static void push(String string) {
-        // TODO validate message here.
         queue.add(string);
     }
 
+    /**
+     * Runs a private inner_loop for reading and writing to the server safely.
+     */
     private void inner_loop() {
-        Server_connection con = new Server_connection();
-        while (true) { // Handles connecting and reconnecting, Should always run.
-            con.openConnection();
-            ExecutionLog executionLog = ExecutionLog.getInstance();
-            while (con.checkConnection()) {
 
-                try { // This makes the application work. It may not be touched.
+        // Create a new server connection.
+        singletonServer_connection = new Server_connection();
+
+        // Handles connecting and reconnecting, Should always run, because if this loop breaks no connection exists.
+        while (true) {
+
+            // Opens the connection to the server.
+            singletonServer_connection.openConnection();
+
+            // Retrieves the instance of the execution log.
+            ExecutionLog executionLog = ExecutionLog.getInstance();
+
+            // Loop while it is connected to the server.
+            while (singletonServer_connection.checkConnection()) {
+
+
+                // This makes the application work. It may not be touched.
+                // Without this 1 ms delay the message are not retrieved from the server. For an unknown reason.
+                try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
                     System.err.println(e);
@@ -52,35 +75,42 @@ public class Net implements Runnable {
                 if (queue.isEmpty()) continue;
 
                 // Sends the first message in queue.
-                con.sendMessage(queue.remove(0));
+                singletonServer_connection.sendMessage(queue.poll());
 
                 // Blocks until a message is received.
-                String result = con.receiveMessage();
+                String result = singletonServer_connection.receiveMessage();
 
-
+                // Run the decode on the a Platform thread.
                 Platform.runLater(() -> {
-                    // Decodes the message and executions it's result.
+
+                    // Create a new decode object with the message received.
                     Decode decode = new Decode(result);
+
+                    // Execute the decoding process.
                     decode.execute();
                 });
             }
 
             // Clears the ExecutionLog and prints no connection, if you are disconnected.
             Platform.runLater(() -> {
+
+                // Clear the execution log
                 executionLog.clear();
+
+                // Write to the execution log that it couldn't connect.
                 executionLog.fwd("No connection established");
             });
 
-            try { // Sleep for for a longer duration before attempting to reconnect.
+            // Sleep for for a longer duration before attempting to reconnect. If
+            // Occurs if you were never connected, or if you disconnected.
+            try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 System.err.println(e);
             }
+
         }
+
     }
 
-    // Test example to send a diagram to the server.
-    public static void test() {
-        Net.push("{1, [\"gateway:g\",\"user:u1\",\"user:u2 \",\"user:u3\"], [g, u1, u2, u3], [{u1, g,[fwd, u2, msg1]},{u3, g,[fwd, u1, msg2]},{ g, u2,[fwd, u2, msg1]},{g, u1,[fwd, u1, msg2]}]}");
-    }
 }
