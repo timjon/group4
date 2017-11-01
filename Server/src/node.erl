@@ -21,7 +21,4 @@ loop(Coordinator) ->
 	{receive_message, From, To, Message, Message_number} ->
       Coordinator ! {message_done, From, To, Message, Message_number},
       loop(Coordinator)
-	  
-	after 60000 -> 
-	  io:format("~nTerminating the process~p", [self()])
   end.
