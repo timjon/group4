@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Version: 2.2
-%%@collaborator Kosara Golemshinska
+%%collaborator Kosara Golemshinska
 
 %Initializes the usercoordinator
 init(Socket) -> 

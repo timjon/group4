@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Version: 1.3
-%%@collaborator Kosara Golemshinska
+%%collaborator Kosara Golemshinska
 
 %Initialized the process for the node
 init(Coordinator) ->

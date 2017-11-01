@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Version: 1.4
-%%@collaborator Kosara Golemshinska
+%%collaborator Kosara Golemshinska
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Usercoordinator, _Did, {[], _}) -> no_classes;
