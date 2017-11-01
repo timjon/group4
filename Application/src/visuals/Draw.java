@@ -206,7 +206,7 @@ public class Draw {
     /**
      * Starts the global Animation thread for all Draw objects and views.
      */
-    static void animate(boolean active) {
+    public static void animate(boolean active) {
         if (active)
             (new Thread(new Animation())).start();
         else

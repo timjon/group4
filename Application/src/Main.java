@@ -48,6 +48,7 @@ public class Main extends Application {
                     case "sequence_diagram" :
                         for (String element : result) {
                             parse.parseSequenceDiagram(element);
+                            Net.push(parse.getFirstSequenceDiagram());
                         }
                         break;
 
