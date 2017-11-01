@@ -82,7 +82,7 @@ public class Parser {
 
             // get the tempProcesses which contain the class names
             for (Processes processesElement : parsedDiagram.getProcesses()) {
-                tempProcesses += "'" + processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + "',";
+                tempProcesses += "\"" + processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + "\",";
                 processesString = (tempProcesses.substring(0, tempProcesses.length() - 1));
                 // yield only the names of the classes
                 tempClassNames += processesElement.getName() + ",";
