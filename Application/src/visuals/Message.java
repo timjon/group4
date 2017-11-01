@@ -111,7 +111,7 @@ public class Message implements Renderable{
             }
 
             // Checks if down image is supposed to be shown and if we are sending a message and not a return.
-            else if (switchImage == false && fromNode < toNode) {
+            else if (!switchImage && fromNode < toNode) {
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
