@@ -27,6 +27,10 @@ public class Message implements Renderable{
     private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
+    // Curve
+    private double curve_increment = 1.05;
+    private double curve = 1;
+
     /**
      * Constructor
      */
@@ -61,14 +65,16 @@ public class Message implements Renderable{
      */
     @Override
     public void update() {
+        curve *= curve_increment;
+
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
            if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
-               if ((animationBounds += class_size/6) > this.node2.getX() - this.node1.getX())
+               if ((animationBounds += (class_size/6 +curve)) > this.node2.getX() - this.node1.getX())
                    keepAnimating = false;
            }
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
            else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
-               if((animationBounds -= class_size/6) < (this.node2.getX())  - this.node1.getX())
+               if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
                    keepAnimating = false;
            }
     }
