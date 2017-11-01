@@ -134,7 +134,7 @@ public class Draw {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(animatedBackground,10,10, this.canvas.getWidth(), this.canvas.getHeight());
+        gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
 
@@ -191,7 +191,7 @@ public class Draw {
     /**
      * Starts the global Animation thread for all Draw objects and views.
      */
-    static void animate(boolean active) {
+    public static void animate(boolean active) {
         if (active)
             (new Thread(new Animation())).start();
         else
