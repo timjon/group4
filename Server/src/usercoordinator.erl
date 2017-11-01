@@ -2,7 +2,8 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Version: 2.1
+%%Collaborator: Isabelle Törnqvist 2017-10-30
+%%Version: 2.2
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -36,7 +37,16 @@ loop(Socket, Diagrams) ->
 	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
-	  loop(Socket, Diagrams)
+	  loop(Socket, Diagrams);
+	  
+	%This case happens when there are messages to print to the execution log
+	{Did, print_information, Msg}->
+		%Turns the message into binary
+		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
+		%Sends the result to client
+		gen_tcp:send(Socket, [Format_result ++ "~"]),
+		loop(Socket, Diagrams)
+	  
   end.
  
 %Finds the correct diagram from the given list
