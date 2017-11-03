@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import visuals.handlers.UniqueCounter;
 
 import java.util.ArrayList;
 
@@ -45,14 +44,14 @@ public class DiagramView {
     /**
      * @return the id of the current selected tab.
      */
-    static String getInView() {
+    private static String getInView() throws NullPointerException {
         return tabPane.getSelectionModel().getSelectedItem().getId();
     }
 
     /**
      * @return the DiagramView that is currently being viewed. null if none.
      */
-    public static DiagramView getDiagramViewInView() throws IllegalStateException {
+    public static DiagramView getDiagramViewInView() throws IllegalStateException, NullPointerException {
         // If there are no diagrams added to the view list.
         if (diagramViews.size() == 0)
             throw new IllegalStateException("No views exist");
@@ -72,12 +71,12 @@ public class DiagramView {
      * Adds it to the diagramViews of DiagramViews and
      * @param tabName the diagram name.
      */
-    public DiagramView(String tabName) {
+    public DiagramView(String tabName, String id) {
         this.draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
         diagramViews.add(this);
         this.tab = new Tab();
         // Get a unique number for the ID.
-        tab.setId(UniqueCounter.getString());
+        tab.setId(id);
         tab.setText(tabName);
         tab.setContent(draw.getCanvas());
     }

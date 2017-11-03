@@ -80,14 +80,11 @@ public class Net implements Runnable {
                 // Blocks until a message is received.
                 String result = singletonServer_connection.receiveMessage();
 
-                // Run the decode on the a Platform thread.
+                // Run the decode on the Platform instance.
                 Platform.runLater(() -> {
 
-                    // Create a new decode object with the message received.
-                    Decode decode = new Decode(result);
-
-                    // Execute the decoding process.
-                    decode.execute();
+                    // Decodes the received message.
+                    (new Decode(result)).execute();
                 });
             }
 

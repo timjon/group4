@@ -26,6 +26,7 @@ class Decode {
      * Decodes the rawStringToDecode string and allocates it to it's associated diagram.
      */
     void execute() {
+        System.out.println(rawStringToDecode);
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
 
@@ -75,7 +76,7 @@ class Decode {
 
                 // New Diagram
             } else {
-                diagramClasses(message);
+                diagramClasses(message, id + "");
             }
         }
     }
@@ -129,11 +130,11 @@ class Decode {
      * Given a string following the network protocol, will create a new diagram with the provided classes.
      * @param classes to draw up the diagram with.
      */
-    private void diagramClasses(String classes) {
+    private void diagramClasses(String classes, String id) {
         // TODO check if diagram_id is unique
 
         // Creates a new view with the tab name.
-        DiagramView diagramView = new DiagramView("Sequence Diagram");
+        DiagramView diagramView = new DiagramView("SDid: " + id, id);
 
         // Add the tab to the collection of tabs.
         tabPane.getTabs().add(diagramView.getTab());
