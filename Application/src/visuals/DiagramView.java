@@ -133,6 +133,15 @@ public class DiagramView {
     public void setLogData(ObservableList<String> logData) {
         this.logData = logData;
     }
+
+    /**
+     * @param data to be added to the views data log.
+     */
+    public void addLogData(String data) {
+        this.logData.add(data);
+        if (this == getDiagramViewInView())
+            ExecutionLog.getInstance().setData(this.logData);
+    }
 }
 
 /**
