@@ -51,6 +51,12 @@ public class Main extends Application {
                             Net.push(parse.getFirstSequenceDiagram());
                         }
                         break;
+                    case "class_diagram" :
+                        for (String element : result) {
+                            parse.parseClassDiagram(element);
+                            //Net.push(parse.getFirstSequenceDiagram());
+                        }
+                        break;
 
                 }
                 // if the diagram is not included in the switch case, check if the diagram is invalid

@@ -1,3 +1,5 @@
+import model.classDiagramParser.ClassDiagramObject;
+import model.classDiagramParser.Meta;
 import model.sequenceDiagramParser.Processes;
 import model.sequenceDiagramParser.ContentArray;
 import javafx.scene.control.Alert;
@@ -153,4 +155,19 @@ public class Parser {
         return ParallelSequenceDiagram;
     }
 
+
+    public void parseClassDiagram(String inputJSON) {
+        Gson gson = new Gson();
+
+        try {
+            ClassDiagramObject parsedDiagram;
+            parsedDiagram = gson.fromJson(inputJSON, ClassDiagramObject.class);
+            Meta m = parsedDiagram.getMeta();
+            System.out.println(m.getFormat());
+    }
+    catch (NullPointerException e) {
+        syntaxErrorMessage();
+
+        }
+    }
 }
