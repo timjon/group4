@@ -1,6 +1,5 @@
 import model.classDiagramParser.ClassDiagramObject;
 import model.classDiagramParser.Classes;
-import model.classDiagramParser.Fields;
 import model.sequenceDiagramParser.Processes;
 import model.sequenceDiagramParser.ContentArray;
 import javafx.scene.control.Alert;
@@ -168,9 +167,11 @@ public class Parser {
 
     private String tempClasses = "";
 
-    private String classesString = "";
-
-    private String cName;
+    private String tempClassesString1 = "";
+    private String tempClassesString2 = "";
+    private String tempClassesString3 = "";
+    private String tempClassesString4 = "";
+    private String tempClassesString5 = "";
 
     public void parseClassDiagram(String inputJSON) {
         Gson gson = new Gson();
@@ -194,15 +195,23 @@ public class Parser {
 
             for (Classes fieldsElement : parsedClassDiagram.getClasses()) {
 
-                tempClasses +=  "{[" + fieldsElement.getName() + ":" + fieldsElement.getFields() + "]},";
+                tempClasses +=  "{\"" + fieldsElement.getName() + "\"," + fieldsElement.getFields() + "},";
 
-                //removing extra comma
-                classesString = (tempClasses.substring(0, tempClasses.length() - 1));
-
-
+                /**
+                * a cluster of temporary strings for now because i suck at string splitting
+                * */
+                // Removing extra comma
+                tempClassesString1 = (tempClasses.substring(0, tempClasses.length() - 1));
+                // Replacing equal signs with colons
+                tempClassesString2 = tempClassesString1.replaceAll("=", ":");
+                // Removing spaces and indentations
+                tempClassesString3 = tempClassesString2.replaceAll(" ", "");
+                // Removing "name" and "type" from the string
+                tempClassesString4 = tempClassesString3.replaceAll("name:", "");
+                tempClassesString5 = tempClassesString4.replaceAll("type:","");
 
             }
-            System.out.println(classesString);
+            System.out.println(tempClassesString5);
     }
     catch (NullPointerException e) {
         syntaxErrorMessage();
