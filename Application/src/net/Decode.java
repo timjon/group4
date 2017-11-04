@@ -26,7 +26,6 @@ class Decode {
      * Decodes the rawStringToDecode string and allocates it to it's associated diagram.
      */
     void execute() {
-        System.out.println(rawStringToDecode);
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
 
