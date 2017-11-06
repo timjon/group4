@@ -17,6 +17,7 @@ import net.Net;
 import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
+import visuals.handlers.Automate;
 import visuals.handlers.Resizer;
 
 import java.awt.*;
@@ -138,19 +139,23 @@ public class Main extends Application {
         button_auto.setOnAction((ActionEvent event) ->{
 
             // Identify if the button is currently on or off.
-            if (button_auto.getText().endsWith("|>")) {
+            if (button_auto.getText().endsWith("|>")) { // Turn it on.
                 button_auto.setText(" || ");
 
                 // Disable manual controls.
                 button_next.setDisable(true);
                 button_previous.setDisable(true);
 
-            } else { // ON
+                (new Thread(new Automate())).start();
+
+            } else { // Turn it off
                 button_auto.setText("|>");
 
                 // Enable manual controls.
                 button_next.setDisable(false);
                 button_previous.setDisable(false);
+
+                Automate.cancel();
 
             }
         });
