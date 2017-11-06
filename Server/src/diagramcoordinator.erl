@@ -27,11 +27,29 @@ loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
 	{previous_message, Usercoordinator} ->
 	  Usercoordinator ! ok,
 	  [Prev_H, Prev_T] = PrevList,
-	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number, Prev_T)
+	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
+  end;
+  loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, []) ->
+    receive
+    {next_message, Usercoordinator} -> 
+	  Usercoordinator ! ok,
+      {From, To, Message} = L,
+	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Usercoordinator, Did), 
+      receive
+	    {message_done, From, To, Message, Message_number} ->
+		  Usercoordinator ! {message_sent, Did, From, To, Message, Message_number},
+		  %Sends info to the usercoordinator that a message has been received by a node. To be printed in the executionlog
+		  Usercoordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
+	  end,
+	  loop(Usercoordinator, Did, Pids, [L|Ls], Message_number + 1, [L|[]]);
+	  
+	{previous_message, Usercoordinator} ->
+	  Usercoordinator ! ok,
+	  loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, [])
   end;
   
 %This loop runs until the list is empty (when there are no more messages)
-loop(Usercoordinator, Did, Pids, [L|Ls], Message_number - 1, PrevList) -> 
+loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, PrevList) -> 
   receive
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
