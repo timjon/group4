@@ -18,6 +18,9 @@ public class Net implements Runnable {
     // A message queue for sending messages to the server.
     private static Queue<String> queue = new PriorityQueue<>();
 
+    // A message queue for received messages from the server.
+    private static Queue<String> received = new PriorityQueue<>();
+
     @Override
     public void run() {
         inner_loop();
@@ -43,6 +46,14 @@ public class Net implements Runnable {
     }
 
     /**
+     * Store a received message in the static queue.
+     * @param string to read from the server.
+     */
+    private static void received(String string) {
+        received.add(string);
+    }
+
+    /**
      * Runs a private inner_loop for reading and writing to the server safely.
      */
     private void inner_loop() {
@@ -50,14 +61,23 @@ public class Net implements Runnable {
         // Create a new server connection.
         singletonServer_connection = new Server_connection();
 
+        // Opens the connection to the server.
+        singletonServer_connection.openConnection();
+
+        // Retrieves the instance of the execution log.
+        ExecutionLog executionLog = ExecutionLog.getInstance();
+
+        // Wait until connected.
+        while (!singletonServer_connection.checkConnection());
+
+        // Starts a thread to receive messages.
+        new Thread(() -> {
+            while (singletonServer_connection != null)
+                Net.received(singletonServer_connection.receiveMessage());
+        }).start();
+
         // Handles connecting and reconnecting, Should always run, because if this loop breaks no connection exists.
-        while (true) {
-
-            // Opens the connection to the server.
-            singletonServer_connection.openConnection();
-
-            // Retrieves the instance of the execution log.
-            ExecutionLog executionLog = ExecutionLog.getInstance();
+        while (singletonServer_connection != null) {
 
             // Loop while it is connected to the server.
             while (singletonServer_connection.checkConnection()) {
@@ -72,23 +92,20 @@ public class Net implements Runnable {
                 }
 
                 // Only do anything if there is a message to send.
-                if (queue.isEmpty()) continue;
+                if (!queue.isEmpty()) {
+                    // Sends the first message in queue.
+                    singletonServer_connection.sendMessage(queue.poll());
+                }
 
-                // Sends the first message in queue.
-                singletonServer_connection.sendMessage(queue.poll());
+                // If we have received a message
+                if (!received.isEmpty()) {
+                    // Run the decode on the Platform instance.
+                    Platform.runLater(() -> {
 
-                // Blocks until a message is received.
-                String result = singletonServer_connection.receiveMessage();
-
-                // Run the decode on the a Platform thread.
-                Platform.runLater(() -> {
-
-                    // Create a new decode object with the message received.
-                    Decode decode = new Decode(result);
-
-                    // Execute the decoding process.
-                    decode.execute();
-                });
+                        // Decodes the received message.
+                        (new Decode(received.poll())).execute();
+                    });
+                }
             }
 
             // Clears the ExecutionLog and prints no connection, if you are disconnected.
@@ -110,7 +127,6 @@ public class Net implements Runnable {
             }
 
         }
-
     }
 
 }

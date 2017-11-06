@@ -26,6 +26,16 @@ public class ExecutionLog extends ListView {
     }
 
     /**
+     * This is a part of Execution Log. A class which displays a log on the left side of the screen. (setLeft). And it's
+     * called in the Next button to identify if the simulation has been finished or not.
+     * @return a boolean which is a true or false. True will be returned if the string matches the finish string.
+     * False if it does not match.
+     */
+    public boolean isFinished() {
+        return data.get(data.size()-1).toLowerCase().contains("simulation finished");
+    }
+
+    /**
      * Only available constructor.
      * Creates a new execution log if one has not been initiated.
      * Sets it's visual properties.
