@@ -30,6 +30,8 @@ class Decode {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
 
+        System.out.println(rawStringToDecode); // TODO REMOVE
+
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
 

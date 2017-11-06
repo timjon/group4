@@ -71,6 +71,7 @@ public class Main extends Application {
         Button button_next = new Button("Next");
         button_next.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+            System.out.println("Sent: {" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
         });
 
         tabPane = new TabPane();
