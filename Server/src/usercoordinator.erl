@@ -32,7 +32,7 @@ loop(Socket, Diagrams) ->
 	  loop(Socket, Diagrams);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
-	{simulation_done, Did, Message_number} -> 
+	{simulation_done, Did, Message_number, PrevList} -> 
 	  %Turns the result into binary
 	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
@@ -55,13 +55,13 @@ find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
 %If the message is the Diagram id and the atom next_message
-use_input({ok, {Did, next_message}}, Socket, Diagrams) ->
+use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
   %Checks if the diagram exists
   case find_diagram(Did, Diagrams) of
 	not_created -> not_ok;
 	Pid         -> 
 	  %Makes the server simulate the next message
-	  Pid ! {next_message, self()},
+	  Pid ! {Message_request, self()},
 	  %Confirmation that the diagram coordinator received the message
 	  receive
 		ok -> ok

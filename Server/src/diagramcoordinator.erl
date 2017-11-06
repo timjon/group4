@@ -1,29 +1,35 @@
 -module(diagramcoordinator).
--export([init/3]).
+-export([init/4]).
 
 %%Author: Tim Jonasson
 %%Collaborator: Isabelle Törnqvist 2017-10-30
 %%Version: 1.5
 
 %Returns no_classes when there was no classes in the given diagram 
-init(_Usercoordinator, _Did, {[], _}) -> no_classes;
+init(_Usercoordinator, _Did, {[], _}, _PrevList) -> no_classes;
 %Returns no_messages when there was no messages in the given diagram 
-init(_Usercoordinator, _Did, {_, []}) -> no_messages;
+init(_Usercoordinator, _Did, {_, []}, _PrevList) -> no_messages;
 %Spawns and Initializes the diagram coordinator
-init(Usercoordinator, Did, {L, Messages}) -> 
+init(Usercoordinator, Did, {L, Messages}, _PrevList) -> 
 	%Sending information that the usercoordinator has been spawned. To be printed in the executionlog
 	Usercoordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
 	Pids = spawn_nodes(L, Did, Usercoordinator),
-	loop(Usercoordinator, Did, Pids, Messages, 1). 
+	loop(Usercoordinator, Did, Pids, Messages, 1, _PrevList). 
 %Sends and receives messages until the list of messages is empty  
-loop(Usercoordinator, Did, _, [], Message_number) ->
+loop(Usercoordinator, Did, Pids, [], Message_number,PrevList) ->
   receive
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
-      Usercoordinator ! {simulation_done, Did, Message_number}
+      Usercoordinator ! {simulation_done, Did, Message_number},
+	  loop(Usercoordinator, Did ,Pids,[],Message_number, PrevList);
+	  
+	{previous_message, Usercoordinator} ->
+	  Usercoordinator ! ok,
+	  [Prev_H, Prev_T] = PrevList,
+	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
   end;
 %This loop runs until the list is empty (when there are no more messages)
-loop(Usercoordinator, Did, Pids, [L|Ls], Message_number) -> 
+loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, PrevList) -> 
   receive
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
@@ -35,7 +41,13 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number) ->
 		  %Sends info to the usercoordinator that a message has been received by a node. To be printed in the executionlog
 		  Usercoordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
-	  loop(Usercoordinator, Did, Pids, Ls, Message_number + 1)
+	  loop(Usercoordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList]);
+	  
+	{previous_message, Usercoordinator} ->
+	  Usercoordinator ! ok,
+	  [Prev_H| Prev_T] = PrevList,
+	  loop(Usercoordinator, Did, Pids, [Prev_H| Ls], Message_number - 1,Prev_T)
+		
   end.
   
 %checks if a class has a process and spawns it if it doesnt exist
