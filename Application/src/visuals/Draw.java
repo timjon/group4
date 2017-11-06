@@ -212,4 +212,12 @@ public class Draw {
         else
             Animation.cancel();
     }
+
+    /**
+     * @return the last message in the draw object.
+     * @throws NullPointerException if there are no messages.
+     */
+    public Message getLastMessage() throws NullPointerException, ArrayIndexOutOfBoundsException {
+        return this.messages.get(this.messages.size()-1);
+    }
 }
