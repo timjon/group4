@@ -16,7 +16,8 @@ init(Usercoordinator, Did, {L, Messages}, _PrevList) ->
 	Pids = spawn_nodes(L, Did, Usercoordinator),
 	loop(Usercoordinator, Did, Pids, Messages, 1, _PrevList). 
 %Sends and receives messages until the list of messages is empty  
-loop(Usercoordinator, Did, Pids, [], Message_number,PrevList) ->
+
+loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
   receive
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
@@ -26,10 +27,11 @@ loop(Usercoordinator, Did, Pids, [], Message_number,PrevList) ->
 	{previous_message, Usercoordinator} ->
 	  Usercoordinator ! ok,
 	  [Prev_H, Prev_T] = PrevList,
-	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
+	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number, Prev_T)
   end;
+  
 %This loop runs until the list is empty (when there are no more messages)
-loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, PrevList) -> 
+loop(Usercoordinator, Did, Pids, [L|Ls], Message_number - 1, PrevList) -> 
   receive
     {next_message, Usercoordinator} -> 
 	  Usercoordinator ! ok,
@@ -46,7 +48,7 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 	{previous_message, Usercoordinator} ->
 	  Usercoordinator ! ok,
 	  [Prev_H| Prev_T] = PrevList,
-	  loop(Usercoordinator, Did, Pids, [Prev_H| Ls], Message_number - 1,Prev_T)
+	  loop(Usercoordinator, Did, Pids, [Prev_H| Ls], Message_number - 1, Prev_T)
   end.
   
 %checks if a class has a process and spawns it if it doesnt exist

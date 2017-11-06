@@ -8,15 +8,15 @@
 %Initializes the usercoordinator
 init(Socket) -> 
   inet:setopts(Socket, [{active, true}]),
-  loop(Socket, []).
+  loop(Socket, [], []).
 
   
-loop(Socket, Diagrams) -> 
+loop(Socket, Diagrams, PrevList) -> 
   receive
     {tcp, Socket, Info} -> 
 	  %Scans the info read from the tcp connection
 	  {ok, Scanned, _} = erl_scan:string(binary_to_list(Info)),
-	  use_input(erl_parse:parse_term(Scanned ++ [{dot,0}]), Socket, Diagrams);
+	  use_input(erl_parse:parse_term(Scanned ++ [{dot,0}]), Socket, Diagrams, PrevList);
 	  
 	%This case happens if the connection to the client is lost
 	{tcp_closed, _Socket} -> 
@@ -29,7 +29,7 @@ loop(Socket, Diagrams) ->
 	  Format_result = io_lib:format("~p", [{Did, From, To, Message, Message_number}]) ++ "~",
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result]),
-	  loop(Socket, Diagrams);
+	  loop(Socket, Diagrams, PrevList);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
 	{simulation_done, Did, Message_number} -> 
@@ -37,7 +37,7 @@ loop(Socket, Diagrams) ->
 	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
-	  loop(Socket, Diagrams);
+	  loop(Socket, Diagrams, PrevList);
 	  
 	%This case happens when there are messages to print to the execution log
 	{Did, print_information, Msg}->
@@ -45,7 +45,7 @@ loop(Socket, Diagrams) ->
 		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
 		%Sends the result to client
 		gen_tcp:send(Socket, [Format_result ++ "~"]),
-		loop(Socket, Diagrams)
+		loop(Socket, Diagrams, PrevList)
 	  
   end.
  
@@ -55,7 +55,7 @@ find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
 %If the message is the Diagram id and the atom next_message
-use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
+use_input({ok, {Did, Message_request}}, Socket, Diagrams, _PrevList) ->
   %Checks if the diagram exists
   case find_diagram(Did, Diagrams) of
 	not_created -> not_ok;
@@ -67,11 +67,11 @@ use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
 		ok -> ok
 	  end,
 	  %Receives the result from the diagram coordinator and sends it to the client
-	  loop(Socket, Diagrams)
+	  loop(Socket, Diagrams, _PrevList)
   end;
   
 %This pattern will match when the first argument is in the format of a new diagram
-use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
+use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams, _PrevList) ->
   %Spawns a diagram coordinator for this diagram if it doesnt exist already 
   case find_diagram(Did, Diagrams) of 
     not_created -> 
@@ -80,6 +80,6 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
       Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
       gen_tcp:send(Socket, Format_result),
 	  Self = self(),
-	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}, _PrevList) end)}| Diagrams]);
+	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}, _PrevList) end)}| Diagrams], _PrevList);
 	_           -> already_created
   end.
