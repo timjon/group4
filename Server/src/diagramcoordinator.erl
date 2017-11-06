@@ -47,7 +47,6 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 	  Usercoordinator ! ok,
 	  [Prev_H| Prev_T] = PrevList,
 	  loop(Usercoordinator, Did, Pids, [Prev_H| Ls], Message_number - 1,Prev_T)
-		
   end.
   
 %checks if a class has a process and spawns it if it doesnt exist

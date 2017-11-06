@@ -32,7 +32,7 @@ loop(Socket, Diagrams) ->
 	  loop(Socket, Diagrams);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
-	{simulation_done, Did, Message_number, PrevList} -> 
+	{simulation_done, Did, Message_number} -> 
 	  %Turns the result into binary
 	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
@@ -80,6 +80,6 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
       Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
       gen_tcp:send(Socket, Format_result),
 	  Self = self(),
-	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
+	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}, _PrevList) end)}| Diagrams]);
 	_           -> already_created
   end.
