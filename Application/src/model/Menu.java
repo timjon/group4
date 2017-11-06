@@ -19,14 +19,21 @@ public class Menu {
     static Button button_previous;
     static Button button_auto;
 
+    // Flavor texts
+    private final static String text_auto_play = "|>";
+    private final static String text_auto_pause = " || ";
+    private final static String text_next = "->";
+    private final static String text_previous = "<-";
+
+
     public static HBox get(Stage stage) {
         HBox menu = new HBox();
 
         // Declare the buttons and their text.
         button_import = new Button("Import");
-        button_next = new Button("->");
-        button_previous = new Button("<-");
-        button_auto = new Button("|>");
+        button_next = new Button(text_next);
+        button_previous = new Button(text_previous);
+        button_auto = new Button(text_auto_play);
 
         // Start all media buttons disabled.
         button_next.setDisable(true);
@@ -99,19 +106,28 @@ public class Menu {
         button_previous.setDisable(false);
     }
 
+    /**
+     * Starts automating the executing. Disables manual control.
+     */
     public static void play() {
-        button_auto.setText(" || ");
+        Platform.runLater(() -> {
+            button_auto.setText(text_auto_pause);
 
-        // Disable manual controls.
-        button_next.setDisable(true);
-        button_previous.setDisable(true);
+            // Disable manual controls.
+            button_next.setDisable(true);
+            button_previous.setDisable(true);
 
-        (new Thread(new Automate())).start();
+            (new Thread(new Automate())).start();
+        });
     }
 
+    /**
+     * Stops automating the executing. enables manual control.
+     */
     public static void pause() {
         Platform.runLater(() -> {
-            button_auto.setText("|>");
+            button_auto.setText(text_auto_play);
+
             // Enable manual controls.
             button_next.setDisable(false);
             button_previous.setDisable(false);
