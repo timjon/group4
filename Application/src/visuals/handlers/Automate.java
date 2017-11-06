@@ -57,6 +57,11 @@ public class Automate extends Thread {
                     Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
                 }
 
+                if (ExecutionLog.getInstance().isFinished()) {
+                    cancel();
+
+                }
+
                 // If there is no message. An exception is caught.
             } catch (Exception ex) {
                 Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
