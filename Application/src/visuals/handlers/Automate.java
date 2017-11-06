@@ -1,5 +1,6 @@
 package visuals.handlers;
 
+import model.Menu;
 import net.Net;
 import visuals.DiagramView;
 import visuals.Draw;
@@ -59,7 +60,7 @@ public class Automate extends Thread {
 
                 if (ExecutionLog.getInstance().isFinished()) {
                     cancel();
-
+                    Menu.pause();
                 }
 
                 // If there is no message. An exception is caught.

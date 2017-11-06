@@ -1,5 +1,6 @@
 package model;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -21,9 +22,16 @@ public class Menu {
     public static HBox get(Stage stage) {
         HBox menu = new HBox();
 
+        // Declare the buttons and their text.
         button_import = new Button("Import");
         button_next = new Button("->");
+        button_previous = new Button("<-");
         button_auto = new Button("|>");
+
+        // Start all media buttons disabled.
+        button_next.setDisable(true);
+        button_previous.setDisable(true);
+        button_auto.setDisable(true);
 
         button_import.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -38,6 +46,9 @@ public class Menu {
                         for (String element : result) {
                             parse.parseSequenceDiagram(element);
                             Net.push(parse.getFirstSequenceDiagram());
+
+                            // Enable all media buttons.
+                            enable();
                         }
                         break;
 
@@ -63,23 +74,10 @@ public class Menu {
 
             // Identify if the button is currently on or off.
             if (button_auto.getText().endsWith("|>")) { // Turn it on.
-                button_auto.setText(" || ");
-
-                // Disable manual controls.
-                button_next.setDisable(true);
-                button_previous.setDisable(true);
-
-                (new Thread(new Automate())).start();
+                play();
 
             } else { // Turn it off
-                button_auto.setText("|>");
-
-                // Enable manual controls.
-                button_next.setDisable(false);
-                button_previous.setDisable(false);
-
-                Automate.cancel();
-
+                pause();
             }
         });
 
@@ -91,5 +89,35 @@ public class Menu {
         return menu;
     }
 
+    /**
+     * Enables all the menu buttons.
+     */
+    public static void enable() {
+        button_import.setDisable(false);
+        button_auto.setDisable(false);
+        button_next.setDisable(false);
+        button_previous.setDisable(false);
+    }
+
+    public static void play() {
+        button_auto.setText(" || ");
+
+        // Disable manual controls.
+        button_next.setDisable(true);
+        button_previous.setDisable(true);
+
+        (new Thread(new Automate())).start();
+    }
+
+    public static void pause() {
+        Platform.runLater(() -> {
+            button_auto.setText("|>");
+            // Enable manual controls.
+            button_next.setDisable(false);
+            button_previous.setDisable(false);
+        });
+
+        Automate.cancel();
+    }
 
 }
