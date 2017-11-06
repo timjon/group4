@@ -26,6 +26,13 @@ public class ExecutionLog extends ListView {
     }
 
     /**
+     * @return the static instance of the Execution Log.
+     */
+    public boolean isFinished() {
+        return data.get(data.size()-1).toLowerCase().contains("simulation finished");
+    }
+
+    /**
      * Only available constructor.
      * Creates a new execution log if one has not been initiated.
      * Sets it's visual properties.
