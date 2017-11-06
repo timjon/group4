@@ -12,5 +12,6 @@ init() ->
 %Accepts connections and spawns a proccess for it
 loop(ListenSocket) ->
   {ok, Socket} = gen_tcp:accept(ListenSocket),
-  spawn(fun() -> loop(ListenSocket) end),
-  usercoordinator:init(Socket).
+  Pid = spawn(fun() -> usercoordinator:init(Socket) end),
+  gen_tcp:controlling_process(Socket, Pid),
+  loop(ListenSocket).
