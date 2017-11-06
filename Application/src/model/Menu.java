@@ -13,13 +13,19 @@ import visuals.handlers.Automate;
 import java.util.Collection;
 
 public class Menu {
+    static Button button_import;
+    static Button button_next;
+    static Button button_previous;
+    static Button button_auto;
 
     public static HBox get(Stage stage) {
         HBox menu = new HBox();
 
-        Button btn_import = new Button();
-        btn_import.setText("Import");
-        btn_import.setOnAction(new EventHandler<ActionEvent>() {
+        button_import = new Button("Import");
+        button_next = new Button("->");
+        button_auto = new Button("|>");
+
+        button_import.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 Collection<String> result = Import.file(stage);
@@ -41,8 +47,6 @@ public class Menu {
 
             }});
 
-
-        Button button_previous = new Button("<-");
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{1, previous_message}");
             // Only go back if you can remove a message.
@@ -51,12 +55,10 @@ public class Menu {
                 ExecutionLog.getInstance().bwd();
         });
 
-        Button button_next = new Button("->");
         button_next.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
         });
 
-        Button button_auto = new Button("|>");
         button_auto.setOnAction((ActionEvent event) ->{
 
             // Identify if the button is currently on or off.
@@ -81,7 +83,7 @@ public class Menu {
             }
         });
 
-        menu.getChildren().add(btn_import); // Adds the buttons to the menu box.
+        menu.getChildren().add(button_import); // Adds the buttons to the menu box.
         menu.getChildren().add(button_previous); // Adds previous button
         menu.getChildren().add(button_auto); // Adds automate button
         menu.getChildren().add(button_next); // Adds next button
