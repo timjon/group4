@@ -15,8 +15,8 @@ init(Usercoordinator, Did, {L, Messages}, []) ->
 	Usercoordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
 	Pids = spawn_nodes(L, Did, Usercoordinator),
 	loop(Usercoordinator, Did, Pids, Messages, 1, []). 
-%Sends and receives messages until the list of messages is empty  
 
+%Sends and receives messages until the list of messages is empty  
 loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
   receive
     {next_message, Usercoordinator} -> 
@@ -30,7 +30,7 @@ loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
 	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
   end;
  
- %-----------------
+ %When there are no previous messages this case is used.
   loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, []) ->
     receive
     {next_message, Usercoordinator} -> 
