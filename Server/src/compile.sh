@@ -7,7 +7,7 @@ for f in *.erl; do
 	# Compiles the erlang file.
 	erlc -v $f
 	
-	# Exho the terminal that it compiled.
+	# Echo the terminal that it compiled.
 	echo "compiled -> $f"
 done
 
