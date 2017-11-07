@@ -56,6 +56,7 @@ public class Menu {
 
                             // Enable all media buttons.
                             enable();
+                            button_previous.setDisable(true);
                         }
                         break;
 
@@ -68,24 +69,34 @@ public class Menu {
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{1, previous_message}");
             // Only go back if you can remove a message.
-            if (DiagramView.getDiagramViewInView().getDraw().removeMessage())
+            if (DiagramView.getDiagramViewInView().getDraw().removeMessage()) {
                 // Remove a line from the execution log.
                 ExecutionLog.getInstance().bwd();
+            } else {
+                button_previous.setDisable(true);
+                button_next.setDisable(false);
+            }
+
         });
 
         button_next.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+
+            if (ExecutionLog.getInstance().isFinished())
+                button_next.setDisable(true);
+
+            button_previous.setDisable(false);
         });
 
         button_auto.setOnAction((ActionEvent event) ->{
 
             // Identify if the button is currently on or off.
-            if (button_auto.getText().endsWith("|>")) { // Turn it on.
+            if (button_auto.getText().endsWith(text_auto_play)) { // Turn it on.
                 play();
-
             } else { // Turn it off
                 pause();
             }
+
         });
 
         menu.getChildren().add(button_import); // Adds the buttons to the menu box.
