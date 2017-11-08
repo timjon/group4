@@ -66,7 +66,20 @@ public class ExecutionLog extends ListView {
      */
     public void bwd() {
         if (data.size() < 2) return;
-        data.remove(data.size()-1);
+
+        for (int i = data.size()-1; i >= 0; i--) {
+            String element = data.remove(data.size()-1);
+            if (!element.startsWith("INFO:"))
+                break;
+        }
+
+        // Removes all INFO before it.
+        for (int i = data.size()-1; i >= 0; i--) {
+            if (!data.get(i).startsWith("INFO:"))
+                break;
+            data.remove(i);
+        }
+
         update();
     }
 

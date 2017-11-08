@@ -1,6 +1,7 @@
 package net;
 
 import javafx.application.Platform;
+import model.Menu;
 import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
@@ -41,6 +42,9 @@ class Decode {
 
             // Write Simulation finished in the execution log.
             write(id, "Simulation finished");
+
+            // Disable next and automate button.
+            Menu.getInstance().finished();
 
             // If it's a statement to only print.
         } else if (rawStringToDecode.contains("print_information")) {
