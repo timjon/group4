@@ -2,8 +2,8 @@
 -export([init/4]).
 
 %%Author: Tim Jonasson
-%%Collaborator: Isabelle Törnqvist 2017-10-30
-%%Version: 1.5
+%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
+%%Version: 1.6
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Usercoordinator, _Did, {[], _}, _PrevList) -> no_classes;
@@ -15,8 +15,8 @@ init(Usercoordinator, Did, {L, Messages}, []) ->
 	Usercoordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
 	Pids = spawn_nodes(L, Did, Usercoordinator),
 	loop(Usercoordinator, Did, Pids, Messages, 1, []). 
-%Sends and receives messages until the list of messages is empty  
 
+%Sends and receives messages until the list of messages is empty  
 loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
   receive
     {next_message, Usercoordinator} -> 
@@ -27,10 +27,11 @@ loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
 	{previous_message, Usercoordinator} ->
 	  Usercoordinator ! ok,
 	  [Prev_H|Prev_T] = PrevList,
+	  Usercoordinator ! {previous_confirmation, Did, ["Previous message"]},
 	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
   end;
  
- %-----------------
+ %When there are no previous messages this case is used.
   loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, []) ->
     receive
     {next_message, Usercoordinator} -> 
@@ -47,6 +48,7 @@ loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
 	  
 	{previous_message, Usercoordinator} ->
 	  Usercoordinator ! ok,
+	  Usercoordinator ! {Did, print_information, ["No previous message"]},
 	  loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, [])
   end;
   
@@ -69,6 +71,7 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 	  Usercoordinator ! ok,
 	  [Prev_H| Prev_T] = PrevList,
 	  List = [L|Ls],
+	  Usercoordinator ! {previous_confirmation, Did, ["Previous message"]},
 	  loop(Usercoordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T)
   end.
   
