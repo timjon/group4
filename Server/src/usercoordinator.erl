@@ -37,7 +37,7 @@ loop(Socket, Diagrams, PrevList) ->
 	  Format_result = io_lib:format("~p", [{Did, previous_confirmation, Message}]) ++ "~",
 	  %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
-	  loop(Socket, Diagram, PrevList);
+	  loop(Socket, Diagrams, PrevList);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
 	{simulation_done, Did, Message_number} -> 
