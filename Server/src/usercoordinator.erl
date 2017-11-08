@@ -34,7 +34,7 @@ loop(Socket, Diagrams, PrevList) ->
 	%This case happens when a previous message has been readded to the "queue" or if there were to previous messages to step back to.
 	{previous_confirmation, Did, Message} -> 
 	  %Turns the message we want to send into binary.
-	  Format_result = io_lib:format("~p", [{Did, previous_confirmation, Message}]) ++ "~",
+	  Format_result = io_lib:format("~p", [{Did, previous_confirmation, Message}]),
 	  %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result ++ "~"]),
 	  loop(Socket, Diagrams, PrevList);
