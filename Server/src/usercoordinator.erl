@@ -2,8 +2,8 @@
 -export([init/1]).
 
 %%Author: Tim Jonasson
-%%Collaborator: Isabelle Törnqvist 2017-10-30
-%%Version: 2.2
+%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
+%%Version: 2.3
 
 %Initializes the usercoordinator
 init(Socket) -> 

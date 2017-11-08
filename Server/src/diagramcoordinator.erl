@@ -2,8 +2,8 @@
 -export([init/4]).
 
 %%Author: Tim Jonasson
-%%Collaborator: Isabelle Törnqvist 2017-10-30
-%%Version: 1.5
+%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
+%%Version: 1.6
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Usercoordinator, _Did, {[], _}, _PrevList) -> no_classes;
