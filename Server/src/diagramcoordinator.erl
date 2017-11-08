@@ -27,6 +27,7 @@ loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
 	{previous_message, Usercoordinator} ->
 	  Usercoordinator ! ok,
 	  [Prev_H|Prev_T] = PrevList,
+	  Usercoordinator ! {previous_confirmation, Did, ["no previous message"]},
 	  loop(Usercoordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
   end;
  
@@ -47,6 +48,7 @@ loop(Usercoordinator, Did, Pids, [], Message_number, PrevList) ->
 	  
 	{previous_message, Usercoordinator} ->
 	  Usercoordinator ! ok,
+	  Usercoordinator ! {previous_confirmation, Did, ["previous message"]},
 	  loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, [])
   end;
   
@@ -69,6 +71,7 @@ loop(Usercoordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 	  Usercoordinator ! ok,
 	  [Prev_H| Prev_T] = PrevList,
 	  List = [L|Ls],
+	  Usercoordinator ! {previous_confirmation, Did, ["previous message"]},
 	  loop(Usercoordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T)
   end.
   

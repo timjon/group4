@@ -30,6 +30,14 @@ loop(Socket, Diagrams, PrevList) ->
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result]),
 	  loop(Socket, Diagrams, PrevList);
+	  
+	%This case happens when a previous message has been readded to the "queue" or if there were to previous messages to step back to.
+	{previous_confirmation, Did, Message} -> 
+	  %Turns the message we want to send into binary.
+	  Format_result = io_lib:format("~p", [{previous_confirmation, Did, Message}]) ++ "~",
+	  %Sends it to the client
+	  gen_tcp:send(Socket, [Format_result ++ "~"]),
+	  loop(Socket, Diagram, PrevList);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
 	{simulation_done, Did, Message_number} -> 
