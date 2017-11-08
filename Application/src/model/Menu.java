@@ -2,7 +2,6 @@ package model;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -13,6 +12,10 @@ import visuals.handlers.Automate;
 
 import java.util.*;
 
+/**
+ * @author Pontus Laestadius
+ * @version 1.0
+ */
 public class Menu {
 
     // Instance
@@ -30,6 +33,9 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
+
+    // State
+    private boolean play = false;
 
     /**
      * Public constructor.
@@ -101,7 +107,7 @@ public class Menu {
     /**
      * Starts automating the executing. Disables manual control.
      */
-    public static void play() {
+    private static void play() {
         Platform.runLater(() -> {
             button_auto.setText(text_auto_pause);
 
@@ -133,9 +139,7 @@ public class Menu {
      */
     private void setEvents(Stage stage) {
 
-        button_import.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        button_import.setOnAction((ActionEvent event) -> {
                 Collection<String> result = Import.file(stage);
                 if (result == null) return;
 
@@ -155,60 +159,23 @@ public class Menu {
                 }
                 // if the diagram is not included in the switch case, check if the diagram is invalid
                 DiagramCheck.ContainsDiagram(result);
-
-            }});
+                identifyState();
+            });
 
 
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
-
-            // Only go back if you can remove a message.
-            if (DiagramView.getDiagramViewInView().getDraw().removeMessage()) {
-
-                // Remove a line from the execution log.
-                Platform.runLater(() -> {
-                    ExecutionLog.getInstance().bwd();
-                });
-
-                // If we couldn't go back.
-            } else {
-                button_previous.setDisable(true);
-            }
-
-            // Enable forward stepping.
-            setMenuState(true, button_import, button_previous);
-
         });
 
         button_next.setOnAction((ActionEvent event)    ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
-
-            if (ExecutionLog.getInstance().isFinished())
-                button_next.setDisable(true);
-
-            button_previous.setDisable(false);
         });
 
         button_auto.setOnAction((ActionEvent event)    ->{
-
-            // Identify if the button is currently on or off.
-            if (button_auto.getText().endsWith(text_auto_play)) { // Turn it on.
-                play();
-            } else { // Turn it off
-                pause();
-            }
-
+            play = button_auto.getText().endsWith(text_auto_play);
+            identifyState();
         });
 
-
-    }
-
-    /**
-     * When the execution is done.
-     */
-    public void finished() {
-        setMenuState(false, button_import, button_previous);
-        button_previous.setDisable(false);
     }
 
     /**
@@ -216,25 +183,49 @@ public class Menu {
      */
     public void identifyState() {
 
-        // Is it at the beginning of execution.
-        if (!DiagramView.getDiagramViewInView().getDraw().removeMessage()) {
-            button_previous.setDisable(true);
-
-            // It is somewhere after the start of the execution.
+        // If it is currently automating.
+        if (play) {
+            play();
+            return;
         } else {
+            pause();
+        }
+
+        // Is it at the beginning of execution.
+
+        DiagramView diagramView;
+
+        try {
+            diagramView = DiagramView.getDiagramViewInView();
+
+            // If there is no view.
+        } catch (IllegalStateException ex) {
+
+            // If there is no view, we disable the media buttons.
+            Menu.getInstance().setMenuState(false, button_import);
+            return;
+        }
+
+        // If we can go back.
+        if (diagramView.getDraw().canRemoveMessage()) {
             button_previous.setDisable(false);
+
+            // If we can't go back.
+        } else {
+            button_previous.setDisable(true);
         }
 
         // If it is finished.
         if (ExecutionLog.getInstance().isFinished()) {
             button_next.setDisable(true);
+            button_auto.setDisable(true);
 
             // If it's not finished.
         } else {
             button_next.setDisable(false);
+            button_auto.setDisable(false);
         }
 
-        // Resets automatic flow.
-        pause();
     }
+
 }

@@ -6,16 +6,15 @@ import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
 
-import static visuals.DiagramView.diagramViews;
 import static visuals.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.2
  */
 class Decode {
     // Raw string to be decoded.
-    String rawStringToDecode;
+    private String rawStringToDecode;
 
     /**
      * @param string string to decode.
@@ -43,10 +42,25 @@ class Decode {
             // Write Simulation finished in the execution log.
             write(id, "Simulation finished");
 
-            // Disable next and automate button.
-            Menu.getInstance().finished();
+            // Update menu state.
+            Menu.getInstance().identifyState();
 
-            // If it's a statement to only print.
+            // If it's a previous message confirmation.
+        } else if (rawStringToDecode.contains("previous_confirmation")) {
+
+            // Only go back if you can remove a message.
+            if (DiagramView.getDiagramViewInView().getDraw().removeMessage()) {
+
+                // Remove a line from the execution log.
+                Platform.runLater(() -> {
+                    ExecutionLog.getInstance().bwd();
+                });
+            } else {
+                System.out.println("This should not occur.");
+            }
+
+            Menu.getInstance().identifyState();
+
         } else if (rawStringToDecode.contains("print_information")) {
 
             // Writes the rawStringToDecode data
@@ -240,7 +254,7 @@ class Decode {
                 }
             }
 
-
+            Menu.getInstance().identifyState();
         });
 
     }

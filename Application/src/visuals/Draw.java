@@ -89,6 +89,13 @@ public class Draw {
         return true;
     }
 
+    /**
+     * Identifies if a message can be removed or not.
+     * @return true if it can remove a message, false if the message list is empty.
+     */
+    public boolean canRemoveMessage() {
+        return !messages.isEmpty();
+    }
 
     /**
      * @param name class name to match.

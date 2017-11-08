@@ -43,6 +43,7 @@ public class Main extends Application {
                         }
                         DiagramView diagramView = DiagramView.getDiagramViewInView();
                         diagramView.focus();
+                        Menu.getInstance().identifyState();
                     }
                 }
         );

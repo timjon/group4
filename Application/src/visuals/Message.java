@@ -28,8 +28,8 @@ public class Message implements Renderable{
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
     // Curve
-    private double curve_increment = 1.05;
-    private double curve = 1;
+    private double curve_increment = 1.2;
+    private double curve = 1.6;
 
     /**
      * Constructor
