@@ -1,5 +1,8 @@
 package visuals;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
@@ -7,6 +10,10 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ListView;
+import visuals.handlers.Resizer;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Displays any information given in to a ListView.
@@ -49,6 +56,55 @@ public class ExecutionLog extends ListView {
         BackgroundFill bgf = new BackgroundFill(c, null,null);
         Background bg = new Background(bgf);
         this.listView.setBackground(bg);
+
+        // Adds listener for selecting a item.
+        this.listView.getSelectionModel().selectedItemProperty().addListener
+                ((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+
+                    // If you selected an INFO. do no action.
+                    if (newValue.startsWith("INFO:")) return;
+
+
+                    // Predicate the data list.
+                    List<String> filteredList =
+                            // Gets the stream of Strings.
+                            data.stream().
+                                    // Filter away INFO messages.
+                            filter(s -> !s.startsWith("INFO:"))
+                                    // Collect it to the list.
+                            .collect(Collectors.toList());
+
+
+                    // Keeps track of number of messages to go back.
+                    int goBackNumberOfMessages = 0;
+
+                    // Iterate over the filtered items.
+                    for (String string: filteredList) {
+
+                        // Iterates messages to go back.
+                        goBackNumberOfMessages++;
+
+                        // Match for equality.
+                        if (string.equals(newValue))
+                            break;
+
+                    }
+
+                    // Remove the number of filtered items.
+                    goBackNumberOfMessages = filteredList.size()-goBackNumberOfMessages;
+
+
+                    // If you did not go back any steps, return to normal execution.
+                    if (goBackNumberOfMessages == 0) {
+                        // TODO set normal state.
+                    } else {
+                        // TODO set selected item history state.
+
+                        System.out.println("Back:" + goBackNumberOfMessages + " item: " + newValue);
+                    }
+
+                });
+
     }
 
     /**
