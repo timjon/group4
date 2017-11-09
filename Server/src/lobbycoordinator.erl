@@ -6,15 +6,9 @@
 
 loop(Socket, Diagrams, UserList) ->
   receive
-    {tcp, Socket, Info} -> 
-	  %Scans the info read from the tcp connection
-	  {ok, Scanned, _} = erl_scan:string(binary_to_list(Info)),
-	 % use_input(erl_parse:parse_term(Scanned ++ [{dot,0}]), Socket, Diagrams); % need to fix this function to fit the lobby setup.
-	
-	{tcp_closed, _Socket} ->
-	  conncetion_closed;
 	  
-	{create_lobby, Host_id} -> ;
+	{create_lobby, Host_id} -> 
+	  monitor(process, spawn(fun () -> lobby:init(Self, Lid, Host_id) end));
 	
 	{join_lobby, User_id, LobbyName } -> ;
 	
@@ -22,7 +16,11 @@ loop(Socket, Diagrams, UserList) ->
 	
 	{remove_lobby, Host_id, LobbyName} -> ;
 	
-	{send_to_lobby, Message, } ->
+	{send_to_lobby, Message, } -> ;
+	
+	{'DOWN', _Ref, _process, Lid, Reason} -> 
+		%Send a notice to the Client stating that a lobbt has crashed as well as relay the reason.
+		Format_result = io_lib:format("~p", [{Lid, lobby_crashed, Reason}])
 	
 	
   end.
