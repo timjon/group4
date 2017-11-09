@@ -163,7 +163,7 @@ public class Menu {
 
         button_import.setOnAction((ActionEvent event) -> {
                 Collection<String> result = Import.file(stage);
-                if (result == null) return;
+                if (result.isEmpty()) return;
 
                 // Parse the element if it contains a supported diagram
                 Parser parse = new Parser();
