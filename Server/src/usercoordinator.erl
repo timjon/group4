@@ -8,7 +8,7 @@
 %Initializes the usercoordinator
 init(Socket) -> 
   inet:setopts(Socket, [{active, true}]),
-  loop(Socket, [], []).
+  loop(Socket, []).
 
   
 loop(Socket, Diagrams) -> 
