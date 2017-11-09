@@ -3,14 +3,12 @@ package net;
 import java.io.*;
 import java.net.*;
 
-
 /**
- * @Author Tim Jonasson
- * @Version 1.0
+ * @author Tim Jonasson
+ * @version 1.0
  * Handles the connection to the backend server
  *
  */
-
 public class Server_connection {
     private Socket socket = null;
     private PrintWriter outputStream = null;

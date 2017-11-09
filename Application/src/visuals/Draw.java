@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius, Sebastian Fransson
  *  -collaborator Rashad Kamsheh
  */
@@ -89,6 +89,13 @@ public class Draw {
         return true;
     }
 
+    /**
+     * Identifies if a message can be removed or not.
+     * @return true if it can remove a message, false if the message list is empty.
+     */
+    public boolean canRemoveMessage() {
+        return !messages.isEmpty();
+    }
 
     /**
      * @param name class name to match.
@@ -146,8 +153,7 @@ public class Draw {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(animatedBackground,10,10, this.canvas.getWidth(), this.canvas.getHeight());
-        Animation.setFramesPerSecond(3); // Sets the desired frames per second.
+        gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
 

@@ -2,7 +2,7 @@
 -export([init/1, find_diagram/2, use_input/3]).
 
 %%Author: Tim Jonasson
-%%Collaborators: Isabelle Törnqvist 2017-10-30 , Sebastian Fransson 2017-11-08
+%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
 %%Version: 2.3
 
 %Initializes the usercoordinator
@@ -30,6 +30,14 @@ loop(Socket, Diagrams) ->
       %Sends it to the client
 	  gen_tcp:send(Socket, [Format_result]),
 	  loop(Socket, Diagrams);
+	  
+	%This case happens when a previous message has been readded to the "queue" or if there were to previous messages to step back to.
+	{previous_confirmation, Did, Message} -> 
+	  %Turns the message we want to send into binary.
+	  Format_result = io_lib:format("~p", [{Did, previous_confirmation, Message}]),
+	  %Sends it to the client
+	  gen_tcp:send(Socket, [Format_result ++ "~"]),
+	  loop(Socket, Diagrams);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
 	{simulation_done, Did, Message_number} -> 
@@ -54,14 +62,14 @@ find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
-%If the message is the Diagram id and the atom next_message
-use_input({ok, {Did, next_message}}, Socket, Diagrams) ->
+%If the message is the Diagram id and the Message_request.
+use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
   %Checks if the diagram exists
   case find_diagram(Did, Diagrams) of
 	not_created -> not_ok;
 	Pid         -> 
-	  %Makes the server simulate the next message
-	  Pid ! {next_message, self()},
+	  %Sends the message to the diagram coordinator.
+	  Pid ! {Message_request, self()},
 	  %Confirmation that the diagram coordinator received the message
 	  receive
 		ok -> ok

@@ -9,7 +9,7 @@ import visuals.Message;
 
 /**
  * Handles automating the Sequence Diagram execution.
- * @version 0.1
+ * @version 1.0
  * @author Pontus Laestadius
  */
 public class Automate extends Thread {
@@ -23,6 +23,13 @@ public class Automate extends Thread {
     public static void cancel() {
         // Sets this thread to null.
         singletonAutomateThread = null;
+    }
+
+    /**
+     * @return if the thread is occupied or not by a running process.
+     */
+    public static boolean running() {
+        return singletonAutomateThread != null;
     }
 
     @Override

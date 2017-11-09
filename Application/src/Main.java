@@ -43,6 +43,7 @@ public class Main extends Application {
                         }
                         DiagramView diagramView = DiagramView.getDiagramViewInView();
                         diagramView.focus();
+                        Menu.getInstance().identifyState();
                     }
                 }
         );
@@ -50,7 +51,10 @@ public class Main extends Application {
         ExecutionLog executionLog = new ExecutionLog();
 
         BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
-        HBox menu = Menu.get(primaryStage); // A HBox holds items horizontally like a menu.
+
+        Menu menu_ = new Menu();
+
+        HBox menu = menu_.get(primaryStage); // A HBox holds items horizontally like a menu.
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
         borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
         borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
