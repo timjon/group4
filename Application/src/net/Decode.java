@@ -5,6 +5,7 @@ import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
 
+import static visuals.DiagramView.diagramViews;
 import static visuals.DiagramView.tabPane;
 
 /**
@@ -33,22 +34,19 @@ class Decode {
         int id_index = rawStringToDecode.indexOf(",");
 
         // Retrieves the Diagram_ID.
-        String id_string = rawStringToDecode.substring(1, id_index);
-
-        // String to Integer.
-        int id = Integer.decode(id_string);
+        String id = rawStringToDecode.substring(1, id_index);
 
         // If the simulation is finished.
         if (rawStringToDecode.contains("simulation_finished")) {
 
             // Write Simulation finished in the execution log.
-            write("Simulation finished");
+            write(id, "Simulation finished");
 
             // If it's a statement to only print.
         } else if (rawStringToDecode.contains("print_information")) {
 
             // Writes the rawStringToDecode data
-            write("INFO: " + retrieveMessage(rawStringToDecode));
+            write(id, "INFO: " + retrieveMessage(rawStringToDecode));
 
             // If it's a message or a list of classes (new diagram).
         } else {
@@ -69,13 +67,14 @@ class Decode {
 
                 // Adds message to the DiagramView.
                 message(
+                        id,
                         DiagramView.getDiagramViewInView().getDraw(),// TODO change if you want multiple diagrams.
                         message, // The message content.
                         values.split(",")); // Split the fields remaining.
 
                 // New Diagram
             } else {
-                diagramClasses(message);
+                diagramClasses(message, id);
             }
         }
     }
@@ -129,11 +128,11 @@ class Decode {
      * Given a string following the network protocol, will create a new diagram with the provided classes.
      * @param classes to draw up the diagram with.
      */
-    private void diagramClasses(String classes) {
+    private void diagramClasses(String classes, String id) {
         // TODO check if diagram_id is unique
 
         // Creates a new view with the tab name.
-        DiagramView diagramView = new DiagramView("Sequence Diagram");
+        DiagramView diagramView = new DiagramView("SDid: " + id, id);
 
         // Add the tab to the collection of tabs.
         tabPane.getTabs().add(diagramView.getTab());
@@ -161,7 +160,7 @@ class Decode {
             }
 
             // Display in the execution log the number of classes created.
-            write("CREATED: " + numberOfClasses + " classes");
+            write(id, "CREATED: " + numberOfClasses + " classes");
 
             // Turns on animations.
             Draw.animate(true);
@@ -176,7 +175,7 @@ class Decode {
      * @param message content and what to display to send.
      * @param values includes the nodes it traverses.
      */
-    private void message(Draw draw, String message, String[] values) {
+    private void message(String id, Draw draw, String message, String[] values) {
 
         // Remove spaces from the from & to.
         String from_name = removeCharactersFromString(values[1], ' ');
@@ -194,16 +193,16 @@ class Decode {
 
 
                 if (from == -1)
-                    write("INVALID: {" + from_name + "} -> " + to_name + " | " + message);
+                    write(id, "INVALID: {" + from_name + "} -> " + to_name + " | " + message);
 
                 else // to == -1
-                    write("INVALID: " + from_name + " -> {" + to_name + "} | " + message);
+                    write(id, "INVALID: " + from_name + " -> {" + to_name + "} | " + message);
 
                 // If it's a valid message.
             } else {
 
                 // Write to the execution log.
-                write(from_name + " -> " + to_name + " | " + message);
+                write(id, from_name + " -> " + to_name + " | " + message);
 
                 // Add it to the diagram.
                 draw.addMessage(from, to, message);
@@ -217,12 +216,26 @@ class Decode {
      * Writes the given content to the execution log.
      * @param string the string to display in the execution log.
      */
-    private void write(String string) {
+    private void write(String id, String string) {
 
         Platform.runLater(() -> {
 
             // Gets the instance and writes a new line.
-            ExecutionLog.getInstance().fwd(string);
+            // Gets the correct diagramView and adds the data to it's log.
+            for (DiagramView diagramView: DiagramView.diagramViews) {
+                if (diagramView.getTab().getId().equals(id)){
+
+                    // Adds to the current visable log.
+                    if (diagramView.getTab() == DiagramView.getDiagramViewInView().getTab()) {
+                        ExecutionLog.getInstance().fwd(string);
+
+                        // Just stores the data.
+                    } else {
+                        diagramView.addLogData(string);
+                    }
+                }
+            }
+
 
         });
 
