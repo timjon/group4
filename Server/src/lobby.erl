@@ -1,14 +1,14 @@
 -module(lobby).
--export([]).
+-export([init/1]).
 
-init(LobbyCoordinator, Lid, Host_id) - >
-  LobbyCoordinator ! {Lid, print_information, ["Lobby was spawned"]},
-  loop(LobbyCoordinator, Lid, Host_id).
+init(Creator_Socket) -> loop(Creator_Socket, [Creator_Socket], []).
 
-loop(LobbyCoordinator, Lid, Host_id) ->
+
+loop(Creator_Socket, Members, Diagrams) -> 
   receive
-    {create_diagram, Diagram, Did} -> ;  %Spawn the DiagramCoordinator, the function 'use_input' from usercoordinator could be used here.
-	
+    {remove_lobby, Creator_Socket} -> ok;
+	{create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}} -> not_implemented;
+	{command, {Did, next_message}} -> not_implemented;
+	{command, {Did, previous_message}} -> not_implemented;
+  end.
 	{remove_diagram, Did} -> ;
-	
-	
