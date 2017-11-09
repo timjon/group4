@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius, Sebastian Fransson
  *  -collaborator Rashad Kamsheh
  */

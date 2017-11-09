@@ -10,7 +10,7 @@ import static visuals.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
- * @version 1.2
+ * @version 1.3
  */
 class Decode {
     // Raw string to be decoded.

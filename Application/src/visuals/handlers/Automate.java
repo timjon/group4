@@ -9,7 +9,7 @@ import visuals.Message;
 
 /**
  * Handles automating the Sequence Diagram execution.
- * @version 0.1
+ * @version 1.0
  * @author Pontus Laestadius
  */
 public class Automate extends Thread {

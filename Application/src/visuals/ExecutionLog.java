@@ -11,7 +11,7 @@ import javafx.scene.control.ListView;
 /**
  * Displays any information given in to a ListView.
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class ExecutionLog extends ListView {
     private static ExecutionLog elog; // Static singleton implementation.

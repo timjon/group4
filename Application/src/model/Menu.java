@@ -13,6 +13,7 @@ import visuals.handlers.Automate;
 import java.util.*;
 
 /**
+ * Handles all menu items and their states.
  * @author Pontus Laestadius
  * @version 1.0
  */
