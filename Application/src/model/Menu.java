@@ -50,6 +50,13 @@ public class Menu {
     }
 
     /**
+     * @param play set the play status of automation.
+     */
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
+
+    /**
      * @return a menu instance.
      */
     public static Menu getInstance() {
@@ -108,14 +115,27 @@ public class Menu {
      * Starts automating the executing. Disables manual control.
      */
     private static void play() {
+        // If it is finished, we pause.
+        if (ExecutionLog.getInstance().isFinished()) {
+            // Pause the execution.
+            pause();
+
+            // Identify new states.
+            Menu.getInstance().identifyState();
+        }
+
+        // Start automating.
         Platform.runLater(() -> {
+
             button_auto.setText(text_auto_pause);
 
             // Disable manual controls.
             button_next.setDisable(true);
             button_previous.setDisable(true);
 
-            (new Thread(new Automate())).start();
+            // Start a new thread if there is no process running.
+            if (!Automate.running())
+                (new Thread(new Automate())).start();
         });
     }
 
@@ -123,6 +143,7 @@ public class Menu {
      * Stops automating the executing. enables manual control.
      */
     public static void pause() {
+        Menu.getInstance().setPlay(false);
         Platform.runLater(() -> {
             button_auto.setText(text_auto_play);
 
@@ -191,8 +212,6 @@ public class Menu {
             pause();
         }
 
-        // Is it at the beginning of execution.
-
         DiagramView diagramView;
 
         try {
@@ -206,26 +225,27 @@ public class Menu {
             return;
         }
 
-        // If we can go back.
-        if (diagramView.getDraw().canRemoveMessage()) {
-            button_previous.setDisable(false);
+        Platform.runLater(() -> {
+            // If we can go back.
+            if (diagramView.getDraw().canRemoveMessage()) {
+                button_previous.setDisable(false);
 
-            // If we can't go back.
-        } else {
-            button_previous.setDisable(true);
-        }
+                // If we can't go back.
+            } else {
+                button_previous.setDisable(true);
+            }
 
-        // If it is finished.
-        if (ExecutionLog.getInstance().isFinished()) {
-            button_next.setDisable(true);
-            button_auto.setDisable(true);
+            // If it is finished.
+            if (ExecutionLog.getInstance().isFinished()) {
+                button_next.setDisable(true);
+                button_auto.setDisable(true);
 
-            // If it's not finished.
-        } else {
-            button_next.setDisable(false);
-            button_auto.setDisable(false);
-        }
-
+                // If it's not finished.
+            } else {
+                button_next.setDisable(false);
+                button_auto.setDisable(false);
+            }
+        });
     }
 
 }

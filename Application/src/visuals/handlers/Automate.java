@@ -25,6 +25,13 @@ public class Automate extends Thread {
         singletonAutomateThread = null;
     }
 
+    /**
+     * @return if the thread is occupied or not by a running process.
+     */
+    public static boolean running() {
+        return singletonAutomateThread != null;
+    }
+
     @Override
     public void run() {
 

@@ -153,8 +153,7 @@ public class Draw {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(animatedBackground,10,10, this.canvas.getWidth(), this.canvas.getHeight());
-        Animation.setFramesPerSecond(3); // Sets the desired frames per second.
+        gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
 
