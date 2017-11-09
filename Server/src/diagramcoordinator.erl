@@ -1,5 +1,5 @@
 -module(diagramcoordinator).
--export([init/4]).
+-export([init/3]).
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
