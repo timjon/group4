@@ -28,10 +28,6 @@ public class Message implements Renderable{
     private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
-    // Curve
-    private double curve_increment = 1.05;
-    private double curve = 1;
-
     // Static indicator.
     private boolean staticIndicator = false;
 
@@ -77,29 +73,26 @@ public class Message implements Renderable{
      */
     @Override
     public void update() {
-        curve *= curve_increment;
 
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
            if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
-               if ((animationBounds += (class_size/6 +curve)) > this.node2.getX() - this.node1.getX())
+               if ((animationBounds += (class_size/6)) > this.node2.getX() - this.node1.getX())
                    keepAnimating = false;
            }
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
            else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
-               if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
+               if((animationBounds -= (class_size/6)) < (this.node2.getX())  - this.node1.getX())
                    keepAnimating = false;
            }
-
 
            // If it's being viewed in the past and not currently animating.
            if (staticIndicator && !keepAnimating) {
 
                // Which direction is it pointing at determines original location.
-               if (node2.getX() > node1.getX()) {
-                   animationBounds = node1.getX();
-               } else {
-                   animationBounds = node2.getX();
-               }
+               animationBounds = 0;
+
+               // Set it's animation state to true.
+               keepAnimating = true;
 
            }
     }
@@ -146,6 +139,8 @@ public class Message implements Renderable{
 
     public void setStatic(boolean staticIndicator)  {
         this.staticIndicator = staticIndicator;
+        if (!staticIndicator)
+            this.keepAnimating = false;
     }
 
     /**
@@ -155,14 +150,15 @@ public class Message implements Renderable{
     public void renderStatic(GraphicsContext gc) {
 
         int y = offset + this.class_size;
+        int h = class_size/20;
 
         gc.setFill(Color.BLACK);
         if (fromNode < toNode) {
-            gc.fillRect(this.node1.getX(), y+this.node1.getY(), this.node2.getX() -this.node1.getX(), class_size/10);
-            gc.fillRect(this.node1.getX(), y+this.node1.getY() + class_size, this.node2.getX() -this.node1.getX(), class_size/10);
+            gc.fillRect(this.node1.getX(), y+this.node1.getY(), this.node2.getX() -this.node1.getX(), h);
+            gc.fillRect(this.node1.getX(), y+this.node1.getY() + class_size/2, this.node2.getX() -this.node1.getX(), h);
         } else {
-            gc.fillRect(this.node2.getX(), y+this.node2.getY(), this.node1.getX() -this.node2.getX(), class_size/10);
-            gc.fillRect(this.node2.getX(), y+this.node2.getY() + class_size, this.node1.getX() -this.node2.getX(), class_size/10);
+            gc.fillRect(this.node2.getX(), y+this.node2.getY(), this.node1.getX() -this.node2.getX(), h);
+            gc.fillRect(this.node2.getX(), y+this.node2.getY() + class_size/2, this.node1.getX() -this.node2.getX(), h);
         }
 
         gc.setFill(Color.BLACK);

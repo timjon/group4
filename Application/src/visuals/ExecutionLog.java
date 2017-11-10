@@ -80,7 +80,6 @@ public class ExecutionLog extends ListView {
                                     // Collect it to the list.
                                     .collect(Collectors.toList());
 
-
                     // Reverse the order of the items.
                     Collections.reverse(filteredList);
 
