@@ -178,7 +178,7 @@ class Decode {
             }
 
             // Display in the execution log the number of classes created.
-            write(id, "CREATED: " + numberOfClasses + " classes");
+            write(id, "INFO: created " + numberOfClasses + " classes");
 
             // Turns on animations.
             Draw.animate(true);

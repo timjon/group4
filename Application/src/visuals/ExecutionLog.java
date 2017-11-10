@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.control.ListView;
 import visuals.handlers.Resizer;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,19 +62,27 @@ public class ExecutionLog extends ListView {
         this.listView.getSelectionModel().selectedItemProperty().addListener
                 ((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
+                    // Get draw object.
+                    Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+                    // Reset.
+                    draw.resetCurrentTime();
+
                     // If you selected an INFO. do no action.
                     if (newValue.startsWith("INFO:")) return;
-
 
                     // Predicate the data list.
                     List<String> filteredList =
                             // Gets the stream of Strings.
                             data.stream().
                                     // Filter away INFO messages.
-                            filter(s -> !s.startsWith("INFO:"))
+                                            filter(s -> !s.startsWith("INFO:"))
                                     // Collect it to the list.
-                            .collect(Collectors.toList());
+                                    .collect(Collectors.toList());
 
+
+                    // Reverse the order of the items.
+                    Collections.reverse(filteredList);
 
                     // Keeps track of number of messages to go back.
                     int goBackNumberOfMessages = 0;
@@ -81,26 +90,33 @@ public class ExecutionLog extends ListView {
                     // Iterate over the filtered items.
                     for (String string: filteredList) {
 
-                        // Iterates messages to go back.
-                        goBackNumberOfMessages++;
-
                         // Match for equality.
                         if (string.equals(newValue))
                             break;
+
+                        // Iterates messages to go back.
+                        goBackNumberOfMessages++;
 
                     }
 
                     // Remove the number of filtered items.
                     goBackNumberOfMessages = filteredList.size()-goBackNumberOfMessages;
 
-
                     // If you did not go back any steps, return to normal execution.
-                    if (goBackNumberOfMessages == 0) {
-                        // TODO set normal state.
-                    } else {
-                        // TODO set selected item history state.
+                    if (goBackNumberOfMessages < filteredList.size()) {
 
-                        System.out.println("Back:" + goBackNumberOfMessages + " item: " + newValue);
+                        // Convert steps to index.
+                        goBackNumberOfMessages -= 1;
+
+                        try {
+                            Message message = draw.getMessage(goBackNumberOfMessages);
+
+                            message.setStatic(true);
+
+                            // When there are no messages,
+                            // Completely harmless, nothing to catch.
+                        } catch (ArrayIndexOutOfBoundsException ex) { }
+
                     }
 
                 });

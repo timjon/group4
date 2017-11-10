@@ -226,4 +226,26 @@ public class Draw {
     public Message getLastMessage() throws NullPointerException, ArrayIndexOutOfBoundsException {
         return this.messages.get(this.messages.size()-1);
     }
+
+    /**
+     * Return a message for the given index.
+     * @param index the index.
+     * @return a message.
+     */
+    public Message getMessage(int index) throws ArrayIndexOutOfBoundsException {
+        if (index >= this.messages.size())
+            throw new ArrayIndexOutOfBoundsException("Index: " + index + "Size: " + this.messages.size());
+        return this.messages.get(index);
+    }
+
+    /**
+     * Resets all the static to be current not static timeline. It's the darkest time line.
+     */
+    public void resetCurrentTime() {
+        for (Message message: this.messages) {
+            message.setStatic(false);
+        }
+    }
+
+
 }

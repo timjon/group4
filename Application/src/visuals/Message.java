@@ -8,7 +8,8 @@ import visuals.handlers.Animation;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * @version 1.0
+ * Collaborator: Pontus Laestadius
+ * @version 1.1
  */
 public class Message implements Renderable{
     private String name;
@@ -30,6 +31,9 @@ public class Message implements Renderable{
     // Curve
     private double curve_increment = 1.05;
     private double curve = 1;
+
+    // Static indicator.
+    private boolean staticIndicator = false;
 
     /**
      * Constructor
@@ -57,7 +61,7 @@ public class Message implements Renderable{
      */
     @Override
     public String format() {
-        return null;
+        return fromNode + " -> " + toNode + " | " + name;
     }
 
 
@@ -85,6 +89,19 @@ public class Message implements Renderable{
                if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
                    keepAnimating = false;
            }
+
+
+           // If it's being viewed in the past and not currently animating.
+           if (staticIndicator && !keepAnimating) {
+
+               // Which direction is it pointing at determines original location.
+               if (node2.getX() > node1.getX()) {
+                   animationBounds = node1.getX();
+               } else {
+                   animationBounds = node2.getX();
+               }
+
+           }
     }
 
     /**
@@ -102,6 +119,60 @@ public class Message implements Renderable{
      */
     @Override
     public void render(GraphicsContext gc){
+        // Static permanent animation.
+        if (staticIndicator) {
+            renderStatic(gc);
+        }
+        // Draws the message.
+        renderDefault(gc);
+    }
+
+    /**
+     * Getter method for retrieving the beginning node of a message
+     * @return fromNode
+     */
+    public int getFromNode(){
+        return fromNode;
+    }
+
+    /**
+     * Getter method for retrieving the end node of a message
+     * @return toNode
+     */
+    public int getToNode(){
+        return toNode;
+    }
+
+
+    public void setStatic(boolean staticIndicator)  {
+        this.staticIndicator = staticIndicator;
+    }
+
+    /**
+     * Renders a static message on the canvas.
+     * @param gc The GraphicalContext to display the info on.
+     */
+    public void renderStatic(GraphicsContext gc) {
+
+        int y = offset + this.class_size;
+
+        gc.setFill(Color.BLACK);
+        if (fromNode < toNode) {
+            gc.fillRect(this.node1.getX(), y+this.node1.getY(), this.node2.getX() -this.node1.getX(), class_size/10);
+            gc.fillRect(this.node1.getX(), y+this.node1.getY() + class_size, this.node2.getX() -this.node1.getX(), class_size/10);
+        } else {
+            gc.fillRect(this.node2.getX(), y+this.node2.getY(), this.node1.getX() -this.node2.getX(), class_size/10);
+            gc.fillRect(this.node2.getX(), y+this.node2.getY() + class_size, this.node1.getX() -this.node2.getX(), class_size/10);
+        }
+
+        gc.setFill(Color.BLACK);
+    }
+
+    /**
+     * Default message rendering.
+     * @param gc The GraphicalContext to display the info on.
+     */
+    public void renderDefault(GraphicsContext gc) {
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
@@ -149,22 +220,7 @@ public class Message implements Renderable{
             }
 
         }
-    }
 
-    /**
-     * Getter method for retrieving the beginning node of a message
-     * @return fromNode
-     */
-    public int getFromNode(){
-        return fromNode;
-    }
-
-    /**
-     * Getter method for retrieving the end node of a message
-     * @return toNode
-     */
-    public int getToNode(){
-        return toNode;
     }
 
 }
