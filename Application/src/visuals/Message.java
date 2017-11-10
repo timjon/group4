@@ -8,7 +8,8 @@ import visuals.handlers.Animation;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * @version 1.0
+ * -collaborator Rashad Kamsheh
+ * @version 1.1
  */
 public class Message implements Renderable{
     private String name;
@@ -20,6 +21,7 @@ public class Message implements Renderable{
     private boolean keepAnimating = true; // State of the animation. Beginning or ending.
     private boolean switchImage; // Keeps track of which image to show.
     private double messageScale = 1.5;
+    private int stage = 1; // used for the hardcoded trajectory of self referencing message
 
     //Images for dragon animation.
     private static Image dragonMessage = new Image("resources/DragonBro.png"); //Wings Up
@@ -85,7 +87,24 @@ public class Message implements Renderable{
                if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
                    keepAnimating = false;
            }
-    }
+            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+           else if (keepAnimating && node1.getX() == node2.getX()) { //Send a self referencing message
+               switch (stage) {
+                   case 1 :
+                       // move 60 pixels to the right
+                       if((animationBounds += (class_size/6 +curve)) > 60) {
+                            stage = 2;
+                       }
+                       break;
+
+                   case 2:
+                       // move back to starting point
+                       if((animationBounds -= (class_size/6 +curve)) < 0) {
+                           keepAnimating = false;
+                       }
+                       break;
+               }
+           }}
 
     /**
      * Gets the new coordinates from resizing the application and redraws messages with these coordinates.
