@@ -24,6 +24,7 @@ public class Menu {
 
     // List of buttons.
     private static Button button_import;
+    private static Button button_import_lobby;
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
@@ -34,6 +35,7 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
+    private final static String text_import_lobby = "Import to lobby";
 
     // State
     private boolean play = false;
@@ -48,6 +50,7 @@ public class Menu {
         button_next = new Button(text_next);
         button_previous = new Button(text_previous);
         button_auto = new Button(text_auto_play);
+        button_import_lobby  = new Button(text_import_lobby);
     }
 
     /**
@@ -74,13 +77,14 @@ public class Menu {
         HBox menu = new HBox();
 
         // Start all media buttons disabled.
-        setMenuState(false, button_import);
+        setMenuState(false, button_import, button_import_lobby);
 
         // Adds the event handlers for the buttons.
         setEvents(stage);
 
         // Add the buttons to the menu.
         menu.getChildren().add(button_import);
+        menu.getChildren().add(button_import_lobby);
         menu.getChildren().add(button_previous);
         menu.getChildren().add(button_auto);
         menu.getChildren().add(button_next);
@@ -98,6 +102,7 @@ public class Menu {
         Set<Button> buttonHashSet = new HashSet<>();
 
         buttonHashSet.add(button_import);
+        buttonHashSet.add(button_import_lobby);
         buttonHashSet.add(button_next);
         buttonHashSet.add(button_previous);
         buttonHashSet.add(button_auto);
@@ -184,6 +189,28 @@ public class Menu {
                 identifyState();
             });
 
+        button_import_lobby.setOnAction((ActionEvent event) -> {
+            Collection<String> result = Import.file(stage);
+            if (result.isEmpty()) return;
+
+            // Parse the element if it contains a supported diagram
+            Parser parse = new Parser();
+            switch(DiagramCheck.ContainsDiagram(result)) {
+                case "sequence_diagram" :
+                    for (String element : result) {
+                        parse.parseSequenceDiagram(element);
+                        Net.push("{share, " + parse.getFirstSequenceDiagram() + "}");
+
+                        // Enable all media buttons.
+                        setMenuState(true);
+                        button_previous.setDisable(true);
+                    }
+                    break;
+            }
+            // if the diagram is not included in the switch case, check if the diagram is invalid
+            DiagramCheck.ContainsDiagram(result);
+            identifyState();
+        });
 
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
