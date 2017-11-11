@@ -25,6 +25,7 @@ public class Draw {
     private Canvas canvas; // Draws and handles graphical context
     private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
+    private ArrayList<Trail> trails = new ArrayList<>(); //Stores the trails that appear after the dragons
     private int offset; // Used for message ordering
     private int class_size = 0; // Used for message positioning
 	
@@ -90,6 +91,26 @@ public class Draw {
     }
 
 
+
+    //TODO: STUFF--------------------------------------
+    public void addTrail(int fromNode, int toNode, String name){
+        offset += 7;
+        this.trails.add(new Trail(diagramClasses.get(fromNode).getCoordinates(),
+                diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
+
+    }
+
+    /**
+     * Removes the last message in the messages list.
+     * @return true if it removed a message, false if the message list is empty.
+     */
+    public boolean removeTrail() {
+        if (trails.isEmpty()) return false;
+        trails.remove(trails.size()-1);
+        return true;
+    }
+
+
     /**
      * @param name class name to match.
      * @return the index the DiagramClass is located at.
@@ -128,6 +149,7 @@ public class Draw {
     void renderItems() {
         renderClass();
         renderMessage();
+        renderTrail();
     }
 
     /**
@@ -161,6 +183,8 @@ public class Draw {
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
+        for (Renderable r: trails)
+           r.render(gc);
     }
 
     /**
@@ -170,6 +194,8 @@ public class Draw {
         for (Renderable r: diagramClasses)
             r.update();
         for (Renderable r: messages)
+            r.update();
+        for (Renderable r: trails)
             r.update();
     }
 
@@ -187,6 +213,25 @@ public class Draw {
             }
         }
     }
+
+    //TODO: MORE STUFF
+    /**
+     * Renders blubblbubb
+     */
+    void renderTrail() {
+        if(trails.size() == 0) return;
+        if(this.trails.size() > 0) {
+            for (Trail trail: trails) {
+                Coordinates node1 = diagramClasses.get(trail.getFromNode()).getCoordinates();
+                Coordinates node2 = diagramClasses.get(trail.getToNode()).getCoordinates();
+
+                trail.changeCoordinates(node1, node2, class_size);
+            }
+        }
+    }
+
+
+
 
     /**
      * Updates the class to fit the resized window.
@@ -224,10 +269,20 @@ public class Draw {
             this.addClass("Class " + i);
         // Messages
         this.addMessage(0, 1, "Msg1");
+
         if (nr > 4) {
             this.addMessage(3, 4, "Msg2");
             this.addMessage(4, 3, "Msg3");
         }
+
+        //Trails
+        this.addTrail(0, 1, "MSGFFS");
+        if (nr > 4) {
+            this.addTrail(3, 4, "DDD");
+            this.addTrail(4, 3, "DDMDD");
+        }
+
+
         animate(true); // Animates all example messages at once. in the real execution messages would be sent in iterations, so ordering is of no issue.
     }
 

@@ -27,6 +27,8 @@ public class Message implements Renderable{
     private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
+    private static Image smoke = new Image("resources/cloud1.png");
+
     // Curve
     private double curve_increment = 1.05;
     private double curve = 1;
@@ -113,6 +115,10 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Up.
+                //draw smoke trail
+                gc.drawImage(smoke, ((x1 - 25) + animationBounds),
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale);
+
                 switchImage = false;
             }
 
@@ -121,6 +127,9 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
+                //draw smoke trail
+                gc.drawImage(smoke, ((x1 - 25) + animationBounds),
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale);
                 switchImage = true;
             }
 
@@ -129,6 +138,9 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
+                //draw smoke trail
+                gc.drawImage(smoke, ((x1 + 25) + animationBounds),
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale);
                 switchImage = false;
             }
 
@@ -137,8 +149,14 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
+                //draw smoke trail
+                gc.drawImage(smoke, ((x1 + 25) + animationBounds),
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale);
                 switchImage = true;
             }
+
+
+
 
         }
     }
