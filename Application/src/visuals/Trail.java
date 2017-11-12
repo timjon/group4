@@ -1,31 +1,35 @@
 package visuals;
 
-import javafx.scene.image.Image;
+/**
+ * Class for the trail of the message
+ * @author Isabelle Törnqvist
+ * @version 1.0
+ */
 
 public class Trail {
 
-    private int xcoor, ycoor;
+    //Variables for coordinates of the trail smoke images
+    private int xcoordinate, ycoordinate;
+    //Variables for the height and width of the trail smoke images
     private double width, height;
 
-
-
-
-    public Trail(int xcoor, int ycoor, double width, double height){
-        this.xcoor = xcoor;
-        this.ycoor = ycoor;
+    /**
+     * Constructor
+     */
+    public Trail(int xcoordinate, int ycoordinate, double width, double height){
+        this.xcoordinate = xcoordinate;
+        this.ycoordinate = ycoordinate;
         this.width = width;
         this.height = height;
-
-
     }
 
-    public int getXcoor(){return  xcoor;}
+    //Getter methods for coordinates, height and width
+    public int getXcoordinate(){return  xcoordinate;}
 
-    public int getYcoor(){return  ycoor;}
+    public int getYcoordinate(){return  ycoordinate;}
 
     public double getWidth(){return width;}
 
     public double getHeight(){return height;}
-
 
 }

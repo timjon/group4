@@ -10,7 +10,8 @@ import java.util.ArrayList;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * @version 1.0
+ * @version 2.0
+ * Collaborator: Isabelle Törnqvist
  */
 public class Message implements Renderable{
     private String name;
@@ -22,7 +23,7 @@ public class Message implements Renderable{
     private boolean keepAnimating = true; // State of the animation. Beginning or ending.
     private boolean switchImage; // Keeps track of which image to show.
     private double messageScale = 1.5;
-    private double trailScale = 3.5;
+    private double trailScale = 3.5; //Scale of the smoke image for trail
 
     private ArrayList<Trail> trails = new ArrayList<>(); //Stores the trails that appear after the dragons
 
@@ -32,8 +33,8 @@ public class Message implements Renderable{
     private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
+    //Image for trail animation
     private static Image smoke = new Image("resources/cloud1.png");
-
 
     // Curve
     private double curve_increment = 1.05;
@@ -71,7 +72,6 @@ public class Message implements Renderable{
     /**
      * Method for animating the message and setting the image size for messages in both directions.
      */
-
 
     @Override
     public void update() {
@@ -149,6 +149,9 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
+                //Draw the trail of the message
+                this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale));
                 switchImage = false;
             }
 
@@ -157,16 +160,12 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
-
-                //Draw the trail of the message
-                this.trails.add(new Trail((x1 + 15)+ animationBounds, y1 +(this.class_size),
-                        class_size/trailScale, class_size/trailScale));
-
                 switchImage = true;
             }
         }
+        //Draw trail for message, for each instance in the arraylist
         for (Trail t: trails)
-            gc.drawImage(smoke, t.getXcoor(), t.getYcoor(), t.getWidth(), t.getHeight());
+            gc.drawImage(smoke, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
     }
 
     /**
