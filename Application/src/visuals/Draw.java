@@ -25,7 +25,6 @@ public class Draw {
     private Canvas canvas; // Draws and handles graphical context
     private ArrayList<DiagramClass> diagramClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
-  //  private ArrayList<Trail> trails = new ArrayList<>(); //Stores the trails that appear after the dragons
     private int offset; // Used for message ordering
     private int class_size = 0; // Used for message positioning
 	
@@ -89,11 +88,6 @@ public class Draw {
         messages.remove(messages.size()-1);
         return true;
     }
-
-
-
-
-
 
     /**
      * @param name class name to match.
@@ -192,9 +186,6 @@ public class Draw {
             }
         }
     }
-
-
-
 
 
     /**

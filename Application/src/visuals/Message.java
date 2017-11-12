@@ -120,8 +120,7 @@ public class Message implements Renderable{
         if(keepAnimating) {
 
 
-            this.trails.add(new Trail((x1 - 25)+animationBounds, y1 +(this.class_size),
-                    class_size/messageScale, class_size/messageScale));
+
 
             //Sets the message text centered above the "dragon".
             gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2)); // Message description.
@@ -132,8 +131,8 @@ public class Message implements Renderable{
                 gc.drawImage(dragonMessage, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Up.
 
-                for (Trail t: trails)
-                    gc.drawImage(smoke, t.getXcoor(), t.getYcoor(), t.getWidth(), t.getHeight());
+                this.trails.add(new Trail((x1 - 25)+animationBounds, y1 +(this.class_size),
+                        class_size/messageScale, class_size/messageScale));
 
                 switchImage = false;
             }
@@ -152,6 +151,9 @@ public class Message implements Renderable{
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
 
+               // for (Trail t: trails)
+                //    gc.drawImage(smoke, t.getXcoor(), t.getYcoor(), t.getWidth(), t.getHeight());
+
                 switchImage = false;
             }
 
@@ -160,10 +162,15 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
+
+                this.trails.add(new Trail((x1 + 25)+animationBounds, y1 +(this.class_size),
+                        class_size/messageScale, class_size/messageScale));
+
                 switchImage = true;
             }
 
-
+            for (Trail t: trails)
+                gc.drawImage(smoke, t.getXcoor(), t.getYcoor(), t.getWidth(), t.getHeight());
 
 
         }
