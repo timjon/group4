@@ -21,7 +21,8 @@ public class Message implements Renderable{
     private boolean keepAnimating = true; // State of the animation. Beginning or ending.
     private boolean switchImage; // Keeps track of which image to show.
     private double messageScale = 1.5;
-    private int stage = 1; // used for the hardcoded trajectory of self referencing message
+    private int stage = 1; // Used for the hardcoded trajectory of self referencing message.
+    private boolean switchDirection = false; // Keeps track whether a the dragon's flying direction should be switched
 
     //Images for dragon animation.
     private static Image dragonMessage = new Image("resources/DragonBro.png"); //Wings Up
@@ -91,16 +92,18 @@ public class Message implements Renderable{
            else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
                switch (stage) {
                    case 1 :
-                       // move 60 pixels to the right
-                       if((animationBounds += (class_size/6 +curve)) > 60) {
-                           offset += 28; // lowering the dragon vertically
+                       switchDirection = true; // Switch state of the dragon's flying direction
+                       // Move 60 pixels to the right
+                       if((animationBounds += (class_size/6)) > 40) {
+                           offset += 28; // Lower the dragon vertically
+                           switchDirection = false; // Original state of the dragon's flying direction
                            stage = 2;
                        }
                        break;
 
                    case 2:
                        // move back to starting point
-                       if((animationBounds -= (class_size/6 +curve)) < 0) {
+                       if((animationBounds -= (class_size/6)) < 0) {
                            keepAnimating = false;
                        }
                        break;
@@ -146,6 +149,22 @@ public class Message implements Renderable{
 
             // Checks if down image is supposed to be shown and if we are sending a message and not a return.
             else if (!switchImage && fromNode < toNode) {
+                //sets the dimensions of the dragon according to the current class size.
+                gc.drawImage(dragonMessage2, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
+                switchImage = true;
+            }
+
+            //Handling the switch of the dragon's flying direction when visualising self calls
+            // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
+            else if (switchDirection && switchImage) {
+                //sets the dimensions of the dragon according to the current class size.
+                gc.drawImage(dragonMessage, x1 + animationBounds,
+                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
+                switchImage = true;
+            }
+            // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
+            else if (switchDirection && !switchImage) {
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
