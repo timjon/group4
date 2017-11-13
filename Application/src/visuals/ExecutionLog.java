@@ -11,7 +11,7 @@ import javafx.scene.control.ListView;
 /**
  * Displays any information given in to a ListView.
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class ExecutionLog extends ListView {
     private static ExecutionLog elog; // Static singleton implementation.
@@ -23,6 +23,16 @@ public class ExecutionLog extends ListView {
      */
     public static ExecutionLog getInstance() {
         return elog;
+    }
+
+    /**
+     * This is a part of Execution Log. A class which displays a log on the left side of the screen. (setLeft). And it's
+     * called in the Next button to identify if the simulation has been finished or not.
+     * @return a boolean which is a true or false. True will be returned if the string matches the finish string.
+     * False if it does not match.
+     */
+    public boolean isFinished() {
+        return data.size() != 0 && data.get(data.size()-1).toLowerCase().equals("simulation finished");
     }
 
     /**
@@ -56,7 +66,20 @@ public class ExecutionLog extends ListView {
      */
     public void bwd() {
         if (data.size() < 2) return;
-        data.remove(data.size()-1);
+
+        for (int i = data.size()-1; i >= 0; i--) {
+            String element = data.remove(data.size()-1);
+            if (!element.startsWith("INFO:"))
+                break;
+        }
+
+        // Removes all INFO before it.
+        for (int i = data.size()-1; i >= 0; i--) {
+            if (!data.get(i).startsWith("INFO:"))
+                break;
+            data.remove(i);
+        }
+
         update();
     }
 

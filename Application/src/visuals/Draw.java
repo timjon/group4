@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius, Sebastian Fransson
  *  -collaborator Rashad Kamsheh
  */
@@ -89,6 +89,13 @@ public class Draw {
         return true;
     }
 
+    /**
+     * Identifies if a message can be removed or not.
+     * @return true if it can remove a message, false if the message list is empty.
+     */
+    public boolean canRemoveMessage() {
+        return !messages.isEmpty();
+    }
 
     /**
      * @param name class name to match.
@@ -146,8 +153,7 @@ public class Draw {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(animatedBackground,10,10, this.canvas.getWidth(), this.canvas.getHeight());
-        Animation.setFramesPerSecond(3); // Sets the desired frames per second.
+        gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
 
@@ -212,37 +218,12 @@ public class Draw {
         else
             Animation.cancel();
     }
-    //-------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------
-    //----------------------------TEST CODE BELOW------------------------------------
-    //-------------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------
 
-    void example_diagram(int nr) {
-        // Classes
-        for (int i = 0; i < nr; i++)
-            this.addClass("Class " + i);
-        // Messages
-        this.addMessage(0, 1, "Msg1");
-        if (nr > 4) {
-            this.addMessage(3, 4, "Msg2");
-            this.addMessage(4, 3, "Msg3");
-        }
-        animate(true); // Animates all example messages at once. in the real execution messages would be sent in iterations, so ordering is of no issue.
-    }
-
-    public static void temp_generate_diagram() { // Init's a draw object that handles graphical elements
-        old_generate_diagram();
-        Draw.animate(true);
-    }
-
-    public static void old_generate_diagram() {
-        for (int i = 1; i <= 5; i++) {
-            String name = "diagram " + i;
-            DiagramView dv = new DiagramView(name);
-            dv.getDraw().example_diagram(i*2); // Only used to display an example.
-            tabPane.getTabs().add(dv.getTab());
-
-        }
+    /**
+     * @return the last message in the draw object.
+     * @throws NullPointerException if there are no messages.
+     */
+    public Message getLastMessage() throws NullPointerException, ArrayIndexOutOfBoundsException {
+        return this.messages.get(this.messages.size()-1);
     }
 }
