@@ -59,7 +59,14 @@ public class ExecutionLog extends ListView {
         this.listView.setBackground(bg);
 
         // Adds listener for selecting a item.
-        this.listView.getSelectionModel().selectedItemProperty().addListener
+        this.listView.
+                // Gets the box which you can select in the overall list view.
+                getSelectionModel().
+                // Selects the property of selecting an item.
+                selectedItemProperty().
+                // Adds a listener for the property when it changes.
+                addListener
+                        // Scope and variables received when a change occurs in the listened property.
                 ((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
                     // Get draw object.

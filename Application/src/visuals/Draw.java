@@ -239,7 +239,7 @@ public class Draw {
     }
 
     /**
-     * Resets all the static to be current not static time line. It's the darkest time line.
+     * Resets all messages but the last one to be not static.
      */
     public void resetCurrentTime() {
         for (int i = messages.size()-1; i > 0; i--)
