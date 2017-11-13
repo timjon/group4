@@ -93,9 +93,9 @@ public class Message implements Renderable{
             switch (stage) {
                 case 1 :
                     switchDirection = true; // Switch state of the dragon's flying direction
-                    // Move 60 pixels to the right
-                    if((animationBounds += (class_size/6)) > 60) {
-                        offset += 30; // Lower the dragon vertically using an arbitrary number
+                    // Move the message to the right of the class
+                    if((animationBounds += (class_size/6)) > this.class_size) {
+                        offset += 20; // Lower the dragon vertically using an arbitrary number
                         switchDirection = false; // Original state of the dragon's flying direction
                         stage = 2;
                     }
