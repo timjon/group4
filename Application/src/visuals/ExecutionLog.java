@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Displays any information given in to a ListView.
+ * Displays any information given in a ListView.
  * @author Pontus Laestadius
- * @version 1.1
+ * @version 1.2
  */
 public class ExecutionLog extends ListView {
     private static ExecutionLog elog; // Static singleton implementation.
@@ -107,14 +107,11 @@ public class ExecutionLog extends ListView {
                         // Convert steps to index.
                         goBackNumberOfMessages -= 1;
 
-                        try {
-                            Message message = draw.getMessage(goBackNumberOfMessages);
+                        // Get the message we are going to display.
+                        Message message = draw.getMessage(goBackNumberOfMessages);
 
-                            message.setStatic(true);
-
-                            // When there are no messages,
-                            // Completely harmless, nothing to catch.
-                        } catch (ArrayIndexOutOfBoundsException ex) { }
+                        // Set it to be static.
+                        message.setStatic(true);
 
                     }
 

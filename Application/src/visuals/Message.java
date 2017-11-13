@@ -8,7 +8,7 @@ import visuals.handlers.Animation;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * Collaborator: Pontus Laestadius
+ * collaborator: Pontus Laestadius
  * @version 1.1
  */
 public class Message implements Renderable{
@@ -136,7 +136,9 @@ public class Message implements Renderable{
         return toNode;
     }
 
-
+    /**
+     * @param staticIndicator true to permanently repeat the animation. False to disable the animation.
+     */
     public void setStatic(boolean staticIndicator)  {
         this.staticIndicator = staticIndicator;
         if (!staticIndicator)
