@@ -1,4 +1,5 @@
-/.idea/
+Server/src/*.beam
+Server/src/*.dump
+*.idea
 /out/
-/Application.iml
-/*.beam
+*.beam
