@@ -5,18 +5,20 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
- * A DiagramClass wrapper for coordinates with extra properties that implements Renderable.
+ * An ActorClass wrapper modeled after DiagramClass.
  * @author Pontus Laestadius
+ * collaborator Kosara Golemshinska
  * @version 1.0
  */
-public class DiagramClass implements Renderable {
-    private Coordinates coordinates; // The coordinates of the object.
+public class ActorClass implements Renderable {
+
+	private Coordinates coordinates; // The coordinates of the object.
     private int size; // Size of the Object.
     private String name; // The class name.
 
     // The images retrieved.
-    private static Image castle1 = new Image("resources/castle_default.png");
-    private static Image castle2 = new Image("resources/castle_default2.png");
+    private static Image king1 = new Image("resources/king_cape_up.png");
+    private static Image king2 = new Image("resources/king_cape_down.png");
 
     private static Image platform = new Image("resources/platform_default.png");
     private static Image connector = new Image("resources/connector_default.png");
@@ -24,21 +26,22 @@ public class DiagramClass implements Renderable {
 
     // Animations
 
-    // The castleStates of the castle.
-    private Image[] castleStates = {castle1, castle2};
-    private double aniindex = 0.0; // Animation index used for writing the state of the animating sequence.
+    // The 2 states of the king/actor.
+    private Image[] kingStates = {king1, king2};
+    // Index used to write the animation state.
+    private double kingAnimIndex = 0.0;
 
     /**
      * @param name the class name.
      */
-    DiagramClass(String name) {
-        this.name = name;
-    }
+    ActorClass(String name) {
+       this.name = name;
+   }
 
     /**
-     * Places the DiagramClass with specific coordinates and size.
-     * @param coordinates the position of the DiagramClass.
-     * @param size the size for the DiagramClass and it's graphics.
+     * Places the ActorClass with specific coordinates and size.
+     * @param coordinates the position of the ActorClass.
+     * @param size the size for the ActorClass and it's graphics.
      */
     public void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
@@ -46,7 +49,7 @@ public class DiagramClass implements Renderable {
     }
 
     /**
-     * @return the given name and not the class name of this DiagramClass.
+     * @return the given name and not the class name of this ActorClass.
      */
     public String getName() {
         String[] s = name.split(":");
@@ -58,9 +61,9 @@ public class DiagramClass implements Renderable {
      * Handles animation processing.
      */
     public void update() {
-        aniindex += 0.25;
-        if (aniindex >= castleStates.length)
-            aniindex = 0;
+        kingAnimIndex += 0.25;
+        if (kingAnimIndex >= kingStates.length)
+        	kingAnimIndex = 0;
     }
 
     /**
@@ -72,14 +75,14 @@ public class DiagramClass implements Renderable {
     }
 
     /**
-     * @return the DiagramClass coordinates
+     * @return the ActorClass coordinates
      */
     public Coordinates getCoordinates() {
         return coordinates;
     }
 
     /**
-     * Renders the DiagramClass on the canvas
+     * Renders the ActorClass on the canvas
      * @param gc GraphicalContext for a canvas.
      */
     public void render(GraphicsContext gc) {
@@ -88,38 +91,38 @@ public class DiagramClass implements Renderable {
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
 
-        int size_DiagramClass    = size/2;
-        int size_lifeline = size_DiagramClass/4;
-        int size_platform = size_DiagramClass + size_DiagramClass/5;
+        int size_ActorClass    = size/2;
+        int size_lifeline = size_ActorClass/4;
+        int size_platform = size_ActorClass + size_ActorClass/5;
 
         // Draws the pillar.
-            double scale = (pillar.getHeight()/pillar.getWidth()); // Used for scaling the pillar to the size of the DiagramClass.
+            double scale = (pillar.getHeight()/pillar.getWidth()); // Used for scaling the pillar to the size of the ActorClass.
             int pillar_height = (int) (scale*size_lifeline);
 
-        // Draws the pillar from the height of the DiagramClass until the end of the canvas.
+        // Draws the pillar from the height of the ActorClass until the end of the canvas.
             for (int i = 0; i < gc.getCanvas().getHeight()-y; i+=pillar_height) // Iterates over scale to the end of the canvas.
-            /* Draws the pillar: The x position needs to be the center of the DiagramClass minus half of the width of the pillar
-             * we are drawing, This gives us (x +size_DiagramClass/2 -size_lifeline/2). The y only has to be provided a increased
-             * starting position as to start from below the DiagramClass drawn, and then in each iteration add the scale to i to
+            /* Draws the pillar: The x position needs to be the center of the ActorClass minus half of the width of the pillar
+             * we are drawing, This gives us (x +size_ActorClass/2 -size_lifeline/2). The y only has to be provided a increased
+             * starting position as to start from below the ActorClass drawn, and then in each iteration add the scale to i to
              * create a solid pillar.*/
                 gc.drawImage(pillar, x -size_lifeline/2, y+i, size_lifeline, pillar_height);
 
         // Draws the connector.
-        placeGraphicCentered(gc, connector, size_lifeline*2, 0, size_DiagramClass -size_lifeline/2);
+        placeGraphicCentered(gc, connector, size_lifeline*2, 0, size_ActorClass -size_lifeline/2);
         // Draws the platform.
         placeGraphicCentered(gc, platform, size_platform, 0, size_platform/2);
-        // Draws the DiagramClass.
+        // Draws the ActorClass.
+        
+        Image king_state = kingStates[(int)kingAnimIndex];
+        placeGraphicCentered(gc, king_state, size_ActorClass/2,-size_ActorClass/8, -size_ActorClass/6);
 
-        Image castle_state = castleStates[(int)aniindex];
-        placeGraphicCentered(gc, castle_state, size_DiagramClass,0, 0);
-
-        // Draws the name of the DiagramClass.
+        // Draws the name of the ActorClass.
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.
             gc.fillText(
-                    this.name, // Sets the text to be the name of the DiagramClass.
-                    x + size_DiagramClass/4 -this.name.length()*2, // Dynamically determines the x position.
-                    y -size_DiagramClass/2, // Does not need to be dynamic, as all elements scale downwards.
-                    size +size_DiagramClass); // Sets a max width as to not bother the other DiagramClasses texts.
+                    this.name, // Sets the text to be the name of the ActorClass.
+                    x + size_ActorClass/4,// -this.name.length()*2, // Dynamically determines the x position.
+                    y -size_ActorClass/2, // Does not need to be dynamic, as all elements scale downwards.
+                    size +size_ActorClass); // Sets a max width as to not bother the other ActorClasses texts.
     }
 
     /**
