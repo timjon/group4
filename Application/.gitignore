@@ -1,2 +1,5 @@
-/.idea/
+Server/src/*.beam
+Server/src/*.dump
+*.idea
 /out/
+*.beam

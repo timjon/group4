@@ -25,7 +25,7 @@ public class DiagramCheck {
         for(String string: s) {
             for (String diagramType : allowedDiagrams) {
 				// If the collection contains a supported type, return it.
-                if (string.contains("\"type\" : \"" + diagramType + "\"")) {
+                if (string.contains(diagramType)) {
                     return diagramType;
                 }
             }
