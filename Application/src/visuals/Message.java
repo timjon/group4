@@ -88,12 +88,13 @@ public class Message implements Renderable{
                    keepAnimating = false;
            }
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-           else if (keepAnimating && node1.getX() == node2.getX()) { //Send a self referencing message
+           else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
                switch (stage) {
                    case 1 :
                        // move 60 pixels to the right
                        if((animationBounds += (class_size/6 +curve)) > 60) {
-                            stage = 2;
+                           offset += 28; // lowering the dragon vertically
+                           stage = 2;
                        }
                        break;
 
