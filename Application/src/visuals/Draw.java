@@ -2,17 +2,12 @@ package visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
-import net.Net;
 
 import javafx.scene.image.Image;
 
 import visuals.handlers.Animation;
 
 import java.util.ArrayList;
-
-import static visuals.DiagramView.tabPane;
 
 /**
  * @version 1.1
@@ -86,6 +81,7 @@ public class Draw {
     public boolean removeMessage() {
         if (messages.isEmpty()) return false;
         messages.remove(messages.size()-1);
+        offset -= 20;
         return true;
     }
 

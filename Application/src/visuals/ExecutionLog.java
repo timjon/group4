@@ -1,7 +1,5 @@
 package visuals;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +8,6 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ListView;
-import visuals.handlers.Resizer;
 
 import java.util.Collections;
 import java.util.List;
