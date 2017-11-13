@@ -12,7 +12,7 @@ import java.util.Collection;
 public class DiagramCheck {
 	// Supported diagram types.
 
-    private static String[] allowedDiagrams = {"sequence_diagram", "class_diagram"};
+    private static String[] allowedDiagrams = {"sequence_diagram"};
 	
 	/**
     * Checks if the JSON file contains a diagram type supported by the application.
