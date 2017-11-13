@@ -1,7 +1,7 @@
-import model.classDiagramParser.ClassDiagramObject;
-import model.classDiagramParser.Classes;
+package model;
+
+import model.sequenceDiagramParser.Messages;
 import model.sequenceDiagramParser.Processes;
-import model.sequenceDiagramParser.ContentArray;
 import javafx.scene.control.Alert;
 import com.google.gson.Gson;
 import model.sequenceDiagramParser.SequenceDiagramObject;
@@ -11,21 +11,21 @@ import java.util.List;
 
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.1
+ * @version 1.2
  * @since 2017-10-16
- *
+ * <p>
  * Made with usage of Gson library for parsing json into Java objects
  * https://github.com/google/gson
  * Gson is released under the Apache 2.0 license.
- *
+ * <p>
  * Copyright 2008 Google Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -89,8 +89,6 @@ public class Parser {
             // Assigns a String to the type of the diagram
             String type = parsedSequenceDiagram.getType();
 
-            System.out.println(format+extensions+version);
-
             // get the tempProcesses which contain the class names
             for (Processes processesElement : parsedSequenceDiagram.getProcesses()) {
                 tempProcesses += "\"" + processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + "\",";
@@ -102,23 +100,23 @@ public class Parser {
             }
 
             // get the elements of the First Diagram
-            for (ContentArray diagramElement : parsedSequenceDiagram.getDiagram().getContent().get(0).getContent()) {
-                tempFirstDiagram += "{" + diagramElement.getFrom() + "," + diagramElement.getTo() + ",[" + diagramElement.getMessage().get(0) + ", " + diagramElement.getMessage().get(1) + ", " + diagramElement.getMessage().get(2) + "]" + "}" + ",";
+            for (Messages diagramElement : parsedSequenceDiagram.getDiagram().getContent().get(0).getMessages()) {
+                tempFirstDiagram += "{" + diagramElement.getFrom() + "," + diagramElement.getTo() + ",[" + diagramElement.getMessage().get(0) + ", " +
+                        diagramElement.getMessage().get(1) + ", " + diagramElement.getMessage().get(2) + "]" + "}" + ",";
                 //removing extra comma
                 firstDiagramString = (tempFirstDiagram.substring(0, tempFirstDiagram.length() - 1));
             }
 
 
             // get the elements of the Parallel Diagram
-            for (ContentArray parallelDiagramElement : parsedSequenceDiagram.getDiagram().getContent().get(1).getContent()) {
+            for (Messages parallelDiagramElement : parsedSequenceDiagram.getDiagram().getContent().get(1).getMessages()) {
                 tempParallelDiagram += "{" + parallelDiagramElement.getFrom() + "," + parallelDiagramElement.getTo() + ",[" + parallelDiagramElement.getMessage().get(0) + "]" + "}" + ",";
                 //removing extra comma
                 parallelDiagramString = (tempParallelDiagram.substring(0, tempParallelDiagram.length() - 1));
             }
 
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             syntaxErrorMessage();
-
         }
     }
 
@@ -162,60 +160,5 @@ public class Parser {
         parallelCounter = parallelCounter + 2;
 
         return ParallelSequenceDiagram;
-    }
-
-
-    private String tempClasses = "";
-
-    private String tempClassesString1 = "";
-    private String tempClassesString2 = "";
-    private String tempClassesString3 = "";
-    private String tempClassesString4 = "";
-    private String tempClassesString5 = "";
-
-    public void parseClassDiagram(String inputJSON) {
-        Gson gson = new Gson();
-
-        try {
-            ClassDiagramObject parsedClassDiagram;
-            parsedClassDiagram = gson.fromJson(inputJSON, ClassDiagramObject.class);
-
-            // Creates an instance of the diagram's meta
-            model.classDiagramParser.Meta meta = parsedClassDiagram.getMeta();
-            // Assigns a String to the diagram's format
-            String format = meta.getFormat();
-            // Assigns a String to the diagram's extensions
-            List<Object> extensions = meta.getExtensions();
-            // Assigns a String to the diagram's version
-            String version = meta.getVersion();
-            // Assigns a String to the type of the diagram
-            String type = parsedClassDiagram.getType();
-
-            //System.out.println(format+extensions+version);
-
-            for (Classes fieldsElement : parsedClassDiagram.getClasses()) {
-
-                tempClasses +=  "{\"" + fieldsElement.getName() + "\"," + fieldsElement.getFields() + "},";
-
-                /**
-                * a cluster of temporary strings for now because i suck at string splitting
-                * */
-                // Removing extra comma
-                tempClassesString1 = (tempClasses.substring(0, tempClasses.length() - 1));
-                // Replacing equal signs with colons
-                tempClassesString2 = tempClassesString1.replaceAll("=", ":");
-                // Removing spaces and indentations
-                tempClassesString3 = tempClassesString2.replaceAll(" ", "");
-                // Removing "name" and "type" from the string
-                tempClassesString4 = tempClassesString3.replaceAll("name:", "");
-                tempClassesString5 = tempClassesString4.replaceAll("type:","");
-
-            }
-            System.out.println(tempClassesString5);
-    }
-    catch (NullPointerException e) {
-        syntaxErrorMessage();
-
-        }
     }
 }
