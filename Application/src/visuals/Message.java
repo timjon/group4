@@ -78,37 +78,37 @@ public class Message implements Renderable{
     public void update() {
         curve *= curve_increment;
 
-            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-           if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
-               if ((animationBounds += (class_size/6 +curve)) > this.node2.getX() - this.node1.getX())
-                   keepAnimating = false;
-           }
-            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-           else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
-               if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
-                   keepAnimating = false;
-           }
-            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-           else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
-               switch (stage) {
-                   case 1 :
-                       switchDirection = true; // Switch state of the dragon's flying direction
-                       // Move 60 pixels to the right
-                       if((animationBounds += (class_size/6)) > 40) {
-                           offset += 28; // Lower the dragon vertically
-                           switchDirection = false; // Original state of the dragon's flying direction
-                           stage = 2;
-                       }
-                       break;
+        //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+        if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
+            if ((animationBounds += (class_size/6)) > this.node2.getX() - this.node1.getX())
+                keepAnimating = false;
+        }
+        //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+        else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
+            if((animationBounds -= (class_size/6)) < (this.node2.getX())  - this.node1.getX())
+                keepAnimating = false;
+        }
+        //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+        else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
+            switch (stage) {
+                case 1 :
+                    switchDirection = true; // Switch state of the dragon's flying direction
+                    // Move 60 pixels to the right
+                    if((animationBounds += (class_size/6)) > 60) {
+                        offset += 30; // Lower the dragon vertically using an arbitrary number
+                        switchDirection = false; // Original state of the dragon's flying direction
+                        stage = 2;
+                    }
+                    break;
 
-                   case 2:
-                       // move back to starting point
-                       if((animationBounds -= (class_size/6)) < 0) {
-                           keepAnimating = false;
-                       }
-                       break;
-               }
-           }}
+                case 2:
+                    // move back to starting point
+                    if((animationBounds -= (class_size/6)) < 1) {
+                        keepAnimating = false;
+                    }
+                    break;
+            }
+        }}
 
     /**
      * Gets the new coordinates from resizing the application and redraws messages with these coordinates.
@@ -155,13 +155,15 @@ public class Message implements Renderable{
                 switchImage = true;
             }
 
-            //Handling the switch of the dragon's flying direction when visualising self calls
+            // Handling the switch of the dragon's flying direction when visualising self calls
             // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
             else if (switchDirection && switchImage) {
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
-                switchImage = true;
+                //TODO: uncomment the following line after integration with the trail feature
+                //this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),class_size/trailScale, class_size/trailScale));
+                switchImage = false;
             }
             // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
             else if (switchDirection && !switchImage) {
