@@ -95,13 +95,20 @@ public class Message implements Renderable{
                     switchDirection = true; // Switch state of the dragon's flying direction
                     // Move the message to the right of the class
                     if((animationBounds += (class_size/6)) > this.class_size) {
-                        offset += 20; // Lower the dragon vertically using an arbitrary number
                         switchDirection = false; // Original state of the dragon's flying direction
                         stage = 2;
                     }
                     break;
 
-                case 2:
+                case 2 :
+                    // Multiple increments to lower the message vertically
+                    for (int i = 0; i < 3; i++){
+
+                        offset+= 4;
+                    }
+                        stage = 3;
+
+                case 3:
                     // move back to starting point
                     if((animationBounds -= (class_size/6)) < 1) {
                         keepAnimating = false;
