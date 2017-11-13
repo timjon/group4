@@ -73,7 +73,7 @@ public class Draw {
      * Creates a message from and to given nodes with an attached name.
      */
     public void addMessage(int fromNode, int toNode, String name){
-        offset += 8;
+        offset += 20;
         this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
 
@@ -239,12 +239,11 @@ public class Draw {
     }
 
     /**
-     * Resets all the static to be current not static timeline. It's the darkest time line.
+     * Resets all the static to be current not static time line. It's the darkest time line.
      */
     public void resetCurrentTime() {
-        for (Message message: this.messages) {
-            message.setStatic(false);
-        }
+        for (int i = messages.size()-1; i > 0; i--)
+            messages.get(i -1).setStatic(false);
     }
 
 
