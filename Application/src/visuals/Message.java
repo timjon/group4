@@ -1,9 +1,7 @@
 package visuals;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
-import visuals.handlers.Animation;
 
 /**
  * Class for creating the messages to pass between "classes".
@@ -22,7 +20,7 @@ public class Message implements Renderable {
     private boolean keepAnimating = true; // State of the animation. Beginning or ending.
     private boolean switchImage; // Keeps track of which image to show.
     private double messageScale = 1.5;
-    private int stage = 1; // Used for the hardcoded trajectory of self referencing message.
+    private int selfCallCounter = 1; // Used for the hardcoded trajectory of self referencing message.
     private boolean switchDirection = false; // Keeps track whether a the dragon's flying direction should be switched
 
     //Images for dragon animation.
@@ -95,13 +93,13 @@ public class Message implements Renderable {
         }
         //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
         else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
-            switch (stage) {
+            switch (selfCallCounter) {
                 case 1:
                     switchDirection = true; // Switch state of the dragon's flying direction
                     // Move the message to the right of the class
                     if ((animationBounds += (class_size / 6)) > this.class_size) {
                         switchDirection = false; // Original state of the dragon's flying direction
-                        stage = 2;
+                        selfCallCounter = 2;
                     }
                     break;
 
@@ -111,7 +109,7 @@ public class Message implements Renderable {
 
                         offset += 4;
                     }
-                    stage = 3;
+                    selfCallCounter = 3;
                     break;
 
                 case 3:
