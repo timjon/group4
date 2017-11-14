@@ -40,7 +40,7 @@ class Decode {
         if (rawStringToDecode.contains("simulation_finished")) {
 
             // Write Simulation finished in the execution log.
-            write(id, "Simulation finished");
+            write(id, "INFO: Simulation finished");
 
             // Update menu state.
             Menu.getInstance().identifyState();

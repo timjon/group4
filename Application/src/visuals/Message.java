@@ -114,10 +114,6 @@ public class Message implements Renderable{
      */
     @Override
     public void render(GraphicsContext gc){
-        // Static permanent animation.
-        if (staticIndicator) {
-            renderStatic(gc);
-        }
         // Draws the message.
         renderDefault(gc);
     }
@@ -145,29 +141,6 @@ public class Message implements Renderable{
         this.staticIndicator = staticIndicator;
         if (!staticIndicator)
             this.keepAnimating = false;
-    }
-
-    /**
-     * Renders a static message on the canvas.
-     * @param gc The GraphicalContext to display the info on.
-     */
-    public void renderStatic(GraphicsContext gc) {
-
-        /*
-        int y = offset + this.class_size;
-        int h = class_size/20;
-
-        gc.setFill(Color.BLACK);
-        if (fromNode < toNode) {
-            gc.fillRect(this.node1.getX(), y+this.node1.getY(), this.node2.getX() -this.node1.getX(), h);
-            gc.fillRect(this.node1.getX(), y+this.node1.getY() + class_size/2, this.node2.getX() -this.node1.getX(), h);
-        } else {
-            gc.fillRect(this.node2.getX(), y+this.node2.getY(), this.node1.getX() -this.node2.getX(), h);
-            gc.fillRect(this.node2.getX(), y+this.node2.getY() + class_size/2, this.node1.getX() -this.node2.getX(), h);
-        }
-
-        gc.setFill(Color.BLACK);
-        */
     }
 
     /**
