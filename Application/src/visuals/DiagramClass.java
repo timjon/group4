@@ -83,8 +83,9 @@ public class DiagramClass implements Renderable {
      * @param gc GraphicalContext for a canvas.
      */
     public void render(GraphicsContext gc) {
+    	
         gc.setFill(Color.TRANSPARENT);
-
+    	
         int x = this.coordinates.getX();
         int y = this.coordinates.getY();
 
@@ -120,7 +121,7 @@ public class DiagramClass implements Renderable {
                     x + size_DiagramClass/4 -this.name.length()*2, // Dynamically determines the x position.
                     y -size_DiagramClass/2, // Does not need to be dynamic, as all elements scale downwards.
                     size +size_DiagramClass); // Sets a max width as to not bother the other DiagramClasses texts.
-    }
+    	}
 
     /**
      * Places an Image in the center position of the x and y coordinates.

@@ -161,7 +161,8 @@ class Decode {
 
         Platform.runLater(() -> {
 
-            // Count number of classes added.
+        	
+        	// Count number of classes added.
             int numberOfClasses = 0;
             
             // Store the separate classes.

@@ -5,7 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 /**
- * An ActorClass wrapper modeled after DiagramClass.
+ * An ActorClass wrapper modelled after DiagramClass.
  * @author Pontus Laestadius
  * collaborator Kosara Golemshinska
  * @version 1.0
@@ -120,7 +120,7 @@ public class ActorClass implements Renderable {
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.
             gc.fillText(
                     this.name, // Sets the text to be the name of the ActorClass.
-                    x + size_ActorClass/4,// -this.name.length()*2, // Dynamically determines the x position.
+                    x + size_ActorClass/4 -this.name.length()*2, // Dynamically determines the x position.
                     y -size_ActorClass/2, // Does not need to be dynamic, as all elements scale downwards.
                     size +size_ActorClass); // Sets a max width as to not bother the other ActorClasses texts.
     }
