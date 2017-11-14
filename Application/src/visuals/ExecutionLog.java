@@ -16,12 +16,14 @@ import java.util.stream.Collectors;
 /**
  * Displays any information given in a ListView.
  * @author Pontus Laestadius
- * @version 1.2
+ * @version 1.3
  */
 public class ExecutionLog extends ListView {
     private static ExecutionLog elog; // Static singleton implementation.
     private ListView<String> listView = new ListView<>(); // Contains the content of the log.
     private ObservableList<String> data = FXCollections.observableArrayList(); // Contains the data of the fields.
+
+    private boolean automatic = true;
 
     /**
      * @return the static instance of the Execution Log.
@@ -106,7 +108,7 @@ public class ExecutionLog extends ListView {
                     goBackNumberOfMessages = filteredList.size()-goBackNumberOfMessages;
 
                     // If you did not go back any steps, return to normal execution.
-                    if (goBackNumberOfMessages < filteredList.size()) {
+                    if (goBackNumberOfMessages < filteredList.size() - (automatic?0:-1)) {
 
                         // Convert steps to index.
                         goBackNumberOfMessages -= 1;
@@ -118,6 +120,10 @@ public class ExecutionLog extends ListView {
                         message.setStatic(true);
 
                     }
+
+
+                    // Manual change.
+                    automatic = false;
 
                 });
 
@@ -171,6 +177,7 @@ public class ExecutionLog extends ListView {
         listView.scrollTo(data.size()-1); // Scrolls to the bottom of the list.
         SelectionModel<String> model = listView.getSelectionModel();
         model.selectLast(); // Selects the last item in the list.
+        automatic = true; // Automatically on.
     }
 
     /**

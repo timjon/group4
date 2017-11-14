@@ -10,7 +10,7 @@ import visuals.handlers.Animation;
 import java.util.ArrayList;
 
 /**
- * @version 1.1
+ * @version 1.2
  * @author Pontus Laestadius, Sebastian Fransson
  *  -collaborator Rashad Kamsheh
  */
@@ -242,5 +242,12 @@ public class Draw {
             messages.get(i -1).setStatic(false);
     }
 
+    /**
+     * Resets all messages to not be static.
+     */
+    public void resetStatic() {
+        for (Message message: messages)
+            message.setStatic(false);
+    }
 
 }
