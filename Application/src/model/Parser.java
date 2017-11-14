@@ -1,3 +1,5 @@
+package model;
+
 import model.sequenceDiagramParser.Processes;
 import model.sequenceDiagramParser.ContentArray;
 import javafx.scene.control.Alert;

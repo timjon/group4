@@ -69,6 +69,14 @@ public class Message implements Renderable{
         return null;
     }
 
+
+    /**
+     * @return if it is still animating or not.
+     */
+    public boolean isKeepAnimating() {
+        return keepAnimating;
+    }
+
     /**
      * Method for animating the message and setting the image size for messages in both directions.
      */
