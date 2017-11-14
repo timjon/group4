@@ -71,11 +71,13 @@ public class ExecutionLog extends ListView {
                     // Get draw object.
                     Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
-                    // Reset.
-                    draw.resetCurrentTime();
-
                     // If you selected an INFO. do no action.
-                    if (newValue.startsWith("INFO:")) return;
+                    if (newValue.startsWith("INFO:")) {
+
+                        // Reset.
+                        draw.resetStatic();
+                        return;
+                    };
 
                     // Predicate the data list.
                     List<String> filteredList =
@@ -106,6 +108,14 @@ public class ExecutionLog extends ListView {
 
                     // Remove the number of filtered items.
                     goBackNumberOfMessages = filteredList.size()-goBackNumberOfMessages;
+
+                    if (goBackNumberOfMessages == 0) {
+                        // All but the last message.
+                        draw.resetCurrentTime();
+                    } else {
+                        // Reset all messages.
+                        draw.resetStatic();
+                    }
 
                     // If you did not go back any steps, return to normal execution.
                     if (goBackNumberOfMessages < filteredList.size() - (automatic?0:-1)) {

@@ -93,6 +93,9 @@ public class Message implements Renderable{
                // Set it's animation state to true.
                keepAnimating = true;
 
+               // Resets static indicator.
+               staticIndicator = false;
+
            }
     }
 
@@ -150,6 +153,7 @@ public class Message implements Renderable{
      */
     public void renderStatic(GraphicsContext gc) {
 
+        /*
         int y = offset + this.class_size;
         int h = class_size/20;
 
@@ -163,6 +167,7 @@ public class Message implements Renderable{
         }
 
         gc.setFill(Color.BLACK);
+        */
     }
 
     /**
