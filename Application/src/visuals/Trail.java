@@ -23,16 +23,28 @@ public class Trail {
         this.height = height;
     }
 
-    //Get method for getting the x-coordinate
+    /**
+     * Getter method for getting the x-coordinate for the trail image
+     * @return xcoordinate
+     */
     public int getXcoordinate(){return  xcoordinate;}
 
-    //Get method for getting the y-coordinate
+    /**
+     * Getter method for getting the y-coordinate for the trail image
+     * @return ycoordinate
+     */
     public int getYcoordinate(){return  ycoordinate;}
 
-    //Get method for getting the width of the trail image
+    /**
+     * Getter method for getting the width of the trail image
+     * @return width
+     */
     public double getWidth(){return width;}
 
-    //Get method for getting the height of the trail image
+    /**
+     * Getter method for getting the height od the trail image
+     * @return height
+     */
     public double getHeight(){return height;}
 
 }
