@@ -39,7 +39,7 @@ public class ExecutionLog extends ListView {
      * False if it does not match.
      */
     public boolean isFinished() {
-        return data.size() != 0 && data.get(data.size()-1).toLowerCase().equals("simulation finished");
+        return data.size() != 0 && data.get(data.size()-1).toLowerCase().equals("info: simulation finished");
     }
 
     /**
