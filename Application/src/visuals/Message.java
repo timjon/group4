@@ -172,8 +172,6 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage, x1 + animationBounds,
                         y1 + (this.class_size), class_size / messageScale, class_size / messageScale); //State Wings Down.
-                //TODO: add a trail below for full integration with the trail feature
-
                 switchImage = false;
             }
             // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
