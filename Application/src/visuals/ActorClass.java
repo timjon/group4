@@ -35,6 +35,7 @@ public class ActorClass extends DiagramClass {
      * Increments the index to use when accessing
      * the king states array.
      */
+    @Override
     public void update() {
         kingAnimIndex += 0.25;
         if (kingAnimIndex >= kingStates.length)
@@ -45,6 +46,7 @@ public class ActorClass extends DiagramClass {
      * Renders the ActorClass on the canvas.
      * @param gc GraphicalContext for a canvas.
      */
+    @Override
     public void render(GraphicsContext gc) {
         gc.setFill(Color.TRANSPARENT);
 
