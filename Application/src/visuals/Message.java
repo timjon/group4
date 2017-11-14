@@ -23,7 +23,7 @@ public class Message implements Renderable{
     private boolean keepAnimating = true; // State of the animation. Beginning or ending.
     private boolean switchImage; // Keeps track of which image to show.
     private double messageScale = 1.5;
-    private double trailScale = 3.5; //Scale of the smoke image for trail
+    private double trailScale = 3.5; //Scale of the trail image
 
     private ArrayList<Trail> trails = new ArrayList<>(); //Stores the trails that appear after the dragons
 
@@ -34,7 +34,7 @@ public class Message implements Renderable{
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
     //Image for trail animation
-    private static Image smoke = new Image("resources/cloud1.png");
+    private static Image trail = new Image("resources/cloud1.png");
 
     // Curve
     private double curve_increment = 1.05;
@@ -122,9 +122,6 @@ public class Message implements Renderable{
 
         y1 += offset; // Sets an offset from the previous message.
 
-        //this.trails.add(new Trail((x1)+animationBounds, y1 +(this.class_size),
-         //       class_size/messageScale, class_size/messageScale));
-
         // Checks if we are supposed to be animating the message.
         if(keepAnimating) {
 
@@ -160,6 +157,7 @@ public class Message implements Renderable{
                 //Draw the trail of the message
                 this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
+
                 switchImage = false;
             }
 
@@ -171,9 +169,9 @@ public class Message implements Renderable{
                 switchImage = true;
             }
         }
-        //Draw trail for message, for each instance in the arraylist
+        //Draw trail for the message, for each instance in the arraylist
         for (Trail t: trails)
-            gc.drawImage(smoke, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
     }
 
     /**
