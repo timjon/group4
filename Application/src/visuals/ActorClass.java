@@ -13,9 +13,12 @@ import javafx.scene.paint.Color;
  */
 public class ActorClass extends DiagramClass {
 
-    // The images retrieved.
+    // The images retrieved for the actor class.
     private static Image king1 = new Image("resources/king_cape_up.png");
     private static Image king2 = new Image("resources/king_cape_down.png");
+
+    // The platform for the actor class.
+    private static Image platform = new Image("resources/carpet_platform.png");
 
     // The 2 states of the king/actor.
     private Image[] kingStates = {king1, king2};

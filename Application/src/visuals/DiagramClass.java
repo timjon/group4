@@ -18,7 +18,7 @@ public class DiagramClass implements Renderable {
     private static Image castle1 = new Image("resources/castle_default.png");
     private static Image castle2 = new Image("resources/castle_default2.png");
 
-    static Image platform = new Image("resources/platform_default.png");
+    private static Image platform = new Image("resources/platform_default.png");
     static Image connector = new Image("resources/connector_default.png");
     static Image pillar = new Image("resources/pillar_default.png");
 
