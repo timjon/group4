@@ -167,4 +167,16 @@ public class Message implements Renderable{
         return toNode;
     }
 
+	@Override
+	public String getName() {
+		// Not in use.
+		return null;
+	}
+
+	@Override
+	public void place(Coordinates coordinates, int size) {
+		// Not in use.
+		
+	}
+
 }

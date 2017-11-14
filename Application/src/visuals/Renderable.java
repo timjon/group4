@@ -20,4 +20,10 @@ public interface Renderable {
 
     // Returns the Object's Coordinates.
     Coordinates getCoordinates();
+
+    // Returns the name for this object.
+    String getName();
+
+    // Places the object at the specified coordinates.
+	void place(Coordinates coordinates, int size);
 }

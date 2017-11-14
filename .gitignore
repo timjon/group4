@@ -3,3 +3,4 @@ Server/src/*.dump
 *.idea
 
 *.beam
+/bin/

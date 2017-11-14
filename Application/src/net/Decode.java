@@ -161,14 +161,27 @@ class Decode {
 
         Platform.runLater(() -> {
 
-            // Count number of classes added.
+        	
+        	// Count number of classes added.
             int numberOfClasses = 0;
+            
+            // Store the separate classes.
+            String[] splitClasses = classes.split(",");
+            
+            // Get the first class only.
+            String actorClass_name = removeCharactersFromString(splitClasses[0], '[', ']', '\"');
+            
+            // Add the first class to the draw object.
+            draw.addActor(actorClass_name);
+            
+            // Increment number of classes drawn.
+            numberOfClasses+=1;
 
             // Split the remaining fields and add them as classes.
-            for (String s: classes.split(",")) {
+            for (int i = 1; i < splitClasses.length; i++) {
 
                 // Removes a few specific characters that may appear in the class name.
-                String diagramClass_name = removeCharactersFromString(s, '[', ']', '\"');
+                String diagramClass_name = removeCharactersFromString(splitClasses[i], '[', ']', '\"');
 
                 // Add the class to the draw object.
                 draw.addClass(diagramClass_name);
