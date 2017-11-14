@@ -5,10 +5,9 @@ import javafx.scene.image.Image;
 
 /**
  * Class for creating the messages to pass between "classes".
- *
  * @author Sebastian Fransson
  * -collaborator Rashad Kamsheh
- * @version 1.1
+ * @version 2.0
  */
 public class Message implements Renderable{
     private String name;
@@ -77,16 +76,16 @@ public class Message implements Renderable{
     public void update() {
         curve *= curve_increment;
 
-        //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-        if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
-            if ((animationBounds += (class_size/6 +curve)) > this.node2.getX() - this.node1.getX())
-                keepAnimating = false;
-        }
-        //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-        else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
-            if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
-                keepAnimating = false;
-        }
+            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+           if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
+               if ((animationBounds += (class_size/6 +curve)) > this.node2.getX() - this.node1.getX())
+                   keepAnimating = false;
+           }
+            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
+           else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
+               if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
+                   keepAnimating = false;
+           }
         //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
         else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
             switch (selfCallCounter) {
@@ -219,4 +218,5 @@ public class Message implements Renderable{
     public int getToNode(){
         return toNode;
     }
+
 }
