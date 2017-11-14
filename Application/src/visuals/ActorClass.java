@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
  * @version 1.0
  */
 public class ActorClass implements Renderable {
-
+	
 	private Coordinates coordinates; // The coordinates of the object.
     private int size; // Size of the Object.
     private String name; // The class name.
