@@ -112,6 +112,7 @@ public class Message implements Renderable {
                         offset += 4;
                     }
                     stage = 3;
+                    break;
 
                 case 3:
                     // move back to starting point
