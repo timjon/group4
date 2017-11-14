@@ -73,10 +73,13 @@ public class Draw {
      * Creates a message from and to given nodes with an attached name.
      */
     public void addMessage(int fromNode, int toNode, String name){
-        offset += 8;
+        offset += 20;
         this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
-
+        // Adds vertical lowering the the message when is self referencing message
+        if (fromNode == toNode){
+            offset += 60;
+        }
     }
 
     /**
@@ -85,7 +88,12 @@ public class Draw {
      */
     public boolean removeMessage() {
         if (messages.isEmpty()) return false;
+        // Removes vertical lowering to the message when is self referencing message
+        if (messages.get(messages.size()-1).getFromNode()==messages.get(messages.size()-1).getToNode()){
+            offset -=60;
+        }
         messages.remove(messages.size()-1);
+        offset -= 20;
         return true;
     }
 
