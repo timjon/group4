@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 1.1
+ * @version 1.2
  * @author Pontus Laestadius, Sebastian Fransson
- *  -collaborator Rashad Kamsheh
+ *  Collaborator Rashad Kamsheh
  */
 
 public class Draw {
@@ -76,9 +76,11 @@ public class Draw {
         offset += 20;
         this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
                 diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
-        // Adds vertical lowering the the message when is self referencing message
+        // Adds vertical lowering to the message when it is a self referencing message
         if (fromNode == toNode){
-            offset += 60;
+            // The offset for self referencing messages is slightly larger than the normal message offset
+            // This way we handle the possibility of having two self referencing messages beneath each other directly
+            offset += 40;
         }
     }
 
@@ -88,9 +90,9 @@ public class Draw {
      */
     public boolean removeMessage() {
         if (messages.isEmpty()) return false;
-        // Removes vertical lowering to the message when is self referencing message
+        // Removes vertical lowering to the message when it is self a referencing message
         if (messages.get(messages.size()-1).getFromNode()==messages.get(messages.size()-1).getToNode()){
-            offset -=60;
+            offset -=40;
         }
         messages.remove(messages.size()-1);
         offset -= 20;
