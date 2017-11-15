@@ -2,17 +2,12 @@ package visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
-import net.Net;
 
 import javafx.scene.image.Image;
 
 import visuals.handlers.Animation;
 
 import java.util.ArrayList;
-
-import static visuals.DiagramView.tabPane;
 
 /**
  * @version 1.3
@@ -239,7 +234,35 @@ public class Draw {
      * @return the last message in the draw object.
      * @throws NullPointerException if there are no messages.
      */
-    public Message getLastMessage() throws NullPointerException, ArrayIndexOutOfBoundsException {
-        return this.messages.get(this.messages.size()-1);
+    public Message getLastMessage() throws ArrayIndexOutOfBoundsException {
+        return getMessage(this.messages.size()-1);
     }
+
+    /**
+     * Return a message for the given index.
+     * @param index the index.
+     * @return a message.
+     */
+    public Message getMessage(int index) throws ArrayIndexOutOfBoundsException {
+        if (this.messages.size() == 0 || index >= this.messages.size())
+            throw new ArrayIndexOutOfBoundsException("Index: " + index + "Size: " + this.messages.size());
+        return this.messages.get(index);
+    }
+
+    /**
+     * Resets all messages but the last one to be not static.
+     */
+    public void resetCurrentTime() {
+        for (int i = messages.size()-1; i > 0; i--)
+            messages.get(i -1).setStatic(false);
+    }
+
+    /**
+     * Resets all messages to not be static.
+     */
+    public void resetStatic() {
+        for (Message message: messages)
+            message.setStatic(false);
+    }
+
 }

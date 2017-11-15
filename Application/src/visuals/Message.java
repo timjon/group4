@@ -8,8 +8,8 @@ import java.util.ArrayList;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * Collaborator Rashad Kamsheh, Isabelle Törnqvist
- * @version 3.0
+ * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius
+ * @version 4.0
  */
 public class Message implements Renderable{
     private String name;
@@ -33,12 +33,11 @@ public class Message implements Renderable{
     private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
+    // Static indicator.
+    private boolean staticIndicator = false;
+  
     //Image for trail animation
     private static Image trail = new Image("resources/cloud1.png");
-
-    // Curve
-    private double curve_increment = 1.05;
-    private double curve = 1;
 
     /**
      * Constructor
@@ -66,7 +65,7 @@ public class Message implements Renderable{
      */
     @Override
     public String format() {
-        return null;
+        return fromNode + " -> " + toNode + " | " + name;
     }
 
 
@@ -83,18 +82,18 @@ public class Message implements Renderable{
 
     @Override
     public void update() {
-        curve *= curve_increment;
 
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
            if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
-               if ((animationBounds += (class_size/6 +curve)) > this.node2.getX() - this.node1.getX())
+               if ((animationBounds += (class_size/6)) > this.node2.getX() - this.node1.getX())
                    keepAnimating = false;
            }
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
            else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
-               if((animationBounds -= (class_size/6 +curve)) < (this.node2.getX())  - this.node1.getX())
+               if((animationBounds -= (class_size/6)) < (this.node2.getX())  - this.node1.getX())
                    keepAnimating = false;
            }
+
         //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
         else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
             switch (selfCallCounter) {
@@ -128,6 +127,24 @@ public class Message implements Renderable{
                     selfCallCounter =1;
             }
         }
+      
+      
+           // If it's being viewed in the past and not currently animating.
+           if (staticIndicator) {
+
+               // Remove all trails
+               trails.clear();
+
+               // Which direction is it pointing at determines original location.
+               animationBounds = 0;
+
+               // Set it's animation state to true.
+               keepAnimating = true;
+
+               // Resets static indicator.
+               staticIndicator = false;
+
+           }
     }
 
     /**
@@ -146,6 +163,45 @@ public class Message implements Renderable{
      */
     @Override
     public void render(GraphicsContext gc){
+        // Draws the message.
+        renderDefault(gc);
+    }
+
+    /**
+     * Getter method for retrieving the beginning node of a message
+     * @return fromNode
+     */
+    public int getFromNode(){
+        return fromNode;
+    }
+
+    /**
+     * Getter method for retrieving the end node of a message
+     * @return toNode
+     */
+    public int getToNode(){
+        return toNode;
+    }
+
+    /**
+     * @param staticIndicator true to permanently repeat the animation. False to disable the animation.
+     */
+    public void setStatic(boolean staticIndicator)  {
+        this.staticIndicator = staticIndicator;
+        if (!staticIndicator)
+            this.keepAnimating = false;
+    }
+
+    /**
+     * Default message rendering.
+     * @param gc The GraphicalContext to display the info on.
+     */
+    public void renderDefault(GraphicsContext gc) {
+
+        //Draw trail for the message, for each instance in the arraylist
+        for (Trail t: trails)
+            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
@@ -221,25 +277,6 @@ public class Message implements Renderable{
                 switchImage = true;
             }
         }
-        //Draw trail for the message, for each instance in the arraylist
-        for (Trail t: trails)
-            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
-    }
-
-    /**
-     * Getter method for retrieving the beginning node of a message
-     * @return fromNode
-     */
-    public int getFromNode(){
-        return fromNode;
-    }
-
-    /**
-     * Getter method for retrieving the end node of a message
-     * @return toNode
-     */
-    public int getToNode(){
-        return toNode;
     }
 
     /**

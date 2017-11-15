@@ -5,6 +5,7 @@ import model.Menu;
 import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
+import visuals.handlers.Automate;
 
 import static visuals.DiagramView.tabPane;
 
@@ -40,7 +41,7 @@ class Decode {
         if (rawStringToDecode.contains("simulation_finished")) {
 
             // Write Simulation finished in the execution log.
-            write(id, "Simulation finished");
+            write(id, "INFO: Simulation finished");
 
             // Update menu state.
             Menu.getInstance().identifyState();
@@ -190,7 +191,7 @@ class Decode {
             }
 
             // Display in the execution log the number of classes created.
-            write(id, "CREATED: " + numberOfClasses + " classes");
+            write(id, "INFO: created " + numberOfClasses + " classes");
 
             // Turns on animations.
             Draw.animate(true);
