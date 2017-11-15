@@ -8,8 +8,7 @@ import java.util.ArrayList;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * Collaborator Rashad Kamsheh
- * Collaborator: Isabelle Törnqvist
+ * Collaborator Rashad Kamsheh, Isabelle Törnqvist
  * @version 3.0
  */
 public class Message implements Renderable{
@@ -111,7 +110,7 @@ public class Message implements Renderable{
                     // Multiple increments to lower the message vertically
                     for (int i = 0; i < 3; i++) {
 
-                        offset += 4;
+                        offset += 8;
                     }
                     selfCallCounter = 3;
                     break;
@@ -188,6 +187,9 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage, x1 + animationBounds,
                         y1 + (this.class_size), class_size / messageScale, class_size / messageScale); //State Wings Down.
+                // Draw the trail of the self referencing message
+                this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale));
                 switchImage = false;
             }
             // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
