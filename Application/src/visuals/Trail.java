@@ -1,7 +1,7 @@
 package visuals;
 
 /**
- * Class for the trail of the message
+ * Class for the trail
  * @author Isabelle Törnqvist
  * @version 1.0
  */
@@ -42,7 +42,7 @@ public class Trail {
     public double getWidth(){return width;}
 
     /**
-     * Getter method for getting the height od the trail image
+     * Getter method for getting the height of the trail image
      * @return height
      */
     public double getHeight(){return height;}
