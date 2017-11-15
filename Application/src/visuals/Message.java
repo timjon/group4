@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class Message implements Renderable{
     private String name;
+    private int size;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
     private int fromNode, toNode;
     private int offset; // offset for the message "ordering".
@@ -223,5 +224,27 @@ public class Message implements Renderable{
             }
         }
     }
+
+    /**
+     * Getter for the name of the message.
+     * @return name
+     */
+	@Override
+	public String getName() {
+		return name;
+	}
+
+    /**
+     * Uses the coordinates and size passed as arguments
+     * to place the message on the canvas.
+     * @param coordinates
+     * @param size
+     */
+	@Override
+	public void place(Coordinates coordinates, int size) {
+        this.coordinates = coordinates;
+        this.size = size;
+
+	}
 
 }
