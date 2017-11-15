@@ -81,8 +81,8 @@ public class Draw {
      */
     public void addMessage(int fromNode, int toNode, String name){
         offset += 20;
-        this.messages.add(new Message(diagramClasses.get(fromNode).getCoordinates(),
-                diagramClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
+        this.messages.add(new Message(allClasses.get(fromNode).getCoordinates(),
+                allClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
         // Adds vertical lowering to the message when it is a self referencing message
         if (fromNode == toNode){
             // The offset for self referencing messages is slightly larger than the normal message offset
