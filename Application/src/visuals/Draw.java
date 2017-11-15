@@ -15,10 +15,9 @@ import java.util.ArrayList;
 import static visuals.DiagramView.tabPane;
 
 /**
- * @version 1.2
+ * @version 1.3
  * @author Pontus Laestadius, Sebastian Fransson
- *  -collaborator Rashad Kamsheh
- *   collaborator Kosara Golemshinska
+ * Collaborator Rashad Kamsheh, Kosara Golemshinska
  */
 
 public class Draw {
@@ -81,10 +80,13 @@ public class Draw {
      * Creates a message from and to given nodes with an attached name.
      */
     public void addMessage(int fromNode, int toNode, String name){
-        offset += 8;
+        offset += 25;
         this.messages.add(new Message(allClasses.get(fromNode).getCoordinates(),
                 allClasses.get(toNode).getCoordinates(), name, fromNode, toNode, offset, class_size));
-
+        // Adds vertical lowering to the message when it is a self referencing message
+        if (fromNode == toNode){
+            offset += 25;
+        }
     }
 
     /**
@@ -93,7 +95,12 @@ public class Draw {
      */
     public boolean removeMessage() {
         if (messages.isEmpty()) return false;
+        // Removes vertical lowering to the message when it is self a referencing message
+        if (messages.get(messages.size()-1).getFromNode()==messages.get(messages.size()-1).getToNode()){
+            offset -= 25;
+        }
         messages.remove(messages.size()-1);
+        offset -= 25;
         return true;
     }
 
