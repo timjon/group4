@@ -227,7 +227,7 @@ public class Draw {
      * @return the last message in the draw object.
      * @throws NullPointerException if there are no messages.
      */
-    public Message getLastMessage() throws NullPointerException, ArrayIndexOutOfBoundsException {
+    public Message getLastMessage() throws ArrayIndexOutOfBoundsException {
         return getMessage(this.messages.size()-1);
     }
 
@@ -237,7 +237,7 @@ public class Draw {
      * @return a message.
      */
     public Message getMessage(int index) throws ArrayIndexOutOfBoundsException {
-        if (index >= this.messages.size())
+        if (this.messages.size() == 0 || index >= this.messages.size())
             throw new ArrayIndexOutOfBoundsException("Index: " + index + "Size: " + this.messages.size());
         return this.messages.get(index);
     }
