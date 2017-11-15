@@ -73,9 +73,6 @@ public class ExecutionLog extends ListView {
 
                     // If you selected an INFO. do no action.
                     if (newValue.startsWith("INFO:")) {
-
-                        // Reset.
-                        draw.resetStatic();
                         return;
                     }
 
@@ -113,7 +110,6 @@ public class ExecutionLog extends ListView {
                         message.setStatic(true);
 
                     }
-
 
                     // Manual change.
                     automatic = false;

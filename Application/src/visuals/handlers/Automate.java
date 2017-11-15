@@ -9,7 +9,7 @@ import visuals.Message;
 
 /**
  * Handles automating the Sequence Diagram execution.
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius
  */
 public class Automate extends Thread {
@@ -62,6 +62,7 @@ public class Automate extends Thread {
                 if (ExecutionLog.getInstance().isFinished()) {
                     cancel();
                     Menu.pause();
+                    Menu.getInstance().identifyState();
                     break;
                 }
 
