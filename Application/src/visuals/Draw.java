@@ -2,17 +2,12 @@ package visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
-import net.Net;
 
 import javafx.scene.image.Image;
 
 import visuals.handlers.Animation;
 
 import java.util.ArrayList;
-
-import static visuals.DiagramView.tabPane;
 
 /**
  * @version 1.1
@@ -29,7 +24,7 @@ public class Draw {
     private int class_size = 0; // Used for message positioning
 	
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
-    private static Image animatedBackground = new Image("resources/SkyGIF_2.0.gif");
+    private static Image animatedBackground = new Image("resources/SkyGIF.gif");
 
     /**
      * Constructor
