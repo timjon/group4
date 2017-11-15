@@ -23,7 +23,6 @@ public class ExecutionLog extends ListView {
     private ListView<String> listView = new ListView<>(); // Contains the content of the log.
     private ObservableList<String> data = FXCollections.observableArrayList(); // Contains the data of the fields.
 
-
     /**
      * @return the static instance of the Execution Log.
      */
@@ -71,9 +70,6 @@ public class ExecutionLog extends ListView {
                             if (newValue == null)
                                 return;
 
-                            // Get draw object.
-                            Draw draw = DiagramView.getDiagramViewInView().getDraw();
-
                             // If you selected an INFO. do no action.
                             if (newValue.startsWith("INFO:")) {
                                 return;
@@ -102,6 +98,9 @@ public class ExecutionLog extends ListView {
 
                             // Convert steps to index.
                             goBackNumberOfMessages -= 1;
+
+                            // Get draw object.
+                            Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
                             // Get the message we are going to display.
                             Message message = draw.getMessage(goBackNumberOfMessages);
@@ -147,6 +146,9 @@ public class ExecutionLog extends ListView {
      */
     public void bwd() {
 
+        // Clear the selection before modification to not trigger events.
+        clearSelection();
+
         // If there are no messages to be removed.
         if (filteredList().size() == 0) return;
 
@@ -162,8 +164,6 @@ public class ExecutionLog extends ListView {
                 break;
             data.remove(i);
         }
-
-        update();
     }
 
     /**
@@ -175,12 +175,18 @@ public class ExecutionLog extends ListView {
     }
 
     /**
+     * Clears the selection of the log.
+     */
+    private void clearSelection() {
+        SelectionModel<String> model = listView.getSelectionModel();
+        model.clearSelection(); // Removes selections, so that all selections are manual only.
+    }
+
+    /**
      * Updates the data in the ListView.
      */
     private void update() {
-        SelectionModel<String> model = listView.getSelectionModel();
-        model.clearSelection(); // Removes selections, so that all selections are manual only.
-
+        clearSelection();
         listView.setItems(data); // Updates the content of the list.
         listView.scrollTo(data.size()-1); // Scrolls to the bottom of the list.
     }
