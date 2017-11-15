@@ -5,6 +5,7 @@ import model.Menu;
 import visuals.DiagramView;
 import visuals.Draw;
 import visuals.ExecutionLog;
+import visuals.handlers.Automate;
 
 import static visuals.DiagramView.tabPane;
 

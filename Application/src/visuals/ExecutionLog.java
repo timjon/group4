@@ -77,19 +77,10 @@ public class ExecutionLog extends ListView {
                         // Reset.
                         draw.resetStatic();
                         return;
-                    };
+                    }
 
-                    // Predicate the data list.
-                    List<String> filteredList =
-                            // Gets the stream of Strings.
-                            data.stream().
-                                    // Filter away INFO messages.
-                                            filter(s -> !s.startsWith("INFO:"))
-                                    // Collect it to the list.
-                                    .collect(Collectors.toList());
-
-                    // Reverse the order of the items.
-                    Collections.reverse(filteredList);
+                    // Gets a list of the messages.
+                    List<String> filteredList = filteredList();
 
                     // Keeps track of number of messages to go back.
                     int goBackNumberOfMessages = 0;
@@ -141,11 +132,32 @@ public class ExecutionLog extends ListView {
     }
 
     /**
+     * @return a filtered list without any information/filler texts.
+     */
+    private List<String> filteredList() {
+        // Predicate the data list.
+        List<String> filteredList =
+                // Gets the stream of Strings.
+                data.stream().
+                        // Filter away INFO messages.
+                                filter(s -> !s.startsWith("INFO:"))
+                        // Collect it to the list.
+                        .collect(Collectors.toList());
+
+        // Reverse the order of the items.
+        Collections.reverse(filteredList);
+
+        return filteredList;
+    }
+
+    /**
      * Backwards
      * Removes the last item from the ListView.
      */
     public void bwd() {
-        if (data.size() < 2) return;
+
+        // If there are no messages to be removed.
+        if (filteredList().size() == 0) return;
 
         for (int i = data.size()-1; i >= 0; i--) {
             String element = data.remove(data.size()-1);
@@ -153,9 +165,9 @@ public class ExecutionLog extends ListView {
                 break;
         }
 
-        // Removes all INFO before it.
+        // Removes all INFO before it, ignoring spawning messages.
         for (int i = data.size()-1; i >= 0; i--) {
-            if (!data.get(i).startsWith("INFO:"))
+            if (!data.get(i).startsWith("INFO:") || data.get(i).toLowerCase().contains("spawned"))
                 break;
             data.remove(i);
         }
@@ -195,12 +207,5 @@ public class ExecutionLog extends ListView {
     void setData(ObservableList<String> data) {
         this.data = data;
         update();
-    }
-
-    /**
-     * @return a List of the content of the ExecutionLog.
-     */
-    public ObservableList<String> getData() {
-        return data;
     }
 }
