@@ -220,11 +220,4 @@ public class Message implements Renderable{
             gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
     }
 
-    /**
-     * Getter method for retrieving the beginning node of a message
-     * @return fromNode
-     */
-    public int getFromNode(){
-        return fromNode;
-    }
 }
