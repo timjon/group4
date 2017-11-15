@@ -3,11 +3,14 @@ package visuals;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * -collaborator Rashad Kamsheh
- * @version 2.0
+ * Collaborator Rashad Kamsheh
+ * Collaborator: Isabelle Törnqvist
+ * @version 3.0
  */
 public class Message implements Renderable{
     private String name;
@@ -21,12 +24,17 @@ public class Message implements Renderable{
     private double messageScale = 1.5;
     private int selfCallCounter = 1; // Used for the hardcoded trajectory of self referencing message.
     private boolean switchDirection = false; // Keeps track whether a the dragon's flying direction should be switched
+    private double trailScale = 3.5; //Scale of the trail image
+    private ArrayList<Trail> trails = new ArrayList<>(); //Stores the trails that appear after the dragons
 
     //Images for dragon animation.
     private static Image dragonMessage = new Image("resources/DragonBro.png"); //Wings Up
     private static Image dragonMessage2 = new Image("resources/DragonBro2.png"); //Wings Down
     private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
+
+    //Image for trail animation
+    private static Image trail = new Image("resources/cloud1.png");
 
     // Curve
     private double curve_increment = 1.05;
@@ -72,6 +80,7 @@ public class Message implements Renderable{
     /**
      * Method for animating the message and setting the image size for messages in both directions.
      */
+
     @Override
     public void update() {
         curve *= curve_increment;
@@ -130,6 +139,7 @@ public class Message implements Renderable{
         this.class_size = class_size;
     }
 
+
     /**
      * Renders a message on the canvas using the provided coordinates.
      * Updates the message image and placing for simulation.
@@ -147,6 +157,7 @@ public class Message implements Renderable{
 
         // Checks if we are supposed to be animating the message.
         if(keepAnimating) {
+
             //Sets the message text centered above the "dragon".
             gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2)); // Message description.
 
@@ -155,6 +166,11 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Up.
+
+                //draw the trail of the message
+                this.trails.add(new Trail((x1 - 15)+animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale));
+
                 switchImage = false;
             }
 
@@ -187,6 +203,10 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
+                //Draw the trail of the message
+                this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale));
+
                 switchImage = false;
             }
 
@@ -197,8 +217,10 @@ public class Message implements Renderable{
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
                 switchImage = true;
             }
-
         }
+        //Draw trail for the message, for each instance in the arraylist
+        for (Trail t: trails)
+            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
     }
 
     /**

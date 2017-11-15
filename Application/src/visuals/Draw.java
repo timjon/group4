@@ -202,6 +202,7 @@ public class Draw {
         }
     }
 
+
     /**
      * Updates the class to fit the resized window.
      */
