@@ -23,7 +23,6 @@ public class ExecutionLog extends ListView {
     private ListView<String> listView = new ListView<>(); // Contains the content of the log.
     private ObservableList<String> data = FXCollections.observableArrayList(); // Contains the data of the fields.
 
-    private boolean automatic = true;
 
     /**
      * @return the static instance of the Execution Log.
@@ -60,61 +59,57 @@ public class ExecutionLog extends ListView {
         // Adds listener for selecting a item.
         this.listView.
                 // Gets the box which you can select in the overall list view.
-                getSelectionModel().
+                        getSelectionModel().
                 // Selects the property of selecting an item.
-                selectedItemProperty().
+                        selectedItemProperty().
                 // Adds a listener for the property when it changes.
-                addListener
-                        // Scope and variables received when a change occurs in the listened property.
-                ((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+                        addListener
+                // Scope and variables received when a change occurs in the listened property.
+                        ((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
-                    // Get draw object.
-                    Draw draw = DiagramView.getDiagramViewInView().getDraw();
+                            // The last change reset selection, do no action.
+                            if (newValue == null)
+                                return;
 
-                    // If you selected an INFO. do no action.
-                    if (newValue.startsWith("INFO:")) {
-                        return;
-                    }
+                            // Get draw object.
+                            Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
-                    // Gets a list of the messages.
-                    List<String> filteredList = filteredList();
+                            // If you selected an INFO. do no action.
+                            if (newValue.startsWith("INFO:")) {
+                                return;
+                            }
 
-                    // Keeps track of number of messages to go back.
-                    int goBackNumberOfMessages = 0;
+                            // Gets a list of the messages.
+                            List<String> filteredList = filteredList();
 
-                    // Iterate over the filtered items.
-                    for (String string: filteredList) {
+                            // Keeps track of number of messages to go back.
+                            int goBackNumberOfMessages = 0;
 
-                        // Match for equality.
-                        if (string.equals(newValue))
-                            break;
+                            // Iterate over the filtered items.
+                            for (String string: filteredList) {
 
-                        // Iterates messages to go back.
-                        goBackNumberOfMessages++;
+                                // Match for equality.
+                                if (string.equals(newValue))
+                                    break;
 
-                    }
+                                // Iterates messages to go back.
+                                goBackNumberOfMessages++;
 
-                    // Remove the number of filtered items.
-                    goBackNumberOfMessages = filteredList.size()-goBackNumberOfMessages;
+                            }
 
-                    // If you did not go back any steps, return to normal execution.
-                    if (goBackNumberOfMessages < filteredList.size() - (automatic?0:-1)) {
+                            // Remove the number of filtered items.
+                            goBackNumberOfMessages = filteredList.size()-goBackNumberOfMessages;
 
-                        // Convert steps to index.
-                        goBackNumberOfMessages -= 1;
+                            // Convert steps to index.
+                            goBackNumberOfMessages -= 1;
 
-                        // Get the message we are going to display.
-                        Message message = draw.getMessage(goBackNumberOfMessages);
+                            // Get the message we are going to display.
+                            Message message = draw.getMessage(goBackNumberOfMessages);
 
-                        // Set it to be static.
-                        message.setStatic(true);
+                            // Set it to be static.
+                            message.setStatic(true);
 
-                    }
-
-                    // Manual change.
-                    automatic = false;
-
-                });
+                        });
 
     }
 
@@ -183,11 +178,11 @@ public class ExecutionLog extends ListView {
      * Updates the data in the ListView.
      */
     private void update() {
+        SelectionModel<String> model = listView.getSelectionModel();
+        model.clearSelection(); // Removes selections, so that all selections are manual only.
+
         listView.setItems(data); // Updates the content of the list.
         listView.scrollTo(data.size()-1); // Scrolls to the bottom of the list.
-        SelectionModel<String> model = listView.getSelectionModel();
-        model.selectLast(); // Selects the last item in the list.
-        automatic = true; // Automatically on.
     }
 
     /**

@@ -94,7 +94,10 @@ public class Message implements Renderable{
            }
 
            // If it's being viewed in the past and not currently animating.
-           if (staticIndicator && !keepAnimating) {
+           if (staticIndicator) {
+
+               // Remove all trails
+               trails.clear();
 
                // Which direction is it pointing at determines original location.
                animationBounds = 0;
@@ -158,6 +161,11 @@ public class Message implements Renderable{
      * @param gc The GraphicalContext to display the info on.
      */
     public void renderDefault(GraphicsContext gc) {
+
+        //Draw trail for the message, for each instance in the arraylist
+        for (Trail t: trails)
+            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
@@ -214,10 +222,6 @@ public class Message implements Renderable{
                 switchImage = true;
             }
         }
-
-        //Draw trail for the message, for each instance in the arraylist
-        for (Trail t: trails)
-            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
     }
 
 }
