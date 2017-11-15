@@ -29,7 +29,7 @@ public class Draw {
     private int class_size = 0; // Used for message positioning
 	
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
-    private static Image animatedBackground = new Image("resources/SkyGIF.gif");
+    private static Image animatedBackground = new Image("resources/SkyGIF_2.0.gif");
 
     /**
      * Constructor
