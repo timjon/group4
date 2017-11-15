@@ -87,7 +87,7 @@ class Decode {
                 // Adds message to the DiagramView.
                 message(
                         id,
-                        DiagramView.getDiagramViewInView().getDraw(),// TODO change if you want multiple diagrams.
+                        DiagramView.getDiagramViewInView().getDraw(),
                         message, // The message content.
                         values.split(",")); // Split the fields remaining.
 

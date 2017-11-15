@@ -3,7 +3,7 @@ package model.sequenceDiagramParser;
 import java.util.List;
 
 /**
- * This Class is part Sequence Diagram Object for the parser from JSON to POJO (Plain Old Java Objects)
+ * This Class is part of the Sequence Diagram Object for the parser from JSON to POJO (Plain Old Java Objects)
  * The getters and setters and their declarations are made to adhere with a predetermined JSON format
  *
  * @author Rashad Kamsheh & Isabelle Törnqvist
@@ -82,6 +82,5 @@ public class SequenceDiagramObject {
     public void setDiagram(Diagram diagram) {
         this.diagram = diagram;
     }
-
 
 }

@@ -4,11 +4,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
  * collaborator: Pontus Laestadius
- * @version 1.1
+ * @version 2.1
  */
 public class Message implements Renderable{
     private String name;
@@ -20,6 +22,9 @@ public class Message implements Renderable{
     private boolean keepAnimating = true; // State of the animation. Beginning or ending.
     private boolean switchImage; // Keeps track of which image to show.
     private double messageScale = 1.5;
+    private double trailScale = 3.5; //Scale of the trail image
+
+    private ArrayList<Trail> trails = new ArrayList<>(); //Stores the trails that appear after the dragons
 
     //Images for dragon animation.
     private static Image dragonMessage = new Image("resources/DragonBro.png"); //Wings Up
@@ -29,6 +34,9 @@ public class Message implements Renderable{
 
     // Static indicator.
     private boolean staticIndicator = false;
+  
+    //Image for trail animation
+    private static Image trail = new Image("resources/cloud1.png");
 
     /**
      * Constructor
@@ -70,6 +78,7 @@ public class Message implements Renderable{
     /**
      * Method for animating the message and setting the image size for messages in both directions.
      */
+
     @Override
     public void update() {
 
@@ -107,6 +116,7 @@ public class Message implements Renderable{
         this.node2 = node2;
         this.class_size = class_size;
     }
+
 
     /**
      * Renders a message on the canvas using the provided coordinates.
@@ -159,6 +169,7 @@ public class Message implements Renderable{
 
         // Checks if we are supposed to be animating the message.
         if(keepAnimating) {
+
             //Sets the message text centered above the "dragon".
             gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2)); // Message description.
 
@@ -167,6 +178,11 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Up.
+
+                //draw the trail of the message
+                this.trails.add(new Trail((x1 - 15)+animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale));
+
                 switchImage = false;
             }
 
@@ -183,6 +199,10 @@ public class Message implements Renderable{
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
+                //Draw the trail of the message
+                this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale));
+
                 switchImage = false;
             }
 
@@ -193,9 +213,18 @@ public class Message implements Renderable{
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
                 switchImage = true;
             }
-
         }
 
+        //Draw trail for the message, for each instance in the arraylist
+        for (Trail t: trails)
+            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
     }
 
+    /**
+     * Getter method for retrieving the beginning node of a message
+     * @return fromNode
+     */
+    public int getFromNode(){
+        return fromNode;
+    }
 }
