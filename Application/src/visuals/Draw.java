@@ -228,7 +228,7 @@ public class Draw {
      * @throws NullPointerException if there are no messages.
      */
     public Message getLastMessage() throws NullPointerException, ArrayIndexOutOfBoundsException {
-        return this.messages.get(this.messages.size()-1);
+        return getMessage(this.messages.size()-1);
     }
 
     /**
