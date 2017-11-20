@@ -6,9 +6,9 @@
 %%Version: 1.6
 
 %Returns no_classes when there was no classes in the given diagram 
-init(_Coordinator, _Did, {[], _}) -> no_classes;
+init(_Usercoordinator, _Did, {[], _}) -> no_classes;
 %Returns no_messages when there was no messages in the given diagram 
-init(_Coordinator, _Did, {_, []}) -> no_messages;
+init(_Usercoordinator, _Did, {_, []}) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Usercoordinator, Did, {L, Messages}) -> 
 	%Sending information that the usercoordinator has been spawned. To be printed in the executionlog
