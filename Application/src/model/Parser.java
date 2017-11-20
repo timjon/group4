@@ -1,17 +1,23 @@
 package model;
 
+import controller.Import;
+import model.classDiagram.ClassDiagram;
+import model.classDiagram.Classes;
+import model.classDiagram.FieldTuple;
+import model.classDiagram.Relationships;
 import model.sequenceDiagramParser.Messages;
 import model.sequenceDiagramParser.Processes;
-import javafx.scene.control.Alert;
 import com.google.gson.Gson;
 import model.sequenceDiagramParser.SequenceDiagramObject;
+import view.handlers.UniqueCounter;
 
 import java.util.List;
 
 
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.2
+ * collaborator: Pontus Laestadius
+ * @version 1.4
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects
@@ -35,59 +41,84 @@ import java.util.List;
 
 public class Parser {
 
-    /**
+    /*
      * defining two different counter variables that will increment each time the diagram calling method
      * that they are is called in order to differentiate between the imported diagrams
      * These two counters are static in order that they change each time and new diagram is imported from the main method
      */
 
-    // odd number for the First Diagram counter
-    private static int counter = 1;
-    // even number for the parallel Diagram counter
-    private static int parallelCounter = 2;
-
-    /**
+    /*
      * The following declarations are used for concatenating the final returned Strings to be used by the backend
      * The temp declarations store the parsed values but with the extra comma, an extra line in each for each loop removes
      * the extra comma and stores the proper value in a new String variable
      */
 
-    private String tempProcesses = "";
     private String processesString = "";
-
-    private String tempClassNames = "";
     private String classNamesString = "";
 
-    private String tempFirstDiagram = "";
-    private String firstDiagramString = "";
+    private String diagram;
+    private String parallel;
 
-    private String tempParallelDiagram = "";
-    private String parallelDiagramString = "";
+    /**
+     * Parses a class diagram.
+     * @param inputJSON to parse
+     */
+    void parseClassDiagram(String inputJSON) {
 
+        try {
+
+            // Parse
+            Gson gson = new Gson();
+            ClassDiagram cd = gson.fromJson(inputJSON, ClassDiagram.class);
+
+            // Format
+            StringBuilder string = new StringBuilder();
+
+            string.append("{");
+            string.append(UniqueCounter.getString());
+            string.append(",[");
+            for (Classes s: cd.classes) {
+                string.append("[");
+                string.append(s.name);
+                string.append(",");
+                for (FieldTuple ft: s.fields) {
+                    string.append(ft.name);
+                    string.append(":");
+                    string.append(ft.type);
+                    string.append(",");
+                }
+                string.replace(string.length()-1, string.length(), "],");
+            }
+            string.replace(string.length()-1, string.length(), "],[");
+
+            for (Relationships rs: cd.relationships) {
+                string.append(rs.format());
+                string.append(",");
+            }
+            string.replace(string.length()-1, string.length(), "]}");
+
+            diagram = string.toString();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Import.disp("Import failed", "Unknown syntax", e.toString());
+        }
+    }
 
     /**
      * Parses the imported JSON files if they contain a sequence diagram adheres with the predetermined JSON format
      *
      * @param inputJSON the imported collection of Strings that make up the JSON files
      */
-
     public void parseSequenceDiagram(String inputJSON) {
+        String tempProcesses = "";
+        String tempClassNames = "";
+
         Gson gson = new Gson();
 
         try {
             SequenceDiagramObject parsedSequenceDiagram;
             parsedSequenceDiagram = gson.fromJson(inputJSON, SequenceDiagramObject.class);
-
-            // Creates an instance of the diagram's meta
-            model.sequenceDiagramParser.Meta meta = parsedSequenceDiagram.getMeta();
-            // Assigns a String to the diagram's format
-            String format = meta.getFormat();
-            // Assigns a String to the diagram's extensions
-            List<Object> extensions = meta.getExtensions();
-            // Assigns a String to the diagram's version
-            String version = meta.getVersion();
-            // Assigns a String to the type of the diagram
-            String type = parsedSequenceDiagram.getType();
 
             // get the tempProcesses which contain the class names
             for (Processes processesElement : parsedSequenceDiagram.getProcesses()) {
@@ -99,20 +130,13 @@ public class Parser {
                 classNamesString = (tempClassNames.substring(0, tempClassNames.length() - 1));
             }
 
-            // get the elements of the First Diagram
-            for (Messages diagramElement : parsedSequenceDiagram.getDiagram().getContent().get(0).getMessages()) {
-                tempFirstDiagram += "{" + diagramElement.getFrom() + "," + diagramElement.getTo() + ",[" + diagramElement.getMessage().get(0) + ", " +
-                        diagramElement.getMessage().get(1) + ", " + diagramElement.getMessage().get(2) + "]" + "}" + ",";
-                //removing extra comma
-                firstDiagramString = (tempFirstDiagram.substring(0, tempFirstDiagram.length() - 1));
-            }
+            diagram = parseMessages(parsedSequenceDiagram.getDiagram().getContent().get(0).getMessages());
+            diagram = wrap(diagram);
 
-
-            // get the elements of the Parallel Diagram
-            for (Messages parallelDiagramElement : parsedSequenceDiagram.getDiagram().getContent().get(1).getMessages()) {
-                tempParallelDiagram += "{" + parallelDiagramElement.getFrom() + "," + parallelDiagramElement.getTo() + ",[" + parallelDiagramElement.getMessage().get(0) + "]" + "}" + ",";
-                //removing extra comma
-                parallelDiagramString = (tempParallelDiagram.substring(0, tempParallelDiagram.length() - 1));
+            // If there is a parallel diagram.
+            if (parsedSequenceDiagram.getDiagram().getContent().size() > 1) {
+                parallel = parseMessages(parsedSequenceDiagram.getDiagram().getContent().get(1).getMessages());
+                parallel = wrap(parallel);
             }
 
         } catch (Exception e) {
@@ -143,7 +167,7 @@ public class Parser {
                 result.append(s);
                 result.append(",");
             }
-            result.replace(result.length()-2, result.length()-1, "");
+            result.replace(result.length()-1, result.length(), "");
             result.append("]},");
         }
         return result.substring(0, result.length()-1);

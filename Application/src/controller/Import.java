@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @version 0.3
+ * @version 1.0
  * @author Pontus Laestadius
  * @since 2017-10-06
  */
@@ -95,7 +95,7 @@ public class Import {
      * @param title of the dialog window.
      * @param content message to be displayed.
      */
-    static void disp(String title, String headerText, String content) {
+    public static void disp(String title, String headerText, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(headerText);

@@ -1,5 +1,7 @@
 package model;
 
+import controller.Import;
+
 import java.util.Collection;
 
 /**

@@ -9,4 +9,11 @@ public class Relationships {
     public String type;
     public String superclass;
     public String subclass;
+
+    /**
+     * @return a formatted string.
+     */
+    public String format() {
+        return "[" + type + "," + superclass + "," + subclass + "]";
+    }
 }
