@@ -4,8 +4,7 @@ import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -246,30 +245,41 @@ public class Menu {
 
         button_join_lobby.setOnAction((ActionEvent event)    ->{
             Stage newStage = new Stage();
+            newStage.setTitle("Join a lobby");
+
             VBox vbox = new VBox();
+
             TextField lobbyID = new TextField("");
             lobbyID.setPromptText("Lobby ID");
+            lobbyID.setFocusTraversable(false);
 
-            TextField password = new TextField("");
+            PasswordField password = new PasswordField();
             password.setPromptText("Password");
+            password.setFocusTraversable(false);
+
+            Label label = new Label();
 
             Button join_button = new Button("Join");
+            join_button.setFocusTraversable(false);
 
             vbox.getChildren().add(lobbyID);
             vbox.getChildren().add(password);
             vbox.getChildren().add(join_button);
+            vbox.getChildren().add((label));
 
-            Scene stageScene = new Scene(vbox, 300, 75);
+            Scene stageScene = new Scene(vbox, 300, 100);
             newStage.setScene(stageScene);
             newStage.show();
+
             join_button.setOnAction((ActionEvent e)    ->{
                 String id  = lobbyID.getText();
                 String pwd = password.getText();
 
                 if(id.equals("") || pwd.equals("")){
-
+                    label.setText("Lobby ID and password needed");
                 } else {
                     Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
+                    newStage.close();
                 }
             });
         });
