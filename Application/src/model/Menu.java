@@ -3,8 +3,11 @@ package model;
 import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import controller.network.Net;
 import view.DiagramView;
@@ -239,6 +242,33 @@ public class Menu {
         button_create_lobby.setOnAction((ActionEvent event)    ->{
             Net.push("{" + "createLobby}");
             button_create_lobby.setDisable(true);
+        });
+
+        button_join_lobby.setOnAction((ActionEvent event)    ->{
+            Stage newStage = new Stage();
+            VBox comp = new VBox();
+            TextField lobbyID = new TextField("");
+            lobbyID.setPromptText("Lobby ID");
+
+            TextField password = new TextField("");
+            password.setPromptText("Password");
+
+            Button join_button = new Button("Join");
+
+            comp.getChildren().add(lobbyID);
+            comp.getChildren().add(password);
+            comp.getChildren().add(join_button);
+
+            Scene stageScene = new Scene(comp, 300, 75);
+            newStage.setScene(stageScene);
+            newStage.show();
+            button_create_lobby.setOnAction((ActionEvent e)    ->{
+                lobbyID.getText();
+                password.getText();
+
+                Net.push("{share, {join_lobby, " + lobbyID.getText() + ", " + password.getText() + "}}");
+                button_create_lobby.setDisable(true);
+            });
         });
 
     }
