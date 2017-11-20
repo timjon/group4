@@ -143,7 +143,7 @@ class Decode {
     }
 
     /**
-     * Given a string following the controller.network protocol, will create a new diagram with the provided classes.
+     * Given a string following the network protocol, will create a new diagram with the provided classes.
      * @param classes to draw up the diagram with.
      */
     private void diagramClasses(String classes, String id) {
