@@ -14,7 +14,8 @@ loop(Rooms, Lobby_increment) ->
 	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Password, self()) end),
       monitor(process, Pid),
 	  created_lobby,
-	  loop([{Lobby_increment, Password, Pid}|Rooms], Lobby_increment + 1)
+	  io:format("Lobby created"),
+	  loop([{Lobby_increment, Password, Pid}|Rooms], Lobby_increment + 1);
 	  
 	{remove_lobby, Creator_Socket, Lobby_ID} -> 
 	  Lobby_ID ! {remove_lobby, Creator_Socket},
