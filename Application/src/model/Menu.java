@@ -1,14 +1,15 @@
 package model;
 
+import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import net.Net;
-import visuals.DiagramView;
-import visuals.ExecutionLog;
-import visuals.handlers.Automate;
+import controller.network.Net;
+import view.DiagramView;
+import view.ExecutionLog;
+import view.handlers.Automate;
 
 import java.util.*;
 

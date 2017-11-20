@@ -1,11 +1,11 @@
-package visuals.handlers;
+package view.handlers;
 
-import visuals.DiagramView;
-import visuals.Draw;
+import view.DiagramView;
+import view.visuals.Draw;
 
 /**
  * Handles animation requests to the Draw object.
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius
  */
 public class Animation extends Thread {
@@ -17,7 +17,7 @@ public class Animation extends Thread {
     private long timeSinceLastUpdate = 0;
 
     // Defaults framesPerSecond the application updates in.
-    private static int framesPerSecond = 6;
+    private static int framesPerSecond = 10;
 
     /**
      * Stops the Animation thread at the end of the next iteration.
@@ -67,7 +67,7 @@ public class Animation extends Thread {
 
                 // If the thread gets interrupted.
             } catch (InterruptedException e) {
-                System.err.println(e.toString());
+                e.printStackTrace();
 
                 // Try again.
                 continue;
@@ -91,6 +91,7 @@ public class Animation extends Thread {
 
                 // If there is no view.
             } catch (IllegalStateException ex) {
+                ex.printStackTrace();
 
                 // Try again.
                 continue;

@@ -1,15 +1,14 @@
-package visuals.handlers;
+package view.handlers;
 
 import model.Menu;
-import net.Net;
-import visuals.DiagramView;
-import visuals.Draw;
-import visuals.ExecutionLog;
-import visuals.Message;
+import controller.network.Net;
+import view.DiagramView;
+import view.ExecutionLog;
+import view.visuals.component.Message;
 
 /**
  * Handles automating the Sequence Diagram execution.
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius
  */
 public class Automate extends Thread {
@@ -56,23 +55,36 @@ public class Automate extends Thread {
         // Makes terminating the thread externally possible.
         while (singletonAutomateThread != null) {
             try {
-                Thread.sleep(250);
+                Thread.sleep(500);
 
-                Message message = DiagramView.getDiagramViewInView().getDraw().getLastMessage();
-
-                // If the last message is done animating.
-                if (!message.isKeepAnimating()) {
-                    Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
-                }
-
+                // Check if we are done.
                 if (ExecutionLog.getInstance().isFinished()) {
                     cancel();
                     Menu.pause();
+                    Menu.getInstance().identifyState();
+                    break;
                 }
 
-                // If there is no message. An exception is caught.
-            } catch (Exception ex) {
-                Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                // Get the message to check for it's status.
+                Message message;
+                try {
+                    // Get the last message.
+                    message = DiagramView.getDiagramViewInView().getDraw().getLastMessage();
+
+                    // If the last message is done animating.
+                    if (!message.isKeepAnimating()) {
+                        Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                    }
+                }
+                // If there are no messages
+                catch (ArrayIndexOutOfBoundsException ex) {
+                    // send a request for a message.
+                    Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                }
+            }
+
+            catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
 

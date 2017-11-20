@@ -1,12 +1,12 @@
-package net;
+package controller.network;
 
 import javafx.application.Platform;
 import model.Menu;
-import visuals.DiagramView;
-import visuals.Draw;
-import visuals.ExecutionLog;
+import view.DiagramView;
+import view.visuals.Draw;
+import view.ExecutionLog;
 
-import static visuals.DiagramView.tabPane;
+import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
@@ -40,7 +40,7 @@ class Decode {
         if (rawStringToDecode.contains("simulation_finished")) {
 
             // Write Simulation finished in the execution log.
-            write(id, "Simulation finished");
+            write(id, "INFO: Simulation finished");
 
             // Update menu state.
             Menu.getInstance().identifyState();
@@ -86,7 +86,7 @@ class Decode {
                 // Adds message to the DiagramView.
                 message(
                         id,
-                        DiagramView.getDiagramViewInView().getDraw(),// TODO change if you want multiple diagrams.
+                        DiagramView.getDiagramViewInView().getDraw(),
                         message, // The message content.
                         values.split(",")); // Split the fields remaining.
 
@@ -163,12 +163,24 @@ class Decode {
 
             // Count number of classes added.
             int numberOfClasses = 0;
+            
+            // Store the separate classes.
+            String[] splitClasses = classes.split(",");
+            
+            // Get the first class only.
+            String actorClass_name = removeCharactersFromString(splitClasses[0], '[', ']', '\"');
+            
+            // Add the first class to the draw object.
+            draw.addActor(actorClass_name);
+            
+            // Increment number of classes drawn.
+            numberOfClasses+=1;
 
             // Split the remaining fields and add them as classes.
-            for (String s: classes.split(",")) {
+            for (int i = 1; i < splitClasses.length; i++) {
 
                 // Removes a few specific characters that may appear in the class name.
-                String diagramClass_name = removeCharactersFromString(s, '[', ']', '\"');
+                String diagramClass_name = removeCharactersFromString(splitClasses[i], '[', ']', '\"');
 
                 // Add the class to the draw object.
                 draw.addClass(diagramClass_name);
@@ -178,7 +190,7 @@ class Decode {
             }
 
             // Display in the execution log the number of classes created.
-            write(id, "CREATED: " + numberOfClasses + " classes");
+            write(id, "INFO: created " + numberOfClasses + " classes");
 
             // Turns on animations.
             Draw.animate(true);

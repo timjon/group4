@@ -3,16 +3,16 @@ package model.sequenceDiagramParser;
 import java.util.List;
 
 /**
- * This Class is part Sequence Diagram Object for the parser from JSON to POJO (Plain Old Java Objects)
+ * This Class is part of the Sequence Diagram Object for the parser from JSON to POJO (Plain Old Java Objects)
  * The getters and setters and their declarations are made to adhere with a predetermined JSON format
- *
+ * This Messages class contains the messages being sent between the classes of the parsed sequence diagram
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * @version 1.0
  * @since 2017-10-16
  */
 
 
-public class ContentArray {
+public class Messages {
 
     private String node;
 

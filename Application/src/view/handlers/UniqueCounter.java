@@ -1,4 +1,4 @@
-package visuals.handlers;
+package view.handlers;
 
 /**
  * Holds a static unique counter that increments on every call.

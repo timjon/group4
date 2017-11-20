@@ -1,6 +1,6 @@
-package net;
+package controller.network;
 
-import visuals.ExecutionLog;
+import view.ExecutionLog;
 import javafx.application.Platform;
 
 import java.util.PriorityQueue;

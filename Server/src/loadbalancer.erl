@@ -2,11 +2,15 @@
 -export([init/0]).
 
 %%Author: Tim Jonasson
-%%Version: 1.0
+%%Collaborator: Sebastian Fransson
+%%Version: 1.1
 
 %Initializes the server
 init() -> 
   {ok, ListenSocket} = gen_tcp:listen(8040, [{active,true}, binary]),
+  Pid = spawn(fun() -> lobbycoordinator:init() end),
+  monitor(process,Pid),
+  register(lobbycoordinator, Pid),
   loop(ListenSocket).
   
 %Accepts connections and spawns a proccess for it

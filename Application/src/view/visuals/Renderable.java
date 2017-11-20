@@ -1,6 +1,7 @@
-package visuals;
+package view.visuals;
 
 import javafx.scene.canvas.GraphicsContext;
+import view.visuals.component.Coordinates;
 
 /**
  * Implementing this assures the class can be rendered through generics.
@@ -20,4 +21,10 @@ public interface Renderable {
 
     // Returns the Object's Coordinates.
     Coordinates getCoordinates();
+
+    // Returns the name for this object.
+    String getName();
+
+    // Places the object at the specified coordinates.
+	void place(Coordinates coordinates, int size);
 }
