@@ -27,7 +27,7 @@ public class Net implements Runnable {
     }
 
     /**
-     * Only allow a single controller.network thread and it must be run on an FXApplicationThread.
+     * Only allow a single network thread and it must be run on an FXApplicationThread.
      * Starts a new Net thread.
      */
     public static void init() {
