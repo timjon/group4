@@ -246,7 +246,7 @@ public class Menu {
 
         button_join_lobby.setOnAction((ActionEvent event)    ->{
             Stage newStage = new Stage();
-            VBox comp = new VBox();
+            VBox vbox = new VBox();
             TextField lobbyID = new TextField("");
             lobbyID.setPromptText("Lobby ID");
 
@@ -255,19 +255,22 @@ public class Menu {
 
             Button join_button = new Button("Join");
 
-            comp.getChildren().add(lobbyID);
-            comp.getChildren().add(password);
-            comp.getChildren().add(join_button);
+            vbox.getChildren().add(lobbyID);
+            vbox.getChildren().add(password);
+            vbox.getChildren().add(join_button);
 
-            Scene stageScene = new Scene(comp, 300, 75);
+            Scene stageScene = new Scene(vbox, 300, 75);
             newStage.setScene(stageScene);
             newStage.show();
-            button_create_lobby.setOnAction((ActionEvent e)    ->{
-                lobbyID.getText();
-                password.getText();
+            join_button.setOnAction((ActionEvent e)    ->{
+                String id  = lobbyID.getText();
+                String pwd = password.getText();
 
-                Net.push("{share, {join_lobby, " + lobbyID.getText() + ", " + password.getText() + "}}");
-                button_create_lobby.setDisable(true);
+                if(id.equals("") || pwd.equals("")){
+
+                } else {
+                    Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
+                }
             });
         });
 
@@ -295,7 +298,7 @@ public class Menu {
         } catch (IllegalStateException ex) {
 
             // If there is no view, we disable the media buttons.
-            Menu.getInstance().setMenuState(false, button_import, button_create_lobby);
+            Menu.getInstance().setMenuState(false, button_import, button_create_lobby, button_join_lobby);
             return;
         }
 

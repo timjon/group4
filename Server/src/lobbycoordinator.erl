@@ -18,10 +18,12 @@ loop(Rooms, Lobby_increment) ->
 	  
 	{remove_lobby, Creator_Socket, Lobby_ID} -> 
 	  Lobby_ID ! {remove_lobby, Creator_Socket},
+	  io:format("hello"),
 	  demonitor(Lobby_ID),
 	  loop(remove_lobby(Lobby_ID, Rooms), Lobby_increment);
 	  
-    {join_lobby, Socket, Lobby_ID} -> not_implemented;
+    {Socket, {join_lobby, {Lobby_ID, Password}}} -> 
+	  loop(Rooms, Lobby_increment);
 	  
 	{leave_lobby, Socket, Lobby_ID} -> not_implemented;
 	
