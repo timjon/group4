@@ -1,8 +1,9 @@
-package visuals;
+package view.visuals.component;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import view.visuals.Renderable;
 
 /**
  * A DiagramClass wrapper for coordinates with extra properties that implements Renderable.
@@ -31,7 +32,7 @@ public class DiagramClass implements Renderable {
     /**
      * @param name the class name.
      */
-    DiagramClass(String name) {
+   public DiagramClass(String name) {
         this.name = name;
     }
 

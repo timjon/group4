@@ -1,7 +1,8 @@
-package visuals;
+package view.visuals.component;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import view.visuals.Renderable;
 
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius
  * @version 4.0
  */
-public class Message implements Renderable{
+public class Message implements Renderable {
     private String name;
     private int size;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.

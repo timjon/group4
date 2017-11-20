@@ -1,13 +1,12 @@
-package net;
+package controller.network;
 
 import javafx.application.Platform;
 import model.Menu;
-import visuals.DiagramView;
-import visuals.Draw;
-import visuals.ExecutionLog;
-import visuals.handlers.Automate;
+import view.DiagramView;
+import view.visuals.Draw;
+import view.ExecutionLog;
 
-import static visuals.DiagramView.tabPane;
+import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
@@ -144,7 +143,7 @@ class Decode {
     }
 
     /**
-     * Given a string following the network protocol, will create a new diagram with the provided classes.
+     * Given a string following the controller.network protocol, will create a new diagram with the provided classes.
      * @param classes to draw up the diagram with.
      */
     private void diagramClasses(String classes, String id) {

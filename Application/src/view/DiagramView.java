@@ -1,10 +1,11 @@
-package visuals;
+package view;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import view.visuals.Draw;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ public class DiagramView {
      * @param draw a Draw Object to match with.
      * @return true if it is in view. false if a DiagramView does not exist for the Draw or if it is not in view.
      */
-    static boolean inView(Draw draw) {
+    public static boolean inView(Draw draw) {
         DiagramView diagramView = getDiagramViewInView();
         return diagramView.getDraw() == draw;
     }
