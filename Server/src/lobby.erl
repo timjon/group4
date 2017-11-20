@@ -9,8 +9,7 @@ init(Creator_Socket) -> loop(Creator_Socket, [Creator_Socket], [], lobby1).
 loop(Creator_Socket, Members, Diagrams, Lobby_ID) -> 
   receive
     {remove_lobby, Creator_Socket} -> ok;
-<<<<<<< HEAD
-	
+
 	{create_diagram, Creator_Socket, {ok, {Did, Class_names, Classes, Messages}}} -> 
 	  %Sends the class names and messages to the client
       %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
@@ -32,12 +31,4 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  loop(Creator_Socket, Members, Diagrams, Lobby_ID);
     {remove_diagram, Did} -> not_implemented
   end.
-  
-=======
-	{create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}} -> not_implemented;
-	{remove_diagram, Did} -> not_implemented;
-	{command, {Did, next_message}} -> not_implemented;
-	{command, {Did, previous_message}} -> not_implemented
-	
-  end.
->>>>>>> 20-sharedsession
+

@@ -62,7 +62,7 @@ find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
-use_input({ok, {share, Info}}, Socket, Diagrams) when hd(Share) == l -> 
+use_input({ok, {share, Info}}, Socket, Diagrams) -> 
   lobbycoordinator ! {Socket, Info},
   loop(Socket, Diagrams);
 %If the message is the Diagram id and the Message_request.

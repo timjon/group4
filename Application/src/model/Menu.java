@@ -29,6 +29,7 @@ public class Menu {
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
+    private static Button button_join_lobby;
 
     // Flavor texts
     private final static String text_input = "Import";
@@ -37,6 +38,7 @@ public class Menu {
     private final static String text_next = "->";
     private final static String text_previous = "<-";
     private final static String text_import_lobby = "Import to lobby";
+    private final static String text_join_lobby = "Join a lobby";
 
     // State
     private boolean play = false;
@@ -52,6 +54,7 @@ public class Menu {
         button_previous = new Button(text_previous);
         button_auto = new Button(text_auto_play);
         button_import_lobby  = new Button(text_import_lobby);
+        button_join_lobby = new Button(text_join_lobby);
     }
 
     /**
@@ -78,7 +81,7 @@ public class Menu {
         HBox menu = new HBox();
 
         // Start all media buttons disabled.
-        setMenuState(false, button_import, button_import_lobby);
+        setMenuState(false, button_import, button_import_lobby, button_join_lobby);
 
         // Adds the event handlers for the buttons.
         setEvents(stage);
@@ -89,6 +92,7 @@ public class Menu {
         menu.getChildren().add(button_previous);
         menu.getChildren().add(button_auto);
         menu.getChildren().add(button_next);
+        menu.getChildren().add(button_join_lobby);
 
         return menu;
     }
@@ -107,6 +111,7 @@ public class Menu {
         buttonHashSet.add(button_next);
         buttonHashSet.add(button_previous);
         buttonHashSet.add(button_auto);
+        buttonHashSet.add(button_join_lobby);
 
         // Remove the buttons from the set, to not modify.
         for (Button button: buttons)
@@ -200,7 +205,7 @@ public class Menu {
                 case "sequence_diagram" :
                     for (String element : result) {
                         parse.parseSequenceDiagram(element);
-                        Net.push("{share, " + parse.getFirstSequenceDiagram() + "}");
+                        Net.push("{share, {command, " + parse.getFirstSequenceDiagram() + "}}");
 
                         // Enable all media buttons.
                         setMenuState(true);
