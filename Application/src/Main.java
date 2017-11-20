@@ -10,11 +10,11 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-import controller.network.Net;
+import model.Menu;
 import view.DiagramView;
 import view.ExecutionLog;
-import model.Menu;
 import view.handlers.Resizer;
+import controller.network.Net;
 
 import java.awt.*;
 
