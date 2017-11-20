@@ -14,11 +14,10 @@ import model.Menu;
 import view.DiagramView;
 import view.ExecutionLog;
 import view.handlers.Resizer;
+import static view.DiagramView.tabPane;
 import controller.network.Net;
 
 import java.awt.*;
-
-import static view.DiagramView.tabPane;
 
 public class Main extends Application {
     public static void main(String[] args) {
