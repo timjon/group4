@@ -1,14 +1,14 @@
-package visuals.handlers;
+package view.handlers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.stage.Stage;
-import visuals.DiagramView;
+import view.DiagramView;
 
 /**
  * The Resizer runs on a separate thread and there can only exist one at a waitAndResize.
  * It's in charge of when the canvases are meant call resize after a certain waitAndResize delay.
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class Resizer implements Runnable {
 
@@ -49,8 +49,7 @@ public class Resizer implements Runnable {
             try {
                 Thread.sleep(increment);
             } catch (InterruptedException e) {
-                System.err.println(e.toString());
-                System.out.println(e.toString());
+                e.printStackTrace();
             }
 
         }

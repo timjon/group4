@@ -3,9 +3,10 @@ package model.sequenceDiagramParser;
 import java.util.List;
 
 /**
- * This Class is part Sequence Diagram Object for the parser from JSON to POJO (Plain Old Java Objects)
+ * This Class is part of the Sequence Diagram Object for the parser from JSON to POJO (Plain Old Java Objects)
  * The getters and setters and their declarations are made to adhere with a predetermined JSON format
- declarations
+ * This Meta class contains the information of the parsed diagram including the name of the format, the version and
+ * the list of extensions
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * @version 1.0
  * @since 2017-10-16

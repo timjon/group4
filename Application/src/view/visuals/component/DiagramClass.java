@@ -1,8 +1,9 @@
-package visuals;
+package view.visuals.component;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import view.visuals.Renderable;
 
 /**
  * A DiagramClass wrapper for coordinates with extra properties that implements Renderable.
@@ -11,16 +12,16 @@ import javafx.scene.paint.Color;
  */
 public class DiagramClass implements Renderable {
     private Coordinates coordinates; // The coordinates of the object.
-    private int size; // Size of the Object.
-    private String name; // The class name.
+    int size; // Size of the Object.
+    String name; // The class name.
 
     // The images retrieved.
     private static Image castle1 = new Image("resources/castle_default.png");
     private static Image castle2 = new Image("resources/castle_default2.png");
 
     private static Image platform = new Image("resources/platform_default.png");
-    private static Image connector = new Image("resources/connector_default.png");
-    private static Image pillar = new Image("resources/pillar_default.png");
+    static Image connector = new Image("resources/connector_default.png");
+    static Image pillar = new Image("resources/pillar_default.png");
 
     // Animations
 
@@ -31,7 +32,7 @@ public class DiagramClass implements Renderable {
     /**
      * @param name the class name.
      */
-    DiagramClass(String name) {
+   public DiagramClass(String name) {
         this.name = name;
     }
 
@@ -40,7 +41,7 @@ public class DiagramClass implements Renderable {
      * @param coordinates the position of the DiagramClass.
      * @param size the size for the DiagramClass and it's graphics.
      */
-    void place(Coordinates coordinates, int size) {
+    public void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
         this.size = size;
     }
@@ -130,7 +131,7 @@ public class DiagramClass implements Renderable {
      * @param offsetX the offset in the x position from the placement.
      * @param offsetY the offset in the y position from the placement.
      */
-    private void placeGraphicCentered(GraphicsContext gc, Image img, int size, int offsetX, int offsetY) {
+    void placeGraphicCentered(GraphicsContext gc, Image img, int size, int offsetX, int offsetY) {
         gc.drawImage(
                 img,
                 this.coordinates.getX() -size/2 + offsetX,

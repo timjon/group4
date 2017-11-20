@@ -10,15 +10,14 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-import net.Net;
-import visuals.DiagramView;
-import visuals.ExecutionLog;
 import model.Menu;
-import visuals.handlers.Resizer;
+import view.DiagramView;
+import view.ExecutionLog;
+import view.handlers.Resizer;
+import static view.DiagramView.tabPane;
+import controller.network.Net;
 
 import java.awt.*;
-
-import static visuals.DiagramView.tabPane;
 
 public class Main extends Application {
     public static void main(String[] args) {
