@@ -116,49 +116,55 @@ public class Parser {
             }
 
         } catch (Exception e) {
-            syntaxErrorMessage();
+            e.printStackTrace();
+            Import.disp("Import failed", "Unknown syntax", e.toString());
         }
     }
 
     /**
-     * displays a frame notifying the user that the imported file contains unrecognisable syntax
+     * @param string to wrap
+     * @return the provided string wrapped inside the processes and class names, in a formatted string.
      */
+    private String wrap(String string) {
+        return "{" + UniqueCounter.getString() + ",[" + processesString + "]," + "[" + classNamesString + "]," + "[" + string + "]}";
+    }
 
-    private void syntaxErrorMessage() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Import failed");
-        alert.setHeaderText("Unknown syntax");
-        alert.setContentText("The selected file contains unrecognisable syntax");
-        alert.show();
+    /**
+     * Given a list of Messages (I know, confusing right?) will parse them in to concat string.
+     * @param messages list of Messages
+     * @return a formatted string.
+     */
+    private String parseMessages(List<Messages> messages) {
+        StringBuilder result = new StringBuilder();
+        for (Messages m: messages) {
+            String r = "{" + m.getFrom() + "," + m.getTo() + ",[";
+            result.append(r);
+            for (String s: m.getMessage()) {
+                result.append(s);
+                result.append(",");
+            }
+            result.replace(result.length()-2, result.length()-1, "");
+            result.append("]},");
+        }
+        return result.substring(0, result.length()-1);
     }
 
     /**
      * gives a String containing the first diagram to be handled by the backend
      *
-     * @return FirstSequenceDiagram which contains a counter, the tempProcesses, the class names, the first diagram's messages and content.
+     * @return a formatted string with the following data,
+     * unique counter, the tempProcesses, the class names, the first diagram's messages and content.
      */
-
-    public String getFirstSequenceDiagram() {
-
-        String FirstSequenceDiagram = "{" + counter + ",[" + processesString + "]," + "[" + classNamesString + "]," + "[" + firstDiagramString + "]}";
-        // increase the counter by 2 since it is always an odd number and it started with 1
-        counter = counter + 2;
-
-        return FirstSequenceDiagram;
+    String getDiagram() {
+        return diagram;
     }
 
     /**
      * gives a String containing the second (i.e parallel) diagram to be handled by the backend
      *
-     * @return ParallelSequenceDiagram which contains a counter, the tempProcesses, the class names, the parallel diagram's messages and content.
+     * @return contains a counter, the tempProcesses, the class names, the parallel diagram's messages and content.
      */
-
-    public String getParallelSequenceDiagram() {
-
-        String ParallelSequenceDiagram = "{" + parallelCounter + ",[" + processesString + "]," + "[" + classNamesString + "]," + "[" + parallelDiagramString + "]}";
-        // increase the parallelCounter by 2 since it is always an even number and it started with 2
-        parallelCounter = parallelCounter + 2;
-
-        return ParallelSequenceDiagram;
+    String getParallelSequenceDiagram() {
+        return parallel;
     }
 }

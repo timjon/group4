@@ -84,7 +84,7 @@ public class Import {
                 sb.append(file.toString());
                 sb.append('\n');
             }
-            disp("", sb.toString());
+            disp("Import error", "Unable to parse the following file(s):", sb.toString());
         }
 
         return files_content;
@@ -95,10 +95,10 @@ public class Import {
      * @param title of the dialog window.
      * @param content message to be displayed.
      */
-    private static void disp(String title, String content) {
+    static void disp(String title, String headerText, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Import error " + title);
-        alert.setHeaderText("Unable to parse the following file(s):");
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
         alert.setContentText(content);
         alert.show();
     }
