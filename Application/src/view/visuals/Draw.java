@@ -7,10 +7,7 @@ import javafx.scene.image.Image;
 
 import view.DiagramView;
 import view.handlers.Animation;
-import view.visuals.component.ActorClass;
-import view.visuals.component.Coordinates;
-import view.visuals.component.DiagramClass;
-import view.visuals.component.Message;
+import view.visuals.component.*;
 
 import java.util.ArrayList;
 
