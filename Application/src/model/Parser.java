@@ -1,15 +1,11 @@
 package model;
 
-import controller.Import;
-import model.classDiagram.ClassDiagram;
-import model.classDiagram.Classes;
-import model.classDiagram.FieldTuple;
-import model.classDiagram.Relationships;
-import model.sequenceDiagramParser.Messages;
-import model.sequenceDiagramParser.Processes;
-import com.google.gson.Gson;
-import model.sequenceDiagramParser.SequenceDiagramObject;
+import model.classDiagram.*;
+import model.sequenceDiagramParser.*;
 import view.handlers.UniqueCounter;
+import controller.Import;
+
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -41,22 +37,14 @@ import java.util.List;
 
 public class Parser {
 
-    /*
-     * defining two different counter variables that will increment each time the diagram calling method
-     * that they are is called in order to differentiate between the imported diagrams
-     * These two counters are static in order that they change each time and new diagram is imported from the main method
-     */
-
-    /*
-     * The following declarations are used for concatenating the final returned Strings to be used by the backend
-     * The temp declarations store the parsed values but with the extra comma, an extra line in each for each loop removes
-     * the extra comma and stores the proper value in a new String variable
-     */
-
+    //The following declarations are used for concatenating the final returned Strings to be used by the backend
     private String processesString = "";
     private String classNamesString = "";
 
+    // Stores a general purpose diagram variable.
     private String diagram;
+
+    // Stores a possible parallel version of a diagram.
     private String parallel;
 
     /**
@@ -77,28 +65,41 @@ public class Parser {
             string.append("{");
             string.append(UniqueCounter.getString());
             string.append(",[");
+
+            // Add the classes.
             for (Classes s: cd.classes) {
                 string.append("[");
                 string.append(s.name);
                 string.append(",");
+
+                // Add the fields for the classes.
                 for (FieldTuple ft: s.fields) {
                     string.append(ft.name);
                     string.append(":");
                     string.append(ft.type);
                     string.append(",");
                 }
+
+                // Remove extra comma, and apply formatting.
                 string.replace(string.length()-1, string.length(), "],");
             }
+
+            // Remove extra comma, and apply formatting.
             string.replace(string.length()-1, string.length(), "],[");
 
+            // Iterate over the relationships and format them.
             for (Relationships rs: cd.relationships) {
                 string.append(rs.format());
                 string.append(",");
             }
+
+            // Remove extra comma, and apply formatting.
             string.replace(string.length()-1, string.length(), "]}");
 
+            // Set the diagram to be the string version of the formatted class diagram.
             diagram = string.toString();
 
+            // Catch everything and prompt the user with a proper error notification.
         } catch (Exception e) {
             e.printStackTrace();
             Import.disp("Import failed", "Unknown syntax", e.toString());
@@ -122,7 +123,11 @@ public class Parser {
 
             // get the tempProcesses which contain the class names
             for (Processes processesElement : parsedSequenceDiagram.getProcesses()) {
-                tempProcesses += "\"" + processesElement.getSequenceDiagramClass() + ":" + processesElement.getName() + "\",";
+
+                tempProcesses += "\"" +
+                        processesElement.getSequenceDiagramClass() + ":" +
+                        processesElement.getName() + "\",";
+
                 processesString = (tempProcesses.substring(0, tempProcesses.length() - 1));
                 // yield only the names of the Classes
                 tempClassNames += processesElement.getName() + ",";
@@ -130,7 +135,10 @@ public class Parser {
                 classNamesString = (tempClassNames.substring(0, tempClassNames.length() - 1));
             }
 
+            // Retrieves the parsed messages.
             diagram = parseMessages(parsedSequenceDiagram.getDiagram().getContent().get(0).getMessages());
+
+            // Wraps them up and gives them an unique id.
             diagram = wrap(diagram);
 
             // If there is a parallel diagram.
@@ -154,28 +162,38 @@ public class Parser {
     }
 
     /**
-     * Given a list of Messages (I know, confusing right?) will parse them in to concat string.
+     * Given a list of Messages (plural Messages class) will parse them in to concat string.
      * @param messages list of Messages
      * @return a formatted string.
      */
     private String parseMessages(List<Messages> messages) {
         StringBuilder result = new StringBuilder();
+
+        // Iterate over the available messages and append them to the StringBuilder,
+        // But with a specific format.
         for (Messages m: messages) {
+
+            // Add a formatted string for the from and to of the message.
             String r = "{" + m.getFrom() + "," + m.getTo() + ",[";
             result.append(r);
+
+            // Iterate through the message content.
             for (String s: m.getMessage()) {
+
                 result.append(s);
                 result.append(",");
             }
-            result.replace(result.length()-1, result.length(), "");
-            result.append("]},");
+
+            // Removes extra comma, and applies formatting.
+            result.replace(result.length()-1, result.length(), "]},");
         }
+
+        // Removes extra comma.
         return result.substring(0, result.length()-1);
     }
 
     /**
      * gives a String containing the first diagram to be handled by the backend
-     *
      * @return a formatted string with the following data,
      * unique counter, the tempProcesses, the class names, the first diagram's messages and content.
      */
@@ -185,7 +203,6 @@ public class Parser {
 
     /**
      * gives a String containing the second (i.e parallel) diagram to be handled by the backend
-     *
      * @return contains a counter, the tempProcesses, the class names, the parallel diagram's messages and content.
      */
     String getParallelSequenceDiagram() {
