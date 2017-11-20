@@ -1,13 +1,12 @@
-package net;
+package controller.network;
 
 import javafx.application.Platform;
 import model.Menu;
-import visuals.DiagramView;
-import visuals.Draw;
-import visuals.ExecutionLog;
-import visuals.handlers.Automate;
+import view.DiagramView;
+import view.visuals.Draw;
+import view.ExecutionLog;
 
-import static visuals.DiagramView.tabPane;
+import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius

@@ -1,4 +1,4 @@
-package visuals;
+package view.visuals.component;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -29,7 +29,7 @@ public class ActorClass extends DiagramClass {
      * Default constructor, calls the super constructor.
      * @param name the class name.
      */
-    ActorClass(String name) {
+    public ActorClass(String name) {
         super(name);
     }
 
