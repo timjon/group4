@@ -237,7 +237,7 @@ public class Menu {
         });
 
         button_create_lobby.setOnAction((ActionEvent event)    ->{
-            Net.push("{" + "createLobby}");
+            Net.push("{" + "share" + ", create_lobby}");
             button_create_lobby.setDisable(true);
         });
 
