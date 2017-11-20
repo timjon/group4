@@ -1,11 +1,10 @@
-package visuals.handlers;
+package view.handlers;
 
 import model.Menu;
-import net.Net;
-import visuals.DiagramView;
-import visuals.Draw;
-import visuals.ExecutionLog;
-import visuals.Message;
+import controller.network.Net;
+import view.DiagramView;
+import view.ExecutionLog;
+import view.visuals.component.Message;
 
 /**
  * Handles automating the Sequence Diagram execution.

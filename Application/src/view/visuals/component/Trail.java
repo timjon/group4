@@ -1,4 +1,4 @@
-package visuals;
+package view.visuals.component;
 
 /**
  * Class for the trail

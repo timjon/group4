@@ -1,7 +1,7 @@
-package visuals.handlers;
+package view.handlers;
 
-import visuals.DiagramView;
-import visuals.Draw;
+import view.DiagramView;
+import view.visuals.Draw;
 
 /**
  * Handles animation requests to the Draw object.
@@ -17,7 +17,7 @@ public class Animation extends Thread {
     private long timeSinceLastUpdate = 0;
 
     // Defaults framesPerSecond the application updates in.
-    private static int framesPerSecond = 15;
+    private static int framesPerSecond = 10;
 
     /**
      * Stops the Animation thread at the end of the next iteration.

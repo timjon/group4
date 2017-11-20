@@ -1,11 +1,11 @@
-package visuals;
+package view.visuals.component;
 
 /**
  * Holds x and y positions
  * @author Pontus Laestadius
  * @version 1.0
  */
-class Coordinates {
+public class Coordinates {
     private int x;
     private int y;
 
@@ -14,7 +14,7 @@ class Coordinates {
      * @param x the position relative to the horizontal alignment.
      * @param y the position relative to the vertical alignment.
      */
-    Coordinates(int x, int y) {
+    public Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
     }

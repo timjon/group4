@@ -1,11 +1,13 @@
-package visuals;
+package view.visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
 
-import visuals.handlers.Animation;
+import view.DiagramView;
+import view.handlers.Animation;
+import view.visuals.component.*;
 
 import java.util.ArrayList;
 
@@ -29,7 +31,7 @@ public class Draw {
     /**
      * Constructor
      */
-    Draw(int w, int h) {
+    public Draw(int w, int h) {
         canvas = new Canvas(w, h);
     }
 
@@ -37,7 +39,7 @@ public class Draw {
      * Gets the active canvas.
      * @return canvas
      */
-    Canvas getCanvas() {
+    public Canvas getCanvas() {
         return canvas;
     }
 
@@ -131,7 +133,7 @@ public class Draw {
      * @param w the new width of the canvas.
      * @param h the new height of the canvas.
      */
-    void resize(double w, double h) {
+    public void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
         canvas.setWidth(w);
