@@ -13,9 +13,9 @@ loop(Rooms, Lobby_increment) ->
     {create_lobby, Creator_Socket, Password} -> 
 	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Password, self()) end),
       monitor(process, Pid),
-	  Rooms ++ [{Lobby_increment, Password, Pid}],
 	  created_lobby,
-	  loop(Rooms, Lobby_increment + 1);
+	  io:format("Lobby created"),
+	  loop([{Lobby_increment, Password, Pid}|Rooms], Lobby_increment + 1);
 	  
 	{remove_lobby, Creator_Socket, Lobby_ID} -> 
 	  Lobby_ID ! {remove_lobby, Creator_Socket},
@@ -30,8 +30,8 @@ loop(Rooms, Lobby_increment) ->
 	 io:format("hello"), not_implemented;
 
 	{'DOWN', _Ref, _process, Pid, Reason} -> 
-	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}]), 
-      loop(Rooms, counter)
+	  %Send a notice to the Client stating that a lobbt has crashed as well as relay the reason.
+	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}])
   end.
   
 find_room([], Lobby_ID)                  -> not_created ;
