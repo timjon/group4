@@ -42,10 +42,10 @@ public class Parser {
     private String classNamesString = "";
 
     // Stores a general purpose diagram variable.
-    private String diagram = "";
+    private String diagram = null;
 
     // Stores a possible parallel version of a diagram.
-    private String parallel = "";
+    private String parallel = null;
 
     /**
      * Parses a class diagram.
@@ -197,7 +197,8 @@ public class Parser {
      * @return a formatted string with the following data,
      * unique counter, the tempProcesses, the class names, the first diagram's messages and content.
      */
-    String getDiagram() {
+    String getDiagram() throws NullPointerException {
+        if (diagram == null) throw new NullPointerException("No diagram parsed");
         return diagram;
     }
 
@@ -205,7 +206,9 @@ public class Parser {
      * gives a String containing the second (i.e parallel) diagram to be handled by the backend
      * @return contains a counter, the tempProcesses, the class names, the parallel diagram's messages and content.
      */
-    String getParallelSequenceDiagram() {
+    String getParallelSequenceDiagram() throws NullPointerException {
+        if (diagram == null) throw new NullPointerException("No diagram parsed");
+
         return parallel;
     }
 }

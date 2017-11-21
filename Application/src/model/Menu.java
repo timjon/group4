@@ -175,8 +175,20 @@ public class Menu {
                     case "sequence_diagram" :
                         parse.parseSequenceDiagram(file);
 
-                        Net.push(parse.getDiagram());
-                        Net.push(parse.getParallelSequenceDiagram());
+                        // Catches if there are no diagrams.
+                        try {
+                            Net.push(parse.getDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
+                        // Catches if there is no parallel diagram.
+                        try {
+                            Net.push(parse.getParallelSequenceDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
 
                         // Enable all media buttons.
                         setMenuState(true);
