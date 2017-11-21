@@ -163,12 +163,8 @@ public class DiagramView {
     /**
      * Resizes the Draw object to with tabpane's dimensions.
      */
-    private void resize() {
-        // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
-        if (this.state == State.RESIZING) return;
-        State tmp = setState(State.RESIZING);
+    public void resize() {
         draw.resize(tabPane.getWidth()/viewing.size(),tabPane.getHeight());
-        this.state = tmp;
     }
 
     /**
