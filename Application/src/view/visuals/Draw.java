@@ -20,6 +20,10 @@ import java.util.ArrayList;
 public class Draw {
 
     private Canvas canvas; // Draws and handles graphical context
+
+    private Canvas canvas_class; // Draws and handles class diagram graphical context.
+    private Canvas canvas_deployment; // Draws and handles class diagram graphical context.
+
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
@@ -33,6 +37,16 @@ public class Draw {
      */
     public Draw(int w, int h) {
         canvas = new Canvas(w, h);
+        canvas_class = new Canvas(0,0);
+        canvas_deployment = new Canvas(0,0);
+    }
+
+
+    /**
+     * @param canvas to be used as class diagram.
+     */
+    public void addClassDiagram(Canvas canvas) {
+        this.canvas_class = canvas;
     }
 
     /**
@@ -42,6 +56,23 @@ public class Draw {
     public Canvas getCanvas() {
         return canvas;
     }
+
+    /**
+     * Gets the class canvas.
+     * @return canvas
+     */
+    public Canvas getCanvas_class() {
+        return canvas_class;
+    }
+
+    /**
+     * Gets the deployment canvas.
+     * @return canvas
+     */
+    public Canvas getCanvas_deployment() {
+        return canvas_deployment;
+    }
+
 
     /**
      * Gets the active canvas height.
@@ -136,8 +167,15 @@ public class Draw {
     public void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
-        canvas.setWidth(w);
+
         canvas.setHeight(h);
+        canvas_class.setHeight(h);
+        canvas_deployment.setHeight(h);
+
+        canvas.setWidth(w);
+        canvas_class.setWidth(w);
+        canvas_deployment.setWidth(w);
+
         redraw();
     }
 
@@ -154,15 +192,14 @@ public class Draw {
      */
     public void redraw() {
         renderItems();
-        init();
+        init(canvas.getGraphicsContext2D());
         renderContainer();
     }
 
     /**
      * initializes the simulation canvas with an animated 8-bit sky/ocean background .
      */
-    void init() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    void init(GraphicsContext gc) {
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
         gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());

@@ -3,16 +3,20 @@ package view;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import view.visuals.Draw;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles a single tabbed diagram view and it's state
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class DiagramView {
     public static TabPane tabPane;
@@ -20,6 +24,13 @@ public class DiagramView {
     private Draw draw;
     private State state = State.PAUSED;
     private Tab tab;
+
+    public final String CLASS_DIAGRAM = "CLASS_DIAGRAM";
+    public final String SEQUENCE_DIAGRAM = "SEQUENCE_DIAGRAM";
+    public final String DEPLOYMENT_DIAGRAM = "DEPLOYMENT_DIAGRAM";
+
+    private ArrayList<String> viewing = new ArrayList<>();
+    private BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
 
     // Stores the execution log data for this diagram.
     private ObservableList<String> logData = FXCollections.observableArrayList();
@@ -79,7 +90,60 @@ public class DiagramView {
         // Get a unique number for the ID.
         tab.setId(id);
         tab.setText(tabName);
-        tab.setContent(draw.getCanvas());
+        tab.setContent(borderpane);
+        addDiagram(SEQUENCE_DIAGRAM);
+    }
+
+    public void addDiagram(String match) {
+        if (!viewing.contains(match))
+            viewing.add(match);
+        updateView();
+    }
+
+    public void removeDiagram(String match) {
+        if (viewing.contains(match))
+            viewing.remove(match);
+        updateView();
+    }
+
+    public void updateView() {
+
+        Platform.runLater(() -> {
+
+            for (String item: viewing) {
+
+                if (item.equals(SEQUENCE_DIAGRAM)) {
+                    if (!getCanvasState(draw.getCanvas())) {
+                        borderpane.setCenter(draw.getCanvas());
+                        draw.getCanvas().setWidth(appropWidth());
+                    }
+
+                } if (item.equals(CLASS_DIAGRAM)) {
+                    if (!getCanvasState(draw.getCanvas_class())) {
+                        borderpane.setRight(draw.getCanvas_class());
+                        draw.getCanvas_class().setWidth(appropWidth());
+                    }
+
+                } else if (item.equals(DEPLOYMENT_DIAGRAM)) {
+                    if (!getCanvasState(draw.getCanvas_deployment())) {
+                        borderpane.setRight(draw.getCanvas_deployment());
+                        draw.getCanvas_deployment().setWidth(appropWidth());
+                    }
+
+                }
+
+            }
+
+            resize();
+        });
+    }
+
+    private int appropWidth() {
+        return (int) tabPane.getWidth()/viewing.size();
+    }
+
+    public boolean getCanvasState(Canvas canvas) {
+        return borderpane.getChildren().contains(canvas);
     }
 
     /**
@@ -103,7 +167,7 @@ public class DiagramView {
         // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
         if (this.state == State.RESIZING) return;
         State tmp = setState(State.RESIZING);
-        draw.resize(tabPane.getWidth(),tabPane.getHeight());
+        draw.resize(tabPane.getWidth()/viewing.size(),tabPane.getHeight());
         this.state = tmp;
     }
 
@@ -125,6 +189,7 @@ public class DiagramView {
         Platform.runLater(() -> {
             // Sets the execution log to display the data of this diagram view log.
             ExecutionLog.getInstance().setData(logData);
+            updateView();
         });
     }
 

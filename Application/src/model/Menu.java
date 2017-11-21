@@ -28,6 +28,8 @@ public class Menu {
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
+    private static Button button_class;
+    private static Button button_deployment;
 
     // Flavor texts
     private final static String text_input = "Import";
@@ -35,6 +37,8 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
+    private final static String text_class = "Show attached class diagram";
+    private final static String text_deployment = "Show attached deployment diagram";
 
     // State
     private boolean play = false;
@@ -49,6 +53,8 @@ public class Menu {
         button_next = new Button(text_next);
         button_previous = new Button(text_previous);
         button_auto = new Button(text_auto_play);
+        button_class = new Button(text_class);
+        button_deployment = new Button(text_deployment);
     }
 
     /**
@@ -85,6 +91,8 @@ public class Menu {
         menu.getChildren().add(button_previous);
         menu.getChildren().add(button_auto);
         menu.getChildren().add(button_next);
+        menu.getChildren().add(button_class);
+        menu.getChildren().add(button_deployment);
 
         return menu;
     }
@@ -207,6 +215,34 @@ public class Menu {
         button_auto.setOnAction((ActionEvent event)    ->{
             play = button_auto.getText().endsWith(text_auto_play);
             identifyState();
+        });
+
+        button_class.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            if (button_class.getText().toLowerCase().contains("show")) {
+                button_class.setText("Hide class diagram");
+                dv.addDiagram(dv.CLASS_DIAGRAM);
+            } else {
+                button_class.setText(text_class);
+                dv.removeDiagram(dv.CLASS_DIAGRAM);
+            }
+
+            dv.updateView();
+        });
+
+        button_deployment.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            if (button_deployment.getText().toLowerCase().contains("show")) {
+                button_deployment.setText("Hide deployment diagram");
+                dv.addDiagram(dv.DEPLOYMENT_DIAGRAM);
+            } else {
+                button_deployment.setText(text_deployment);
+                dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
+            }
+
+            dv.updateView();
         });
 
     }
