@@ -69,6 +69,7 @@ public class Draw {
      */
     public void addClass(String name) {
         allClasses.add(new DiagramClass(name));  // Class gets added to the end of the array list.
+        allClasses.add(new ClassDiagramClass(name));
     }
 
     /**
