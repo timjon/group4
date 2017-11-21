@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles a single tabbed diagram view and it's state
  * @author Pontus Laestadius
- * @version 1.1
+ * @version 1.5
  */
 public class DiagramView {
     public static TabPane tabPane;
@@ -163,7 +163,7 @@ public class DiagramView {
     /**
      * Resizes the Draw object to with tabpane's dimensions.
      */
-    public void resize() {
+    private void resize() {
         // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
         if (this.state == State.RESIZING) return;
         State tmp = setState(State.RESIZING);

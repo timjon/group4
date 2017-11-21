@@ -58,7 +58,7 @@ public class Resizer implements Runnable {
         for (DiagramView d: DiagramView.diagramViews)
 
             // Resize them
-            d.resize();
+            d.updateView();
 
         // Allows a new instance to start once this one is finished.
         singletonResizer = null;

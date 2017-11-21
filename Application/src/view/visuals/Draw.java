@@ -73,13 +73,12 @@ public class Draw {
         return canvas_deployment;
     }
 
-
     /**
      * Gets the active canvas height.
      * @return canvas height
      */
     int getHeight() {
-        return (int)canvas.getHeight();
+        return (int)DiagramView.tabPane.getHeight();
     }
 
     /**
@@ -87,7 +86,7 @@ public class Draw {
      * @return canvas width
      */
     int getWidth() {
-        return (int)canvas.getWidth();
+        return (int)DiagramView.tabPane.getWidth();
     }
     
     /**
@@ -243,13 +242,12 @@ public class Draw {
         }
     }
 
-
     /**
      * Updates the class to fit the resized window.
      */
     void renderClass() {
         if (allClasses.size() == 0) return; // There are no items to render
-        int space = (getWidth())/this.allClasses.size(); // The amount of space each class can use.
+        int space = ((int)this.canvas.getWidth())/this.allClasses.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
         for(int i = 0; i < allClasses.size(); i++) {
