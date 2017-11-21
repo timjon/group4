@@ -42,10 +42,10 @@ public class Parser {
     private String classNamesString = "";
 
     // Stores a general purpose diagram variable.
-    private String diagram;
+    private String diagram = "";
 
     // Stores a possible parallel version of a diagram.
-    private String parallel;
+    private String parallel = "";
 
     /**
      * Parses a class diagram.
