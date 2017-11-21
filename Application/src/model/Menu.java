@@ -3,8 +3,20 @@ package model;
 import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import controller.network.Net;
 import view.DiagramView;
@@ -237,8 +249,7 @@ public class Menu {
         });
 
         button_create_lobby.setOnAction((ActionEvent event)    ->{
-            Net.push("{" + "share" + ", create_lobby}");
-            button_create_lobby.setDisable(true);
+            passwordBox();
         });
 
     }
@@ -288,6 +299,51 @@ public class Menu {
             } else {
                 button_next.setDisable(false);
                 button_auto.setDisable(false);
+            }
+        });
+    }
+
+    /**
+     * Method for
+     */
+    public void passwordBox(){
+        String ok_password_text = "OK";
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Input Password");
+        primaryStage.show();
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(15, 15, 15, 15));
+
+        Scene scene = new Scene(grid, 250, 125);
+        primaryStage.setScene(scene);
+
+        Label pw = new Label("Password:");
+        grid.add(pw, 0, 0);
+
+        PasswordField pwBox = new PasswordField();
+        grid.add(pwBox, 1, 0);
+        pwBox.setPromptText("Password");
+        Button ok_password = new Button(ok_password_text);
+        grid.add(ok_password, 1,1);
+
+        final Text pressReturn = new Text();
+        grid.add(pressReturn, 1, 2);
+
+        ok_password.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                final String result = pwBox.getText();
+                if(result.equals("") || result == null) {pressReturn.setText("Please enter a password");}
+                else {
+                    pressReturn.setFill(Color.GREEN);
+                    pressReturn.setText("Lobby created");
+                    Net.push("{" + "share, " + result + ", create_lobby}");
+                    button_create_lobby.setDisable(true);
+                }
             }
         });
     }
