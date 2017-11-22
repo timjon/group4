@@ -163,28 +163,50 @@ public class Menu {
     private void setEvents(Stage stage) {
 
         button_import.setOnAction((ActionEvent event) -> {
-                Collection<String> result = Import.file(stage);
-                if (result.isEmpty()) return;
+            Collection<String> result = Import.file(stage);
+            if (result == null) return;
+            if (result.isEmpty()) return;
 
-                // Parse the element if it contains a supported diagram
-                Parser parse = new Parser();
+            // Parse the element if it contains a supported diagram
+            Parser parse = new Parser();
+
+            for (String file: result) {
                 switch(DiagramCheck.ContainsDiagram(result)) {
                     case "sequence_diagram" :
-                        for (String element : result) {
-                            parse.parseSequenceDiagram(element);
-                            Net.push(parse.getFirstSequenceDiagram());
+                        parse.parseSequenceDiagram(file);
 
-                            // Enable all media buttons.
-                            setMenuState(true);
-                            button_previous.setDisable(true);
+                        // Catches if there are no diagrams.
+                        try {
+                            Net.push(parse.getDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
                         }
+
+                        // Catches if there is no parallel diagram.
+                        try {
+                            Net.push(parse.getParallelSequenceDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
+
+                        // Enable all media buttons.
+                        setMenuState(true);
+                        button_previous.setDisable(true);
+                        break;
+                    case "class_diagram":
+                        parse.parseClassDiagram(file);
+                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
+                        Net.push(parse.getDiagram());
+
                         break;
                 }
-                // if the diagram is not included in the switch case, check if the diagram is invalid
-                DiagramCheck.ContainsDiagram(result);
-                identifyState();
-            });
 
+
+            }
+
+            identifyState();
+        });
 
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
