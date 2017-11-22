@@ -25,6 +25,7 @@ loop(Rooms, Lobby_increment) ->
 	  [Ref | _] = RefTmp,
 	  [Lobby_PID|_] = Lid,
 	  NewRooms = [ {Lid, Password, Pid, Socket, Ref}|| {Lid, Password, Pid, Socket, Ref} <- Rooms, Creator_Socket /= Socket],
+	  %demonitor the lobby to avoid receiving the 'DOWN' message, since we manually terminated the process.
 	  demonitor(Ref),
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
 	  io:format("after sending remove ~n"),
