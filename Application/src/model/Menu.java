@@ -242,20 +242,27 @@ public class Menu {
 
         button_previous.setOnAction((ActionEvent event) ->{
             String tabID = DiagramView.getDiagramViewInView().getTab().getId();
-            if(tabID.charAt(1) == 'l') {
-                Net.push("{share, {" + tabID + ", previous_message}}");
-            }
-            else{
+            try {
+                if (tabID.charAt(1) == 'l') {
+                    Net.push("{share, {" + tabID + ", previous_message}}");
+                } else {
+                    Net.push("{" + tabID + ", previous_message}");
+                }
+            }catch(StringIndexOutOfBoundsException e){
                 Net.push("{" + tabID + ", previous_message}");
             }
         });
 
         button_next.setOnAction((ActionEvent event)    ->{
             String tabID = DiagramView.getDiagramViewInView().getTab().getId();
-            if(tabID.charAt(1) == 'l') {
-                Net.push("{share, {" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}}");
-            } else {
-                Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+            try {
+                if (tabID.charAt(1) == 'l') {
+                    Net.push("{share, {" + tabID + ", next_message}}");
+                } else {
+                    Net.push("{" + tabID + ", next_message}");
+                }
+            }catch(StringIndexOutOfBoundsException e){
+                Net.push("{" + tabID + ", next_message}");
             }
         });
 

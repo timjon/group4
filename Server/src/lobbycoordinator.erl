@@ -50,12 +50,9 @@ loop(Rooms, Lobby_increment) ->
 	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}])
   end.
   
-find_room([], Lobby_ID)                  -> not_created ;
+find_room([], Lobby_ID)                             -> not_created ;
 find_room([{Lobby_ID, Password, Pid}|Ls], Lobby_ID) -> Pid;
-find_room([L|Ls], Lobby_ID)               -> 
-  io:format("lobby id: ~p~n", [L]),
-  io:format("acual id: ~p~n", [Lobby_ID]),
-  find_room(Ls, Lobby_ID).
+find_room([L|Ls], Lobby_ID)                         -> find_room(Ls, Lobby_ID).
 
 get_lobby_ID([]) -> [];
 get_lobby_ID([L|Ls]) when (L >= $0) and (L =< $9) -> get_ID([L|Ls]);

@@ -15,6 +15,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  loop(Creator_Socket, case find_member(Members, Socket) of 
 	    not_found -> 
 		  gen_tcp:send(Socket, io_lib:format("Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
+		  send_classes(Socket, Diagrams),
 		  [Socket|Members];
 		found_member -> 
 		  gen_tcp:send(Socket, io_lib:format("Already in lobby, ~p", [Lobby_ID]) ++ "~"),
@@ -28,12 +29,10 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Diagram_ID, Class_names}]) ++ "~",
       send_messages(Members, Format_result),
 	  Self = self(),
-	  loop(Creator_Socket, Members, [{Diagram_ID, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}) end)}| Diagrams], Lobby_ID);
+	  loop(Creator_Socket, Members, [{Diagram_ID, Class_names, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}) end)}| Diagrams], Lobby_ID);
 	
 	{command, Creator_Socket, {Did, Message_request}} -> 
-	  io:format("bye"),
-	  Pid = usercoordinator:find_diagram(Did, Diagrams),
-	  io:format("bye fuckface"),
+	  Pid = find_diagram(Did, Diagrams),
 	  %Sends the message to the diagram coordinator.
 	  Pid ! {Message_request, self()},
 	  %Confirmation that the diagram coordinator received the message
@@ -61,7 +60,6 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  
 	%This case happens when a message has been sent in a diagram and the info is supposed to be sent to the client
 	{message_sent, Did, From, To, Message, Message_number} -> 
-	  io:format("helasdnui~n"),
 	  %Turns the result into binary
 	  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
 	  Format_result = io_lib:format("~p", [{Did, From, To, Message, Message_number}]) ++ "~",
@@ -77,7 +75,18 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  send_messages(Members, [Format_result ++ "~"]),
 	  loop(Creator_Socket, Members, Diagrams, Lobby_ID)
   end.
-
+  
+send_classes(_, []) -> done;
+send_classes(Socket, [{Diagram_ID, Class_names, _}|Diagrams]) -> 
+  Format_result = io_lib:format("~p", [{Diagram_ID, Class_names}]) ++ "~",
+  gen_tcp:send(Socket, Format_result),
+  send_classes(Socket, Diagrams).
+  
+%Finds the correct diagram from the given list
+find_diagram(_, []) -> not_created;
+find_diagram(Diagram_id,[{Diagram_id, _ ,Pid} | _]) -> Pid;
+find_diagram(Diagram_id,[_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).  
+  
 find_member([], _) -> not_found;
 find_member([Member|_], Member) -> found_member;
 find_member([_|Members], Member) -> find_member(Members, Member).
