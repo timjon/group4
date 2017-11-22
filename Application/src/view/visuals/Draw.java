@@ -1,5 +1,6 @@
 package view.visuals;
 
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -26,6 +27,9 @@ public class Draw {
     private Canvas canvas_deployment; // Draws and handles class diagram graphical context.
 
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
+
+    private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>();
+
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
     private int class_size = 0; // Used for message positioning
@@ -105,6 +109,11 @@ public class Draw {
         allClasses.add(new DiagramClass(name));  // Class gets added to the end of the array list.
             }
 
+
+    public void addClassDiagramClass (String name){
+        allClassDiagramClasses.add(new ClassDiagramClass(name));
+    }
+
     /**
      * Creates a message from and to given nodes with an attached name.
      */
@@ -161,31 +170,28 @@ public class Draw {
     }
 
 
-
+    //TODO: copy pasta below
     /**
-     * Always renders with a new specific resolution.
-     * @param w the new width of the canvas.
-     * @param h the new height of the canvas.
+     * @param name class name to match.
+     * @return the index the DiagramClass is located at.
      */
+    public int findClassDiagramClassIndex(String name){
 
-       /*
-    public void resize(double w, double h) {
-        if (w == getWidth() && h == getHeight())
-            return;
+        // Iterate over the existing diagram classes
+        for (int i = 0; i < allClassDiagramClasses.size(); i++) {
 
+            if (allClassDiagramClasses.get(i).getName().equals(name))
 
+                // Return the index in the array.
+                return i;
+        }
 
-        canvas.setHeight(h);
-        canvas_class.setHeight(h);
-        canvas_deployment.setHeight(h);
-
-        canvas.setWidth(w);
-        canvas_class.setWidth(w);
-        canvas_deployment.setWidth(w);
-
-        redraw();
+        // Return a number that can't exist if the class does not. Thus a negative number.
+        return -1;
     }
-    */
+
+
+
 
     /**
      * remakes the "Items", referring to messages and classes
@@ -193,6 +199,7 @@ public class Draw {
     void renderItems() {
         renderClass();
         renderMessage();
+        renderClassDiagramClass();
     }
 
     /**
@@ -201,7 +208,7 @@ public class Draw {
     public void redraw() {
         renderItems();
         init(canvas.getGraphicsContext2D());
-        initClass(canvas_class.getGraphicsContext2D());
+        initClassDiagram(canvas_class.getGraphicsContext2D());
 
         //clear(canvas_class.getGraphicsContext2D());
         clear(canvas_deployment.getGraphicsContext2D());
@@ -210,6 +217,7 @@ public class Draw {
         //canvas_class.getGraphicsContext2D().fillRect(0,0,canvas_class.getWidth(), canvas_class.getHeight());
 
         renderContainer();
+        renderClassDiagramContainer();
     }
 
     /**
@@ -221,7 +229,7 @@ public class Draw {
         gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
-    void initClass(GraphicsContext gc){
+    void initClassDiagram(GraphicsContext gc){
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
         gc.drawImage(testImg,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
@@ -237,12 +245,21 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        //GraphicsContext gc2 = canvas_class.getGraphicsContext2D();
         for (Renderable r: allClasses)
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
     }
+
+
+    void renderClassDiagramContainer(){
+        if (!DiagramView.inView(this)) return;
+        GraphicsContext gc = canvas_class.getGraphicsContext2D();
+        for (Renderable r: allClassDiagramClasses)
+            r.render(gc);
+    }
+
+
 
     /**
      * Updates the Renderables.
@@ -251,6 +268,8 @@ public class Draw {
         for (Renderable r: allClasses)
             r.update();
         for (Renderable r: messages)
+            r.update();
+        for (Renderable r: allClassDiagramClasses)
             r.update();
     }
 
@@ -282,6 +301,20 @@ public class Draw {
             int y = 25 +size/4;
             allClasses.get(i).place(new Coordinates(x,y), size);
         }
+    }
+
+
+    void renderClassDiagramClass(){
+        if (allClassDiagramClasses.size() == 0) return;
+        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
+        int size = space/2; // The size of the objects is half of it's given space.
+        class_size = size/2;
+        for(int i = 0; i < allClassDiagramClasses.size(); i++) {
+            int x = size+ (i*space);
+            int y = 25 +size/4;
+            allClassDiagramClasses.get(i).place(new Coordinates(x,y), size);
+        }
+
     }
 
     /**

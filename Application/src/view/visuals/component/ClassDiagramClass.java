@@ -14,6 +14,9 @@ public class ClassDiagramClass implements Renderable {
     // The images retrieved.
     private static Image island = new Image("resources/Island_with_trees.png");
 
+    public ClassDiagramClass(String name) { this.name = name;
+    }
+
 
     @Override
     public void render(GraphicsContext gc) {
