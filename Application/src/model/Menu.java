@@ -222,8 +222,11 @@ public class Menu {
 
         button_import_lobby.setOnAction((ActionEvent event) -> {
             Collection<String> result = Import.file(stage);
-            if (result.isEmpty()) return;
+            try {
+                if (result.isEmpty()) return;
+            }catch(NullPointerException e){
 
+            }
             // Parse the element if it contains a supported diagram
             Parser parse = new Parser();
             switch(DiagramCheck.ContainsDiagram(result)) {
@@ -231,7 +234,7 @@ public class Menu {
                     for (String element : result) {
                         parse.parseSequenceDiagram(element);
                         System.out.println("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
-                        Net.push("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
+                        Net.push("{share, " + parse.getFirstSequenceDiagram() + "}");
 
                         // Enable all media buttons.
                         setMenuState(true);
