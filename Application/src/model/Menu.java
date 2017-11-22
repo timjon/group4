@@ -219,11 +219,20 @@ public class Menu {
         button_class.setOnAction((ActionEvent event)    ->{
             DiagramView dv = DiagramView.getDiagramViewInView();
 
+            // Checks for the state of the button if it's hiding or showing.
             if (button_class.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
                 button_class.setText("Hide class diagram");
+
+                // Add diagram to view.
                 dv.addDiagram(dv.CLASS_DIAGRAM);
             } else {
+
+                // Change to default text.
                 button_class.setText(text_class);
+
+                // Remove diagram from view.
                 dv.removeDiagram(dv.CLASS_DIAGRAM);
             }
 
@@ -232,11 +241,20 @@ public class Menu {
         button_deployment.setOnAction((ActionEvent event)    ->{
             DiagramView dv = DiagramView.getDiagramViewInView();
 
+            // Checks for the state of the button if it's hiding or showing.
             if (button_deployment.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
                 button_deployment.setText("Hide deployment diagram");
+
+                // Add diagram to view.
                 dv.addDiagram(dv.DEPLOYMENT_DIAGRAM);
             } else {
+
+                // Change to default text.
                 button_deployment.setText(text_deployment);
+
+                // Remove diagram from view.
                 dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
             }
 
