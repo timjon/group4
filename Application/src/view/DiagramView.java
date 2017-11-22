@@ -3,16 +3,12 @@ package view;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import view.visuals.Draw;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Handles a single tabbed diagram view and it's state
@@ -26,8 +22,8 @@ public class DiagramView {
     private Tab tab;
 
     // Used as enums for identifying what diagram to add.
+    private final String SEQUENCE_DIAGRAM = "SEQUENCE_DIAGRAM";
     public final String CLASS_DIAGRAM = "CLASS_DIAGRAM";
-    public final String SEQUENCE_DIAGRAM = "SEQUENCE_DIAGRAM";
     public final String DEPLOYMENT_DIAGRAM = "DEPLOYMENT_DIAGRAM";
 
     // List of diagrams that are currently being viewed.
@@ -190,7 +186,7 @@ public class DiagramView {
                 break;
 
             default:
-                throw new ValueException("Invalid view value:" + vSize);
+                throw new NumberFormatException("Invalid view value:" + vSize);
         }
 
         // UI adjustments
