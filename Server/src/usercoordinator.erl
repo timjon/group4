@@ -62,6 +62,10 @@ find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
+use_input({ok, {share, Password, create_lobby}}, Socket, Diagrams) -> 
+  lobbycoordinator ! {Socket, Password, create_lobby},
+  loop(Socket, Diagrams);
+  
 use_input({ok, {share, Info}}, Socket, Diagrams) -> 
   lobbycoordinator ! {Socket, Info},
   loop(Socket, Diagrams);
