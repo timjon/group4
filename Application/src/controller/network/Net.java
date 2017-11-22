@@ -8,7 +8,7 @@ import java.util.Queue;
 
 /**
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class Net implements Runnable {
 
@@ -102,8 +102,15 @@ public class Net implements Runnable {
                     // Run the decode on the Platform instance.
                     Platform.runLater(() -> {
 
+                        // Pull a message from the received messages queue.
+                        String message = received.poll();
+
+                        // Due to threading, messages can be pulled and there can not be any.
+                        if (message == null) return;
+
                         // Decodes the received message.
-                        (new Decode(received.poll())).execute();
+                        (new Decode(message)).execute();
+
                     });
                 }
             }
