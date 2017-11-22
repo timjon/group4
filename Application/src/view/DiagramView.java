@@ -8,6 +8,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import view.visuals.Draw;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class DiagramView {
 
     private ArrayList<String> viewing = new ArrayList<>();
     private BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
+    private BorderPane required_pane = new BorderPane(); // Holds sequence diagram.
+    private BorderPane optional_pane = new BorderPane(); // holds other diagrams.
 
     // Stores the execution log data for this diagram.
     private ObservableList<String> logData = FXCollections.observableArrayList();
@@ -90,6 +93,13 @@ public class DiagramView {
         // Get a unique number for the ID.
         tab.setId(id);
         tab.setText(tabName);
+
+        required_pane.getChildren().add(draw.getCanvas());
+        optional_pane.setTop(draw.getCanvas_class());
+        optional_pane.setBottom(draw.getCanvas_deployment());
+
+        borderpane.setLeft(required_pane);
+        borderpane.setRight(optional_pane);
         tab.setContent(borderpane);
         addDiagram(SEQUENCE_DIAGRAM);
     }
@@ -110,40 +120,55 @@ public class DiagramView {
 
         Platform.runLater(() -> {
 
-            for (String item: viewing) {
+            int vSize = viewing.size();
+            int width = (int)tabPane.getWidth();
+            int height = (int)tabPane.getHeight();
 
-                if (item.equals(SEQUENCE_DIAGRAM)) {
-                    if (!getCanvasState(draw.getCanvas())) {
-                        borderpane.setCenter(draw.getCanvas());
-                        draw.getCanvas().setWidth(appropWidth());
-                    }
+            int[] size = {width/2, height};
+            int sequence_diagram_width = width/2;
 
-                } if (item.equals(CLASS_DIAGRAM)) {
-                    if (!getCanvasState(draw.getCanvas_class())) {
-                        borderpane.setRight(draw.getCanvas_class());
-                        draw.getCanvas_class().setWidth(appropWidth());
-                    }
+            switch (vSize) {
 
-                } else if (item.equals(DEPLOYMENT_DIAGRAM)) {
-                    if (!getCanvasState(draw.getCanvas_deployment())) {
-                        borderpane.setRight(draw.getCanvas_deployment());
-                        draw.getCanvas_deployment().setWidth(appropWidth());
-                    }
+                case 1:
+                    sequence_diagram_width = width;
+                    break;
 
-                }
+                case 2:
+                    break;
 
+                case 3:
+                    size[1] = height/2;
+                    size[0] = width/2;
+                    break;
+
+                    default:
+                        throw new ValueException("Invalid view value:" + vSize);
             }
 
-            resize();
+            System.out.println("viewing: " + viewing.size() + " size:" + size[0] + " " + size[1]);
+
+            if (!viewing.contains(CLASS_DIAGRAM)) {
+                draw.getCanvas_class().setWidth(0);
+                draw.getCanvas_class().setHeight(0);
+            } else {
+                draw.getCanvas_class().setWidth(size[0]);
+                draw.getCanvas_class().setHeight(size[1]);
+            }
+
+            if (!viewing.contains(DEPLOYMENT_DIAGRAM)) {
+                draw.getCanvas_deployment().setWidth(0);
+                draw.getCanvas_deployment().setHeight(0);
+            } else {
+                draw.getCanvas_deployment().setWidth(size[0]);
+                draw.getCanvas_deployment().setHeight(size[1]);
+            }
+
+            if (viewing.contains(SEQUENCE_DIAGRAM)) {
+                draw.getCanvas().setWidth(sequence_diagram_width);
+            }
+
+            draw.redraw();
         });
-    }
-
-    private int appropWidth() {
-        return (int) tabPane.getWidth()/viewing.size();
-    }
-
-    public boolean getCanvasState(Canvas canvas) {
-        return borderpane.getChildren().contains(canvas);
     }
 
     /**
@@ -158,13 +183,6 @@ public class DiagramView {
      */
     public void redraw() {
         draw.redraw();
-    }
-
-    /**
-     * Resizes the Draw object to with tabpane's dimensions.
-     */
-    public void resize() {
-        draw.resize(tabPane.getWidth()/viewing.size(),tabPane.getHeight());
     }
 
     /**

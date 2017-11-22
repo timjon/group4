@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
 
+import javafx.scene.paint.Color;
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
@@ -158,14 +159,20 @@ public class Draw {
         return -1;
     }
 
+
+
     /**
      * Always renders with a new specific resolution.
      * @param w the new width of the canvas.
      * @param h the new height of the canvas.
      */
+
+       /*
     public void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
+
+
 
         canvas.setHeight(h);
         canvas_class.setHeight(h);
@@ -177,6 +184,7 @@ public class Draw {
 
         redraw();
     }
+    */
 
     /**
      * remakes the "Items", referring to messages and classes
@@ -192,6 +200,13 @@ public class Draw {
     public void redraw() {
         renderItems();
         init(canvas.getGraphicsContext2D());
+
+        clear(canvas_class.getGraphicsContext2D());
+        clear(canvas_deployment.getGraphicsContext2D());
+        canvas_class.getGraphicsContext2D().setFill(Color.YELLOW);
+        canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
+        canvas_class.getGraphicsContext2D().fillRect(0,0,canvas_class.getWidth(), canvas_class.getHeight());
+
         renderContainer();
     }
 
@@ -204,6 +219,9 @@ public class Draw {
         gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
+    private void clear(GraphicsContext gc) {
+        gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
+    }
 
     /**
      * Renders the actor and classes in a new thread as well as the messages.
