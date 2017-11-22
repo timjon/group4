@@ -226,7 +226,8 @@ public class Menu {
                 case "sequence_diagram" :
                     for (String element : result) {
                         parse.parseSequenceDiagram(element);
-                        Net.push("{share, {command, " + parse.getFirstSequenceDiagram() + "}}");
+                        System.out.println("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
+                        Net.push("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
 
                         // Enable all media buttons.
                         setMenuState(true);
@@ -321,7 +322,7 @@ public class Menu {
         } catch (IllegalStateException ex) {
 
             // If there is no view, we disable the media buttons.
-            Menu.getInstance().setMenuState(false, button_import, button_create_lobby, button_join_lobby);
+            Menu.getInstance().setMenuState(false, button_import, button_import_lobby, button_create_lobby, button_join_lobby);
             return;
         }
 

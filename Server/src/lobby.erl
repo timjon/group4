@@ -7,13 +7,26 @@ init(Creator_Socket) -> loop(Creator_Socket, [Creator_Socket], [], lobby1).
 
 
 loop(Creator_Socket, Members, Diagrams, Lobby_ID) -> 
+  io:format("lobby loop ~n"),
   receive
     {remove_lobby, Creator_Socket} -> ok;
+	
+	{join_lobby, Socket} -> 
+	  loop(Creator_Socket, case find_member(Members, Socket) of 
+	    not_found -> 
+		  io:format("hello 1 ~n"),
+		  gen_tcp:send(Socket, io_lib:format("Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
+		  [Socket|Members];
+		found_member -> 
+		  io:format("hello 2 ~n"),
+		  gen_tcp:send(Socket, io_lib:format("Already in lobby, ~p", [Lobby_ID]) ++ "~"),
+		  Members
+		end, Diagrams, Lobby_ID);
 
-	{create_diagram, Creator_Socket, {ok, {Did, Class_names, Classes, Messages}}} -> 
+	{create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
 	  %Sends the class names and messages to the client
       %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-      Diagram_ID = Did ++ Lobby_ID,
+      Diagram_ID = atom_to_list(Lobby_ID) ++ "d" ++ integer_to_list(Did),
 	  Format_result = io_lib:format("~p", [{Diagram_ID, Class_names}]) ++ "~",
       gen_tcp:send(Creator_Socket, Format_result),
 	  Self = self(),
@@ -32,3 +45,6 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
     {remove_diagram, Did} -> not_implemented
   end.
 
+find_member([], _) -> not_found;
+find_member([Member|_], Member) -> found_member;
+find_member([_|Members], Member) -> find_member(Members, Member).

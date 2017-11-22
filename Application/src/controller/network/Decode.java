@@ -67,6 +67,11 @@ class Decode {
             write(id, "INFO: " + retrieveMessage(rawStringToDecode));
 
             // If it's a message or a list of classes (new diagram).
+        }else if (rawStringToDecode.contains("in lobby")){
+
+            //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
+            System.out.println(rawStringToDecode);
+
         } else {
 
             // Gets the message content.
