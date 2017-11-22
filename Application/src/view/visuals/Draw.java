@@ -32,13 +32,14 @@ public class Draw {
 	
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
     private static Image animatedBackground = new Image("resources/SkyGIF.gif");
+    private  static Image testImg = new Image("resources/Island_with_trees.png");
 
     /**
      * Constructor
      */
     public Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        canvas_class = new Canvas(0,0);
+        canvas_class = new Canvas(w, h);
         canvas_deployment = new Canvas(0,0);
     }
 
@@ -102,8 +103,7 @@ public class Draw {
      */
     public void addClass(String name) {
         allClasses.add(new DiagramClass(name));  // Class gets added to the end of the array list.
-        allClasses.add(new ClassDiagramClass()); //Adding class diagram
-    }
+            }
 
     /**
      * Creates a message from and to given nodes with an attached name.
@@ -201,12 +201,13 @@ public class Draw {
     public void redraw() {
         renderItems();
         init(canvas.getGraphicsContext2D());
+        initClass(canvas_class.getGraphicsContext2D());
 
-        clear(canvas_class.getGraphicsContext2D());
+        //clear(canvas_class.getGraphicsContext2D());
         clear(canvas_deployment.getGraphicsContext2D());
-        canvas_class.getGraphicsContext2D().setFill(Color.YELLOW);
+        //canvas_class.getGraphicsContext2D().setFill(Color.YELLOW);
         canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
-        canvas_class.getGraphicsContext2D().fillRect(0,0,canvas_class.getWidth(), canvas_class.getHeight());
+        //canvas_class.getGraphicsContext2D().fillRect(0,0,canvas_class.getWidth(), canvas_class.getHeight());
 
         renderContainer();
     }
@@ -220,6 +221,12 @@ public class Draw {
         gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
+    void initClass(GraphicsContext gc){
+        gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
+        // adds an animated gif file to the canvas with proper height and width
+        gc.drawImage(testImg,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
+    }
+
     private void clear(GraphicsContext gc) {
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
     }
@@ -230,6 +237,7 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        //GraphicsContext gc2 = canvas_class.getGraphicsContext2D();
         for (Renderable r: allClasses)
             r.render(gc);
         for (Renderable r: messages)
