@@ -1,5 +1,5 @@
 -module(lobby).
--export([init/1]).
+-export([init/2]).
 %%Version: 0.1
 %%Collaborators: Sebastian Fransson
 
@@ -8,7 +8,7 @@ init(Creator_Socket, Lobby_ID) -> loop(Creator_Socket, [Creator_Socket], [], Lob
 
 loop(Creator_Socket, Members, Diagrams, Lobby_ID) -> 
   receive
-    {remove_lobby, Creator_Socket} -> ok;
+    {remove_lobby, Creator_Socket} -> io:format("Removed lobby ~n"), ok;
 
 	{create_diagram, Creator_Socket, {ok, {Did, Class_names, Classes, Messages}}} -> 
 	  %Sends the class names and messages to the client

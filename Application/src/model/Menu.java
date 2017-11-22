@@ -43,6 +43,7 @@ public class Menu {
     private static Button button_auto;
     private static Button button_join_lobby;
     private static Button button_create_lobby;
+    private static Button button_remove_lobby;
 
     // Flavor texts
     private final static String text_input = "Import";
@@ -52,8 +53,8 @@ public class Menu {
     private final static String text_previous = "<-";
     private final static String text_import_lobby = "Import to lobby";
     private final static String text_join_lobby = "Join a lobby";
-    private final static String text_create_lobby = "Create Lobby";
-
+    private final static String text_create_lobby = "Create lobby";
+    private final static String text_remove_lobby = "Remove lobby";
     // State
     private boolean play = false;
 
@@ -70,6 +71,7 @@ public class Menu {
         button_import_lobby  = new Button(text_import_lobby);
         button_join_lobby = new Button(text_join_lobby);
         button_create_lobby = new Button(text_create_lobby);
+        button_remove_lobby = new Button(text_remove_lobby);
     }
 
     /**
@@ -109,6 +111,7 @@ public class Menu {
         menu.getChildren().add(button_next);
         menu.getChildren().add(button_join_lobby);
         menu.getChildren().add(button_create_lobby);
+        menu.getChildren().add(button_remove_lobby);
 
         return menu;
     }
@@ -129,6 +132,7 @@ public class Menu {
         buttonHashSet.add(button_auto);
         buttonHashSet.add(button_join_lobby);
         buttonHashSet.add(button_create_lobby);
+        buttonHashSet.add(button_remove_lobby);
 
         // Remove the buttons from the set, to not modify.
         for (Button button: buttons)
@@ -202,7 +206,7 @@ public class Menu {
                             Net.push(parse.getFirstSequenceDiagram());
 
                             // Enable all media buttons.
-                            setMenuState(true);
+                            setMenuState(true, button_create_lobby, button_remove_lobby);
                             button_previous.setDisable(true);
                         }
                         break;
@@ -250,6 +254,12 @@ public class Menu {
 
         button_create_lobby.setOnAction((ActionEvent event)    ->{
             passwordBox();
+        });
+        button_remove_lobby.setOnAction((ActionEvent event) ->{
+            Net.push("{" + "share, " + "remove_lobby}");
+            button_remove_lobby.setDisable(true);
+            button_create_lobby.setDisable(false);
+
         });
 
     }
@@ -339,10 +349,11 @@ public class Menu {
                 final String result = pwBox.getText();
                 if(result.equals("")) pressReturn.setText("Please enter a password");
                 else {
+                    Net.push("{" + "share, " + result + ", create_lobby}");
                     pressReturn.setFill(Color.GREEN);
                     pressReturn.setText("Lobby created");
-                    Net.push("{" + "share, " + result + ", create_lobby}");
                     button_create_lobby.setDisable(true);
+                    button_remove_lobby.setDisable(false);
                     //ok_password.setDisable(true);
                     primaryStage.close();
                 }

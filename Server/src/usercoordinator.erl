@@ -64,7 +64,7 @@ find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
 %if a user wishes to create a lobby.
 use_input({ok, {share, Password, create_lobby}}, Socket, Diagrams) -> 
-  lobbycoordinator ! {create_lobby, Password, Socket},
+  lobbycoordinator ! {Socket, create_lobby, Password},
   loop(Socket, Diagrams);
   
 use_input({ok, {share, Info}}, Socket, Diagrams) -> 

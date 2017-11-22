@@ -10,18 +10,25 @@ init() ->
 %the loop keeps track of the rooms and handles lobby requests.
 loop(Rooms, Lobby_increment) ->
   receive 
-    {create_lobby, Password, Creator_Socket} -> 
+    {Creator_Socket, create_lobby, Password} -> 
 	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Lobby_increment) end),
-      monitor(process, Pid),
+      Ref = monitor(process, Pid),
 	  io:format("Lobby created"),
 	  %Format_result = io_lib:format("~p", [{lobby_created, "Lobby has been created"}]),
 	  %gen_tcp:send(Creator_Socket, [Format_result]),
-	  loop([{Lobby_increment, Password,  Pid}|Rooms], Lobby_increment + 1);
+	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1);
 	  
-	{remove_lobby, Creator_Socket, Lobby_ID} -> 
-	  Lobby_ID ! {remove_lobby, Creator_Socket},
-	  demonitor(Lobby_ID),
-	  loop(remove_lobby(Lobby_ID, Rooms), Lobby_increment);
+	{Creator_Socket, remove_lobby} -> 
+	  io:format("before sending ~n"),
+	  Lid = [Pid||{_Lid, _Password, Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
+	  RefTmp = [Ref || {_Lid, _Password, _Pid, Socket, Ref} <- Rooms, Creator_Socket == Socket],
+	  [Ref | _] = RefTmp,
+	  [Lobby_PID|_] = Lid,
+	  NewRooms = [ {Lid, Password, Pid, Socket, Ref}|| {Lid, Password, Pid, Socket, Ref} <- Rooms, Creator_Socket /= Socket],
+	  demonitor(Ref),
+	  Lobby_PID ! {remove_lobby, Creator_Socket},
+	  io:format("after sending remove ~n"),
+	  loop(NewRooms, Lobby_increment);
 	  
     {join_lobby, Socket, Lobby_ID} -> not_implemented;
 	  
