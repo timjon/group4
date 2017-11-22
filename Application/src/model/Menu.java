@@ -1,14 +1,15 @@
 package model;
 
+import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import net.Net;
-import visuals.DiagramView;
-import visuals.ExecutionLog;
-import visuals.handlers.Automate;
+import controller.network.Net;
+import view.DiagramView;
+import view.ExecutionLog;
+import view.handlers.Automate;
 
 import java.util.*;
 
@@ -27,6 +28,8 @@ public class Menu {
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
+    private static Button button_class;
+    private static Button button_deployment;
 
     // Flavor texts
     private final static String text_input = "Import";
@@ -34,6 +37,8 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
+    private final static String text_class = "Show attached class diagram";
+    private final static String text_deployment = "Show attached deployment diagram";
 
     // State
     private boolean play = false;
@@ -48,6 +53,8 @@ public class Menu {
         button_next = new Button(text_next);
         button_previous = new Button(text_previous);
         button_auto = new Button(text_auto_play);
+        button_class = new Button(text_class);
+        button_deployment = new Button(text_deployment);
     }
 
     /**
@@ -84,6 +91,8 @@ public class Menu {
         menu.getChildren().add(button_previous);
         menu.getChildren().add(button_auto);
         menu.getChildren().add(button_next);
+        menu.getChildren().add(button_class);
+        menu.getChildren().add(button_deployment);
 
         return menu;
     }
@@ -162,28 +171,38 @@ public class Menu {
     private void setEvents(Stage stage) {
 
         button_import.setOnAction((ActionEvent event) -> {
-                Collection<String> result = Import.file(stage);
-                if (result.isEmpty()) return;
+            Collection<String> result = Import.file(stage);
+            if (result == null) return;
+            if (result.isEmpty()) return;
 
-                // Parse the element if it contains a supported diagram
-                Parser parse = new Parser();
+            // Parse the element if it contains a supported diagram
+            Parser parse = new Parser();
+
+            for (String file: result) {
                 switch(DiagramCheck.ContainsDiagram(result)) {
                     case "sequence_diagram" :
-                        for (String element : result) {
-                            parse.parseSequenceDiagram(element);
-                            Net.push(parse.getFirstSequenceDiagram());
+                        parse.parseSequenceDiagram(file);
 
-                            // Enable all media buttons.
-                            setMenuState(true);
-                            button_previous.setDisable(true);
-                        }
+                        Net.push(parse.getDiagram());
+                        Net.push(parse.getParallelSequenceDiagram());
+
+                        // Enable all media buttons.
+                        setMenuState(true);
+                        button_previous.setDisable(true);
+                        break;
+                    case "class_diagram":
+                        parse.parseClassDiagram(file);
+                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
+                        Net.push(parse.getDiagram());
+
                         break;
                 }
-                // if the diagram is not included in the switch case, check if the diagram is invalid
-                DiagramCheck.ContainsDiagram(result);
-                identifyState();
-            });
 
+
+            }
+
+            identifyState();
+        });
 
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
@@ -196,6 +215,34 @@ public class Menu {
         button_auto.setOnAction((ActionEvent event)    ->{
             play = button_auto.getText().endsWith(text_auto_play);
             identifyState();
+        });
+
+        button_class.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            if (button_class.getText().toLowerCase().contains("show")) {
+                button_class.setText("Hide class diagram");
+                dv.addDiagram(dv.CLASS_DIAGRAM);
+            } else {
+                button_class.setText(text_class);
+                dv.removeDiagram(dv.CLASS_DIAGRAM);
+            }
+
+            dv.updateView();
+        });
+
+        button_deployment.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            if (button_deployment.getText().toLowerCase().contains("show")) {
+                button_deployment.setText("Hide deployment diagram");
+                dv.addDiagram(dv.DEPLOYMENT_DIAGRAM);
+            } else {
+                button_deployment.setText(text_deployment);
+                dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
+            }
+
+            dv.updateView();
         });
 
     }

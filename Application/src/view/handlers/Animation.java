@@ -1,7 +1,8 @@
-package visuals.handlers;
+package view.handlers;
 
-import visuals.DiagramView;
-import visuals.Draw;
+import javafx.application.Platform;
+import view.DiagramView;
+import view.visuals.Draw;
 
 /**
  * Handles animation requests to the Draw object.
@@ -17,7 +18,7 @@ public class Animation extends Thread {
     private long timeSinceLastUpdate = 0;
 
     // Defaults framesPerSecond the application updates in.
-    private static int framesPerSecond = 15;
+    private static int framesPerSecond = 5;
 
     /**
      * Stops the Animation thread at the end of the next iteration.
@@ -87,7 +88,9 @@ public class Animation extends Thread {
                 draw.update();
 
                 // Redraws their graphics on the canvas.
-                draw.redraw();
+                Platform.runLater(() -> {
+                    draw.redraw();
+                });
 
                 // If there is no view.
             } catch (IllegalStateException ex) {

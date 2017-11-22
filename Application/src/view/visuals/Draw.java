@@ -1,11 +1,14 @@
-package visuals;
+package view.visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
 
-import visuals.handlers.Animation;
+import javafx.scene.paint.Color;
+import view.DiagramView;
+import view.handlers.Animation;
+import view.visuals.component.*;
 
 import java.util.ArrayList;
 
@@ -18,6 +21,10 @@ import java.util.ArrayList;
 public class Draw {
 
     private Canvas canvas; // Draws and handles graphical context
+
+    private Canvas canvas_class; // Draws and handles class diagram graphical context.
+    private Canvas canvas_deployment; // Draws and handles class diagram graphical context.
+
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
@@ -29,16 +36,42 @@ public class Draw {
     /**
      * Constructor
      */
-    Draw(int w, int h) {
+    public Draw(int w, int h) {
         canvas = new Canvas(w, h);
+        canvas_class = new Canvas(0,0);
+        canvas_deployment = new Canvas(0,0);
+    }
+
+
+    /**
+     * @param canvas to be used as class diagram.
+     */
+    public void addClassDiagram(Canvas canvas) {
+        this.canvas_class = canvas;
     }
 
     /**
      * Gets the active canvas.
      * @return canvas
      */
-    Canvas getCanvas() {
+    public Canvas getCanvas() {
         return canvas;
+    }
+
+    /**
+     * Gets the class canvas.
+     * @return canvas
+     */
+    public Canvas getCanvas_class() {
+        return canvas_class;
+    }
+
+    /**
+     * Gets the deployment canvas.
+     * @return canvas
+     */
+    public Canvas getCanvas_deployment() {
+        return canvas_deployment;
     }
 
     /**
@@ -46,7 +79,7 @@ public class Draw {
      * @return canvas height
      */
     int getHeight() {
-        return (int)canvas.getHeight();
+        return (int)DiagramView.tabPane.getHeight();
     }
 
     /**
@@ -54,7 +87,7 @@ public class Draw {
      * @return canvas width
      */
     int getWidth() {
-        return (int)canvas.getWidth();
+        return (int)DiagramView.tabPane.getWidth();
     }
     
     /**
@@ -127,18 +160,32 @@ public class Draw {
         return -1;
     }
 
+
+
     /**
      * Always renders with a new specific resolution.
      * @param w the new width of the canvas.
      * @param h the new height of the canvas.
      */
-    void resize(double w, double h) {
+
+       /*
+    public void resize(double w, double h) {
         if (w == getWidth() && h == getHeight())
             return;
-        canvas.setWidth(w);
+
+
+
         canvas.setHeight(h);
+        canvas_class.setHeight(h);
+        canvas_deployment.setHeight(h);
+
+        canvas.setWidth(w);
+        canvas_class.setWidth(w);
+        canvas_deployment.setWidth(w);
+
         redraw();
     }
+    */
 
     /**
      * remakes the "Items", referring to messages and classes
@@ -153,20 +200,29 @@ public class Draw {
      */
     public void redraw() {
         renderItems();
-        init();
+        init(canvas.getGraphicsContext2D());
+
+        clear(canvas_class.getGraphicsContext2D());
+        clear(canvas_deployment.getGraphicsContext2D());
+        canvas_class.getGraphicsContext2D().setFill(Color.YELLOW);
+        canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
+        canvas_class.getGraphicsContext2D().fillRect(0,0,canvas_class.getWidth(), canvas_class.getHeight());
+
         renderContainer();
     }
 
     /**
      * initializes the simulation canvas with an animated 8-bit sky/ocean background .
      */
-    void init() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
+    void init(GraphicsContext gc) {
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
         gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
+    private void clear(GraphicsContext gc) {
+        gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
+    }
 
     /**
      * Renders the actor and classes in a new thread as well as the messages.
@@ -205,13 +261,12 @@ public class Draw {
         }
     }
 
-
     /**
      * Updates the class to fit the resized window.
      */
     void renderClass() {
         if (allClasses.size() == 0) return; // There are no items to render
-        int space = (getWidth())/this.allClasses.size(); // The amount of space each class can use.
+        int space = ((int)this.canvas.getWidth())/this.allClasses.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
         for(int i = 0; i < allClasses.size(); i++) {

@@ -1,17 +1,23 @@
-package visuals;
+package view;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
+import view.visuals.Draw;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Handles a single tabbed diagram view and it's state
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.5
  */
 public class DiagramView {
     public static TabPane tabPane;
@@ -19,6 +25,15 @@ public class DiagramView {
     private Draw draw;
     private State state = State.PAUSED;
     private Tab tab;
+
+    public final String CLASS_DIAGRAM = "CLASS_DIAGRAM";
+    public final String SEQUENCE_DIAGRAM = "SEQUENCE_DIAGRAM";
+    public final String DEPLOYMENT_DIAGRAM = "DEPLOYMENT_DIAGRAM";
+
+    private ArrayList<String> viewing = new ArrayList<>();
+    private BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
+    private BorderPane required_pane = new BorderPane(); // Holds sequence diagram.
+    private BorderPane optional_pane = new BorderPane(); // holds other diagrams.
 
     // Stores the execution log data for this diagram.
     private ObservableList<String> logData = FXCollections.observableArrayList();
@@ -36,7 +51,7 @@ public class DiagramView {
      * @param draw a Draw Object to match with.
      * @return true if it is in view. false if a DiagramView does not exist for the Draw or if it is not in view.
      */
-    static boolean inView(Draw draw) {
+    public static boolean inView(Draw draw) {
         DiagramView diagramView = getDiagramViewInView();
         return diagramView.getDraw() == draw;
     }
@@ -78,7 +93,82 @@ public class DiagramView {
         // Get a unique number for the ID.
         tab.setId(id);
         tab.setText(tabName);
-        tab.setContent(draw.getCanvas());
+
+        required_pane.getChildren().add(draw.getCanvas());
+        optional_pane.setTop(draw.getCanvas_class());
+        optional_pane.setBottom(draw.getCanvas_deployment());
+
+        borderpane.setLeft(required_pane);
+        borderpane.setRight(optional_pane);
+        tab.setContent(borderpane);
+        addDiagram(SEQUENCE_DIAGRAM);
+    }
+
+    public void addDiagram(String match) {
+        if (!viewing.contains(match))
+            viewing.add(match);
+        updateView();
+    }
+
+    public void removeDiagram(String match) {
+        if (viewing.contains(match))
+            viewing.remove(match);
+        updateView();
+    }
+
+    public void updateView() {
+
+        Platform.runLater(() -> {
+
+            int vSize = viewing.size();
+            int width = (int)tabPane.getWidth();
+            int height = (int)tabPane.getHeight();
+
+            int[] size = {width/2, height};
+            int sequence_diagram_width = width/2;
+
+            switch (vSize) {
+
+                case 1:
+                    sequence_diagram_width = width;
+                    break;
+
+                case 2:
+                    break;
+
+                case 3:
+                    size[1] = height/2;
+                    size[0] = width/2;
+                    break;
+
+                    default:
+                        throw new ValueException("Invalid view value:" + vSize);
+            }
+
+            System.out.println("viewing: " + viewing.size() + " size:" + size[0] + " " + size[1]);
+
+            if (!viewing.contains(CLASS_DIAGRAM)) {
+                draw.getCanvas_class().setWidth(0);
+                draw.getCanvas_class().setHeight(0);
+            } else {
+                draw.getCanvas_class().setWidth(size[0]);
+                draw.getCanvas_class().setHeight(size[1]);
+            }
+
+            if (!viewing.contains(DEPLOYMENT_DIAGRAM)) {
+                draw.getCanvas_deployment().setWidth(0);
+                draw.getCanvas_deployment().setHeight(0);
+            } else {
+                draw.getCanvas_deployment().setWidth(size[0]);
+                draw.getCanvas_deployment().setHeight(size[1]);
+            }
+
+            if (viewing.contains(SEQUENCE_DIAGRAM)) {
+                draw.getCanvas().setWidth(sequence_diagram_width);
+            }
+
+            draw.redraw();
+        });
     }
 
     /**
@@ -93,17 +183,6 @@ public class DiagramView {
      */
     public void redraw() {
         draw.redraw();
-    }
-
-    /**
-     * Resizes the Draw object to with tabpane's dimensions.
-     */
-    public void resize() {
-        // By adding the Resizing state and checking for it, All concurrency related bugs were squashed.
-        if (this.state == State.RESIZING) return;
-        State tmp = setState(State.RESIZING);
-        draw.resize(tabPane.getWidth(),tabPane.getHeight());
-        this.state = tmp;
     }
 
     /**
@@ -124,6 +203,7 @@ public class DiagramView {
         Platform.runLater(() -> {
             // Sets the execution log to display the data of this diagram view log.
             ExecutionLog.getInstance().setData(logData);
+            updateView();
         });
     }
 

@@ -1,8 +1,8 @@
-package visuals.handlers;
+package view.handlers;
 
 import javafx.beans.value.ChangeListener;
 import javafx.stage.Stage;
-import visuals.DiagramView;
+import view.DiagramView;
 
 /**
  * The Resizer runs on a separate thread and there can only exist one at a waitAndResize.
@@ -58,7 +58,7 @@ public class Resizer implements Runnable {
         for (DiagramView d: DiagramView.diagramViews)
 
             // Resize them
-            d.resize();
+            d.updateView();
 
         // Allows a new instance to start once this one is finished.
         singletonResizer = null;
