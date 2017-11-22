@@ -45,7 +45,6 @@ loop(Rooms, Lobby_increment) ->
 	  loop(Rooms, Lobby_increment);
 	
 	{Creator_Socket, {Did, Command}} -> 
-	  io:format("hello fycjface~n"),
 	  case find_room(Rooms, list_to_integer(get_lobby_ID(Did))) of 
 	    not_created -> no_lobby_created,
 		  io:format("no lobby");
@@ -60,7 +59,7 @@ loop(Rooms, Lobby_increment) ->
   end.
   
 find_room([], Lobby_ID)                             -> not_created ;
-find_room([{Lobby_ID, Password, Pid}|Ls], Lobby_ID) -> Pid;
+find_room([{Lobby_ID, Password, Pid, _, _}|Ls], Lobby_ID) -> Pid;
 find_room([L|Ls], Lobby_ID)                         -> find_room(Ls, Lobby_ID).
 
 get_lobby_ID([]) -> [];

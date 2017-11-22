@@ -6,8 +6,7 @@
 init(Creator_Socket, Lobby_ID) -> loop(Creator_Socket, [Creator_Socket], [], Lobby_ID).
 
 loop(Creator_Socket, Members, Diagrams, Lobby_ID) -> 
-  io:format("lobby loop 1~n"),
-  receive<
+  receive
     {remove_lobby, Creator_Socket} -> io:format("Removed lobby ~n"), ok;
 
 	{join_lobby, Socket} -> 
@@ -24,7 +23,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	{create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
 	  %Sends the class names and messages to the client
       %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-      Diagram_ID = atom_to_list(Lobby_ID) ++ "d" ++ integer_to_list(Did),
+      Diagram_ID = "l" ++ integer_to_list(Lobby_ID) ++ "d" ++ integer_to_list(Did),
 	  Format_result = io_lib:format("~p", [{Diagram_ID, Class_names}]) ++ "~",
       send_messages(Members, Format_result),
 	  Self = self(),
