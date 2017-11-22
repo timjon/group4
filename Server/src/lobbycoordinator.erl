@@ -9,6 +9,7 @@ init() ->
   
 %the loop keeps track of the rooms and handles lobby requests.
 loop(Rooms, Lobby_increment) ->
+  io:format("hhello ~n~p", [Lobby_increment]),
   receive 
     {Creator_Socket, create_lobby, Password} -> 
 	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Lobby_increment) end),
@@ -37,8 +38,11 @@ loop(Rooms, Lobby_increment) ->
 	  
 	{leave_lobby, Socket, Lobby_ID} -> not_implemented;
 	
-	{Creator_Socket, {Lobby_ID, {Did, Class_names, Classes, Messages}}} -> 
-	  case find_room(Rooms, list_to_integer(get_lobby_ID(atom_to_list(Lobby_ID)))) of
+	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
+	  io:format("wow~n"),
+	  Lid = hd([Lid||{Lid, _Password, _Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket]),
+	  io:format("wow~n~p", [Lid]),
+	  case find_room(Rooms, Lid) of
 	    not_created -> no_lobby_created;
 		Pid         -> Pid ! {create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}}
 	  end,
