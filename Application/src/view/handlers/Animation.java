@@ -18,7 +18,7 @@ public class Animation extends Thread {
     private long timeSinceLastUpdate = 0;
 
     // Defaults framesPerSecond the application updates in.
-    private static int framesPerSecond = 5;
+    private static int framesPerSecond = 15;
 
     /**
      * Stops the Animation thread at the end of the next iteration.

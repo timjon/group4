@@ -17,23 +17,21 @@ import java.util.List;
 /**
  * Handles a single tabbed diagram view and it's state
  * @author Pontus Laestadius
- * @version 1.5
+ * @version 2.0
  */
 public class DiagramView {
     public static TabPane tabPane;
 
     private Draw draw;
-    private State state = State.PAUSED;
     private Tab tab;
 
+    // Used as enums for identifying what diagram to add.
     public final String CLASS_DIAGRAM = "CLASS_DIAGRAM";
     public final String SEQUENCE_DIAGRAM = "SEQUENCE_DIAGRAM";
     public final String DEPLOYMENT_DIAGRAM = "DEPLOYMENT_DIAGRAM";
 
+    // List of diagrams that are currently being viewed.
     private ArrayList<String> viewing = new ArrayList<>();
-    private BorderPane borderpane = new BorderPane(); // Initializes a new BorderPane that holds all Elements.
-    private BorderPane required_pane = new BorderPane(); // Holds sequence diagram.
-    private BorderPane optional_pane = new BorderPane(); // holds other diagrams.
 
     // Stores the execution log data for this diagram.
     private ObservableList<String> logData = FXCollections.observableArrayList();
@@ -88,65 +86,117 @@ public class DiagramView {
      */
     public DiagramView(String tabName, String id) {
         this.draw = new Draw((int)tabPane.getWidth(), (int)tabPane.getHeight());
+
+        // Adds it to the list of retrievable DiagramViews.
         diagramViews.add(this);
+
         this.tab = new Tab();
+
         // Get a unique number for the ID.
         tab.setId(id);
         tab.setText(tabName);
 
+        // Initializes a new BorderPane that holds all Elements.
+        BorderPane borderpane = new BorderPane();
+
+        // Holds sequence diagram.
+        BorderPane required_pane = new BorderPane();
+
+        // holds other diagrams.
+        BorderPane optional_pane = new BorderPane();
+
+        // Add sequence diagram to required pane.
         required_pane.getChildren().add(draw.getCanvas());
+
+        // Sets the diagram on top to be the class diagram.
         optional_pane.setTop(draw.getCanvas_class());
+
+        // Sets the diagram on the bottom to be the deployment diagram.
         optional_pane.setBottom(draw.getCanvas_deployment());
 
+        // Sets the required pane on the left.
         borderpane.setLeft(required_pane);
+
+        // Sets the optional pane on th eright.
         borderpane.setRight(optional_pane);
+
+        // Set the tab view to be the pane holding all panes.
         tab.setContent(borderpane);
+
+        // Defaults to add a sequence diagram to the view.
         addDiagram(SEQUENCE_DIAGRAM);
     }
 
+    /**
+     * Adds a diagram to the view.
+     * @param match diagram to add to list of displayed ones.
+     */
     public void addDiagram(String match) {
+
+        // Check so it doesn't already exist.
         if (!viewing.contains(match))
+
+            // Add the string to the view list.
             viewing.add(match);
+
+        // Update the view.
         updateView();
     }
 
+    /**
+     * Removes the specified diagram if it exists in the current view.
+     * @param match diagram to remove to list of displayed ones.
+     */
     public void removeDiagram(String match) {
+
+        // Check so it does exist in the list.
         if (viewing.contains(match))
+
+            // Remove the item.
             viewing.remove(match);
+
+        // Update the view.
         updateView();
     }
 
+    /**
+     * Re-adjusts all canvases size in according to the amount of diagrams currently being viewed.
+     */
     public void updateView() {
 
+        // Variables retrieved.
+        int vSize = viewing.size();
+        int width = (int)tabPane.getWidth();
+        int height = (int)tabPane.getHeight();
+
+        // Based on the number of diagrams in view their width and height are specified.
+        int[] size = {width/2, height};
+        final int sequence_diagram_width;
+
+        switch (vSize) {
+
+            case 1:
+                sequence_diagram_width = width;
+                break;
+
+            case 2:
+                sequence_diagram_width = width/2;
+                break;
+
+            case 3:
+                sequence_diagram_width = width/2;
+                size[1] = height/2;
+                size[0] = width/2;
+                break;
+
+            default:
+                throw new ValueException("Invalid view value:" + vSize);
+        }
+
+        // UI adjustments
         Platform.runLater(() -> {
 
-            int vSize = viewing.size();
-            int width = (int)tabPane.getWidth();
-            int height = (int)tabPane.getHeight();
-
-            int[] size = {width/2, height};
-            int sequence_diagram_width = width/2;
-
-            switch (vSize) {
-
-                case 1:
-                    sequence_diagram_width = width;
-                    break;
-
-                case 2:
-                    break;
-
-                case 3:
-                    size[1] = height/2;
-                    size[0] = width/2;
-                    break;
-
-                    default:
-                        throw new ValueException("Invalid view value:" + vSize);
-            }
-
-            System.out.println("viewing: " + viewing.size() + " size:" + size[0] + " " + size[1]);
-
+            // If class diagram is in view.
             if (!viewing.contains(CLASS_DIAGRAM)) {
                 draw.getCanvas_class().setWidth(0);
                 draw.getCanvas_class().setHeight(0);
@@ -155,6 +205,7 @@ public class DiagramView {
                 draw.getCanvas_class().setHeight(size[1]);
             }
 
+            // If deployment diagram is in view.
             if (!viewing.contains(DEPLOYMENT_DIAGRAM)) {
                 draw.getCanvas_deployment().setWidth(0);
                 draw.getCanvas_deployment().setHeight(0);
@@ -163,10 +214,13 @@ public class DiagramView {
                 draw.getCanvas_deployment().setHeight(size[1]);
             }
 
+            // If sequence diagram is in view.
             if (viewing.contains(SEQUENCE_DIAGRAM)) {
                 draw.getCanvas().setWidth(sequence_diagram_width);
+                draw.getCanvas().setHeight(height);
             }
 
+            // Update their children.
             draw.redraw();
         });
     }
@@ -186,32 +240,18 @@ public class DiagramView {
     }
 
     /**
-     * Sets the state to the provided one and returns the previously allocated state.
-     * @param state the new state
-     * @return the previous state
-     */
-    private State setState(State state) {
-        State previousState = this.state;
-        this.state = state;
-        return previousState;
-    }
-
-    /**
      * Allocates and displays the ExecutionLog for the current DiagramView.
      */
     public void focus() {
+
         Platform.runLater(() -> {
+
             // Sets the execution log to display the data of this diagram view log.
             ExecutionLog.getInstance().setData(logData);
+
+            // Update the view.
             updateView();
         });
-    }
-
-    /**
-     * @param logData data for the execution log.
-     */
-    public void setLogData(ObservableList<String> logData) {
-        this.logData = logData;
     }
 
     /**
@@ -222,14 +262,4 @@ public class DiagramView {
         if (this == getDiagramViewInView())
             ExecutionLog.getInstance().setData(this.logData);
     }
-}
-
-/**
- * Lists all the States of the DiagramView.
- */
-enum State {
-    WAITING, // Waiting for a response from the server.
-    PAUSED, // Manually paused, no action is being performed.
-    EXECUTING, // Executing the visual aspects.
-    RESIZING, // While resizing to avoid concurrency issues.
 }

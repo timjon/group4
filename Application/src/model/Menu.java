@@ -37,8 +37,8 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
-    private final static String text_class = "Show attached class diagram";
-    private final static String text_deployment = "Show attached deployment diagram";
+    private final static String text_class = "Show class diagram";
+    private final static String text_deployment = "Show deployment diagram";
 
     // State
     private boolean play = false;
@@ -60,7 +60,7 @@ public class Menu {
     /**
      * @param play set the play status of automation.
      */
-    public void setPlay(boolean play) {
+    private void setPlay(boolean play) {
         this.play = play;
     }
 
@@ -119,7 +119,6 @@ public class Menu {
         for (Button button: buttonHashSet)
             button.setDisable(!state);
     }
-
 
     /**
      * Starts automating the executing. Disables manual control.
@@ -228,7 +227,6 @@ public class Menu {
                 dv.removeDiagram(dv.CLASS_DIAGRAM);
             }
 
-            dv.updateView();
         });
 
         button_deployment.setOnAction((ActionEvent event)    ->{
@@ -242,7 +240,6 @@ public class Menu {
                 dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
             }
 
-            dv.updateView();
         });
 
     }
