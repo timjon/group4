@@ -10,10 +10,12 @@ init() ->
 %the loop keeps track of the rooms and handles lobby requests.
 loop(Rooms, Lobby_increment) ->
   receive 
-    {Creator_Socket, Password, create_lobby} -> 
-	  Pid = spawn(fun () -> lobby:init(Creator_Socket) end),
+    {create_lobby, Password, Creator_Socket} -> 
+	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Lobby_increment) end),
       monitor(process, Pid),
 	  io:format("Lobby created"),
+	  %Format_result = io_lib:format("~p", [{lobby_created, "Lobby has been created"}]),
+	  %gen_tcp:send(Creator_Socket, [Format_result]),
 	  loop([{Lobby_increment, Password,  Pid}|Rooms], Lobby_increment + 1);
 	  
 	{remove_lobby, Creator_Socket, Lobby_ID} -> 

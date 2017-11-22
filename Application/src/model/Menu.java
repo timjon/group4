@@ -337,12 +337,14 @@ public class Menu {
             @Override
             public void handle(ActionEvent e) {
                 final String result = pwBox.getText();
-                if(result.equals("") || result == null) {pressReturn.setText("Please enter a password");}
+                if(result.equals("")) pressReturn.setText("Please enter a password");
                 else {
                     pressReturn.setFill(Color.GREEN);
                     pressReturn.setText("Lobby created");
                     Net.push("{" + "share, " + result + ", create_lobby}");
                     button_create_lobby.setDisable(true);
+                    //ok_password.setDisable(true);
+                    primaryStage.close();
                 }
             }
         });

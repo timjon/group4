@@ -3,7 +3,7 @@
 %%Version: 0.1
 %%Collaborators: Sebastian Fransson
 
-init(Creator_Socket) -> loop(Creator_Socket, [Creator_Socket], [], lobby1).
+init(Creator_Socket, Lobby_ID) -> loop(Creator_Socket, [Creator_Socket], [], Lobby_ID).
 
 
 loop(Creator_Socket, Members, Diagrams, Lobby_ID) -> 
