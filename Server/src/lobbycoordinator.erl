@@ -20,10 +20,10 @@ loop(Rooms, Lobby_increment) ->
 	  
 	{Creator_Socket, remove_lobby} -> 
 	  io:format("before sending ~n"),
-	  Lid = [Pid||{_Lid, _Password, Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
+	  LPid = [TmpPid||{_Lid, _Password, Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
 	  RefTmp = [Ref || {_Lid, _Password, _Pid, Socket, Ref} <- Rooms, Creator_Socket == Socket],
 	  [Ref | _] = RefTmp,
-	  [Lobby_PID|_] = Lid,
+	  [Lobby_PID|_] = LPid,
 	  NewRooms = [ {Lid, Password, Pid, Socket, Ref}|| {Lid, Password, Pid, Socket, Ref} <- Rooms, Creator_Socket /= Socket],
 	  %demonitor the lobby to avoid receiving the 'DOWN' message, since we manually terminated the process.
 	  demonitor(Ref),
