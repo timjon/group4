@@ -241,11 +241,22 @@ public class Menu {
         });
 
         button_previous.setOnAction((ActionEvent event) ->{
-            Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
+            String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+            if(tabID.charAt(1) == 'l') {
+                Net.push("{share, {" + tabID + ", previous_message}}");
+            }
+            else{
+                Net.push("{" + tabID + ", previous_message}");
+            }
         });
 
         button_next.setOnAction((ActionEvent event)    ->{
-            Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+            String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+            if(tabID.charAt(1) == 'l') {
+                Net.push("{share, {" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}}");
+            } else {
+                Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+            }
         });
 
         button_auto.setOnAction((ActionEvent event)    ->{

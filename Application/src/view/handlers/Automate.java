@@ -73,13 +73,23 @@ public class Automate extends Thread {
 
                     // If the last message is done animating.
                     if (!message.isKeepAnimating()) {
-                        Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                        String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+                        if(tabID.charAt(1) == 'l') {
+                            Net.push("{share, {" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}}");
+                        } else {
+                            Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                        }
                     }
                 }
                 // If there are no messages
                 catch (ArrayIndexOutOfBoundsException ex) {
                     // send a request for a message.
-                    Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                    String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+                    if(tabID.charAt(1) == 'l') {
+                        Net.push("{share, {" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}}");
+                    } else {
+                        Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                    }
                 }
             }
 
