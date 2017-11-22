@@ -102,6 +102,8 @@ public class DiagramView {
         borderpane.setRight(optional_pane);
         tab.setContent(borderpane);
         addDiagram(SEQUENCE_DIAGRAM);
+
+        addDiagram(CLASS_DIAGRAM);
     }
 
     public void addDiagram(String match) {
