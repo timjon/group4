@@ -3,6 +3,10 @@ package model;
 import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -226,7 +230,8 @@ public class Menu {
                 case "sequence_diagram" :
                     for (String element : result) {
                         parse.parseSequenceDiagram(element);
-                        Net.push("{share, {command, " + parse.getFirstSequenceDiagram() + "}}");
+                        System.out.println("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
+                        Net.push("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
 
                         // Enable all media buttons.
                         setMenuState(true);
@@ -240,11 +245,29 @@ public class Menu {
         });
 
         button_previous.setOnAction((ActionEvent event) ->{
-            Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
+            String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+            try {
+                if (tabID.charAt(1) == 'l') {
+                    Net.push("{share, {" + tabID + ", previous_message}}");
+                } else {
+                    Net.push("{" + tabID + ", previous_message}");
+                }
+            }catch(StringIndexOutOfBoundsException e){
+                Net.push("{" + tabID + ", previous_message}");
+            }
         });
 
         button_next.setOnAction((ActionEvent event)    ->{
-            Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+            String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+            try {
+                if (tabID.charAt(1) == 'l') {
+                    Net.push("{share, {" + tabID + ", next_message}}");
+                } else {
+                    Net.push("{" + tabID + ", next_message}");
+                }
+            }catch(StringIndexOutOfBoundsException e){
+                Net.push("{" + tabID + ", next_message}");
+            }
         });
 
         button_auto.setOnAction((ActionEvent event)    ->{
@@ -260,6 +283,47 @@ public class Menu {
             button_remove_lobby.setDisable(true);
             button_create_lobby.setDisable(false);
 
+        });
+
+        button_join_lobby.setOnAction((ActionEvent event)    ->{
+            Stage newStage = new Stage();
+            newStage.setTitle("Join a lobby");
+
+            VBox vbox = new VBox();
+
+            TextField lobbyID = new TextField("");
+            lobbyID.setPromptText("Lobby ID");
+            lobbyID.setFocusTraversable(false);
+
+            PasswordField password = new PasswordField();
+            password.setPromptText("Password");
+            password.setFocusTraversable(false);
+
+            Label label = new Label();
+
+            Button join_button = new Button("Join");
+            join_button.setFocusTraversable(false);
+
+            vbox.getChildren().add(lobbyID);
+            vbox.getChildren().add(password);
+            vbox.getChildren().add(join_button);
+            vbox.getChildren().add((label));
+
+            Scene stageScene = new Scene(vbox, 300, 100);
+            newStage.setScene(stageScene);
+            newStage.show();
+
+            join_button.setOnAction((ActionEvent e)    ->{
+                String id  = lobbyID.getText();
+                String pwd = password.getText();
+
+                if(id.equals("") || pwd.equals("")){
+                    label.setText("Lobby ID and password needed");
+                } else {
+                    Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
+                    newStage.close();
+                }
+            });
         });
 
     }
@@ -286,7 +350,7 @@ public class Menu {
         } catch (IllegalStateException ex) {
 
             // If there is no view, we disable the media buttons.
-            Menu.getInstance().setMenuState(false, button_import, button_create_lobby);
+            Menu.getInstance().setMenuState(false, button_import, button_import_lobby, button_create_lobby, button_join_lobby);
             return;
         }
 
