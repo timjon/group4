@@ -199,8 +199,11 @@ public class Menu {
 
         button_import.setOnAction((ActionEvent event) -> {
                 Collection<String> result = Import.file(stage);
-                if (result.isEmpty()) return;
-
+                try {
+                    if (result.isEmpty()) return;
+                }catch(NullPointerException e){
+                    //This is just here since we get a null pointer if we close the import screen without importing
+                }
                 // Parse the element if it contains a supported diagram
                 Parser parse = new Parser();
                 switch(DiagramCheck.ContainsDiagram(result)) {

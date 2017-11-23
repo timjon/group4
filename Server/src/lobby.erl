@@ -1,20 +1,26 @@
 -module(lobby).
--export([init/2]).
+-export([init/3]).
 %%Version: 0.1
 %%Collaborators: Sebastian Fransson
 
-init(Creator_Socket, Lobby_ID) -> loop(Creator_Socket, [Creator_Socket], [], Lobby_ID).
+init(Creator_Socket, Password, Lobby_ID) -> loop(Creator_Socket, Password, [Creator_Socket], [], Lobby_ID).
 
-loop(Creator_Socket, Members, Diagrams, Lobby_ID) -> 
+loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) -> 
   receive
     {remove_lobby, Creator_Socket} -> io:format("Removed lobby ~n"), ok;
 
-	{join_lobby, Socket} -> 
-	  loop(Creator_Socket, case find_member(Members, Socket) of 
+	{join_lobby, Socket, Pwd} -> 
+	  loop(Creator_Socket, Password, case find_member(Members, Socket) of 
 	    not_found -> 
-		  gen_tcp:send(Socket, io_lib:format("Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
-		  send_classes(Socket, Diagrams),
-		  [Socket|Members];
+		  case Pwd of 
+		    Password -> 
+		      gen_tcp:send(Socket, io_lib:format("Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
+		      send_classes(Socket, Diagrams),
+		      [Socket|Members];
+			_ -> 
+			  gen_tcp:send(Socket, io_lib:format("Wrong password to lobby, ~p", [Lobby_ID]) ++ "~"),
+			  Members
+		  end;
 		found_member -> 
 		  gen_tcp:send(Socket, io_lib:format("Already in lobby, ~p", [Lobby_ID]) ++ "~"),
 		  Members
@@ -27,7 +33,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Diagram_ID, Class_names}]) ++ "~",
       send_messages(Members, Format_result),
 	  Self = self(),
-	  loop(Creator_Socket, Members, [{Diagram_ID, Class_names, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}) end)}| Diagrams], Lobby_ID);
+	  loop(Creator_Socket, Password, Members, [{Diagram_ID, Class_names, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}) end)}| Diagrams], Lobby_ID);
 	
 	{command, Creator_Socket, {Did, Message_request}} -> 
 	  Pid = find_diagram(Did, Diagrams),
@@ -38,7 +44,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  	ok -> ok
 	  end,
 	  %Receives the result from the diagram coordinator and sends it to the client
-	  loop(Creator_Socket, Members, Diagrams, Lobby_ID);
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
 	  
 	%This case happens when a previous message has been readded to the "queue" or if there were to previous messages to step back to.
 	{previous_confirmation, Did, Message} -> 
@@ -46,7 +52,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Did, previous_confirmation, Message}]),
 	  %Sends it to the client
 	  send_messages(Members, [Format_result ++ "~"]),
-	  loop(Creator_Socket, Members, Diagrams, Lobby_ID);
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
 	
 	%This case happens when there is no more messages in the diagram and the user tries to simulate the next message
 	{simulation_done, Did, Message_number} -> 
@@ -54,7 +60,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Did, simulation_finished, Message_number}]),
       %Sends it to the client
 	  send_messages(Members, [Format_result ++ "~"]),
-	  loop(Creator_Socket, Members, Diagrams, Lobby_ID);
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
 	  
 	%This case happens when a message has been sent in a diagram and the info is supposed to be sent to the client
 	{message_sent, Did, From, To, Message, Message_number} -> 
@@ -63,7 +69,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Did, From, To, Message, Message_number}]) ++ "~",
       %Sends it to the client
 	  send_messages(Members, [Format_result]),
-	  loop(Creator_Socket, Members, Diagrams, Lobby_ID);
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
 	  
 	%This case happens when there are messages to print to the execution log
 	{Did, print_information, Msg}->
@@ -71,7 +77,7 @@ loop(Creator_Socket, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
       %Sends the result to client
 	  send_messages(Members, [Format_result ++ "~"]),
-	  loop(Creator_Socket, Members, Diagrams, Lobby_ID)
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID)
   end.
   
 send_classes(_, []) -> done;

@@ -72,7 +72,17 @@ class Decode {
             //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
             System.out.println(rawStringToDecode);
 
-        } else {
+        }else if (rawStringToDecode.contains("joined lobby,")){
+
+            //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
+            System.out.println(rawStringToDecode);
+
+        }else if (rawStringToDecode.contains("Wrong password")){
+
+            //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
+            System.out.println(rawStringToDecode);
+
+        }else {
 
             // Gets the message content.
             String message = retrieveMessage(rawStringToDecode);
