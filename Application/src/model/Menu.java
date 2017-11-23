@@ -288,7 +288,24 @@ public class Menu {
             return;
         }
 
+        // Updates optional view states.
+        ArrayList<String> viewing = diagramView.getViewing();
+
         Platform.runLater(() -> {
+
+            // Only displaying required diagram.
+            if (viewing.size() == 1) {
+                button_class.setText(text_class);
+                button_deployment.setText(text_deployment);
+
+                // More diagrams in view.
+            } else {
+                if (viewing.contains("CLASS_DIAGRAM"))
+                    button_class.setText("Hide class diagram");
+                if (viewing.contains("DEPLOYMENT_DIAGRAM"))
+                    button_class.setText("Hide deployment diagram");
+            }
+
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
                 button_previous.setDisable(false);

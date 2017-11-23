@@ -50,6 +50,14 @@ public class DiagramView {
         return diagramView.getDraw() == draw;
     }
 
+
+    /**
+     * @return the diagrams in view.
+     */
+    public ArrayList<String> getViewing() {
+        return viewing;
+    }
+
     /**
      * @return the id of the current selected tab.
      */
