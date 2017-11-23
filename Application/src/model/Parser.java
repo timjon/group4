@@ -2,6 +2,7 @@ package model;
 
 import model.classDiagram.*;
 import model.sequenceDiagramParser.*;
+import view.DiagramView;
 import view.handlers.UniqueCounter;
 import controller.Import;
 
@@ -63,6 +64,8 @@ public class Parser {
             StringBuilder string = new StringBuilder();
 
             string.append("{");
+            string.append(DiagramView.getDiagramViewInView().getTab().getId());
+            string.append(",");
             string.append(UniqueCounter.getString());
             string.append(",[");
 
