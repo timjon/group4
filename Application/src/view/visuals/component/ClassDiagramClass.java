@@ -34,10 +34,10 @@ public class ClassDiagramClass implements Renderable {
                 size*(island.getHeight()/island.getWidth()));
 
 
-        gc.setFill(Color.BEIGE);
+        gc.setFill(Color.BLACK);
         gc.fillText(
                 this.name,
-                this.coordinates.getX(),
+                this.coordinates.getX()- size/3,
                 this.coordinates.getY(),
                 island.getWidth());
     }

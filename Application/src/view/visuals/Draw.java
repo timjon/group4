@@ -47,7 +47,7 @@ public class Draw {
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
 
-        // TODO REMOVE, mock input data
+        // TODO REMOVE, mock input data for class diagram
         addClassDiagramClass("YOLOSWAG123");
         addClassDiagramClass("Dopeffs");
     }
@@ -291,9 +291,9 @@ public class Draw {
         int space = ((int)this.canvas.getWidth())/this.allClassDiagramClasses.size();
         int size = space/2;
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            int x = size+ (i*space);
-            int y = 25 +size/4;
-            allClassDiagramClasses.get(i).place(new Coordinates(x,y), class_size * 3);
+            int x = size + (i * space);
+            int y = 50 + size/4;
+            allClassDiagramClasses.get(i).place(new Coordinates(x,y), size);
         }
 
     }
