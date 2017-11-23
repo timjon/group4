@@ -384,16 +384,17 @@ public class Menu {
     }
 
     /**
-     * Method for
+     * Method for adding a password to the creation of a lobby.
      */
     public void passwordBox(){
         String ok_password_text = "OK";
-        Stage primaryStage = new Stage();
+        Stage primaryStage = new Stage(); // Creates a new 'stage' where we gather the fields and buttons for the pwBox.
         primaryStage.setTitle("Input Password");
         primaryStage.show();
 
-        GridPane grid = new GridPane();
+        GridPane grid = new GridPane(); // Creates a gridpane to easily place the different components.
         grid.setAlignment(Pos.CENTER);
+        //Sets a "padding" which makes the texfield and related components more centered and not use the entire box.
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(15, 15, 15, 15));
@@ -401,19 +402,20 @@ public class Menu {
         Scene scene = new Scene(grid, 250, 125);
         primaryStage.setScene(scene);
 
-        Label pw = new Label("Password:");
+        Label pw = new Label("Password:"); // Label showing showing next to textField.
         grid.add(pw, 0, 0);
 
-        PasswordField pwBox = new PasswordField();
+        PasswordField pwBox = new PasswordField(); // Textfield with password protection.
         grid.add(pwBox, 1, 0);
         pwBox.setPromptText("Password");
-        Button ok_password = new Button(ok_password_text);
-        grid.add(ok_password, 1,1);
+        Button button_ok_password = new Button(ok_password_text); // Button to create a lobby with input password.
+        grid.add(button_ok_password, 1,1);
 
-        final Text pressReturn = new Text();
+        final Text pressReturn = new Text(); //
         grid.add(pressReturn, 1, 2);
 
-        ok_password.setOnAction(new EventHandler<ActionEvent>() {
+        //Handler for pressing the ok button in the newly opened window.
+        button_ok_password.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
                 final String result = pwBox.getText();
@@ -424,7 +426,7 @@ public class Menu {
                     pressReturn.setText("Lobby created");
                     button_create_lobby.setDisable(true);
                     button_remove_lobby.setDisable(false);
-                    //ok_password.setDisable(true);
+                    //button_ok_password.setDisable(true); // TODO: remove for P-Request.
                     primaryStage.close();
                 }
             }

@@ -11,6 +11,7 @@ init() ->
 loop(Rooms, Lobby_increment) ->
   io:format("hhello ~n~p", [Lobby_increment]),
   receive 
+    %Creates a diagram and saves the monitor reference as well as lobby info to the list of rooms.
     {Creator_Socket, create_lobby, Password} -> 
 	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Password, Lobby_increment) end),
       Ref = monitor(process, Pid),
@@ -18,9 +19,11 @@ loop(Rooms, Lobby_increment) ->
 	  %Format_result = io_lib:format("~p", [{lobby_created, "Lobby has been created"}]),
 	  %gen_tcp:send(Creator_Socket, [Format_result]),
 	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1);
-	  
+	
+	%Demonitors, kills and removes the host's lobby from the list of rooms.  
 	{Creator_Socket, remove_lobby} -> 
 	  io:format("before sending ~n"),
+	  %Finds the lobby id and Pid of the lobby process.
 	  LPid = [Pid||{_Lid, _Password, Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
 	  RefTmp = [Ref || {_Lid, _Password, _Pid, Socket, Ref} <- Rooms, Creator_Socket == Socket],
 	  [Ref | _] = RefTmp,
@@ -28,6 +31,7 @@ loop(Rooms, Lobby_increment) ->
 	  NewRooms = [ {Lid, Password, Pid, Socket, Ref}|| {Lid, Password, Pid, Socket, Ref} <- Rooms, Creator_Socket /= Socket],
 	  %demonitor the lobby to avoid receiving the 'DOWN' message, since we manually terminated the process.
 	  demonitor(Ref),
+	  %Send a confirmation to the lobby so that it exits naturally.
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
 	  io:format("after sending remove ~n"),
 	  loop(NewRooms, Lobby_increment);

@@ -1,6 +1,7 @@
 -module(lobbymonitor).
 -export([init/0]).
 
+% initializes the loop, spawns the lobbycoordinator, monitors the lobbycoordinator and registers it.
 init() -> 
   Pid = spawn(fun() -> lobbycoordinator:init() end),
   monitor(process,Pid),
@@ -9,6 +10,7 @@ init() ->
   
   loop(Pid) ->
     receive
+	  % if the lobbycoordinator process were to die, this process catches the resulting message and respawns it.
       {'DOWN', _Ref, _process, Pid, _Reason} -> 
 	    NewPid = spawn(fun() -> lobbycoordinator:init() end),
 		monitor(process, NewPid),

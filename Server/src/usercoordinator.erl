@@ -70,6 +70,7 @@ use_input({ok, {share, Password, create_lobby}}, Socket, Diagrams) ->
 use_input({ok, {share, Info}}, Socket, Diagrams) -> 
   lobbycoordinator ! {Socket, Info},
   loop(Socket, Diagrams);
+  
 %If the message is the Diagram id and the Message_request.
 use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
   %Checks if the diagram exists

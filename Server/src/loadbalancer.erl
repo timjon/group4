@@ -5,7 +5,7 @@
 %%Collaborator: Sebastian Fransson
 %%Version: 1.1
 
-%Initializes the server
+%Initializes the server and spawns the lobbymonitor.
 init() -> 
   {ok, ListenSocket} = gen_tcp:listen(8040, [{active,true}, binary]),
   spawn(fun() -> lobbymonitor:init() end),
