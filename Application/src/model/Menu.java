@@ -212,9 +212,7 @@ public class Menu {
                             parse.parseSequenceDiagram(element);
                             Net.push(parse.getFirstSequenceDiagram());
 
-                            // Enable all media buttons.
-                            setMenuState(true, button_create_lobby, button_remove_lobby);
-                            button_previous.setDisable(true);
+                            identifyState();
                         }
                         break;
                 }
@@ -240,8 +238,7 @@ public class Menu {
                         Net.push("{share, " + parse.getFirstSequenceDiagram() + "}");
 
                         // Enable all media buttons.
-                        setMenuState(true);
-                        button_previous.setDisable(true);
+                        identifyState();
                     }
                     break;
             }
@@ -286,9 +283,13 @@ public class Menu {
         });
         button_remove_lobby.setOnAction((ActionEvent event) ->{
             Net.push("{" + "share, " + "remove_lobby}");
-            button_remove_lobby.setDisable(true);
-            button_create_lobby.setDisable(false);
 
+            Platform.runLater(() -> {
+                DiagramView.getDiagramViewInView().getTab().setId("Disconnected");
+                DiagramView.getDiagramViewInView().getTab().setText("Disconnected");
+            });
+
+            identifyState();
         });
 
         button_join_lobby.setOnAction((ActionEvent event)    ->{
@@ -354,13 +355,25 @@ public class Menu {
 
             // If there is no view.
         } catch (IllegalStateException ex) {
-
-            // If there is no view, we disable the media buttons.
-            Menu.getInstance().setMenuState(false, button_import, button_import_lobby, button_create_lobby, button_join_lobby);
             return;
         }
 
+
+        String id = diagramView.getTab().getId();
+        boolean in_lobby = id.contains("l");
+
         Platform.runLater(() -> {
+
+            // Remove lobby
+            button_remove_lobby.setDisable(!in_lobby);
+            // Join lobby
+            button_join_lobby.setDisable(in_lobby);
+            // Create lobby
+            button_create_lobby.setDisable(in_lobby);
+            // Import to lobby
+            button_create_lobby.setDisable(!in_lobby);
+
+
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
                 button_previous.setDisable(false);
