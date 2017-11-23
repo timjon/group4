@@ -11,7 +11,12 @@ public class ClassDiagramClass implements Renderable {
     int size;
     String name;
 
-    private static Image island = new Image("resources/Island_with_trees.png");
+    private static Image island1 = new Image("resources/Island_with_trees.png");
+    private static Image island2 = new Image("resources/Island_with_trees2.png");
+
+    //Animation of Island
+    private Image[] islandStates = {island1, island2};
+    private double animationIndex = 0.0;
 
     public ClassDiagramClass(String name) { this.name = name; }
 
@@ -19,7 +24,8 @@ public class ClassDiagramClass implements Renderable {
     public void render(GraphicsContext gc) {
 
         gc.setFill(Color.TRANSPARENT);
-        int size_DiagramClass = size/2;
+
+        Image island = islandStates[(int)animationIndex];
 
         gc.drawImage(island,
                 this.coordinates.getX() - size/2,
@@ -34,14 +40,13 @@ public class ClassDiagramClass implements Renderable {
                 this.coordinates.getX(),
                 this.coordinates.getY(),
                 island.getWidth());
-
-
-
     }
 
     @Override
     public void update() {
-
+        animationIndex += 0.25;
+        if (animationIndex >= islandStates.length)
+            animationIndex = 0;
     }
 
     @Override

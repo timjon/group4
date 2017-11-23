@@ -39,7 +39,6 @@ public class Draw {
 
     private static Image classDiagramBackground  = new Image("resources/OceanBackground.png");
 
-
     /**
      * Constructor
      */
