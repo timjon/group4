@@ -36,15 +36,19 @@ public class Draw {
 	
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
     private static Image animatedBackground = new Image("resources/SkyGIF.gif");
-    private  static Image testImg = new Image("resources/Island_with_trees.png");
+    private  static Image classDiagramBackground = new Image("resources/ocean.png");
 
     /**
      * Constructor
      */
     public Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        canvas_class = new Canvas(w, h);
+        canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
+
+        // TODO REMOVE, mock input data
+        addClassDiagramClass("YOLOSWAG123");
+        addClassDiagramClass("Dopeffs");
     }
 
 
@@ -107,7 +111,7 @@ public class Draw {
      */
     public void addClass(String name) {
         allClasses.add(new DiagramClass(name));  // Class gets added to the end of the array list.
-            }
+    }
 
 
     public void addClassDiagramClass (String name){
@@ -206,17 +210,11 @@ public class Draw {
      * redraws the simulation canvas with all elements.
      */
     public void redraw() {
-        renderItems();
+        renderItems(); // Updates states due to resizing/etc.
         init(canvas.getGraphicsContext2D());
         initClassDiagram(canvas_class.getGraphicsContext2D());
 
-        //clear(canvas_class.getGraphicsContext2D());
-        clear(canvas_deployment.getGraphicsContext2D());
-        //canvas_class.getGraphicsContext2D().setFill(Color.YELLOW);
-        canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
-        //canvas_class.getGraphicsContext2D().fillRect(0,0,canvas_class.getWidth(), canvas_class.getHeight());
-
-        renderContainer();
+        renderContainer(); // Paints
         renderClassDiagramContainer();
     }
 
@@ -232,7 +230,7 @@ public class Draw {
     void initClassDiagram(GraphicsContext gc){
         gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
         // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(testImg,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
+        gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
     }
 
     private void clear(GraphicsContext gc) {
@@ -306,12 +304,11 @@ public class Draw {
 
     void renderClassDiagramClass(){
         if (allClassDiagramClasses.size() == 0) return;
-        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
-        int size = space/2; // The size of the objects is half of it's given space.
-        class_size = size/2;
+
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            int x = size+ (i*space);
-            int y = 25 +size/4;
+            int x = 50;
+            int y = 100;
+            int size = 50;
             allClassDiagramClasses.get(i).place(new Coordinates(x,y), size);
         }
 
