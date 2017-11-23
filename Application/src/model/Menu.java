@@ -294,17 +294,15 @@ public class Menu {
         Platform.runLater(() -> {
 
             // Only displaying required diagram.
-            if (viewing.size() == 1) {
-                button_class.setText(text_class);
-                button_deployment.setText(text_deployment);
+            button_class.setText(text_class);
+            button_deployment.setText(text_deployment);
 
-                // More diagrams in view.
-            } else {
-                if (viewing.contains("CLASS_DIAGRAM"))
-                    button_class.setText("Hide class diagram");
-                if (viewing.contains("DEPLOYMENT_DIAGRAM"))
-                    button_deployment.setText("Hide deployment diagram");
-            }
+            if (viewing.contains("CLASS_DIAGRAM"))
+                button_class.setText("Hide class diagram");
+
+            if (viewing.contains("DEPLOYMENT_DIAGRAM"))
+                button_deployment.setText("Hide deployment diagram");
+
 
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
