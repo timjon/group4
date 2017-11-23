@@ -28,6 +28,8 @@ public class Menu {
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
+    private static Button button_class;
+    private static Button button_deployment;
 
     // Flavor texts
     private final static String text_input = "Import";
@@ -35,6 +37,8 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
+    private final static String text_class = "Show class diagram";
+    private final static String text_deployment = "Show deployment diagram";
 
     // State
     private boolean play = false;
@@ -49,12 +53,14 @@ public class Menu {
         button_next = new Button(text_next);
         button_previous = new Button(text_previous);
         button_auto = new Button(text_auto_play);
+        button_class = new Button(text_class);
+        button_deployment = new Button(text_deployment);
     }
 
     /**
      * @param play set the play status of automation.
      */
-    public void setPlay(boolean play) {
+    private void setPlay(boolean play) {
         this.play = play;
     }
 
@@ -85,6 +91,8 @@ public class Menu {
         menu.getChildren().add(button_previous);
         menu.getChildren().add(button_auto);
         menu.getChildren().add(button_next);
+        menu.getChildren().add(button_class);
+        menu.getChildren().add(button_deployment);
 
         return menu;
     }
@@ -111,7 +119,6 @@ public class Menu {
         for (Button button: buttonHashSet)
             button.setDisable(!state);
     }
-
 
     /**
      * Starts automating the executing. Disables manual control.
@@ -221,6 +228,50 @@ public class Menu {
             identifyState();
         });
 
+        button_class.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            // Checks for the state of the button if it's hiding or showing.
+            if (button_class.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
+                button_class.setText("Hide class diagram");
+
+                // Add diagram to view.
+                dv.addDiagram(dv.CLASS_DIAGRAM);
+            } else {
+
+                // Change to default text.
+                button_class.setText(text_class);
+
+                // Remove diagram from view.
+                dv.removeDiagram(dv.CLASS_DIAGRAM);
+            }
+
+        });
+
+        button_deployment.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            // Checks for the state of the button if it's hiding or showing.
+            if (button_deployment.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
+                button_deployment.setText("Hide deployment diagram");
+
+                // Add diagram to view.
+                dv.addDiagram(dv.DEPLOYMENT_DIAGRAM);
+            } else {
+
+                // Change to default text.
+                button_deployment.setText(text_deployment);
+
+                // Remove diagram from view.
+                dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
+            }
+
+        });
+
     }
 
     /**
@@ -249,7 +300,22 @@ public class Menu {
             return;
         }
 
+        // Updates optional view states.
+        ArrayList<String> viewing = diagramView.getViewing();
+
         Platform.runLater(() -> {
+
+            // Only displaying required diagram.
+            button_class.setText(text_class);
+            button_deployment.setText(text_deployment);
+
+            if (viewing.contains("CLASS_DIAGRAM"))
+                button_class.setText("Hide class diagram");
+
+            if (viewing.contains("DEPLOYMENT_DIAGRAM"))
+                button_deployment.setText("Hide deployment diagram");
+
+
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
                 button_previous.setDisable(false);
