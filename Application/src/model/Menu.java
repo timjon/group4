@@ -200,47 +200,60 @@ public class Menu {
     private void setEvents(Stage stage) {
 
         button_import.setOnAction((ActionEvent event) -> {
-                Collection<String> result = Import.file(stage);
-                try {
-                    if (result.isEmpty()) return;
-                }catch(NullPointerException e){
-                    //This is just here since we get a null pointer if we close the import screen without importing
-                }
-                // Parse the element if it contains a supported diagram
-                Parser parse = new Parser();
+            Collection<String> result = Import.file(stage);
+            if (result == null) return;
+            if (result.isEmpty()) return;
+
+            // Parse the element if it contains a supported diagram
+            Parser parse = new Parser();
+
+            for (String file: result) {
                 switch(DiagramCheck.ContainsDiagram(result)) {
                     case "sequence_diagram" :
-                        for (String element : result) {
-                            parse.parseSequenceDiagram(element);
-                            Net.push(parse.getFirstSequenceDiagram());
+                        parse.parseSequenceDiagram(file);
 
-                            identifyState();
+                        // Catches if there are no diagrams.
+                        try {
+                            Net.push(parse.getDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
                         }
+
+                        // Catches if there is no parallel diagram.
+                        try {
+                            Net.push(parse.getParallelSequenceDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
+                        break;
+                    case "class_diagram":
+                        parse.parseClassDiagram(file);
+                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
+                        Net.push(parse.getDiagram());
+
                         break;
                 }
-                // if the diagram is not included in the switch case, check if the diagram is invalid
-                DiagramCheck.ContainsDiagram(result);
-                identifyState();
-            });
+
+            }
+
+            identifyState();
+        });
 
         button_import_lobby.setOnAction((ActionEvent event) -> {
             Collection<String> result = Import.file(stage);
-            try {
-                if (result.isEmpty()) return;
-            }catch(NullPointerException e){
+            if (result == null) return;
+            if (result.isEmpty()) return;
 
-            }
             // Parse the element if it contains a supported diagram
             Parser parse = new Parser();
             switch(DiagramCheck.ContainsDiagram(result)) {
                 case "sequence_diagram" :
                     for (String element : result) {
                         parse.parseSequenceDiagram(element);
-                        System.out.println("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
-                        Net.push("{share, " + parse.getFirstSequenceDiagram() + "}");
+                        Net.push("{share, " + parse.getDiagram() + "}");
 
                         // Enable all media buttons.
-                        identifyState();
                     }
                     break;
             }
@@ -282,6 +295,7 @@ public class Menu {
 
         button_create_lobby.setOnAction((ActionEvent event)    ->{
             passwordBox();
+            identifyState();
         });
         button_remove_lobby.setOnAction((ActionEvent event) ->{
             Net.push("{" + "share, " + "remove_lobby}");
