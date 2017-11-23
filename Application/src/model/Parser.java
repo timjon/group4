@@ -71,15 +71,17 @@ public class Parser {
 
             // Add the classes.
             for (Classes s: cd.classes) {
-                string.append("[");
+                string.append("['");
                 string.append(s.name);
-                string.append(",");
+                string.append("',");
 
                 // Add the fields for the classes.
                 for (FieldTuple ft: s.fields) {
+                    string.append("'");
                     string.append(ft.name);
                     string.append(":");
                     string.append(ft.type);
+                    string.append("'");
                     string.append(",");
                 }
 
