@@ -7,31 +7,35 @@ import view.visuals.Renderable;
 
 public class ClassDiagramClass implements Renderable {
 
-    private Coordinates coordinates; // The coordinates of the object.
-    int size; // Size of the Object.
-    String name; // The class name.
+    private Coordinates coordinates;
+    int size;
+    String name;
 
-    // The images retrieved.
     private static Image island = new Image("resources/Island_with_trees.png");
 
     public ClassDiagramClass(String name) { this.name = name; }
-
 
     @Override
     public void render(GraphicsContext gc) {
 
         gc.setFill(Color.TRANSPARENT);
-
-       // int x = this.coordinates.getX();
-        //int y = this.coordinates.getY();
-
-        int size_ClassDiagramClass = size/2;
+        int size_DiagramClass = size/2;
 
         gc.drawImage(island,
-                this.coordinates.getX() -size/2,
-                this.coordinates.getY() -size/2,
+                this.coordinates.getX() - size/2,
+                this.coordinates.getY() - size/2,
                 size,
                 size*(island.getHeight()/island.getWidth()));
+
+
+        gc.setFill(Color.BEIGE);
+        gc.fillText(
+                this.name,
+                this.coordinates.getX(),
+                this.coordinates.getY(),
+                island.getWidth());
+
+
 
     }
 

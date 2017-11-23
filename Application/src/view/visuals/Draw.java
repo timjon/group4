@@ -173,30 +173,6 @@ public class Draw {
         return -1;
     }
 
-
-    //TODO: copy pasta below
-    /**
-     * @param name class name to match.
-     * @return the index the DiagramClass is located at.
-     */
-    public int findClassDiagramClassIndex(String name){
-
-        // Iterate over the existing diagram classes
-        for (int i = 0; i < allClassDiagramClasses.size(); i++) {
-
-            if (allClassDiagramClasses.get(i).getName().equals(name))
-
-                // Return the index in the array.
-                return i;
-        }
-
-        // Return a number that can't exist if the class does not. Thus a negative number.
-        return -1;
-    }
-
-
-
-
     /**
      * remakes the "Items", referring to messages and classes
      */
@@ -227,9 +203,14 @@ public class Draw {
         gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
+    /**
+     * Initializes the drawing of class diagram
+     * @param gc
+     */
+
     void initClassDiagram(GraphicsContext gc){
-        gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
-        // adds an animated gif file to the canvas with proper height and width
+        gc.clearRect(0,0,getWidth(), getHeight());
+        // adds the background to canvas
         gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
     }
 
@@ -249,6 +230,9 @@ public class Draw {
             r.render(gc);
     }
 
+    /**
+     * Renders class diagram
+     */
 
     void renderClassDiagramContainer(){
         if (!DiagramView.inView(this)) return;
@@ -256,7 +240,6 @@ public class Draw {
         for (Renderable r: allClassDiagramClasses)
             r.render(gc);
     }
-
 
 
     /**
@@ -304,12 +287,12 @@ public class Draw {
 
     void renderClassDiagramClass(){
         if (allClassDiagramClasses.size() == 0) return;
-
+        int space = ((int)this.canvas.getWidth())/this.allClassDiagramClasses.size();
+        int size = space/2;
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            int x = 50;
-            int y = 100;
-            int size = 50;
-            allClassDiagramClasses.get(i).place(new Coordinates(x,y), size);
+            int x = size+ (i*space);
+            int y = 25 +size/4;
+            allClassDiagramClasses.get(i).place(new Coordinates(x,y), class_size * 3);
         }
 
     }
