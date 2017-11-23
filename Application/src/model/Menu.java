@@ -303,7 +303,7 @@ public class Menu {
                 if (viewing.contains("CLASS_DIAGRAM"))
                     button_class.setText("Hide class diagram");
                 if (viewing.contains("DEPLOYMENT_DIAGRAM"))
-                    button_class.setText("Hide deployment diagram");
+                    button_deployment.setText("Hide deployment diagram");
             }
 
             // If we can go back.
