@@ -19,10 +19,10 @@ public class Resizer implements Runnable {
     private static int timer = 0;
 
     // The time in milliseconds before each check of the timer value.
-    private static int increment = 5;
+    private static int increment = 2;
 
     // The amount of time in milliseconds the resizer has to wait.
-    private static int finished = 40;
+    private static int finished = 10;
 
     /**
      * Runs when the thread starts.
@@ -58,7 +58,7 @@ public class Resizer implements Runnable {
         for (DiagramView d: DiagramView.diagramViews)
 
             // Resize them
-            d.resize();
+            d.updateView();
 
         // Allows a new instance to start once this one is finished.
         singletonResizer = null;

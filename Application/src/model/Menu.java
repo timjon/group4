@@ -4,22 +4,17 @@ import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import controller.network.Net;
@@ -43,13 +38,15 @@ public class Menu {
 
     // List of buttons.
     private static Button button_import;
-    private static Button button_import_lobby;
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
     private static Button button_join_lobby;
     private static Button button_create_lobby;
     private static Button button_remove_lobby;
+    private static Button button_import_lobby;
+    private static Button button_class;
+    private static Button button_deployment;
 
     // Flavor texts
     private final static String text_input = "Import";
@@ -61,6 +58,9 @@ public class Menu {
     private final static String text_join_lobby = "Join a lobby";
     private final static String text_create_lobby = "Create lobby";
     private final static String text_remove_lobby = "Remove lobby";
+    private final static String text_class = "Show class diagram";
+    private final static String text_deployment = "Show deployment diagram";
+
     // State
     private boolean play = false;
 
@@ -78,12 +78,14 @@ public class Menu {
         button_join_lobby = new Button(text_join_lobby);
         button_create_lobby = new Button(text_create_lobby);
         button_remove_lobby = new Button(text_remove_lobby);
+        button_class = new Button(text_class);
+        button_deployment = new Button(text_deployment);
     }
 
     /**
      * @param play set the play status of automation.
      */
-    public void setPlay(boolean play) {
+    private void setPlay(boolean play) {
         this.play = play;
     }
 
@@ -118,6 +120,8 @@ public class Menu {
         menu.getChildren().add(button_join_lobby);
         menu.getChildren().add(button_create_lobby);
         menu.getChildren().add(button_remove_lobby);
+        menu.getChildren().add(button_class);
+        menu.getChildren().add(button_deployment);
 
         return menu;
     }
@@ -148,7 +152,6 @@ public class Menu {
         for (Button button: buttonHashSet)
             button.setDisable(!state);
     }
-
 
     /**
      * Starts automating the executing. Disables manual control.
@@ -309,45 +312,90 @@ public class Menu {
             identifyState();
         });
 
-        button_join_lobby.setOnAction((ActionEvent event)    ->{
-            Stage newStage = new Stage();
-            newStage.setTitle("Join a lobby");
+        button_join_lobby.setOnAction((ActionEvent event)    -> {
+                    Stage newStage = new Stage();
+                    newStage.setTitle("Join a lobby");
 
-            VBox vbox = new VBox();
+                    VBox vbox = new VBox();
 
-            TextField lobbyID = new TextField("");
-            lobbyID.setPromptText("Lobby ID");
-            lobbyID.setFocusTraversable(false);
+                    TextField lobbyID = new TextField("");
+                    lobbyID.setPromptText("Lobby ID");
+                    lobbyID.setFocusTraversable(false);
 
-            PasswordField password = new PasswordField();
-            password.setPromptText("Password");
-            password.setFocusTraversable(false);
+                    PasswordField password = new PasswordField();
+                    password.setPromptText("Password");
+                    password.setFocusTraversable(false);
 
-            Label label = new Label();
+                    Label label = new Label();
 
-            Button join_button = new Button("Join");
-            join_button.setFocusTraversable(false);
+                    Button join_button = new Button("Join");
+                    join_button.setFocusTraversable(false);
 
-            vbox.getChildren().add(lobbyID);
-            vbox.getChildren().add(password);
-            vbox.getChildren().add(join_button);
-            vbox.getChildren().add((label));
+                    vbox.getChildren().add(lobbyID);
+                    vbox.getChildren().add(password);
+                    vbox.getChildren().add(join_button);
+                    vbox.getChildren().add((label));
 
-            Scene stageScene = new Scene(vbox, 300, 100);
-            newStage.setScene(stageScene);
-            newStage.show();
+                    Scene stageScene = new Scene(vbox, 300, 100);
+                    newStage.setScene(stageScene);
+                    newStage.show();
 
-            join_button.setOnAction((ActionEvent e)    ->{
-                String id  = lobbyID.getText();
-                String pwd = password.getText();
+                    join_button.setOnAction((ActionEvent e) -> {
+                        String id = lobbyID.getText();
+                        String pwd = password.getText();
 
-                if(id.equals("") || pwd.equals("")){
-                    label.setText("Lobby ID and password needed");
-                } else {
-                    Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
-                    newStage.close();
-                }
-            });
+                        if (id.equals("") || pwd.equals("")) {
+                            label.setText("Lobby ID and password needed");
+                        } else {
+                            Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
+                            newStage.close();
+                        }
+                    });
+
+                });
+
+        button_class.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            // Checks for the state of the button if it's hiding or showing.
+            if (button_class.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
+                button_class.setText("Hide class diagram");
+
+                // Add diagram to view.
+                dv.addDiagram(dv.CLASS_DIAGRAM);
+            } else {
+
+                // Change to default text.
+                button_class.setText(text_class);
+
+                // Remove diagram from view.
+                dv.removeDiagram(dv.CLASS_DIAGRAM);
+            }
+
+        });
+
+        button_deployment.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            // Checks for the state of the button if it's hiding or showing.
+            if (button_deployment.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
+                button_deployment.setText("Hide deployment diagram");
+
+                // Add diagram to view.
+                dv.addDiagram(dv.DEPLOYMENT_DIAGRAM);
+            } else {
+
+                // Change to default text.
+                button_deployment.setText(text_deployment);
+
+                // Remove diagram from view.
+                dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
+            }
+
         });
 
     }
@@ -375,7 +423,6 @@ public class Menu {
             return;
         }
 
-
         String id = diagramView.getTab().getId();
         boolean in_lobby = id.contains("l");
 
@@ -401,6 +448,18 @@ public class Menu {
             // Join lobby
             button_join_lobby.setDisable(false);
 
+        // Updates optional view states.
+        ArrayList<String> viewing = diagramView.getViewing();
+
+            // Only displaying required diagram.
+            button_class.setText(text_class);
+            button_deployment.setText(text_deployment);
+
+            if (viewing.contains("CLASS_DIAGRAM"))
+                button_class.setText("Hide class diagram");
+
+            if (viewing.contains("DEPLOYMENT_DIAGRAM"))
+                button_deployment.setText("Hide deployment diagram");
 
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
