@@ -59,7 +59,10 @@ loop(Rooms, Lobby_increment) ->
 
 	{'DOWN', _Ref, _process, Pid, Reason} -> 
 	  %Send a notice to the Client stating that a lobbt has crashed as well as relay the reason.
-	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}])
+	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}]);
+	  
+	 _ -> 
+		loop(Rooms, Lobby_increment)
   end.
   
 find_room([], Lobby_ID)                             -> not_created ;
