@@ -36,7 +36,9 @@ public class Draw {
 	
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
     private static Image animatedBackground = new Image("resources/SkyGIF.gif");
-    private  static Image classDiagramBackground = new Image("resources/ocean.png");
+
+    private static Image classDiagramBackground  = new Image("resources/OceanBackground.png");
+
 
     /**
      * Constructor
