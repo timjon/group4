@@ -36,6 +36,8 @@ import java.util.*;
  */
 public class Menu {
 
+    private static boolean host = false;
+
     // Instance
     private static Menu menuInstance;
 
@@ -289,6 +291,7 @@ public class Menu {
                 DiagramView.getDiagramViewInView().getTab().setText("Disconnected");
             });
 
+            host = false;
             identifyState();
         });
 
@@ -364,14 +367,25 @@ public class Menu {
 
         Platform.runLater(() -> {
 
-            // Remove lobby
-            button_remove_lobby.setDisable(!in_lobby);
+            if (host) {
+                // Remove lobby
+                button_remove_lobby.setDisable(false);
+
+                // Create lobby
+                button_create_lobby.setDisable(true);
+
+                // Import lobby
+                button_import_lobby.setDisable(false);
+
+
+            } else {
+                button_remove_lobby.setDisable(true);
+                button_create_lobby.setDisable(false);
+                button_import_lobby.setDisable(true);
+            }
+
             // Join lobby
-            button_join_lobby.setDisable(in_lobby);
-            // Create lobby
-            button_create_lobby.setDisable(in_lobby);
-            // Import to lobby
-            button_create_lobby.setDisable(!in_lobby);
+            button_join_lobby.setDisable(false);
 
 
             // If we can go back.
@@ -437,9 +451,7 @@ public class Menu {
                     Net.push("{" + "share, " + result + ", create_lobby}");
                     pressReturn.setFill(Color.GREEN);
                     pressReturn.setText("Lobby created");
-                    button_create_lobby.setDisable(true);
-                    button_remove_lobby.setDisable(false);
-                    //button_ok_password.setDisable(true); // TODO: remove for P-Request.
+                    host = true;
                     primaryStage.close();
                 }
             }
