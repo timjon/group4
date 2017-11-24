@@ -7,6 +7,10 @@ init(Creator_Socket, Password, Lobby_ID) -> loop(Creator_Socket, Password, [Crea
 
 loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) -> 
   receive
+    {leave_lobby, Socket} -> 
+	  NewMembers = [ New || New <- Members, New /= Socket],
+	  loop(Creator_Socket, Password, NewMembers, Diagrams, Lobby_ID);
+  
     {remove_lobby, Creator_Socket} -> io:format("Removed lobby ~n"), ok;
 
 	{join_lobby, Socket, Pwd} -> 

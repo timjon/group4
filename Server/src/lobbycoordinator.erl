@@ -1,14 +1,14 @@
 -module(lobbycoordinator).
 -export([init/0, remove_lobby/2, get_lobby_ID/1]).
-%%Version 0.1
+%%Version 0.8
 %%Collaborators: Sebastian Fransson
 
 %Initializes the lobby
 init() -> 
-  loop([], 0).
+  loop([], 0, []).
   
 %the loop keeps track of the rooms and handles lobby requests.
-loop(Rooms, Lobby_increment) ->
+loop(Rooms, Lobby_increment, Members) ->
   io:format("hhello ~n~p", [Lobby_increment]),
   receive 
     %Creates a diagram and saves the monitor reference as well as lobby info to the list of rooms.
@@ -18,9 +18,9 @@ loop(Rooms, Lobby_increment) ->
 	  io:format("Lobby created"),
 	  %Format_result = io_lib:format("~p", [{lobby_created, "Lobby has been created"}]),
 	  %gen_tcp:send(Creator_Socket, [Format_result]),
-	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1);
+	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1, Members);
 	
-	%Demonitors, kills and removes the host's lobby from the list of rooms.  
+	%Demonitors, kills and removes the host's lobby from the list of rooms.
 	{Creator_Socket, remove_lobby} -> 
 	  io:format("before sending ~n"),
 	  %Finds the lobby id and Pid of the lobby process.
@@ -34,13 +34,15 @@ loop(Rooms, Lobby_increment) ->
 	  %Send a confirmation to the lobby so that it exits naturally.
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
 	  io:format("after sending remove ~n"),
-	  loop(NewRooms, Lobby_increment);
+	  loop(NewRooms, Lobby_increment, Members);
 	  
     {Socket, {join_lobby, {Lobby_ID, Password}}} -> 
 	  find_room(Rooms, Lobby_ID) ! {join_lobby, Socket, Password},
-	  loop(Rooms, Lobby_increment);
+	  loop(Rooms, Lobby_increment, Members);
 	  
-	{leave_lobby, Socket, Lobby_ID} -> not_implemented;
+	{leave_lobby, User_Socket, Lobby_ID} -> 
+	  LPid = LPid = [Pid||{Lid, _Password, Pid, _Socket, _Ref} <- Rooms, Lobby_ID == Lid],
+	  LPid ! {leave_lobby, User_Socket};
 	
 	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
 	  io:format("wow~n"),
@@ -50,7 +52,7 @@ loop(Rooms, Lobby_increment) ->
 	    not_created -> no_lobby_created;
 		Pid         -> Pid ! {create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}}
 	  end,
-	  loop(Rooms, Lobby_increment);
+	  loop(Rooms, Lobby_increment, Members);
 	
 	{Creator_Socket, {Did, Command}} -> 
 	  case find_room(Rooms, list_to_integer(get_lobby_ID(Did))) of 
@@ -59,14 +61,14 @@ loop(Rooms, Lobby_increment) ->
 		Pid         -> Pid ! {command, Creator_Socket, {Did, Command}},
 		  io:format("Sent: ~n~p", [{command, {Did, Command}}])
 	  end,
-	  loop(Rooms, Lobby_increment);
+	  loop(Rooms, Lobby_increment, Members);
 
 	{'DOWN', _Ref, _process, Pid, Reason} -> 
 	  %Send a notice to the Client stating that a lobbt has crashed as well as relay the reason.
 	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}]);
 	  
 	 _ -> 
-		loop(Rooms, Lobby_increment)
+		loop(Rooms, Lobby_increment, Members)
   end.
   
 find_room([], Lobby_ID)                             -> not_created ;
