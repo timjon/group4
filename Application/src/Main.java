@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -10,9 +11,11 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+import javafx.stage.WindowEvent;
 import model.Menu;
 import view.DiagramView;
 import view.ExecutionLog;
+import view.handlers.Animation;
 import view.handlers.Resizer;
 import static view.DiagramView.tabPane;
 import controller.network.Net;
@@ -72,6 +75,13 @@ public class Main extends Application {
 
         primaryStage.setScene(main);
         primaryStage.show();
+
+        // When you close the application, exit the system.
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent we) {
+                System.exit(0);
+            }
+        });
 
         /*
         Resources used to figure out the following code:
