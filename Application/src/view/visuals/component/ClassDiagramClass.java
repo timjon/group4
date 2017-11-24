@@ -5,6 +5,12 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import view.visuals.Renderable;
 
+/**
+ * Class for Class diagrams
+ * @version 1.0
+ * @author Isabelle Törnqvist
+ */
+
 public class ClassDiagramClass implements Renderable {
 
     private Coordinates coordinates;

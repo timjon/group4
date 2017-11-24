@@ -14,9 +14,9 @@ import view.visuals.component.*;
 import java.util.ArrayList;
 
 /**
- * @version 1.3
+ * @version 2.0
  * @author Pontus Laestadius, Sebastian Fransson
- * Collaborator Rashad Kamsheh, Kosara Golemshinska
+ * Collaborator Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
 
 public class Draw {
