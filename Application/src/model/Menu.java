@@ -268,6 +268,7 @@ public class Menu {
         button_previous.setOnAction((ActionEvent event) ->{
             String tabID = DiagramView.getDiagramViewInView().getTab().getId();
             try {
+                //Checks if the current tab has a diagram from a lobby or not
                 if (tabID.charAt(1) == 'l') {
                     Net.push("{share, {" + tabID + ", previous_message}}");
                 } else {
@@ -281,6 +282,7 @@ public class Menu {
         button_next.setOnAction((ActionEvent event)    ->{
             String tabID = DiagramView.getDiagramViewInView().getTab().getId();
             try {
+                //Checks if the current tab has a diagram from a lobby or not
                 if (tabID.charAt(1) == 'l') {
                     Net.push("{share, {" + tabID + ", next_message}}");
                 } else {
@@ -312,9 +314,11 @@ public class Menu {
             identifyState();
         });
 
-        button_join_lobby.setOnAction((ActionEvent event)    -> {
-                    Stage newStage = new Stage();
-                    newStage.setTitle("Join a lobby");
+        button_join_lobby.setOnAction((ActionEvent event)    ->{
+            //Creates the popup window
+            Stage joinLobbyStage = new Stage();
+            joinLobbyStage.setTitle("Join a lobby");
+
 
                     VBox vbox = new VBox();
 
@@ -328,17 +332,21 @@ public class Menu {
 
                     Label label = new Label();
 
-                    Button join_button = new Button("Join");
-                    join_button.setFocusTraversable(false);
+            //Creates the join button
+            Button join_button = new Button("Join");
+            join_button.setFocusTraversable(false);
 
-                    vbox.getChildren().add(lobbyID);
-                    vbox.getChildren().add(password);
-                    vbox.getChildren().add(join_button);
-                    vbox.getChildren().add((label));
+            //Adds the fields and the button to the window
+            vbox.getChildren().add(lobbyID);
+            vbox.getChildren().add(password);
+            vbox.getChildren().add(join_button);
+            vbox.getChildren().add((label));
 
-                    Scene stageScene = new Scene(vbox, 300, 100);
-                    newStage.setScene(stageScene);
-                    newStage.show();
+            //Sets the size of the window
+            Scene stageScene = new Scene(vbox, 300, 100);
+            joinLobbyStage.setScene(stageScene);
+            joinLobbyStage.show();
+
 
                     join_button.setOnAction((ActionEvent e) -> {
                         String id = lobbyID.getText();
@@ -348,7 +356,7 @@ public class Menu {
                             label.setText("Lobby ID and password needed");
                         } else {
                             Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
-                            newStage.close();
+                            joinLobbyStage.close();
                         }
                     });
 
@@ -395,7 +403,6 @@ public class Menu {
                 // Remove diagram from view.
                 dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
             }
-
         });
 
     }

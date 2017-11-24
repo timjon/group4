@@ -36,9 +36,14 @@ loop(Rooms, Lobby_increment, Members) ->
 	  io:format("after sending remove ~n"),
 	  loop(NewRooms, Lobby_increment, Members);
 	  
+	%This happens when a user tries to join a lobby
     {Socket, {join_lobby, {Lobby_ID, Password}}} -> 
-	  find_room(Rooms, Lobby_ID) ! {join_lobby, Socket, Password},
-	  loop(Rooms, Lobby_increment, Members);
+	  %Finds the room the user wants to find
+	  case find_room(Rooms, Lobby_ID) of 
+	    not_created -> not_created;
+		Pid         ->  Pid ! {join_lobby, Socket, Password}, io:format("created")
+	  end,
+	  loop(Rooms, Lobby_increment);
 	  
 	{leave_lobby, User_Socket, Lobby_ID} -> 
 	  LPid = LPid = [Pid||{Lid, _Password, Pid, _Socket, _Ref} <- Rooms, Lobby_ID == Lid],
@@ -46,11 +51,15 @@ loop(Rooms, Lobby_increment, Members) ->
 	
 	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
 	  io:format("wow~n"),
-	  Lid = hd([Lid||{Lid, _Password, _Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket]),
+	  Lid = [Lid||{Lid, _Password, _Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
 	  io:format("wow~n~p", [Lid]),
-	  case find_room(Rooms, Lid) of
-	    not_created -> no_lobby_created;
-		Pid         -> Pid ! {create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}}
+	  case Lid of 
+	    [] -> no_lobby_created;
+	    [Head|_] -> 
+		  case find_room(Rooms, Head) of
+	        not_created -> no_lobby_created;
+		    Pid         -> Pid ! {create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}}
+		  end
 	  end,
 	  loop(Rooms, Lobby_increment, Members);
 	

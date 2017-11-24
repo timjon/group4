@@ -67,6 +67,7 @@ use_input({ok, {share, Password, create_lobby}}, Socket, Diagrams) ->
   lobbycoordinator ! {Socket, create_lobby, Password},
   loop(Socket, Diagrams);
   
+%If the user wants to interact with a lobby
 use_input({ok, {share, Info}}, Socket, Diagrams) -> 
   lobbycoordinator ! {Socket, Info},
   loop(Socket, Diagrams);
