@@ -4,22 +4,17 @@ import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import controller.network.Net;
@@ -36,18 +31,22 @@ import java.util.*;
  */
 public class Menu {
 
+    private static boolean host = false;
+
     // Instance
     private static Menu menuInstance;
 
     // List of buttons.
     private static Button button_import;
-    private static Button button_import_lobby;
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
     private static Button button_join_lobby;
     private static Button button_create_lobby;
     private static Button button_remove_lobby;
+    private static Button button_import_lobby;
+    private static Button button_class;
+    private static Button button_deployment;
 
     // Flavor texts
     private final static String text_input = "Import";
@@ -59,6 +58,9 @@ public class Menu {
     private final static String text_join_lobby = "Join a lobby";
     private final static String text_create_lobby = "Create lobby";
     private final static String text_remove_lobby = "Remove lobby";
+    private final static String text_class = "Show class diagram";
+    private final static String text_deployment = "Show deployment diagram";
+
     // State
     private boolean play = false;
 
@@ -76,12 +78,14 @@ public class Menu {
         button_join_lobby = new Button(text_join_lobby);
         button_create_lobby = new Button(text_create_lobby);
         button_remove_lobby = new Button(text_remove_lobby);
+        button_class = new Button(text_class);
+        button_deployment = new Button(text_deployment);
     }
 
     /**
      * @param play set the play status of automation.
      */
-    public void setPlay(boolean play) {
+    private void setPlay(boolean play) {
         this.play = play;
     }
 
@@ -116,6 +120,8 @@ public class Menu {
         menu.getChildren().add(button_join_lobby);
         menu.getChildren().add(button_create_lobby);
         menu.getChildren().add(button_remove_lobby);
+        menu.getChildren().add(button_class);
+        menu.getChildren().add(button_deployment);
 
         return menu;
     }
@@ -146,7 +152,6 @@ public class Menu {
         for (Button button: buttonHashSet)
             button.setDisable(!state);
     }
-
 
     /**
      * Starts automating the executing. Disables manual control.
@@ -198,50 +203,60 @@ public class Menu {
     private void setEvents(Stage stage) {
 
         button_import.setOnAction((ActionEvent event) -> {
-                Collection<String> result = Import.file(stage);
-                try {
-                    if (result.isEmpty()) return;
-                }catch(NullPointerException e){
-                    //This is just here since we get a null pointer if we close the import screen without importing
-                }
-                // Parse the element if it contains a supported diagram
-                Parser parse = new Parser();
+            Collection<String> result = Import.file(stage);
+            if (result == null) return;
+            if (result.isEmpty()) return;
+
+            // Parse the element if it contains a supported diagram
+            Parser parse = new Parser();
+
+            for (String file: result) {
                 switch(DiagramCheck.ContainsDiagram(result)) {
                     case "sequence_diagram" :
-                        for (String element : result) {
-                            parse.parseSequenceDiagram(element);
-                            Net.push(parse.getFirstSequenceDiagram());
+                        parse.parseSequenceDiagram(file);
 
-                            // Enable all media buttons.
-                            setMenuState(true, button_create_lobby, button_remove_lobby);
-                            button_previous.setDisable(true);
+                        // Catches if there are no diagrams.
+                        try {
+                            Net.push(parse.getDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
                         }
+
+                        // Catches if there is no parallel diagram.
+                        try {
+                            Net.push(parse.getParallelSequenceDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
+                        break;
+                    case "class_diagram":
+                        parse.parseClassDiagram(file);
+                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
+                        Net.push(parse.getDiagram());
+
                         break;
                 }
-                // if the diagram is not included in the switch case, check if the diagram is invalid
-                DiagramCheck.ContainsDiagram(result);
-                identifyState();
-            });
+
+            }
+
+            identifyState();
+        });
 
         button_import_lobby.setOnAction((ActionEvent event) -> {
             Collection<String> result = Import.file(stage);
-            try {
-                if (result.isEmpty()) return;
-            }catch(NullPointerException e){
+            if (result == null) return;
+            if (result.isEmpty()) return;
 
-            }
             // Parse the element if it contains a supported diagram
             Parser parse = new Parser();
             switch(DiagramCheck.ContainsDiagram(result)) {
                 case "sequence_diagram" :
                     for (String element : result) {
                         parse.parseSequenceDiagram(element);
-                        System.out.println("{share, {l0, " + parse.getFirstSequenceDiagram() + "}}");
-                        Net.push("{share, " + parse.getFirstSequenceDiagram() + "}");
+                        Net.push("{share, " + parse.getDiagram() + "}");
 
                         // Enable all media buttons.
-                        setMenuState(true);
-                        button_previous.setDisable(true);
                     }
                     break;
             }
@@ -285,12 +300,18 @@ public class Menu {
 
         button_create_lobby.setOnAction((ActionEvent event)    ->{
             passwordBox();
+            identifyState();
         });
         button_remove_lobby.setOnAction((ActionEvent event) ->{
             Net.push("{" + "share, " + "remove_lobby}");
-            button_remove_lobby.setDisable(true);
-            button_create_lobby.setDisable(false);
 
+            Platform.runLater(() -> {
+                DiagramView.getDiagramViewInView().getTab().setId("Disconnected");
+                DiagramView.getDiagramViewInView().getTab().setText("Disconnected");
+            });
+
+            host = false;
+            identifyState();
         });
 
         button_join_lobby.setOnAction((ActionEvent event)    ->{
@@ -298,19 +319,18 @@ public class Menu {
             Stage joinLobbyStage = new Stage();
             joinLobbyStage.setTitle("Join a lobby");
 
-            VBox vbox = new VBox();
 
-            //Adds the field for writing in the lobby id
-            TextField lobbyID = new TextField("");
-            lobbyID.setPromptText("Lobby ID");
-            lobbyID.setFocusTraversable(false);
+                    VBox vbox = new VBox();
 
-            //Adds the field for writing in the password
-            PasswordField password = new PasswordField();
-            password.setPromptText("Password");
-            password.setFocusTraversable(false);
+                    TextField lobbyID = new TextField("");
+                    lobbyID.setPromptText("Lobby ID");
+                    lobbyID.setFocusTraversable(false);
 
-            Label label = new Label();
+                    PasswordField password = new PasswordField();
+                    password.setPromptText("Password");
+                    password.setFocusTraversable(false);
+
+                    Label label = new Label();
 
             //Creates the join button
             Button join_button = new Button("Join");
@@ -327,18 +347,62 @@ public class Menu {
             joinLobbyStage.setScene(stageScene);
             joinLobbyStage.show();
 
-            join_button.setOnAction((ActionEvent e)    ->{
-                String id  = lobbyID.getText();
-                String pwd = password.getText();
 
-                //Makes sure you cant try to join a lobby without a name or password
-                if(id.equals("") || pwd.equals("")){
-                    label.setText("Lobby ID and password needed");
-                } else {
-                    Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
-                    joinLobbyStage.close();
-                }
-            });
+                    join_button.setOnAction((ActionEvent e) -> {
+                        String id = lobbyID.getText();
+                        String pwd = password.getText();
+
+                        if (id.equals("") || pwd.equals("")) {
+                            label.setText("Lobby ID and password needed");
+                        } else {
+                            Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
+                            joinLobbyStage.close();
+                        }
+                    });
+
+                });
+
+        button_class.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            // Checks for the state of the button if it's hiding or showing.
+            if (button_class.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
+                button_class.setText("Hide class diagram");
+
+                // Add diagram to view.
+                dv.addDiagram(dv.CLASS_DIAGRAM);
+            } else {
+
+                // Change to default text.
+                button_class.setText(text_class);
+
+                // Remove diagram from view.
+                dv.removeDiagram(dv.CLASS_DIAGRAM);
+            }
+
+        });
+
+        button_deployment.setOnAction((ActionEvent event)    ->{
+            DiagramView dv = DiagramView.getDiagramViewInView();
+
+            // Checks for the state of the button if it's hiding or showing.
+            if (button_deployment.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
+                button_deployment.setText("Hide deployment diagram");
+
+                // Add diagram to view.
+                dv.addDiagram(dv.DEPLOYMENT_DIAGRAM);
+            } else {
+
+                // Change to default text.
+                button_deployment.setText(text_deployment);
+
+                // Remove diagram from view.
+                dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
+            }
         });
 
     }
@@ -363,13 +427,47 @@ public class Menu {
 
             // If there is no view.
         } catch (IllegalStateException ex) {
-
-            // If there is no view, we disable the media buttons.
-            Menu.getInstance().setMenuState(false, button_import, button_import_lobby, button_create_lobby, button_join_lobby);
             return;
         }
 
+        String id = diagramView.getTab().getId();
+        boolean in_lobby = id.contains("l");
+
         Platform.runLater(() -> {
+
+            if (host) {
+                // Remove lobby
+                button_remove_lobby.setDisable(false);
+
+                // Create lobby
+                button_create_lobby.setDisable(true);
+
+                // Import lobby
+                button_import_lobby.setDisable(false);
+
+
+            } else {
+                button_remove_lobby.setDisable(true);
+                button_create_lobby.setDisable(false);
+                button_import_lobby.setDisable(true);
+            }
+
+            // Join lobby
+            button_join_lobby.setDisable(false);
+
+        // Updates optional view states.
+        ArrayList<String> viewing = diagramView.getViewing();
+
+            // Only displaying required diagram.
+            button_class.setText(text_class);
+            button_deployment.setText(text_deployment);
+
+            if (viewing.contains("CLASS_DIAGRAM"))
+                button_class.setText("Hide class diagram");
+
+            if (viewing.contains("DEPLOYMENT_DIAGRAM"))
+                button_deployment.setText("Hide deployment diagram");
+
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
                 button_previous.setDisable(false);
@@ -393,16 +491,17 @@ public class Menu {
     }
 
     /**
-     * Method for
+     * Method for adding a password to the creation of a lobby.
      */
     public void passwordBox(){
         String ok_password_text = "OK";
-        Stage primaryStage = new Stage();
+        Stage primaryStage = new Stage(); // Creates a new 'stage' where we gather the fields and buttons for the pwBox.
         primaryStage.setTitle("Input Password");
         primaryStage.show();
 
-        GridPane grid = new GridPane();
+        GridPane grid = new GridPane(); // Creates a gridpane to easily place the different components.
         grid.setAlignment(Pos.CENTER);
+        //Sets a "padding" which makes the texfield and related components more centered and not use the entire box.
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(15, 15, 15, 15));
@@ -410,19 +509,20 @@ public class Menu {
         Scene scene = new Scene(grid, 250, 125);
         primaryStage.setScene(scene);
 
-        Label pw = new Label("Password:");
+        Label pw = new Label("Password:"); // Label showing showing next to textField.
         grid.add(pw, 0, 0);
 
-        PasswordField pwBox = new PasswordField();
+        PasswordField pwBox = new PasswordField(); // Textfield with password protection.
         grid.add(pwBox, 1, 0);
         pwBox.setPromptText("Password");
-        Button ok_password = new Button(ok_password_text);
-        grid.add(ok_password, 1,1);
+        Button button_ok_password = new Button(ok_password_text); // Button to create a lobby with input password.
+        grid.add(button_ok_password, 1,1);
 
-        final Text pressReturn = new Text();
+        final Text pressReturn = new Text(); //
         grid.add(pressReturn, 1, 2);
 
-        ok_password.setOnAction(new EventHandler<ActionEvent>() {
+        //Handler for pressing the ok button in the newly opened window.
+        button_ok_password.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
                 final String result = pwBox.getText();
@@ -431,9 +531,7 @@ public class Menu {
                     Net.push("{" + "share, " + result + ", create_lobby}");
                     pressReturn.setFill(Color.GREEN);
                     pressReturn.setText("Lobby created");
-                    button_create_lobby.setDisable(true);
-                    button_remove_lobby.setDisable(false);
-                    //ok_password.setDisable(true);
+                    host = true;
                     primaryStage.close();
                 }
             }
