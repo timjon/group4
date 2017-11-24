@@ -32,8 +32,14 @@ loop(Rooms, Lobby_increment) ->
 	  io:format("after sending remove ~n"),
 	  loop(NewRooms, Lobby_increment);
 	  
+	%This happens when a user tries to join a lobby
     {Socket, {join_lobby, {Lobby_ID, Password}}} -> 
-	  find_room(Rooms, Lobby_ID) ! {join_lobby, Socket, Password},
+	  %Finds the room the user wants to find
+	  Id = get_lobby_ID(Lobby_ID),
+	  case find_room(Rooms, Id) of 
+	    not_created -> not_created;
+		Pid         ->  Pid ! {join_lobby, Socket, Password}, io:format("created")
+	  end,
 	  loop(Rooms, Lobby_increment);
 	  
 	{leave_lobby, Socket, Lobby_ID} -> not_implemented;

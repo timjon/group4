@@ -66,18 +66,25 @@ class Decode {
             // Writes the rawStringToDecode data
             write(id, "INFO: " + retrieveMessage(rawStringToDecode));
 
-            // If it's a message or a list of classes (new diagram).
+            //Case for when you already join that lobby
         }else if (rawStringToDecode.contains("in lobby")){
 
             //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
             System.out.println(rawStringToDecode);
 
+            //Case for when you successfully joined the lobby
         }else if (rawStringToDecode.contains("joined lobby,")){
 
             //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
             System.out.println(rawStringToDecode);
 
+            //Case for when you wrote in the wrong password
         }else if (rawStringToDecode.contains("Wrong password")){
+
+            //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
+            System.out.println(rawStringToDecode);
+
+        }else if (rawStringToDecode.contains("does not exit")){
 
             //TODO Popup or something here when I decide what to do with this thing plz block this pullrequest
             System.out.println(rawStringToDecode);
