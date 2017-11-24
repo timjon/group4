@@ -5,10 +5,10 @@
 
 %Initializes the lobby
 init() -> 
-  loop([], 0, []).
+  loop([], 0).
   
 %the loop keeps track of the rooms and handles lobby requests.
-loop(Rooms, Lobby_increment, Members) ->
+loop(Rooms, Lobby_increment) ->
   io:format("hhello ~n~p", [Lobby_increment]),
   receive 
     %Creates a diagram and saves the monitor reference as well as lobby info to the list of rooms.
@@ -18,7 +18,7 @@ loop(Rooms, Lobby_increment, Members) ->
 	  io:format("Lobby created"),
 	  %Format_result = io_lib:format("~p", [{lobby_created, "Lobby has been created"}]),
 	  %gen_tcp:send(Creator_Socket, [Format_result]),
-	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1, Members);
+	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1);
 	
 	%Demonitors, kills and removes the host's lobby from the list of rooms.
 	{Creator_Socket, remove_lobby} -> 
@@ -34,7 +34,7 @@ loop(Rooms, Lobby_increment, Members) ->
 	  %Send a confirmation to the lobby so that it exits naturally.
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
 	  io:format("after sending remove ~n"),
-	  loop(NewRooms, Lobby_increment, Members);
+	  loop(NewRooms, Lobby_increment);
 	  
 	%This happens when a user tries to join a lobby
     {Socket, {join_lobby, {Lobby_ID, Password}}} -> 
@@ -61,7 +61,7 @@ loop(Rooms, Lobby_increment, Members) ->
 		    Pid         -> Pid ! {create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}}
 		  end
 	  end,
-	  loop(Rooms, Lobby_increment, Members);
+	  loop(Rooms, Lobby_increment);
 	
 	{Creator_Socket, {Did, Command}} -> 
 	  case find_room(Rooms, list_to_integer(get_lobby_ID(Did))) of 
@@ -70,14 +70,14 @@ loop(Rooms, Lobby_increment, Members) ->
 		Pid         -> Pid ! {command, Creator_Socket, {Did, Command}},
 		  io:format("Sent: ~n~p", [{command, {Did, Command}}])
 	  end,
-	  loop(Rooms, Lobby_increment, Members);
+	  loop(Rooms, Lobby_increment);
 
 	{'DOWN', _Ref, _process, Pid, Reason} -> 
 	  %Send a notice to the Client stating that a lobbt has crashed as well as relay the reason.
 	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}]);
 	  
 	 _ -> 
-		loop(Rooms, Lobby_increment, Members)
+		loop(Rooms, Lobby_increment)
   end.
   
 find_room([], Lobby_ID)                             -> not_created ;

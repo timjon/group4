@@ -45,6 +45,7 @@ public class Menu {
     private static Button button_create_lobby;
     private static Button button_remove_lobby;
     private static Button button_import_lobby;
+    private static Button button_leave_lobby;
     private static Button button_class;
     private static Button button_deployment;
 
@@ -58,6 +59,7 @@ public class Menu {
     private final static String text_join_lobby = "Join a lobby";
     private final static String text_create_lobby = "Create lobby";
     private final static String text_remove_lobby = "Remove lobby";
+    private final static String text_leave_lobby = "Leave lobby";
     private final static String text_class = "Show class diagram";
     private final static String text_deployment = "Show deployment diagram";
 
@@ -78,6 +80,7 @@ public class Menu {
         button_join_lobby = new Button(text_join_lobby);
         button_create_lobby = new Button(text_create_lobby);
         button_remove_lobby = new Button(text_remove_lobby);
+        button_leave_lobby = new Button(text_leave_lobby);
         button_class = new Button(text_class);
         button_deployment = new Button(text_deployment);
     }
@@ -120,6 +123,7 @@ public class Menu {
         menu.getChildren().add(button_join_lobby);
         menu.getChildren().add(button_create_lobby);
         menu.getChildren().add(button_remove_lobby);
+        menu.getChildren().add(button_leave_lobby);
         menu.getChildren().add(button_class);
         menu.getChildren().add(button_deployment);
 
@@ -143,6 +147,7 @@ public class Menu {
         buttonHashSet.add(button_join_lobby);
         buttonHashSet.add(button_create_lobby);
         buttonHashSet.add(button_remove_lobby);
+        buttonHashSet.add(button_leave_lobby);
 
         // Remove the buttons from the set, to not modify.
         for (Button button: buttons)
@@ -361,6 +366,9 @@ public class Menu {
                     });
 
                 });
+        button_leave_lobby.setOnAction((ActionEvent event) ->{
+        //  Net.push("{" + "share" + "leave_lobby, " + LID HERE);
+        });
 
         button_class.setOnAction((ActionEvent event)    ->{
             DiagramView dv = DiagramView.getDiagramViewInView();
