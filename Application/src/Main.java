@@ -8,6 +8,11 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundSize;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
@@ -30,6 +35,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.getIcons().add(new Image("resources/logo.png"));
+        // Welcome screen image.
+        Image welcome_screen = new Image("resources/welcome_screen.png");
 
         primaryStage.setTitle("FUML");
 
@@ -56,9 +63,24 @@ public class Main extends Application {
 
         Menu menu_ = new Menu();
 
+        /**
+         * Welcome screen author: Kosara Golemshinska
+         */
+        // Sets the background image size.
+        BackgroundSize background_size = new BackgroundSize(0.25, 0.25,
+                true, true, false, false);
+        // Creates the background of the center pane in the border pane to the welcome screen.
+        Background welcome_background = new Background(new BackgroundImage(welcome_screen,
+                BackgroundRepeat.NO_REPEAT,
+               BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                background_size));
+        // Sets the background.
+        borderpane.setBackground(welcome_background);
+
         HBox menu = menu_.get(primaryStage); // A HBox holds items horizontally like a menu.
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
-        borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
+       borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
         borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
 
         Scene main;

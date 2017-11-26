@@ -77,7 +77,7 @@ public class Menu {
      */
     public HBox get(Stage stage) {
 
-        // Box to hold all item.
+        // Box to hold all items.
         HBox menu = new HBox();
 
         // Start all media buttons disabled.
