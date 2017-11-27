@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
  * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius
- * @version 4.0
+ * @version 4.1
  */
 public class Message implements Renderable {
     private String name;
@@ -207,7 +207,7 @@ public class Message implements Renderable {
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
         //toNode Coordinates.
-        // int x2 = this.node2.getX(); //Not used atm.
+        int x2 = this.node2.getX(); //Not used atm.
         // int y2 = this.node2.getY(); //Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
@@ -277,6 +277,13 @@ public class Message implements Renderable {
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
                 switchImage = true;
             }
+        } else {
+
+            int x = x1-x2;
+
+            // Sets the message above the trail.
+            gc.fillText(this.name, x1-x/2 -this.name.length()*2, y1 +this.class_size*1.2); // Message description.
+
         }
     }
 
