@@ -1,7 +1,7 @@
 -module(lobbycoordinator).
--export([init/0, remove_lobby/2, get_lobby_ID/1]).
-%%Version 0.8
-%%Collaborators: Sebastian Fransson
+-export([init/0]).
+%%Version 1.0
+%%Authors: Sebastian Fransson, Tim Jonasson
 
 %Initializes the lobby
 init() -> 
@@ -9,7 +9,6 @@ init() ->
   
 %the loop keeps track of the rooms and handles lobby requests.
 loop(Rooms, Lobby_increment) ->
-  io:format("hhello ~n~p", [Lobby_increment]),
   receive 
     %Creates a diagram and saves the monitor reference as well as lobby info to the list of rooms.
     {Creator_Socket, create_lobby, Password} -> 
@@ -51,14 +50,15 @@ loop(Rooms, Lobby_increment) ->
 	  gen_tcp:send(User_Socket, io_lib:format("INFO# Successfully left the lobby at PID: ~p", [LPid]) ++ "~"),
 	  loop(Rooms, Lobby_increment);
 	  
-	
+	%This happens when you send a new diagram to the lobby
 	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
-	  io:format("wow~n"),
+	  %Gets the lobby id
 	  Lid = [Lid||{Lid, _Password, _Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
-	  io:format("wow~n~p", [Lid]),
+	  %Checks if the lobby exists
 	  case Lid of 
 	    [] -> no_lobby_created;
 	    [Head|_] -> 
+		  %Gets the pid
 		  case find_room(Rooms, Head) of
 	        not_created -> no_lobby_created;
 		    Pid         -> Pid ! {create_diagram, Creator_Socket, {Did, Class_names, Classes, Messages}}
@@ -66,12 +66,12 @@ loop(Rooms, Lobby_increment) ->
 	  end,
 	  loop(Rooms, Lobby_increment);
 	
+	%This happens when a command is sent to a shared diagram
 	{Creator_Socket, {Did, Command}} -> 
+	  %Checks if the lobby exists
 	  case find_room(Rooms, list_to_integer(get_lobby_ID(Did))) of 
-	    not_created -> no_lobby_created,
-		  io:format("no lobby");
-		Pid         -> Pid ! {command, Creator_Socket, {Did, Command}},
-		  io:format("Sent: ~n~p", [{command, {Did, Command}}])
+	    not_created -> no_lobby_created;
+		Pid         -> Pid ! {command, Creator_Socket, {Did, Command}}
 	  end,
 	  loop(Rooms, Lobby_increment);
 
@@ -82,18 +82,22 @@ loop(Rooms, Lobby_increment) ->
 		loop(Rooms, Lobby_increment)
   end.
   
+%Finds the pid related to the given lobby id
 find_room([], _Lobby_ID)                             -> not_created ;
 find_room([{Lobby_ID, _Password, Pid, _, _}|_Ls], Lobby_ID) -> Pid;
 find_room([_L|Ls], Lobby_ID)                         -> find_room(Ls, Lobby_ID).
 
+%Gets the lobby id of the given string
 get_lobby_ID([]) -> [];
 get_lobby_ID([L|Ls]) when (L >= $0) and (L =< $9) -> get_ID([L|Ls]);
 get_lobby_ID([_|Ls]) -> get_lobby_ID(Ls).
 
+%Helper function that takes all numbers until another char appears
 get_ID([]) -> [];
 get_ID([L|Ls]) when (L >= $0) and (L =< $9) -> [L| get_ID(Ls)];
 get_ID(_) -> [].
 
+%Removes the lobby related to the given id
 remove_lobby(_Lobby_ID, []) -> [];
 remove_lobby(Lobby_ID, [{Lobby_ID, _Password, _Pid}|Lobbys]) -> Lobbys;
 remove_lobby(Lobby_ID, [Lobby|Lobbys]) -> [Lobby|remove_lobby(Lobby_ID, Lobbys)].

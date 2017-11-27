@@ -1,7 +1,7 @@
 -module(lobby).
 -export([init/3]).
-%%Version: 0.1
-%%Collaborators: Sebastian Fransson
+%%Version: 1.0
+%%Authors: Sebastian Fransson, Tim Jonasson
 
 init(Creator_Socket, Password, Lobby_ID) -> loop(Creator_Socket, Password, [Creator_Socket], [], Lobby_ID).
 
