@@ -32,14 +32,14 @@ public class ClassDiagramClass implements Renderable {
         gc.setFill(Color.TRANSPARENT);
 
         Image island = islandStates[(int)animationIndex];
-
+        //Draw class
         gc.drawImage(island,
                 this.coordinates.getX() - size/2,
                 this.coordinates.getY() - size/2,
                 size,
                 size*(island.getHeight()/island.getWidth()));
 
-
+        //Sets the name of the class
         gc.setFill(Color.BLACK);
         gc.fillText(
                 this.name,
@@ -48,6 +48,9 @@ public class ClassDiagramClass implements Renderable {
                 island.getWidth());
     }
 
+    /**
+     * Changes between the two island, making it "animated"
+     */
     @Override
     public void update() {
         animationIndex += 0.25;
@@ -55,22 +58,36 @@ public class ClassDiagramClass implements Renderable {
             animationIndex = 0;
     }
 
+    /**
+     * Does nothing, but is needed
+     */
     @Override
     public String format() {
         return null;
     }
 
+    /**
+     * @return coordinates
+     */
     @Override
     public Coordinates getCoordinates() {
         return coordinates;
     }
 
+    /**
+     * @return name
+     */
     @Override
     public String getName() {
         String[] s = name.split(":");
         return s[1];
     }
 
+    /**
+     * Sets the coordinates and size, used to place the class
+     * @param coordinates
+     * @param size
+     */
     @Override
     public void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;

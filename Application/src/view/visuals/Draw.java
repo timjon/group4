@@ -37,7 +37,7 @@ public class Draw {
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
     private static Image animatedBackground = new Image("resources/SkyGIF.gif");
 
-    private static Image classDiagramBackground  = new Image("resources/OceanBackground.png");
+    private static Image classDiagramBackground  = new Image("resources/OceanBackgroundMuted.png");
 
     /**
      * Constructor
@@ -47,7 +47,7 @@ public class Draw {
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
 
-        // Mock input data for class diagram
+        // TODO: remove Mock input data for class diagram
         addClassDiagramClass("YOLOSWAG123");
         addClassDiagramClass("Dopeffs");
     }
