@@ -16,8 +16,7 @@ loop(Rooms, Lobby_increment) ->
 	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Password, Lobby_increment) end),
       Ref = monitor(process, Pid),
 	  io:format("Lobby created"),
-	  %Format_result = io_lib:format("~p", [{lobby_created, "Lobby has been created"}]),
-	  %gen_tcp:send(Creator_Socket, [Format_result]),
+	  gen_tcp:send(Creator_Socket, io_lib:format("Created lobby with id:,  ~p", [Lobby_increment]) ++ "~"),
 	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1);
 	
 	%Demonitors, kills and removes the host's lobby from the list of rooms.
@@ -33,6 +32,7 @@ loop(Rooms, Lobby_increment) ->
 	  demonitor(Ref),
 	  %Send a confirmation to the lobby so that it exits naturally.
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
+	  gen_tcp:send(Creator_Socket, io_lib:format("Removed lobby") ++ "~"),
 	  io:format("after sending remove ~n"),
 	  loop(NewRooms, Lobby_increment);
 	  
@@ -45,9 +45,12 @@ loop(Rooms, Lobby_increment) ->
 	  end,
 	  loop(Rooms, Lobby_increment);
 	  
-	{leave_lobby, User_Socket, Lobby_ID} -> 
+	{User_Socket, {leave_lobby, Lobby_ID}} -> 
 	  LPid = LPid = [Pid||{Lid, _Password, Pid, _Socket, _Ref} <- Rooms, Lobby_ID == Lid],
-	  LPid ! {leave_lobby, User_Socket};
+	  LPid ! {leave_lobby, User_Socket},
+	  gen_tcp:send(User_Socket, io_lib:format("Left lobby successfully") ++ "~"),
+	  loop(Rooms, Lobby_increment);
+	  
 	
 	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
 	  io:format("wow~n"),

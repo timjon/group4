@@ -462,6 +462,7 @@ public class Menu {
 
             // Join lobby
             button_join_lobby.setDisable(false);
+            button_leave_lobby.setDisable(false);
 
         // Updates optional view states.
         ArrayList<String> viewing = diagramView.getViewing();

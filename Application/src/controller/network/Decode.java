@@ -68,20 +68,26 @@ class Decode {
             write(id, "INFO: " + retrieveMessage(rawStringToDecode));
 
             //Case for when you already join that lobby
-        }else if (rawStringToDecode.contains("in lobby")){
+        } else if (rawStringToDecode.contains("in lobby")) {
 
             disp("Warning", "Already in lobby", "You already join this lobby");
 
             //Case for when you successfully joined the lobby
-        }else if (rawStringToDecode.contains("joined lobby,")){
+        } else if (rawStringToDecode.contains("joined lobby,")) {
 
             disp("Joined lobby", rawStringToDecode, "");
 
             //Case for when you wrote in the wrong password
-        }else if (rawStringToDecode.contains("Wrong password")){
+        } else if (rawStringToDecode.contains("Wrong password")) {
 
             disp("Error", "Incorrect password", "The given password is not valid for this lobby");
 
+        } else if (rawStringToDecode.contains("Created lobby")) {
+            disp("Info", rawStringToDecode, "");
+        } else if (rawStringToDecode.contains("Removed lobby")) {
+            disp("Info", rawStringToDecode, "");
+        }else if(rawStringToDecode.contains("Left lobby")){
+            disp("Info", rawStringToDecode, "");
         }else {
 
             // Gets the message content.
