@@ -24,13 +24,11 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 		  case Pwd of 
 		    Password -> 
 		      %Sends a confirmation message to the client and then adds the user to the members list
-			  io:format("hello joining thing"),
 			  gen_tcp:send(Socket, io_lib:format("INFO# Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
 		      send_classes(Socket, Diagrams),
 		      [Socket|Members];
 			_ -> 
 			  %Sends a message to the client telling the user that the password was incorrect
-			  io:format("NOOOOO"),
 			  gen_tcp:send(Socket, io_lib:format("INFO# Wrong password to lobby, ~p", [Lobby_ID]) ++ "~"),
 			  Members
 		  end;

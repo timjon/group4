@@ -41,7 +41,7 @@ loop(Rooms, Lobby_increment) ->
 	  %Finds the room the user wants to find
 	  case find_room(Rooms, Lobby_ID) of 
 	    not_created -> not_created;
-		Pid         ->  Pid ! {join_lobby, Socket, Password}, io:format("created")
+		Pid         ->  Pid ! {join_lobby, Socket, Password}
 	  end,
 	  loop(Rooms, Lobby_increment);
 	  

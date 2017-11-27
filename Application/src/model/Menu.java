@@ -260,10 +260,41 @@ public class Menu {
                     for (String element : result) {
                         parse.parseSequenceDiagram(element);
                         Net.push("{share, " + parse.getDiagram() + "}");
+                        System.out.println("{share, " + parse.getDiagram() + "}");
 
                         // Enable all media buttons.
                     }
                     break;
+            }
+            for (String file: result) {
+                switch(DiagramCheck.ContainsDiagram(result)) {
+                    case "sequence_diagram" :
+                        parse.parseSequenceDiagram(file);
+
+                        // Catches if there are no diagrams.
+                        try {
+                            Net.push("{share, " + parse.getDiagram() + "}");
+                            System.out.println("{share, " + parse.getDiagram() + "}");
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
+                        // Catches if there is no parallel diagram.
+                        try {
+                            Net.push("{share, " + parse.getParallelSequenceDiagram() + "}");
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
+                        break;
+                    case "class_diagram":
+                        parse.parseClassDiagram(file);
+                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
+                        Net.push("{share, " + parse.getDiagram() + "}");
+
+                        break;
+                }
+
             }
             // if the diagram is not included in the switch case, check if the diagram is invalid
             DiagramCheck.ContainsDiagram(result);
