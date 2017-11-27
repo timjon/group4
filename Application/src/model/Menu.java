@@ -10,6 +10,7 @@ import controller.network.Net;
 import view.DiagramView;
 import view.ExecutionLog;
 import view.handlers.Automate;
+import view.visuals.Draw;
 
 import java.util.*;
 
@@ -217,6 +218,7 @@ public class Menu {
 
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
+            Draw.removeGameOver();  // Removes the game over screen from the canvas.
         });
 
         button_next.setOnAction((ActionEvent event)    ->{

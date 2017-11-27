@@ -118,6 +118,13 @@ public class Draw {
     }
 
     /**
+     * Sets the game over message to null.
+     */
+    public static void removeGameOver() {
+        gameOverNotification = null;
+    }
+
+    /**
      * Removes the last message in the messages list.
      * @return true if it removed a message, false if the message list is empty.
      */

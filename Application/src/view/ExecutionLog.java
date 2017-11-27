@@ -45,7 +45,7 @@ public class ExecutionLog extends ListView {
     /**
      * Only available constructor.
      * Creates a new execution log if one has not been initiated.
-     * Sets it's visual properties.
+     * Sets its visual properties.
      */
     public ExecutionLog() {
         if (elog != null) return; // Only allow a single ExecutionLog view.
