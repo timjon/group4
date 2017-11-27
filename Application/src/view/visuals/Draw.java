@@ -227,7 +227,9 @@ public class Draw {
         for (Renderable r: messages) {
             r.render(gc);
         }
-        gameOverNotification.render(gc);
+        if(gameOverNotification != null) {  // Check if the notification is null to avoid an exception.
+            gameOverNotification.render(gc);
+        }
     }
 
     /**

@@ -29,8 +29,11 @@ public class GameOver implements Renderable {
      */
     @Override
     public void render(GraphicsContext gc) {
-        gc.drawImage(game_over, 0, 0, size,
-                size*(game_over.getHeight()/game_over.getWidth()));
+        int width = (int)gc.getCanvas().getWidth();
+        int height = (int)gc.getCanvas().getHeight();
+        int size2 = (int)(size*(game_over.getHeight()/game_over.getWidth()));
+        gc.drawImage(game_over, (width-size)/2, height/2.5-size2/2, size,
+                size2);
     }
 
     /**
