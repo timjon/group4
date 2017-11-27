@@ -27,6 +27,7 @@ public class Draw {
 
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
+    private static GameOver gameOverNotification;
     private int offset; // Used for message ordering
     private int class_size = 0; // Used for message positioning
 	
@@ -110,6 +111,13 @@ public class Draw {
     }
 
     /**
+     * Creates the game over message.
+     */
+    public static void addGameOver() {
+        gameOverNotification = new GameOver();
+    }
+
+    /**
      * Removes the last message in the messages list.
      * @return true if it removed a message, false if the message list is empty.
      */
@@ -152,11 +160,12 @@ public class Draw {
     }
 
     /**
-     * remakes the "Items", referring to messages and classes
+     * remakes the "Items", referring to messages, classes and "game over"
      */
     private void renderItems() {
         renderClass();
         renderMessage();
+        renderGameOver();
     }
 
     /**
@@ -205,10 +214,13 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        for (Renderable r: allClasses)
+        for (Renderable r: allClasses) {
             r.render(gc);
-        for (Renderable r: messages)
+        }
+        for (Renderable r: messages) {
             r.render(gc);
+        }
+        gameOverNotification.render(gc);
     }
 
     /**
@@ -246,7 +258,7 @@ public class Draw {
      * Updates the class to fit the resized window.
      */
     private void renderClass() {
-        if (allClasses.size() == 0) return; // There are no items to render
+        if (allClasses.size() == 0) return; // There are no items to render.
         int space = ((int)this.canvas.getWidth())/this.allClasses.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
@@ -254,6 +266,21 @@ public class Draw {
             int x = size+ (i*space);
             int y = 25 +size/4;
             allClasses.get(i).place(new Coordinates(x,y), size);
+        }
+    }
+
+    /**
+     * Updates the game over message to fit the resized window.
+     */
+    private void renderGameOver() {
+        if (gameOverNotification == null){
+            return;  // The game over message hasn't been initialized yet.
+        }
+        else {
+            int newWidth = (int)this.canvas.getWidth();
+            int newHeight = (int)this.canvas.getHeight();
+            int size  = newWidth/2;
+            gameOverNotification.place(new Coordinates(newWidth, newHeight), size);
         }
     }
 

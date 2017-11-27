@@ -12,36 +12,70 @@ import view.visuals.Renderable;
  */
 public class GameOver implements Renderable {
 
-    // Game over message.
-    private Image game_over = new Image("resources/game_over_screen.png");
+    private Coordinates coordinates; // The coordinates of the object.
+    int size; // Size of the Object.
+    private Image game_over = new Image("resources/game_over_screen.png");  // Game over message.
 
-    @Override
-    public void render(GraphicsContext gc) {
+    /**
+     * Default constructor.
+     */
+    public GameOver() {
 
     }
 
+    /**
+     * Renders the game over message on the canvas.
+     * @param gc graphics context
+     */
+    @Override
+    public void render(GraphicsContext gc) {
+        gc.drawImage(game_over, 0, 0, size,
+                size*(game_over.getHeight()/game_over.getWidth()));
+    }
+
+    /**
+     * Not applicable as it's not animated.
+     */
     @Override
     public void update() {
 
     }
 
+    /**
+     * Not applicable to the current class
+     * @return null as it's not in use
+     */
     @Override
     public String format() {
         return null;
     }
 
+    /**
+     * Returns the current coordinates of the game over message.
+     * @return the current coordinates
+     */
     @Override
     public Coordinates getCoordinates() {
-        return null;
+        return coordinates;
     }
 
+    /**
+     * Not applicable to this class.
+     * @return null as it's not in use
+     */
     @Override
     public String getName() {
         return null;
     }
 
+    /**
+     * Sets the coordinates and size of the object to the given ones.
+     * @param coordinates the current coordinates of the object
+     * @param size the current size of the object
+     */
     @Override
     public void place(Coordinates coordinates, int size) {
-
+        this.coordinates = coordinates;
+        this.size = size;
     }
 }

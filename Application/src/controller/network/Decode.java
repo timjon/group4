@@ -42,6 +42,9 @@ class Decode {
             // Write Simulation finished in the execution log.
             write(id, "INFO: Simulation finished");
 
+            // Add the game over message to the draw object.
+            Draw.addGameOver();
+
             // Update menu state.
             Menu.getInstance().identifyState();
 
