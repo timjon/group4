@@ -7,12 +7,13 @@ init(Creator_Socket, Password, Lobby_ID) -> loop(Creator_Socket, Password, [Crea
 
 loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) -> 
   receive
+    % This happens when a user leaves a lobby.
     {leave_lobby, Socket} -> 
+	  % Remove the user from the list and send the remaining users into the loop.
 	  NewMembers = [ New || New <- Members, New /= Socket],
-	  io:format("NewList ~p~n", [NewMembers]),
 	  loop(Creator_Socket, Password, NewMembers, Diagrams, Lobby_ID);
   
-    {remove_lobby, Creator_Socket} -> io:format("Removed lobby ~n"), ok;
+    {remove_lobby, Creator_Socket} -> ok; % end the lobby looping to let it terminate naturally.
 
 	%This happens when someone tries to join a lobby
 	{join_lobby, Socket, Pwd} -> 

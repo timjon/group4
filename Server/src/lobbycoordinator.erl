@@ -10,17 +10,18 @@ init() ->
 %the loop keeps track of the rooms and handles lobby requests.
 loop(Rooms, Lobby_increment) ->
   receive 
-    %Creates a diagram and saves the monitor reference as well as lobby info to the list of rooms.
+    %Creates a lobby and saves the monitor reference as well as lobby info to the list of rooms.
     {Creator_Socket, create_lobby, Password} -> 
+	  % Spawn the process and save the Pid.
 	  Pid = spawn(fun () -> lobby:init(Creator_Socket, Password, Lobby_increment) end),
+	  % Save the reference so that we can use it later for demonitoring.
       Ref = monitor(process, Pid),
-	  io:format("Lobby created"),
+	  % Send a confimation to the client saying that the lobby was created.
 	  gen_tcp:send(Creator_Socket, io_lib:format("INFO# Created lobby with id:,  ~p", [Lobby_increment]) ++ "~"),
 	  loop([{Lobby_increment, Password, Pid, Creator_Socket, Ref}|Rooms], Lobby_increment + 1);
 	
 	%Demonitors, kills and removes the host's lobby from the list of rooms.
 	{Creator_Socket, remove_lobby} -> 
-	  io:format("before sending ~n"),
 	  %Finds the lobby id and Pid of the lobby process.
 	  LPid = [Pid||{_Lid, _Password, Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
 	  RefTmp = [Ref || {_Lid, _Password, _Pid, Socket, Ref} <- Rooms, Creator_Socket == Socket],
@@ -31,8 +32,8 @@ loop(Rooms, Lobby_increment) ->
 	  demonitor(Ref),
 	  %Send a confirmation to the lobby so that it exits naturally.
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
-	  gen_tcp:send(Creator_Socket, io_lib:format("INFO# Successfully removed the lobby at PID: ~p", [LPid]) ++ "~"),
-	  io:format("after sending remove ~n"),
+	  %Send a confirmation to the client that a lobby has been removed.
+	  gen_tcp:send(Creator_Socket, io_lib:format("INFO# Successfully removed the lobby at PID:, ~p", [LPid]) ++ "~"),
 	  loop(NewRooms, Lobby_increment);
 	  
 	%This happens when a user tries to join a lobby
@@ -44,10 +45,13 @@ loop(Rooms, Lobby_increment) ->
 	  end,
 	  loop(Rooms, Lobby_increment);
 	  
+	% This happens when a user tries to leave a lobby.
 	{User_Socket, leave_lobby, Lobby_ID} -> 
+	  % Check the list and retrieve the lobby PID of the specified lobby.
 	  LPid = hd([Pid||{Lid, _Password, Pid, _Socket, _Ref} <- Rooms, Lobby_ID == Lid]),
 	  LPid ! {leave_lobby, User_Socket},
-	  gen_tcp:send(User_Socket, io_lib:format("INFO# Successfully left the lobby at PID: ~p", [LPid]) ++ "~"),
+	  % Send a confrimation to the client that a lobby has been successfully left.
+	  gen_tcp:send(User_Socket, io_lib:format("INFO# Successfully left the lobby at PID:, ~p", [LPid]) ++ "~"),
 	  loop(Rooms, Lobby_increment);
 	  
 	%This happens when you send a new diagram to the lobby

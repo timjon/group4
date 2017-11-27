@@ -1,5 +1,7 @@
 -module(lobbymonitor).
 -export([init/0]).
+%% Version: 1.0
+%% Author: Sebastian Fransson
 
 % initializes the loop, spawns the lobbycoordinator, monitors the lobbycoordinator and registers it.
 init() -> 
