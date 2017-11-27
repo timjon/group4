@@ -196,7 +196,6 @@ public class Draw {
         initClassDiagram(canvas_class.getGraphicsContext2D());
 
         renderContainer(); // Paints
-        renderClassDiagramContainer();
     }
 
     /**
@@ -228,23 +227,15 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        GraphicsContext graphicsContext = canvas_class.getGraphicsContext2D(); //content for class diagram
         for (Renderable r: allClasses)
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
+        //rendering of class diagram
+        for (Renderable e: allClassDiagramClasses)
+            e.render(graphicsContext);
     }
-
-    /**
-     * Renders class diagram
-     */
-
-    void renderClassDiagramContainer(){
-        if (!DiagramView.inView(this)) return;
-        GraphicsContext gc = canvas_class.getGraphicsContext2D();
-        for (Renderable r: allClassDiagramClasses)
-            r.render(gc);
-    }
-
 
     /**
      * Updates the Renderables.
