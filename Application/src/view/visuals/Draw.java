@@ -188,9 +188,18 @@ public class Draw {
 
         renderItems();
         renderContainer();
-
         clear(canvas_deployment);
         canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
+    }
+
+    /**
+     * Initializes the drawing of class diagram
+     * @param gc
+     */
+    void initClassDiagram(GraphicsContext gc){
+        gc.clearRect(0,0,getWidth(), getHeight());
+        // adds the background to class diagram canvas
+        gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
     }
 
     /**
@@ -207,16 +216,7 @@ public class Draw {
     }
 
     /**
-     * Initializes the drawing of class diagram
-     * @param gc
-     */
-    void initClassDiagram(GraphicsContext gc){
-        gc.clearRect(0,0,getWidth(), getHeight());
-        // adds the background to class diagram canvas
-        gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
-    }
-
-     /** Clear the provided GraphicalContext.
+     * Clear the provided GraphicalContext.
      * @param canvas to get properties from.
      */
     private void clear(Canvas canvas) {
@@ -330,21 +330,5 @@ public class Draw {
         if (this.messages.size() == 0 || index >= this.messages.size())
             throw new ArrayIndexOutOfBoundsException("Index: " + index + "Size: " + this.messages.size());
         return this.messages.get(index);
-    }
-
-    /**
-     * Resets all messages but the last one to be not static.
-     */
-    public void resetCurrentTime() {
-        for (int i = messages.size()-1; i > 0; i--)
-            messages.get(i -1).setStatic(false);
-    }
-
-    /**
-     * Resets all messages to not be static.
-     */
-    public void resetStatic() {
-        for (Message message: messages)
-            message.setStatic(false);
     }
 }
