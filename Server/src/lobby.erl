@@ -24,18 +24,18 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 		    Password -> 
 		      %Sends a confirmation message to the client and then adds the user to the members list
 			  io:format("hello joining thing"),
-			  gen_tcp:send(Socket, io_lib:format("Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
+			  gen_tcp:send(Socket, io_lib:format("INFO# Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
 		      send_classes(Socket, Diagrams),
 		      [Socket|Members];
 			_ -> 
 			  %Sends a message to the client telling the user that the password was incorrect
 			  io:format("NOOOOO"),
-			  gen_tcp:send(Socket, io_lib:format("Wrong password to lobby, ~p", [Lobby_ID]) ++ "~"),
+			  gen_tcp:send(Socket, io_lib:format("INFO# Wrong password to lobby, ~p", [Lobby_ID]) ++ "~"),
 			  Members
 		  end;
 		found_member -> 
 		  %Tells the user that they already joined this lobby
-		  gen_tcp:send(Socket, io_lib:format("Already in lobby, ~p", [Lobby_ID]) ++ "~"),
+		  gen_tcp:send(Socket, io_lib:format("INFO# Already in lobby, ~p", [Lobby_ID]) ++ "~"),
 		  Members
 		end, Diagrams, Lobby_ID);
 
