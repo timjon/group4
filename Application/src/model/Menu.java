@@ -576,6 +576,7 @@ public class Menu {
             @Override
             public void handle(ActionEvent e) {
                 final String result = leaveBox.getText();
+                    // Send the result to the server.
                     Net.push("{" + "share, " + result + ", leave_lobby}");
                     leaveStage.close();
                 }
