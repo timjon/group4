@@ -27,12 +27,12 @@ loop(Rooms, Lobby_increment) ->
 	  RefTmp = [Ref || {_Lid, _Password, _Pid, Socket, Ref} <- Rooms, Creator_Socket == Socket],
 	  [Ref | _] = RefTmp,
 	  [Lobby_PID|_] = LPid,
-	  NewRooms = [ {Lid, Password, Pid, Socket, Ref}|| {Lid, Password, Pid, Socket, Ref} <- Rooms, Creator_Socket /= Socket],
+	  NewRooms = [ {Lid, Password, Pid, Socket, _Ref}|| {Lid, Password, Pid, Socket, _Ref} <- Rooms, Creator_Socket /= Socket],
 	  %demonitor the lobby to avoid receiving the 'DOWN' message, since we manually terminated the process.
 	  demonitor(Ref),
 	  %Send a confirmation to the lobby so that it exits naturally.
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
-	  gen_tcp:send(Creator_Socket, io_lib:format("Removed lobby") ++ "~"),
+	  gen_tcp:send(Creator_Socket, io_lib:format("Removed lobby with id:, ~p", [LPid]) ++ "~"),
 	  io:format("after sending remove ~n"),
 	  loop(NewRooms, Lobby_increment);
 	  
@@ -45,10 +45,10 @@ loop(Rooms, Lobby_increment) ->
 	  end,
 	  loop(Rooms, Lobby_increment);
 	  
-	{User_Socket, {leave_lobby, Lobby_ID}} -> 
-	  LPid = LPid = [Pid||{Lid, _Password, Pid, _Socket, _Ref} <- Rooms, Lobby_ID == Lid],
+	{User_Socket, leave_lobby, Lobby_ID} -> 
+	  LPid = hd([Pid||{Lid, _Password, Pid, _Socket, _Ref} <- Rooms, Lobby_ID == Lid]),
 	  LPid ! {leave_lobby, User_Socket},
-	  gen_tcp:send(User_Socket, io_lib:format("Left lobby successfully") ++ "~"),
+	  gen_tcp:send(User_Socket, io_lib:format("Left lobby successfully by id:,~p", [Lobby_ID]) ++ "~"),
 	  loop(Rooms, Lobby_increment);
 	  
 	
@@ -78,14 +78,13 @@ loop(Rooms, Lobby_increment) ->
 	{'DOWN', _Ref, _process, Pid, Reason} -> 
 	  %Send a notice to the Client stating that a lobbt has crashed as well as relay the reason.
 	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}]);
-	  
 	 _ -> 
 		loop(Rooms, Lobby_increment)
   end.
   
-find_room([], Lobby_ID)                             -> not_created ;
-find_room([{Lobby_ID, Password, Pid, _, _}|Ls], Lobby_ID) -> Pid;
-find_room([L|Ls], Lobby_ID)                         -> find_room(Ls, Lobby_ID).
+find_room([], _Lobby_ID)                             -> not_created ;
+find_room([{Lobby_ID, _Password, Pid, _, _}|_Ls], Lobby_ID) -> Pid;
+find_room([_L|Ls], Lobby_ID)                         -> find_room(Ls, Lobby_ID).
 
 get_lobby_ID([]) -> [];
 get_lobby_ID([L|Ls]) when (L >= $0) and (L =< $9) -> get_ID([L|Ls]);
@@ -95,6 +94,6 @@ get_ID([]) -> [];
 get_ID([L|Ls]) when (L >= $0) and (L =< $9) -> [L| get_ID(Ls)];
 get_ID(_) -> [].
 
-remove_lobby(Lobby_ID, []) -> [];
-remove_lobby(Lobby_ID, [{Lobby_ID, Password, Pid}|Lobbys]) -> Lobbys;
+remove_lobby(_Lobby_ID, []) -> [];
+remove_lobby(Lobby_ID, [{Lobby_ID, _Password, _Pid}|Lobbys]) -> Lobbys;
 remove_lobby(Lobby_ID, [Lobby|Lobbys]) -> [Lobby|remove_lobby(Lobby_ID, Lobbys)].
