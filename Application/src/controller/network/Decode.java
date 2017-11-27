@@ -70,7 +70,7 @@ class Decode {
             //Info messages
         } else if (rawStringToDecode.contains("INFO#")) {
 
-            disp("Info", rawStringToDecode, "");
+            disp("Info", rawStringToDecode.substring(6), "");
 
         } else {
 

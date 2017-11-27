@@ -32,7 +32,7 @@ loop(Rooms, Lobby_increment) ->
 	  demonitor(Ref),
 	  %Send a confirmation to the lobby so that it exits naturally.
 	  Lobby_PID ! {remove_lobby, Creator_Socket},
-	  gen_tcp:send(Creator_Socket, io_lib:format("INFO# Successfully removed the lobby at PID: ~p", [LPid]) ++ "~"),
+	  gen_tcp:send(Creator_Socket, io_lib:format("INFO# Successfully removed the lobby at PID:, ~p", [LPid]) ++ "~"),
 	  io:format("after sending remove ~n"),
 	  loop(NewRooms, Lobby_increment);
 	  
@@ -48,7 +48,7 @@ loop(Rooms, Lobby_increment) ->
 	{User_Socket, leave_lobby, Lobby_ID} -> 
 	  LPid = hd([Pid||{Lid, _Password, Pid, _Socket, _Ref} <- Rooms, Lobby_ID == Lid]),
 	  LPid ! {leave_lobby, User_Socket},
-	  gen_tcp:send(User_Socket, io_lib:format("INFO# Successfully left the lobby at PID: ~p", [LPid]) ++ "~"),
+	  gen_tcp:send(User_Socket, io_lib:format("INFO# Successfully left the lobby at PID:, ~p", [LPid]) ++ "~"),
 	  loop(Rooms, Lobby_increment);
 	  
 	
