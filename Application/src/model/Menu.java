@@ -111,6 +111,8 @@ public class Menu {
         buttonHashSet.add(button_next);
         buttonHashSet.add(button_previous);
         buttonHashSet.add(button_auto);
+        buttonHashSet.add(button_class);
+        buttonHashSet.add(button_deployment);
 
         // Remove the buttons from the set, to not modify.
         for (Button button: buttons)
