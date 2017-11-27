@@ -255,17 +255,7 @@ public class Menu {
 
             // Parse the element if it contains a supported diagram
             Parser parse = new Parser();
-            switch(DiagramCheck.ContainsDiagram(result)) {
-                case "sequence_diagram" :
-                    for (String element : result) {
-                        parse.parseSequenceDiagram(element);
-                        Net.push("{share, " + parse.getDiagram() + "}");
-                        System.out.println("{share, " + parse.getDiagram() + "}");
-
-                        // Enable all media buttons.
-                    }
-                    break;
-            }
+            
             for (String file: result) {
                 switch(DiagramCheck.ContainsDiagram(result)) {
                     case "sequence_diagram" :
