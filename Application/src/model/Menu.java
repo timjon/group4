@@ -37,8 +37,8 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
-    private final static String text_class = "Show attached class diagram";
-    private final static String text_deployment = "Show attached deployment diagram";
+    private final static String text_class = "Show class diagram";
+    private final static String text_deployment = "Show deployment diagram";
 
     // State
     private boolean play = false;
@@ -60,7 +60,7 @@ public class Menu {
     /**
      * @param play set the play status of automation.
      */
-    public void setPlay(boolean play) {
+    private void setPlay(boolean play) {
         this.play = play;
     }
 
@@ -119,7 +119,6 @@ public class Menu {
         for (Button button: buttonHashSet)
             button.setDisable(!state);
     }
-
 
     /**
      * Starts automating the executing. Disables manual control.
@@ -183,8 +182,20 @@ public class Menu {
                     case "sequence_diagram" :
                         parse.parseSequenceDiagram(file);
 
-                        Net.push(parse.getDiagram());
-                        Net.push(parse.getParallelSequenceDiagram());
+                        // Catches if there are no diagrams.
+                        try {
+                            Net.push(parse.getDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
+                        // Catches if there is no parallel diagram.
+                        try {
+                            Net.push(parse.getParallelSequenceDiagram());
+                        } catch (NullPointerException e) {
+                            continue;
+                        }
+
 
                         // Enable all media buttons.
                         setMenuState(true);
@@ -220,29 +231,45 @@ public class Menu {
         button_class.setOnAction((ActionEvent event)    ->{
             DiagramView dv = DiagramView.getDiagramViewInView();
 
+            // Checks for the state of the button if it's hiding or showing.
             if (button_class.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
                 button_class.setText("Hide class diagram");
+
+                // Add diagram to view.
                 dv.addDiagram(dv.CLASS_DIAGRAM);
             } else {
+
+                // Change to default text.
                 button_class.setText(text_class);
+
+                // Remove diagram from view.
                 dv.removeDiagram(dv.CLASS_DIAGRAM);
             }
 
-            dv.updateView();
         });
 
         button_deployment.setOnAction((ActionEvent event)    ->{
             DiagramView dv = DiagramView.getDiagramViewInView();
 
+            // Checks for the state of the button if it's hiding or showing.
             if (button_deployment.getText().toLowerCase().contains("show")) {
+
+                // Change to 'hide'
                 button_deployment.setText("Hide deployment diagram");
+
+                // Add diagram to view.
                 dv.addDiagram(dv.DEPLOYMENT_DIAGRAM);
             } else {
+
+                // Change to default text.
                 button_deployment.setText(text_deployment);
+
+                // Remove diagram from view.
                 dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
             }
 
-            dv.updateView();
         });
 
     }
@@ -273,7 +300,22 @@ public class Menu {
             return;
         }
 
+        // Updates optional view states.
+        ArrayList<String> viewing = diagramView.getViewing();
+
         Platform.runLater(() -> {
+
+            // Only displaying required diagram.
+            button_class.setText(text_class);
+            button_deployment.setText(text_deployment);
+
+            if (viewing.contains("CLASS_DIAGRAM"))
+                button_class.setText("Hide class diagram");
+
+            if (viewing.contains("DEPLOYMENT_DIAGRAM"))
+                button_deployment.setText("Hide deployment diagram");
+
+
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
                 button_previous.setDisable(false);

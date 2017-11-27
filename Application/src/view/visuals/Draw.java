@@ -28,7 +28,7 @@ public class Draw {
 
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
 
-    private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>();
+    private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
 
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
@@ -50,14 +50,6 @@ public class Draw {
         // TODO: remove Mock input data for class diagram
         addClassDiagramClass("YOLOSWAG123");
         addClassDiagramClass("Dopeffs");
-    }
-
-
-    /**
-     * @param canvas to be used as class diagram.
-     */
-    public void addClassDiagram(Canvas canvas) {
-        this.canvas_class = canvas;
     }
 
     /**
@@ -88,7 +80,7 @@ public class Draw {
      * Gets the active canvas height.
      * @return canvas height
      */
-    int getHeight() {
+    private int getHeight() {
         return (int)DiagramView.tabPane.getHeight();
     }
 
@@ -96,7 +88,7 @@ public class Draw {
      * Gets the active canvas width
      * @return canvas width
      */
-    int getWidth() {
+    private int getWidth() {
         return (int)DiagramView.tabPane.getWidth();
     }
     
@@ -181,7 +173,7 @@ public class Draw {
     /**
      * remakes the "Items", referring to messages and classes
      */
-    void renderItems() {
+    private void renderItems() {
         renderClass();
         renderMessage();
         renderClassDiagramClass();
@@ -191,20 +183,27 @@ public class Draw {
      * redraws the simulation canvas with all elements.
      */
     public void redraw() {
-        renderItems(); // Updates states due to resizing/etc.
-        init(canvas.getGraphicsContext2D());
+        init(canvas);
         initClassDiagram(canvas_class.getGraphicsContext2D());
 
-        renderContainer(); // Paints
+        renderItems();
+        renderContainer();
+
+        clear(canvas_deployment);
+        canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
     }
 
     /**
-     * initializes the simulation canvas with an animated 8-bit sky/ocean background .
+     * initializes the frame with an animated background.
+     * @param canvas to get properties from.
      */
-    void init(GraphicsContext gc) {
-        gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
-        // adds an animated gif file to the canvas with proper height and width
-        gc.drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
+    private void init(Canvas canvas) {
+
+        // Removes the content of the canvas.
+        clear(canvas);
+
+        // adds an animated gif file to the canvas with proper height and width.
+        canvas.getGraphicsContext2D().drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
     /**
@@ -217,8 +216,12 @@ public class Draw {
         gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
     }
 
-    private void clear(GraphicsContext gc) {
-        gc.clearRect(0,0,getWidth(), getHeight()); // Clears the canvas
+     /** Clear the provided GraphicalContext.
+     * @param canvas to get properties from.
+     */
+    private void clear(Canvas canvas) {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0,0,canvas.getWidth(), canvas.getHeight()); // Clears the canvas
     }
 
     /**
@@ -252,22 +255,28 @@ public class Draw {
     /**
      * Renders the message when trying to resize the application.
      */
-    void renderMessage() {
+    private void renderMessage() {
         if(messages.size() == 0) return; // There are no messages in the list.
-        if(this.messages.size() > 0) {
-            for (Message message: messages) { //Messages exist and will now be be re-placed.
-                Coordinates node1 = allClasses.get(message.getFromNode()).getCoordinates();
-                Coordinates node2 = allClasses.get(message.getToNode()).getCoordinates();
-                // Changes the coordinates of the messages.
-                message.changeCoordinates(node1, node2, class_size);
-            }
+        for (Message message: messages) { //Messages exist and will now be be re-placed.
+            Coordinates node1 = allClasses.get(message.getFromNode()).getCoordinates();
+            Coordinates node2 = allClasses.get(message.getToNode()).getCoordinates();
+            // Changes the coordinates of the messages.
+            message.changeCoordinates(node1, node2, class_size);
         }
+    }
+
+    /**
+     * checks a canvas properties to validate if it is in view or not.
+     * @param canvas to check
+     */
+    private boolean inView(Canvas canvas) {
+        return canvas.getWidth() == 0 && canvas.getHeight() == 0;
     }
 
     /**
      * Updates the class to fit the resized window.
      */
-    void renderClass() {
+    private void renderClass() {
         if (allClasses.size() == 0) return; // There are no items to render
         int space = ((int)this.canvas.getWidth())/this.allClasses.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
@@ -285,8 +294,9 @@ public class Draw {
 
     void renderClassDiagramClass(){
         if (allClassDiagramClasses.size() == 0) return;
-        int space = ((int)this.canvas.getWidth())/this.allClassDiagramClasses.size();
+        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
+            System.out.println("yo");
             int x = (space/2) + (i * space);
             int y = 50 + (space/2)/4;
             allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
