@@ -8,7 +8,7 @@ import view.visuals.Renderable;
 /**
  * Holds the graphics for the game over message.
  * @author Kosara Golemshinska
- * @version 0.1
+ * @version 1.0
  */
 public class GameOver implements Renderable {
 

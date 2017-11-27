@@ -35,6 +35,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.getIcons().add(new Image("resources/logo.png"));
+
         // Welcome screen image.
         Image welcome_screen = new Image("resources/welcome_screen.png");
 
@@ -66,21 +67,22 @@ public class Main extends Application {
         /**
          * Welcome screen author: Kosara Golemshinska
          */
-        // Sets the background image size.
-        BackgroundSize background_size = new BackgroundSize(0.25, 0.25,
+        BackgroundSize background_size = new BackgroundSize(0.25, 0.25,  // Sets the background image size.
                 true, true, false, false);
+
         // Creates the background of the center pane in the border pane to the welcome screen.
         Background welcome_background = new Background(new BackgroundImage(welcome_screen,
                 BackgroundRepeat.NO_REPEAT,
-               BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
                 background_size));
+
         // Sets the background.
         borderpane.setBackground(welcome_background);
 
         HBox menu = menu_.get(primaryStage); // A HBox holds items horizontally like a menu.
         borderpane.setTop(menu); // Gets the menu to be at the top of the window.
-       borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
+        borderpane.setCenter(tabPane); // Sets the TabPane to the center/main focus of the application.
         borderpane.setLeft(executionLog.getContainer()); // Sets the Execution log to be on the left side.
 
         Scene main;

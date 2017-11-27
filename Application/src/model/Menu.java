@@ -17,7 +17,8 @@ import java.util.*;
 /**
  * Handles all menu items and their states.
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
+ * Collaborator Kosara Golemshinska
  */
 public class Menu {
 
