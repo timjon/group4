@@ -13,10 +13,11 @@ import view.visuals.Renderable;
 
 public class ClassDiagramClass implements Renderable {
 
-    private Coordinates coordinates;
-    int size;
-    String name;
+    private Coordinates coordinates; //coordinates
+    int size; //size of the allowed class space
+    String name; //Name of the class
 
+    //Images for classes
     private static Image island1 = new Image("resources/Island_with_trees.png");
     private static Image island2 = new Image("resources/Island_with_trees2.png");
 
@@ -24,6 +25,9 @@ public class ClassDiagramClass implements Renderable {
     private Image[] islandStates = {island1, island2};
     private double animationIndex = 0.0;
 
+    /**
+     * @param name class name setter
+     */
     public ClassDiagramClass(String name) { this.name = name; }
 
     @Override

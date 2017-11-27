@@ -114,6 +114,10 @@ public class Draw {
         allClasses.add(new DiagramClass(name));  // Class gets added to the end of the array list.
     }
 
+    /**
+     * Adds class to arraylist, to be drawn
+     * @param name
+     */
 
     public void addClassDiagramClass (String name){
         allClassDiagramClasses.add(new ClassDiagramClass(name));
@@ -208,10 +212,9 @@ public class Draw {
      * Initializes the drawing of class diagram
      * @param gc
      */
-
     void initClassDiagram(GraphicsContext gc){
         gc.clearRect(0,0,getWidth(), getHeight());
-        // adds the background to canvas
+        // adds the background to class diagram canvas
         gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
     }
 
