@@ -367,7 +367,7 @@ public class Menu {
 
                 });
         button_leave_lobby.setOnAction((ActionEvent event) ->{
-        //  Net.push("{" + "share" + "leave_lobby, " + LID HERE);
+            leaveLobbyBox();
         });
 
         button_class.setOnAction((ActionEvent event)    ->{
@@ -544,6 +544,41 @@ public class Menu {
                     primaryStage.close();
                 }
             }
+        });
+    }
+
+    public void leaveLobbyBox(){
+        String ok_leave_text = "OK";
+        Stage leaveStage = new Stage(); // Creates a new 'stage' where we gather the fields and buttons for the box.
+        leaveStage.setTitle("Input Lobby ID");
+        leaveStage.show();
+
+        GridPane grid = new GridPane(); // Creates a GridPane to easily place the different components.
+        grid.setAlignment(Pos.CENTER);
+        //Sets a "padding" which makes the TexField and related components more centered and not use the entire box.
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(15, 15, 15, 15));
+
+        Scene scene = new Scene(grid, 250, 125);
+        leaveStage.setScene(scene);
+        TextField leaveBox = new TextField();
+        grid.add(leaveBox, 1, 0);
+        leaveBox.setPromptText("Lobby ID");
+        Button button_ok_leave = new Button(ok_leave_text); // Button to leave a lobby with id.
+        grid.add(button_ok_leave, 1,1);
+
+        final Text pressReturn = new Text(); //
+        grid.add(pressReturn, 1, 2);
+
+        //Handler for pressing the ok button in the newly opened window.
+        button_ok_leave.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                final String result = leaveBox.getText();
+                    Net.push("{" + "share, " + result + ", leave_lobby}");
+                    leaveStage.close();
+                }
         });
     }
 
