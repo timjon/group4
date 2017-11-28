@@ -9,10 +9,7 @@ import javafx.scene.layout.VBox;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -27,10 +24,11 @@ import java.util.*;
 /**
  * Handles all menu items and their states.
  * @author Pontus Laestadius
- * @version 1.0
+ * Collaborators: Sebastian Fransson, Tim Jonasson
+ * @version 1.1
  */
 public class Menu {
-
+    //Boolean values to keep track of when to switch states of buttons. 'host' pertains to creating/removing a lobby.
     private static boolean host = false;
     private static boolean joined_lobby = false;
 
@@ -57,7 +55,7 @@ public class Menu {
     private final static String text_next = "->";
     private final static String text_previous = "<-";
     private final static String text_import_lobby = "Import to lobby";
-    private final static String text_join_lobby = "Join a lobby";
+    private final static String text_join_lobby = "Join lobby";
     private final static String text_create_lobby = "Create lobby";
     private final static String text_remove_lobby = "Remove lobby";
     private final static String text_leave_lobby = "Leave lobby";
@@ -270,7 +268,7 @@ public class Menu {
                             continue;
                         }
 
-                        // Catches if there is no parallel diagram.
+                        // Catches a nullpointer exception if there is no parallel diagram.
                         try {
                             Net.push("{share, " + parse.getParallelSequenceDiagram() + "}");
                         } catch (NullPointerException e) {
@@ -341,7 +339,6 @@ public class Menu {
             Stage joinLobbyStage = new Stage();
             joinLobbyStage.setTitle("Join a lobby");
 
-
                     VBox vbox = new VBox();
 
                     TextField lobbyID = new TextField("");
@@ -385,6 +382,9 @@ public class Menu {
                     });
 
                 });
+
+        //if a user presses the leave button this handler is used.
+        //which creates a textbox where a user enters desired lobby to leave
         button_leave_lobby.setOnAction((ActionEvent event) ->{
             leaveLobbyBox();
         });
@@ -527,10 +527,9 @@ public class Menu {
     }
 
     /**
-     * Method for adding a password to the creation of a lobby.
+     * Creates a separate window where a user enters their desired password for the lobby.
      */
     public void passwordBox(){
-        String ok_password_text = "OK";
         Stage primaryStage = new Stage(); // Creates a new 'stage' where we gather the fields and buttons for the pwBox.
         primaryStage.setTitle("Input Password");
         primaryStage.show();
@@ -551,6 +550,8 @@ public class Menu {
         PasswordField pwBox = new PasswordField(); // Textfield with password protection.
         grid.add(pwBox, 1, 0);
         pwBox.setPromptText("Password");
+
+        String ok_password_text = "OK";
         Button button_ok_password = new Button(ok_password_text); // Button to create a lobby with input password.
         grid.add(button_ok_password, 1,1);
 
@@ -565,8 +566,6 @@ public class Menu {
                 if(result.equals("")) pressReturn.setText("Please enter a password");
                 else {
                     Net.push("{" + "share, " + result + ", create_lobby}");
-                    pressReturn.setFill(Color.GREEN);
-                    pressReturn.setText("Lobby created");
                     host = true;
                     primaryStage.close();
                 }
@@ -574,6 +573,9 @@ public class Menu {
         });
     }
 
+    /**
+     * Creates a separate window where a user enters the desired lobby to leave.
+     */
     public void leaveLobbyBox(){
         String ok_leave_text = "OK";
         Stage leaveStage = new Stage(); // Creates a new 'stage' where we gather the fields and buttons for the box.
