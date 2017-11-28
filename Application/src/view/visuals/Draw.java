@@ -1,6 +1,5 @@
 package view.visuals;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
