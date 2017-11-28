@@ -100,6 +100,7 @@ class Decode {
                 diagramClasses(message, id);
             }
         }
+        Menu.getInstance().identifyState();
     }
 
     /**

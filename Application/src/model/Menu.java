@@ -32,6 +32,7 @@ import java.util.*;
 public class Menu {
 
     private static boolean host = false;
+    private static boolean joined_lobby = false;
 
     // Instance
     private static Menu menuInstance;
@@ -382,6 +383,8 @@ public class Menu {
                             label.setText("Lobby ID and password needed");
                         } else {
                             Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
+                            // Joined lobby
+                            joined_lobby = true;
                             joinLobbyStage.close();
                         }
                     });
@@ -449,6 +452,35 @@ public class Menu {
             pause();
         }
 
+        Platform.runLater(() -> {
+            if (host) {
+                // Remove lobby
+                button_remove_lobby.setDisable(false);
+
+                // Create lobby
+                button_create_lobby.setDisable(true);
+
+                // Import lobby
+                button_import_lobby.setDisable(false);
+
+            } else {
+                button_remove_lobby.setDisable(true);
+                button_create_lobby.setDisable(false);
+                button_import_lobby.setDisable(true);
+            }
+
+            if(joined_lobby){
+                button_leave_lobby.setDisable(false);
+            }else{
+                button_leave_lobby.setDisable(true);
+            }
+
+
+            // Join lobby
+            button_join_lobby.setDisable(false);
+
+        });
+
         DiagramView diagramView;
 
         try {
@@ -464,26 +496,6 @@ public class Menu {
 
         Platform.runLater(() -> {
 
-            if (host) {
-                // Remove lobby
-                button_remove_lobby.setDisable(false);
-
-                // Create lobby
-                button_create_lobby.setDisable(true);
-
-                // Import lobby
-                button_import_lobby.setDisable(false);
-
-
-            } else {
-                button_remove_lobby.setDisable(true);
-                button_create_lobby.setDisable(false);
-                button_import_lobby.setDisable(true);
-            }
-
-            // Join lobby
-            button_join_lobby.setDisable(false);
-            button_leave_lobby.setDisable(false);
 
         // Updates optional view states.
         ArrayList<String> viewing = diagramView.getViewing();
