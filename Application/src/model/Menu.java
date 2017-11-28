@@ -207,115 +207,19 @@ public class Menu {
     private void setEvents(Stage stage) {
 
         button_import.setOnAction((ActionEvent event) -> {
-            Collection<String> result = Import.file(stage);
-            if (result == null) return;
-            if (result.isEmpty()) return;
-
-            // Parse the element if it contains a supported diagram
-            Parser parse = new Parser();
-
-            for (String file: result) {
-                switch(DiagramCheck.ContainsDiagram(result)) {
-                    case "sequence_diagram" :
-                        parse.parseSequenceDiagram(file);
-
-                        // Catches if there are no diagrams.
-                        try {
-                            Net.push(parse.getDiagram());
-                        } catch (NullPointerException e) {
-                            continue;
-                        }
-
-                        // Catches if there is no parallel diagram.
-                        try {
-                            Net.push(parse.getParallelSequenceDiagram());
-                        } catch (NullPointerException e) {
-                            continue;
-                        }
-
-                        break;
-                    case "class_diagram":
-                        parse.parseClassDiagram(file);
-                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
-                        Net.push(parse.getDiagram());
-
-                        break;
-                }
-
-            }
-
-            identifyState();
+            importDiagram(stage, false);
         });
 
         button_import_lobby.setOnAction((ActionEvent event) -> {
-            Collection<String> result = Import.file(stage);
-            if (result == null) return;
-            if (result.isEmpty()) return;
-
-            // Parse the element if it contains a supported diagram
-            Parser parse = new Parser();
-
-            for (String file: result) {
-                switch(DiagramCheck.ContainsDiagram(result)) {
-                    case "sequence_diagram" :
-                        parse.parseSequenceDiagram(file);
-
-                        // Catches if there are no diagrams.
-                        try {
-                            Net.push("{share, " + parse.getDiagram() + "}");
-                            System.out.println("{share, " + parse.getDiagram() + "}");
-                        } catch (NullPointerException e) {
-                            continue;
-                        }
-
-                        // Catches a nullpointer exception if there is no parallel diagram.
-                        try {
-                            Net.push("{share, " + parse.getParallelSequenceDiagram() + "}");
-                        } catch (NullPointerException e) {
-                            continue;
-                        }
-
-                        break;
-                    case "class_diagram":
-                        parse.parseClassDiagram(file);
-                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
-                        Net.push("{share, " + parse.getDiagram() + "}");
-
-                        break;
-                }
-
-            }
-            // if the diagram is not included in the switch case, check if the diagram is invalid
-            DiagramCheck.ContainsDiagram(result);
-            identifyState();
+           importDiagram(stage, true);
         });
 
         button_previous.setOnAction((ActionEvent event) ->{
-            String tabID = DiagramView.getDiagramViewInView().getTab().getId();
-            try {
-                //Checks if the current tab has a diagram from a lobby or not
-                if (tabID.charAt(1) == 'l') {
-                    Net.push("{share, {" + tabID + ", previous_message}}");
-                } else {
-                    Net.push("{" + tabID + ", previous_message}");
-                }
-            }catch(StringIndexOutOfBoundsException e){
-                Net.push("{" + tabID + ", previous_message}");
-            }
+            changeMessage("previous_message");
         });
 
         button_next.setOnAction((ActionEvent event)    ->{
-            String tabID = DiagramView.getDiagramViewInView().getTab().getId();
-            try {
-                //Checks if the current tab has a diagram from a lobby or not
-                if (tabID.charAt(1) == 'l') {
-                    Net.push("{share, {" + tabID + ", next_message}}");
-                } else {
-                    Net.push("{" + tabID + ", next_message}");
-                }
-            }catch(StringIndexOutOfBoundsException e){
-                Net.push("{" + tabID + ", next_message}");
-            }
+            changeMessage("next_message");
         });
 
         button_auto.setOnAction((ActionEvent event)    ->{
@@ -339,17 +243,19 @@ public class Menu {
             Stage joinLobbyStage = new Stage();
             joinLobbyStage.setTitle("Join a lobby");
 
-                    VBox vbox = new VBox();
+            VBox vbox = new VBox();
 
-                    TextField lobbyID = new TextField("");
-                    lobbyID.setPromptText("Lobby ID");
-                    lobbyID.setFocusTraversable(false);
+            //Creates the textfield for writing in the lobby id and sets it to not be auto focused by the cursor
+            TextField lobbyID = new TextField("");
+            lobbyID.setPromptText("Lobby ID");
+            lobbyID.setFocusTraversable(false);
 
-                    PasswordField password = new PasswordField();
-                    password.setPromptText("Password");
-                    password.setFocusTraversable(false);
+            //Creates the textfield for writing in the password and sets it to not be auto focused by the cursor
+            PasswordField password = new PasswordField();
+            password.setPromptText("Password");
+            password.setFocusTraversable(false);
 
-                    Label label = new Label();
+            Label label = new Label();
 
             //Creates the join button
             Button join_button = new Button("Join");
@@ -371,6 +277,7 @@ public class Menu {
                         String id = lobbyID.getText();
                         String pwd = password.getText();
 
+                        //Stops the users from sending messages to the server without writing in a lobby id or password
                         if (id.equals("") || pwd.equals("")) {
                             label.setText("Lobby ID and password needed");
                         } else {
@@ -612,4 +519,73 @@ public class Menu {
         });
     }
 
+    /**
+     * Sends a message of the given message type to the server
+     * @param MessageType The message type, either previous_message or next_message
+     */
+    public static void changeMessage(String MessageType){
+        String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+        if (tabID.contains("l")){
+            Net.push("{share, {" + tabID + ", " + MessageType + "}}");
+        } else {
+            Net.push("{" + tabID + ", " + MessageType + "}");
+        }
+    }
+
+    /**
+     * Handels importing a diagram
+     * @param share True if the diagram is supposed to be shared othervise false
+     */
+    public void importDiagram(Stage stage, Boolean share) {
+        Collection<String> result = Import.file(stage);
+        if (result == null) return;
+        if (result.isEmpty()) return;
+
+        // Parse the element if it contains a supported diagram
+        Parser parse = new Parser();
+
+        for (String file : result) {
+            switch (DiagramCheck.ContainsDiagram(result)) {
+                case "sequence_diagram":
+                    parse.parseSequenceDiagram(file);
+
+                    // Catches if there are no diagrams.
+                    try {
+                        if(share) {
+                            Net.push("{share, " + parse.getDiagram() + "}");
+                        }else{
+                            Net.push(parse.getDiagram());
+                        }
+                    } catch (NullPointerException e) {
+                        continue;
+                    }
+
+                    // Catches a nullpointer exception if there is no parallel diagram.
+                    try {
+                        if(share) {
+                            Net.push("{share, " + parse.getParallelSequenceDiagram() + "}");
+                        }else {
+                            Net.push(parse.getParallelSequenceDiagram());
+                        }
+                    } catch (NullPointerException e) {
+                        continue;
+                    }
+
+                    break;
+                case "class_diagram":
+                    parse.parseClassDiagram(file);
+                    System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
+                    if(share) {
+                        Net.push("{share, " + parse.getDiagram() + "}");
+                    }else{
+                        Net.push(parse.getDiagram());
+                    }
+                    break;
+            }
+
+        }
+        // if the diagram is not included in the switch case, check if the diagram is invalid
+        DiagramCheck.ContainsDiagram(result);
+        identifyState();
+    }
 }

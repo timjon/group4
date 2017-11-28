@@ -1,7 +1,6 @@
 package view.handlers;
 
 import model.Menu;
-import controller.network.Net;
 import view.DiagramView;
 import view.ExecutionLog;
 import view.visuals.component.Message;
@@ -73,31 +72,12 @@ public class Automate extends Thread {
 
                     // If the last message is done animating.
                     if (!message.isKeepAnimating()) {
-                        String tabID = DiagramView.getDiagramViewInView().getTab().getId();
-                        try {
-                            if (tabID.charAt(1) == 'l') {
-                                Net.push("{share, {" + tabID + ", next_message}}");
-                            } else {
-                                Net.push("{" + tabID + ", next_message}");
-                            }
-                        }catch(StringIndexOutOfBoundsException e){
-                            Net.push("{" + tabID + ", next_message}");
-                        }
+                        Menu.changeMessage("next_message");
                     }
                 }
                 // If there are no messages
                 catch (ArrayIndexOutOfBoundsException ex) {
-                    // send a request for a message.
-                    String tabID = DiagramView.getDiagramViewInView().getTab().getId();
-                    try {
-                        if (tabID.charAt(1) == 'l') {
-                            Net.push("{share, {" + tabID + ", next_message}}");
-                        } else {
-                            Net.push("{" + tabID + ", next_message}");
-                        }
-                    }catch(StringIndexOutOfBoundsException e){
-                        Net.push("{" + tabID + ", next_message}");
-                    }
+                    Menu.changeMessage("next_message");
                 }
             }
 
