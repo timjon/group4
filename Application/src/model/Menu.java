@@ -332,11 +332,6 @@ public class Menu {
         button_remove_lobby.setOnAction((ActionEvent event) ->{
             Net.push("{" + "share, " + "remove_lobby}");
 
-            Platform.runLater(() -> {
-                DiagramView.getDiagramViewInView().getTab().setId("Disconnected");
-                DiagramView.getDiagramViewInView().getTab().setText("Disconnected");
-            });
-
             host = false;
             identifyState();
         });
@@ -492,7 +487,6 @@ public class Menu {
         }
 
         String id = diagramView.getTab().getId();
-        boolean in_lobby = id.contains("l");
 
         Platform.runLater(() -> {
 

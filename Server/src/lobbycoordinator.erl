@@ -79,9 +79,7 @@ loop(Rooms, Lobby_increment) ->
 	  end,
 	  loop(Rooms, Lobby_increment);
 
-	{'DOWN', _Ref, _process, Pid, Reason} -> 
-	  %Send a notice to the Client stating that a lobbt has crashed as well as relay the reason.
-	  Format_result = io_lib:format("~p", [{Pid, lobby_crashed, Reason}]);
+	{'DOWN', _Ref, _process, _Pid, _Reason} -> ok;
 	 _ -> 
 		loop(Rooms, Lobby_increment)
   end.
@@ -100,8 +98,3 @@ get_lobby_ID([_|Ls]) -> get_lobby_ID(Ls).
 get_ID([]) -> [];
 get_ID([L|Ls]) when (L >= $0) and (L =< $9) -> [L| get_ID(Ls)];
 get_ID(_) -> [].
-
-%Removes the lobby related to the given id
-remove_lobby(_Lobby_ID, []) -> [];
-remove_lobby(Lobby_ID, [{Lobby_ID, _Password, _Pid}|Lobbys]) -> Lobbys;
-remove_lobby(Lobby_ID, [Lobby|Lobbys]) -> [Lobby|remove_lobby(Lobby_ID, Lobbys)].
