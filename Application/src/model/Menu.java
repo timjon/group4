@@ -256,7 +256,7 @@ public class Menu {
 
             // Parse the element if it contains a supported diagram
             Parser parse = new Parser();
-            
+
             for (String file: result) {
                 switch(DiagramCheck.ContainsDiagram(result)) {
                     case "sequence_diagram" :
