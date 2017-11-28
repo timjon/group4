@@ -246,9 +246,8 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        for (Renderable r: allClasses) {
         GraphicsContext graphicsContext = canvas_class.getGraphicsContext2D(); //content for class diagram
-        for (Renderable r: allClasses)
+        for (Renderable r: allClasses) {
             r.render(gc);
         }
         for (Renderable r: messages) {
@@ -314,17 +313,19 @@ public class Draw {
      * Updates the game over message to fit the resized window.
      */
     private void renderGameOver() {
-        if (gameOverNotification == null){
+        if (gameOverNotification == null) {
             return;  // The game over message hasn't been initialized yet.
-        }
-        else {
-            int newWidth = (int)this.canvas.getWidth();
-            int newHeight = (int)this.canvas.getHeight();
-            int size  = newWidth/2;
+        } else {
+            int newWidth = (int) this.canvas.getWidth();
+            int newHeight = (int) this.canvas.getHeight();
+            int size = newWidth / 2;
             gameOverNotification.place(new Coordinates(newWidth, newHeight), size);
-     * Places the classes in the class diagram
-     */
-
+        }
+    }
+            /**
+             *
+             *Places the classes in the class diagram
+             */
     void renderClassDiagramClass(){
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
