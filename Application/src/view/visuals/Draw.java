@@ -14,8 +14,9 @@ import java.util.ArrayList;
 
 /**
  * @version 1.5
+ * @version 2.0
  * @author Pontus Laestadius, Sebastian Fransson
- * Collaborator Rashad Kamsheh, Kosara Golemshinska
+ * Collaborator Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
 
 public class Draw {
@@ -26,6 +27,9 @@ public class Draw {
     private Canvas canvas_deployment; // Draws and handles class diagram graphical context.
 
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
+
+    private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
+
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private static GameOver gameOverNotification;
     private int offset; // Used for message ordering
@@ -34,13 +38,19 @@ public class Draw {
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
     private static Image animatedBackground = new Image("resources/SkyGIF.gif");
 
+    private static Image classDiagramBackground  = new Image("resources/OceanBackgroundMuted.png");
+
     /**
      * Constructor
      */
     public Draw(int w, int h) {
         canvas = new Canvas(w, h);
-        canvas_class = new Canvas(0,0);
+        canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
+
+        // TODO: remove Mock input data for class diagram
+        addClassDiagramClass("YOLOSWAG123");
+        addClassDiagramClass("Dopeffs");
     }
 
     /**
@@ -95,6 +105,15 @@ public class Draw {
      */
     public void addClass(String name) {
         allClasses.add(new DiagramClass(name));  // Class gets added to the end of the array list.
+    }
+
+    /**
+     * Adds class to arraylist, to be drawn
+     * @param name
+     */
+
+    public void addClassDiagramClass (String name){
+        allClassDiagramClasses.add(new ClassDiagramClass(name));
     }
 
     /**
@@ -173,24 +192,30 @@ public class Draw {
         renderClass();
         renderMessage();
         renderGameOver();
+        renderClassDiagramClass();
     }
 
     /**
      * redraws the simulation canvas with all elements.
      */
     public void redraw() {
-        renderItems();
         init(canvas);
+        initClassDiagram(canvas_class.getGraphicsContext2D());
+
+        renderItems();
         renderContainer();
-
-        // TODO temporary code used to show that multiple diagrams are being displayed, one yellow one black.
-        // TODO they are to be removed when class and deployment diagram content exists.
-        clear(canvas_class);
         clear(canvas_deployment);
-        canvas_class.getGraphicsContext2D().setFill(Color.YELLOW);
         canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
-        canvas_class.getGraphicsContext2D().fillRect(0,0,canvas_class.getWidth(), canvas_class.getHeight());
+    }
 
+    /**
+     * Initializes the drawing of class diagram
+     * @param gc
+     */
+    void initClassDiagram(GraphicsContext gc){
+        gc.clearRect(0,0,getWidth(), getHeight());
+        // adds the background to class diagram canvas
+        gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
     }
 
     /**
@@ -222,6 +247,8 @@ public class Draw {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (Renderable r: allClasses) {
+        GraphicsContext graphicsContext = canvas_class.getGraphicsContext2D(); //content for class diagram
+        for (Renderable r: allClasses)
             r.render(gc);
         }
         for (Renderable r: messages) {
@@ -230,6 +257,9 @@ public class Draw {
         if(gameOverNotification != null) {  // Check if the notification is null to avoid an exception.
             gameOverNotification.render(gc);
         }
+        //rendering of class diagram
+        for (Renderable e: allClassDiagramClasses)
+            e.render(graphicsContext);
     }
 
     /**
@@ -239,6 +269,8 @@ public class Draw {
         for (Renderable r: allClasses)
             r.update();
         for (Renderable r: messages)
+            r.update();
+        for (Renderable r: allClassDiagramClasses)
             r.update();
     }
 
@@ -290,6 +322,17 @@ public class Draw {
             int newHeight = (int)this.canvas.getHeight();
             int size  = newWidth/2;
             gameOverNotification.place(new Coordinates(newWidth, newHeight), size);
+     * Places the classes in the class diagram
+     */
+
+    void renderClassDiagramClass(){
+        if (allClassDiagramClasses.size() == 0) return;
+        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
+        for(int i = 0; i < allClassDiagramClasses.size(); i++) {
+            System.out.println("yo");
+            int x = (space/2) + (i * space);
+            int y = 50 + (space/2)/4;
+            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
         }
     }
 
