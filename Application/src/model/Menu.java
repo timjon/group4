@@ -10,6 +10,7 @@ import controller.network.Net;
 import view.DiagramView;
 import view.ExecutionLog;
 import view.handlers.Automate;
+import view.visuals.Draw;
 
 import java.util.*;
 
@@ -77,7 +78,7 @@ public class Menu {
      */
     public HBox get(Stage stage) {
 
-        // Box to hold all item.
+        // Box to hold all items.
         HBox menu = new HBox();
 
         // Start all media buttons disabled.
@@ -110,6 +111,8 @@ public class Menu {
         buttonHashSet.add(button_next);
         buttonHashSet.add(button_previous);
         buttonHashSet.add(button_auto);
+        buttonHashSet.add(button_class);
+        buttonHashSet.add(button_deployment);
 
         // Remove the buttons from the set, to not modify.
         for (Button button: buttons)

@@ -13,7 +13,7 @@ import view.visuals.component.*;
 import java.util.ArrayList;
 
 /**
- * @version 2.0
+ * @version 2.1
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborator Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -30,6 +30,7 @@ public class Draw {
     private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
 
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
+    private static GameOver gameOverNotification;
     private int offset; // Used for message ordering
     private int class_size = 0; // Used for message positioning
 	
@@ -128,6 +129,20 @@ public class Draw {
     }
 
     /**
+     * Creates the game over message.
+     */
+    public static void addGameOver() {
+        gameOverNotification = new GameOver();
+    }
+
+    /**
+     * Sets the game over message to null.
+     */
+    public static void removeGameOver() {
+        gameOverNotification = null;
+    }
+
+    /**
      * Removes the last message in the messages list.
      * @return true if it removed a message, false if the message list is empty.
      */
@@ -170,11 +185,12 @@ public class Draw {
     }
 
     /**
-     * remakes the "Items", referring to messages and classes
+     * remakes the "Items", referring to messages, classes and "game over"
      */
     private void renderItems() {
         renderClass();
         renderMessage();
+        renderGameOver();
         renderClassDiagramClass();
     }
 
@@ -230,10 +246,15 @@ public class Draw {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
         GraphicsContext graphicsContext = canvas_class.getGraphicsContext2D(); //content for class diagram
-        for (Renderable r: allClasses)
+        for (Renderable r: allClasses) {
             r.render(gc);
-        for (Renderable r: messages)
+        }
+        for (Renderable r: messages) {
             r.render(gc);
+        }
+        if(gameOverNotification != null) {  // Check if the notification is null to avoid an exception.
+            gameOverNotification.render(gc);
+        }
         //rendering of class diagram
         for (Renderable e: allClassDiagramClasses)
             e.render(graphicsContext);
@@ -276,7 +297,7 @@ public class Draw {
      * Updates the class to fit the resized window.
      */
     private void renderClass() {
-        if (allClasses.size() == 0) return; // There are no items to render
+        if (allClasses.size() == 0) return; // There are no items to render.
         int space = ((int)this.canvas.getWidth())/this.allClasses.size(); // The amount of space each class can use.
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
@@ -288,9 +309,20 @@ public class Draw {
     }
 
     /**
-     * Places the classes in the class diagram
+     * Updates the game over message to fit the resized window.
      */
-
+    private void renderGameOver() {
+        if (gameOverNotification != null) {
+            int newWidth = (int) this.canvas.getWidth();
+            int newHeight = (int) this.canvas.getHeight();
+            int size = newWidth / 2;
+            gameOverNotification.place(new Coordinates(newWidth, newHeight), size);
+        }
+    }
+            /**
+             *
+             *Places the classes in the class diagram
+             */
     void renderClassDiagramClass(){
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();

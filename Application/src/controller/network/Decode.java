@@ -10,7 +10,8 @@ import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
- * @version 1.3
+ * @version 1.4
+ * Collaborator Kosara Golemshinska
  */
 class Decode {
     // Raw string to be decoded.
@@ -42,6 +43,9 @@ class Decode {
             // Write Simulation finished in the execution log.
             write(id, "INFO: Simulation finished");
 
+            // Add the game over message to the draw object.
+            Draw.addGameOver();
+
             // Update menu state.
             Menu.getInstance().identifyState();
 
@@ -54,6 +58,7 @@ class Decode {
                 // Remove a line from the execution log.
                 Platform.runLater(() -> {
                     ExecutionLog.getInstance().bwd();
+                    Draw.removeGameOver();  // Removes the game over screen from the canvas.
                 });
             } else {
                 System.out.println("This should not occur.");
