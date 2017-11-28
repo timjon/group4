@@ -13,8 +13,7 @@ import view.visuals.component.*;
 import java.util.ArrayList;
 
 /**
- * @version 1.5
- * @version 2.0
+ * @version 2.1
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborator Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -313,9 +312,7 @@ public class Draw {
      * Updates the game over message to fit the resized window.
      */
     private void renderGameOver() {
-        if (gameOverNotification == null) {
-            return;  // The game over message hasn't been initialized yet.
-        } else {
+        if (gameOverNotification != null) {
             int newWidth = (int) this.canvas.getWidth();
             int newHeight = (int) this.canvas.getHeight();
             int size = newWidth / 2;

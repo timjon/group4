@@ -58,6 +58,7 @@ class Decode {
                 // Remove a line from the execution log.
                 Platform.runLater(() -> {
                     ExecutionLog.getInstance().bwd();
+                    Draw.removeGameOver();  // Removes the game over screen from the canvas.
                 });
             } else {
                 System.out.println("This should not occur.");

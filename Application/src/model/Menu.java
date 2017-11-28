@@ -17,8 +17,7 @@ import java.util.*;
 /**
  * Handles all menu items and their states.
  * @author Pontus Laestadius
- * @version 1.1
- * Collaborator Kosara Golemshinska
+ * @version 1.0
  */
 public class Menu {
 
@@ -221,7 +220,6 @@ public class Menu {
 
         button_previous.setOnAction((ActionEvent event) ->{
             Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
-            Draw.removeGameOver();  // Removes the game over screen from the canvas.
         });
 
         button_next.setOnAction((ActionEvent event)    ->{
