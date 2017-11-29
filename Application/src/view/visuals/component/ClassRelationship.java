@@ -12,7 +12,7 @@ import view.visuals.Renderable;
 
 public class ClassRelationship implements Renderable {
 
-    //Image for the bridge sprite
+    //Image for the bridge sprite which are used to resemble the relationships
     private static Image bridge = new Image("resources/bridgeSprite.png");
     //Image for the arrow at the end of the bridge
     private static Image arrow = new Image("resources/arrow.png");
@@ -28,7 +28,7 @@ public class ClassRelationship implements Renderable {
         this.toNode = toNode;
         this.size = size;
     }
-    // initialiser
+    // initialiser for rendering the bridge sprites between 2 classes
     public void init(Coordinates fromNode, Coordinates toNode, int size) {
         this.fromNode = fromNode;
         this.toNode = toNode;
@@ -43,19 +43,22 @@ public class ClassRelationship implements Renderable {
         //int endingPointY = toNode.getY(); not used atm
 
         int offset = 0;
-        int distance = endingPointX - startingPointX;
-        for (int i = 0; i < distance / 15 - 4; i++) {
+        int XDistance = endingPointX - startingPointX;
 
+        // basic case: inheritance between 2 cases that are on the same horizontal line
+        for (int i = 0; i < XDistance / 15 - 4; i++) {
 
-            if (distance > 0) {
+            if (XDistance > 0) {
                 offset += 15;
             } else {
                 offset -= 15;
             }
+            // Draw a bridge sprite
             gc.drawImage(bridge,
                     startingPointX + offset,
                     startingPointY, 15, 15);
         }
+        // Draw an arrow at the end of the bridge
         gc.drawImage(arrow, startingPointX + offset, startingPointY, 15, 15);
 
     }

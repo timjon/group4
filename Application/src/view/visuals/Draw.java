@@ -5,7 +5,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
 
-import javafx.scene.paint.Color;
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
@@ -217,7 +216,8 @@ public class Draw {
         clear(canvas);
 
         // adds an animated gif file to the canvas with proper height and width.
-        canvas.getGraphicsContext2D().drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
+        canvas.getGraphicsContext2D().drawImage(animatedBackground,0,0,
+                this.canvas.getWidth(), this.canvas.getHeight());
     }
 
     /**
@@ -244,8 +244,8 @@ public class Draw {
         for (Renderable r: allClassRelationships)
             r.render(graphicsContext);
         //rendering of class diagram
-        for (Renderable r: allClassDiagramClasses)
-            r.render(graphicsContext);
+        for (Renderable e: allClassDiagramClasses)
+            e.render(graphicsContext);
     }
 
     /**
@@ -308,7 +308,6 @@ public class Draw {
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            System.out.println("yo");
             int x = (space/2) + (i * space);
             int y = 50 + (space/2)/4;
             allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
