@@ -6,11 +6,13 @@ import view.DiagramView;
 import view.visuals.Draw;
 import view.ExecutionLog;
 
+import static controller.Import.disp;
 import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
- * @version 1.3
+ * Collaborators: Sebastian Fransson, Tim Jonasson
+ * @version 1.4
  */
 class Decode {
     // Raw string to be decoded.
@@ -66,7 +68,11 @@ class Decode {
             // Writes the rawStringToDecode data
             write(id, "INFO: " + retrieveMessage(rawStringToDecode));
 
-            // If it's a message or a list of classes (new diagram).
+            //Info messages
+        } else if (rawStringToDecode.contains("INFO#")) {
+            //Send through the rawStringToDecode starting at the 6th character to skip the INFO#.
+            disp("Info", rawStringToDecode.substring(6), "");
+
         } else {
 
             // Gets the message content.
@@ -95,6 +101,8 @@ class Decode {
                 diagramClasses(message, id);
             }
         }
+        //Updates the button states. Placed here to update the state even though there exists no diagramview yet.
+        Menu.getInstance().identifyState();
     }
 
     /**

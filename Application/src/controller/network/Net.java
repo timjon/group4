@@ -1,5 +1,6 @@
 package controller.network;
 
+import view.DiagramView;
 import view.ExecutionLog;
 import javafx.application.Platform;
 
@@ -133,6 +134,19 @@ public class Net implements Runnable {
                 System.err.println(e);
             }
 
+        }
+    }
+
+    /**
+     * Sends a message of the given message type to the server
+     * @param MessageType The message type, either previous_message or next_message
+     */
+    public static void changeMessage(String MessageType){
+        String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+        if (tabID.contains("l")){
+            Net.push("{share, {" + tabID + ", " + MessageType + "}}");
+        } else {
+            Net.push("{" + tabID + ", " + MessageType + "}");
         }
     }
 

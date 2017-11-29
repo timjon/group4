@@ -3,8 +3,16 @@ package model;
 import controller.Import;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
+import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import controller.network.Net;
 import view.DiagramView;
@@ -13,13 +21,18 @@ import view.handlers.Automate;
 
 import java.util.*;
 
+import static controller.network.Net.changeMessage;
+
 /**
  * Handles all menu items and their states.
  * @author Pontus Laestadius
+ * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
  * @version 1.1
- * Collaborator Kosara Golemshinska
  */
 public class Menu {
+    //Boolean values to keep track of when to switch states of buttons. 'host' pertains to creating/removing a lobby.
+    private static boolean host = false;
+    private static boolean joined_lobby = false;
 
     // Instance
     private static Menu menuInstance;
@@ -29,6 +42,11 @@ public class Menu {
     private static Button button_next;
     private static Button button_previous;
     private static Button button_auto;
+    private static Button button_join_lobby;
+    private static Button button_create_lobby;
+    private static Button button_remove_lobby;
+    private static Button button_import_lobby;
+    private static Button button_leave_lobby;
     private static Button button_class;
     private static Button button_deployment;
 
@@ -38,6 +56,11 @@ public class Menu {
     private final static String text_auto_pause = " || ";
     private final static String text_next = "->";
     private final static String text_previous = "<-";
+    private final static String text_import_lobby = "Import to lobby";
+    private final static String text_join_lobby = "Join lobby";
+    private final static String text_create_lobby = "Create lobby";
+    private final static String text_remove_lobby = "Remove lobby";
+    private final static String text_leave_lobby = "Leave lobby";
     private final static String text_class = "Show class diagram";
     private final static String text_deployment = "Show deployment diagram";
 
@@ -54,6 +77,11 @@ public class Menu {
         button_next = new Button(text_next);
         button_previous = new Button(text_previous);
         button_auto = new Button(text_auto_play);
+        button_import_lobby  = new Button(text_import_lobby);
+        button_join_lobby = new Button(text_join_lobby);
+        button_create_lobby = new Button(text_create_lobby);
+        button_remove_lobby = new Button(text_remove_lobby);
+        button_leave_lobby = new Button(text_leave_lobby);
         button_class = new Button(text_class);
         button_deployment = new Button(text_deployment);
     }
@@ -82,16 +110,21 @@ public class Menu {
         HBox menu = new HBox();
 
         // Start all media buttons disabled.
-        setMenuState(false, button_import);
+        setMenuState(false, button_import, button_import_lobby, button_join_lobby, button_create_lobby);
 
         // Adds the event handlers for the buttons.
         setEvents(stage);
 
         // Add the buttons to the menu.
         menu.getChildren().add(button_import);
+        menu.getChildren().add(button_import_lobby);
         menu.getChildren().add(button_previous);
         menu.getChildren().add(button_auto);
         menu.getChildren().add(button_next);
+        menu.getChildren().add(button_join_lobby);
+        menu.getChildren().add(button_create_lobby);
+        menu.getChildren().add(button_remove_lobby);
+        menu.getChildren().add(button_leave_lobby);
         menu.getChildren().add(button_class);
         menu.getChildren().add(button_deployment);
 
@@ -108,9 +141,14 @@ public class Menu {
         Set<Button> buttonHashSet = new HashSet<>();
 
         buttonHashSet.add(button_import);
+        buttonHashSet.add(button_import_lobby);
         buttonHashSet.add(button_next);
         buttonHashSet.add(button_previous);
         buttonHashSet.add(button_auto);
+        buttonHashSet.add(button_join_lobby);
+        buttonHashSet.add(button_create_lobby);
+        buttonHashSet.add(button_remove_lobby);
+        buttonHashSet.add(button_leave_lobby);
         buttonHashSet.add(button_class);
         buttonHashSet.add(button_deployment);
 
@@ -173,62 +211,93 @@ public class Menu {
     private void setEvents(Stage stage) {
 
         button_import.setOnAction((ActionEvent event) -> {
-            Collection<String> result = Import.file(stage);
-            if (result == null) return;
-            if (result.isEmpty()) return;
+            controller.Import.importDiagram(stage, false);
+        });
 
-            // Parse the element if it contains a supported diagram
-            Parser parse = new Parser();
-
-            for (String file: result) {
-                switch(DiagramCheck.ContainsDiagram(result)) {
-                    case "sequence_diagram" :
-                        parse.parseSequenceDiagram(file);
-
-                        // Catches if there are no diagrams.
-                        try {
-                            Net.push(parse.getDiagram());
-                        } catch (NullPointerException e) {
-                            continue;
-                        }
-
-                        // Catches if there is no parallel diagram.
-                        try {
-                            Net.push(parse.getParallelSequenceDiagram());
-                        } catch (NullPointerException e) {
-                            continue;
-                        }
-
-
-                        // Enable all media buttons.
-                        setMenuState(true);
-                        button_previous.setDisable(true);
-                        break;
-                    case "class_diagram":
-                        parse.parseClassDiagram(file);
-                        System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
-                        Net.push(parse.getDiagram());
-
-                        break;
-                }
-
-
-            }
-
-            identifyState();
+        button_import_lobby.setOnAction((ActionEvent event) -> {
+            controller.Import.importDiagram(stage, true);
         });
 
         button_previous.setOnAction((ActionEvent event) ->{
-            Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", previous_message}");
+            changeMessage("previous_message");
         });
 
         button_next.setOnAction((ActionEvent event)    ->{
-            Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+            changeMessage("next_message");
         });
 
         button_auto.setOnAction((ActionEvent event)    ->{
             play = button_auto.getText().endsWith(text_auto_play);
             identifyState();
+        });
+
+        button_create_lobby.setOnAction((ActionEvent event)    ->{
+            passwordBox();
+            identifyState();
+        });
+        button_remove_lobby.setOnAction((ActionEvent event) ->{
+            Net.push("{" + "share, " + "remove_lobby}");
+
+            host = false;
+            identifyState();
+        });
+
+        button_join_lobby.setOnAction((ActionEvent event)    ->{
+            //Creates the popup window
+            Stage joinLobbyStage = new Stage();
+            joinLobbyStage.setTitle("Join a lobby");
+
+            VBox vbox = new VBox();
+
+            //Creates the textfield for writing in the lobby id and sets it to not be auto focused by the cursor
+            TextField lobbyID = new TextField("");
+            lobbyID.setPromptText("Lobby ID");
+            lobbyID.setFocusTraversable(false);
+
+            //Creates the textfield for writing in the password and sets it to not be auto focused by the cursor
+            PasswordField password = new PasswordField();
+            password.setPromptText("Password");
+            password.setFocusTraversable(false);
+
+            Label label = new Label();
+
+            //Creates the join button
+            Button join_button = new Button("Join");
+            join_button.setFocusTraversable(false);
+
+            //Adds the fields and the button to the window
+            vbox.getChildren().add(lobbyID);
+            vbox.getChildren().add(password);
+            vbox.getChildren().add(join_button);
+            vbox.getChildren().add((label));
+
+            //Sets the size of the window
+            Scene stageScene = new Scene(vbox, 300, 100);
+            joinLobbyStage.setScene(stageScene);
+            joinLobbyStage.show();
+
+
+                    join_button.setOnAction((ActionEvent e) -> {
+                        String id = lobbyID.getText();
+                        String pwd = password.getText();
+
+                        //Stops the users from sending messages to the server without writing in a lobby id or password
+                        if (id.equals("") || pwd.equals("")) {
+                            label.setText("Lobby ID and password needed");
+                        } else {
+                            Net.push("{share, {join_lobby, {" + lobbyID.getText() + ", " + password.getText() + "}}}");
+                            // Joined lobby
+                            joined_lobby = true;
+                            joinLobbyStage.close();
+                        }
+                    });
+
+                });
+
+        //if a user presses the leave button this handler is used.
+        //which creates a textbox where a user enters desired lobby to leave
+        button_leave_lobby.setOnAction((ActionEvent event) ->{
+            leaveLobbyBox();
         });
 
         button_class.setOnAction((ActionEvent event)    ->{
@@ -272,7 +341,6 @@ public class Menu {
                 // Remove diagram from view.
                 dv.removeDiagram(dv.DEPLOYMENT_DIAGRAM);
             }
-
         });
 
     }
@@ -290,6 +358,35 @@ public class Menu {
             pause();
         }
 
+        Platform.runLater(() -> {
+            if (host) {
+                // Remove lobby
+                button_remove_lobby.setDisable(false);
+
+                // Create lobby
+                button_create_lobby.setDisable(true);
+
+                // Import lobby
+                button_import_lobby.setDisable(false);
+
+            } else {
+                button_remove_lobby.setDisable(true);
+                button_create_lobby.setDisable(false);
+                button_import_lobby.setDisable(true);
+            }
+
+            if(joined_lobby){
+                button_leave_lobby.setDisable(false);
+            }else{
+                button_leave_lobby.setDisable(true);
+            }
+
+
+            // Join lobby
+            button_join_lobby.setDisable(false);
+
+        });
+
         DiagramView diagramView;
 
         try {
@@ -297,16 +394,16 @@ public class Menu {
 
             // If there is no view.
         } catch (IllegalStateException ex) {
-
-            // If there is no view, we disable the media buttons.
-            Menu.getInstance().setMenuState(false, button_import);
             return;
         }
 
-        // Updates optional view states.
-        ArrayList<String> viewing = diagramView.getViewing();
+        String id = diagramView.getTab().getId();
 
         Platform.runLater(() -> {
+
+
+        // Updates optional view states.
+        ArrayList<String> viewing = diagramView.getViewing();
 
             // Only displaying required diagram.
             button_class.setText(text_class);
@@ -317,7 +414,6 @@ public class Menu {
 
             if (viewing.contains("DEPLOYMENT_DIAGRAM"))
                 button_deployment.setText("Hide deployment diagram");
-
 
             // If we can go back.
             if (diagramView.getDraw().canRemoveMessage()) {
@@ -341,4 +437,89 @@ public class Menu {
         });
     }
 
+    /**
+     * Creates a separate window where a user enters their desired password for the lobby.
+     */
+    public void passwordBox(){
+        Stage primaryStage = new Stage(); // Creates a new 'stage' where we gather the fields and buttons for the pwBox.
+        primaryStage.setTitle("Input Password");
+        primaryStage.show();
+
+        GridPane grid = new GridPane(); // Creates a gridpane to easily place the different components.
+        grid.setAlignment(Pos.CENTER);
+        //Sets a "padding" which makes the texfield and related components more centered and not use the entire box.
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(15, 15, 15, 15));
+
+        Scene scene = new Scene(grid, 250, 125);
+        primaryStage.setScene(scene);
+
+        Label pw = new Label("Password:"); // Label showing showing next to textField.
+        grid.add(pw, 0, 0);
+
+        PasswordField pwBox = new PasswordField(); // Textfield with password protection.
+        grid.add(pwBox, 1, 0);
+        pwBox.setPromptText("Password");
+
+        String ok_password_text = "OK";
+        Button button_ok_password = new Button(ok_password_text); // Button to create a lobby with input password.
+        grid.add(button_ok_password, 1,1);
+
+        final Text pressReturn = new Text(); //
+        grid.add(pressReturn, 1, 2);
+
+        //Handler for pressing the ok button in the newly opened window.
+        button_ok_password.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                final String result = pwBox.getText();
+                if(result.equals("")) pressReturn.setText("Please enter a password");
+                else {
+                    Net.push("{" + "share, " + result + ", create_lobby}");
+                    host = true;
+                    primaryStage.close();
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates a separate window where a user enters the desired lobby to leave.
+     */
+    public void leaveLobbyBox(){
+        String ok_leave_text = "OK";
+        Stage leaveStage = new Stage(); // Creates a new 'stage' where we gather the fields and buttons for the box.
+        leaveStage.setTitle("Input Lobby ID");
+        leaveStage.show();
+
+        GridPane grid = new GridPane(); // Creates a GridPane to easily place the different components.
+        grid.setAlignment(Pos.CENTER);
+        //Sets a "padding" which makes the TexField and related components more centered and not use the entire box.
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(15, 15, 15, 15));
+
+        Scene scene = new Scene(grid, 250, 125);
+        leaveStage.setScene(scene);
+        TextField leaveBox = new TextField();
+        grid.add(leaveBox, 1, 0);
+        leaveBox.setPromptText("Lobby ID");
+        Button button_ok_leave = new Button(ok_leave_text); // Button to leave a lobby with id.
+        grid.add(button_ok_leave, 1,1);
+
+        final Text pressReturn = new Text(); //
+        grid.add(pressReturn, 1, 2);
+
+        //Handler for pressing the ok button in the newly opened window.
+        button_ok_leave.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                final String result = leaveBox.getText();
+                    // Send the result to the server.
+                    Net.push("{" + "share, " + result + ", leave_lobby}");
+                    leaveStage.close();
+                }
+        });
+    }
 }

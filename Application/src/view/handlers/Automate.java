@@ -1,7 +1,7 @@
 package view.handlers;
 
-import model.Menu;
 import controller.network.Net;
+import model.Menu;
 import view.DiagramView;
 import view.ExecutionLog;
 import view.visuals.component.Message;
@@ -73,13 +73,12 @@ public class Automate extends Thread {
 
                     // If the last message is done animating.
                     if (!message.isKeepAnimating()) {
-                        Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                        Net.changeMessage("next_message");
                     }
                 }
                 // If there are no messages
                 catch (ArrayIndexOutOfBoundsException ex) {
-                    // send a request for a message.
-                    Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                    Net.changeMessage("next_message");
                 }
             }
 
