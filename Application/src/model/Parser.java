@@ -51,7 +51,7 @@ public class Parser {
      * Parses a class diagram.
      * @param inputJSON to parse
      */
-    void parseClassDiagram(String inputJSON) {
+    public void parseClassDiagram(String inputJSON) {
 
         try {
 
@@ -197,7 +197,7 @@ public class Parser {
      * @return a formatted string with the following data,
      * unique counter, the tempProcesses, the class names, the first diagram's messages and content.
      */
-    String getDiagram() throws NullPointerException {
+    public String getDiagram() throws NullPointerException {
         if (diagram == null) throw new NullPointerException("No diagram parsed");
         return diagram;
     }
@@ -206,7 +206,7 @@ public class Parser {
      * gives a String containing the second (i.e parallel) diagram to be handled by the backend
      * @return contains a counter, the tempProcesses, the class names, the parallel diagram's messages and content.
      */
-    String getParallelSequenceDiagram() throws NullPointerException {
+    public String getParallelSequenceDiagram() throws NullPointerException {
         if (diagram == null) throw new NullPointerException("No diagram parsed");
 
         return parallel;

@@ -209,11 +209,11 @@ public class Menu {
     private void setEvents(Stage stage) {
 
         button_import.setOnAction((ActionEvent event) -> {
-            importDiagram(stage, false);
+            controller.Import.importDiagram(stage, false);
         });
 
         button_import_lobby.setOnAction((ActionEvent event) -> {
-           importDiagram(stage, true);
+            controller.Import.importDiagram(stage, true);
         });
 
         button_previous.setOnAction((ActionEvent event) ->{
@@ -519,62 +519,5 @@ public class Menu {
                     leaveStage.close();
                 }
         });
-    }
-
-    /**
-     * Handels importing a diagram
-     * @param share True if the diagram is supposed to be shared othervise false
-     */
-    public void importDiagram(Stage stage, Boolean share) {
-        Collection<String> result = Import.file(stage);
-        if (result == null) return;
-        if (result.isEmpty()) return;
-
-        // Parse the element if it contains a supported diagram
-        Parser parse = new Parser();
-
-        for (String file : result) {
-            switch (DiagramCheck.ContainsDiagram(result)) {
-                case "sequence_diagram":
-                    parse.parseSequenceDiagram(file);
-
-                    // Catches if there are no diagrams.
-                    try {
-                        if(share) {
-                            Net.push("{share, " + parse.getDiagram() + "}");
-                        }else{
-                            Net.push(parse.getDiagram());
-                        }
-                    } catch (NullPointerException e) {
-                        continue;
-                    }
-
-                    // Catches a nullpointer exception if there is no parallel diagram.
-                    try {
-                        if(share) {
-                            Net.push("{share, " + parse.getParallelSequenceDiagram() + "}");
-                        }else {
-                            Net.push(parse.getParallelSequenceDiagram());
-                        }
-                    } catch (NullPointerException e) {
-                        continue;
-                    }
-
-                    break;
-                case "class_diagram":
-                    parse.parseClassDiagram(file);
-                    System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
-                    if(share) {
-                        Net.push("{share, " + parse.getDiagram() + "}");
-                    }else{
-                        Net.push(parse.getDiagram());
-                    }
-                    break;
-            }
-
-        }
-        // if the diagram is not included in the switch case, check if the diagram is invalid
-        DiagramCheck.ContainsDiagram(result);
-        identifyState();
     }
 }
