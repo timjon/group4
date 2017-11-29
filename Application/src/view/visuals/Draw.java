@@ -12,7 +12,7 @@ import view.visuals.component.*;
 import java.util.ArrayList;
 
 /**
- * @version 3.0
+ * @version 2.1
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborator Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -314,7 +314,9 @@ public class Draw {
         }
     }
 
-
+    /**
+     * Places the relationships in the class diagram
+     */
     void renderClassRelationship(){
         if (allClassRelationships.size()==0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassRelationships.size();

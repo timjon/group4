@@ -45,7 +45,7 @@ public class ClassRelationship implements Renderable {
         int offset = 0;
         int XDistance = endingPointX - startingPointX;
 
-        // basic case: inheritance between 2 cases that are on the same horizontal line
+        // basic case: inheritance between 2 cases that are on the same horisontal line
         for (int i = 0; i < XDistance / 15 - 4; i++) {
 
             if (XDistance > 0) {
@@ -105,15 +105,5 @@ public class ClassRelationship implements Renderable {
     public String format() {
         return "";
     }
-
-
-    // not used for now
-    public void setFromNode(Coordinates fromNode) {
-        this.fromNode = fromNode;
-    }
-
-    // not used for now
-    public void setToNode(Coordinates toNode) {
-        this.toNode = toNode;
-    }
+    
 }
