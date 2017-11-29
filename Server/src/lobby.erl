@@ -49,7 +49,7 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	  Self = self(),
 	  loop(Creator_Socket, Password, Members, [{Diagram_ID, Class_names, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}) end)}| Diagrams], Lobby_ID);
 	
-	%This case happens when the message recieved contains a command for simulation the diagram
+	%This case happens when the message recieved contains a command for simulating the diagram
 	{command, Creator_Socket, {Did, Message_request}} -> 
 	  Pid = find_diagram(Did, Diagrams),
 	  %Sends the message to the diagram coordinator.
