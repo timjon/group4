@@ -26,7 +26,7 @@ import static controller.network.Net.changeMessage;
 /**
  * Handles all menu items and their states.
  * @author Pontus Laestadius
- * Collaborators: Sebastian Fransson, Tim Jonasson
+ * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
  * @version 1.1
  */
 public class Menu {
@@ -106,7 +106,7 @@ public class Menu {
      */
     public HBox get(Stage stage) {
 
-        // Box to hold all item.
+        // Box to hold all items.
         HBox menu = new HBox();
 
         // Start all media buttons disabled.
@@ -149,6 +149,8 @@ public class Menu {
         buttonHashSet.add(button_create_lobby);
         buttonHashSet.add(button_remove_lobby);
         buttonHashSet.add(button_leave_lobby);
+        buttonHashSet.add(button_class);
+        buttonHashSet.add(button_deployment);
 
         // Remove the buttons from the set, to not modify.
         for (Button button: buttons)
