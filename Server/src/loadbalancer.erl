@@ -15,5 +15,6 @@ init() ->
 loop(ListenSocket) ->
   {ok, Socket} = gen_tcp:accept(ListenSocket),
   Pid = spawn(fun() -> usercoordinator:init(Socket) end),
+  %Makes the Pid recieve everything sent to the given socket
   gen_tcp:controlling_process(Socket, Pid),
   loop(ListenSocket).

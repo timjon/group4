@@ -21,6 +21,8 @@ import view.handlers.Automate;
 
 import java.util.*;
 
+import static controller.network.Net.changeMessage;
+
 /**
  * Handles all menu items and their states.
  * @author Pontus Laestadius
@@ -517,19 +519,6 @@ public class Menu {
                     leaveStage.close();
                 }
         });
-    }
-
-    /**
-     * Sends a message of the given message type to the server
-     * @param MessageType The message type, either previous_message or next_message
-     */
-    public static void changeMessage(String MessageType){
-        String tabID = DiagramView.getDiagramViewInView().getTab().getId();
-        if (tabID.contains("l")){
-            Net.push("{share, {" + tabID + ", " + MessageType + "}}");
-        } else {
-            Net.push("{" + tabID + ", " + MessageType + "}");
-        }
     }
 
     /**

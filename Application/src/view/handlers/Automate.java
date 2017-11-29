@@ -1,5 +1,6 @@
 package view.handlers;
 
+import controller.network.Net;
 import model.Menu;
 import view.DiagramView;
 import view.ExecutionLog;
@@ -72,12 +73,12 @@ public class Automate extends Thread {
 
                     // If the last message is done animating.
                     if (!message.isKeepAnimating()) {
-                        Menu.changeMessage("next_message");
+                        Net.changeMessage("next_message");
                     }
                 }
                 // If there are no messages
                 catch (ArrayIndexOutOfBoundsException ex) {
-                    Menu.changeMessage("next_message");
+                    Net.changeMessage("next_message");
                 }
             }
 

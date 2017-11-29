@@ -2,6 +2,7 @@
 -export([init/3]).
 %%Version: 1.0
 %%Authors: Sebastian Fransson, Tim Jonasson
+%%This module manages a lobby and all the diagrams connected to it
 
 init(Creator_Socket, Password, Lobby_ID) -> loop(Creator_Socket, Password, [Creator_Socket], [], Lobby_ID).
 
