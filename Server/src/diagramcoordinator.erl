@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
-%%Version: 1.6
+%%Version: 1.7
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Coordinator, _Did, {[], _}) -> no_classes;
@@ -20,12 +20,10 @@ init(Coordinator, Did, {L, Messages}) ->
 loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
   receive
     {next_message, Coordinator} -> 
-	  Coordinator ! ok,
       Coordinator ! {simulation_done, Did, Message_number},
 	  loop(Coordinator, Did ,Pids,[],Message_number, PrevList);
 	  
 	{previous_message, Coordinator} ->
-	  Coordinator ! ok,
 	  [Prev_H|Prev_T] = PrevList,
 	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
 	  loop(Coordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
@@ -35,7 +33,6 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
   loop(Coordinator, Did, Pids, [L|Ls], Message_number, []) ->
     receive
     {next_message, Coordinator} -> 
-	  Coordinator ! ok,
       {From, To, Message} = L,
 	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
       receive
@@ -47,7 +44,6 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
 	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|[]]);
 	  
 	{previous_message, Coordinator} ->
-	  Coordinator ! ok,
 	  Coordinator ! {Did, print_information, ["No previous message"]},
 	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [])
   end;
@@ -56,7 +52,6 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
 loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) -> 
   receive
     {next_message, Coordinator} -> 
-	  Coordinator ! ok,
       {From, To, Message} = L,
 	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
       receive
@@ -68,7 +63,6 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList]);
 	  
 	{previous_message, Coordinator} ->
-	  Coordinator ! ok,
 	  [Prev_H| Prev_T] = PrevList,
 	  List = [L|Ls],
 	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},

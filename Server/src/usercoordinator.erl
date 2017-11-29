@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
-%%Version: 2.3
+%%Version: 2.4
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -81,9 +81,6 @@ use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
 	  %Sends the message to the diagram coordinator.
 	  Pid ! {Message_request, self()},
 	  %Confirmation that the diagram coordinator received the message
-	  receive
-		ok -> ok
-	  end,
 	  %Receives the result from the diagram coordinator and sends it to the client
 	  loop(Socket, Diagrams)
   end;

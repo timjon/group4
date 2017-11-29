@@ -57,10 +57,6 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	  Pid = find_diagram(Did, Diagrams),
 	  %Sends the message to the diagram coordinator.
 	  Pid ! {Message_request, self()},
-	  %Confirmation that the diagram coordinator received the message
-	  receive
-	  	ok -> ok
-	  end,
 	  %Receives the result from the diagram coordinator and sends it to the client
 	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
 	  
