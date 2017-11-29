@@ -25,16 +25,19 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 		  case Pwd of 
 		    Password -> 
 		      %Sends a confirmation message to the client and then adds the user to the members list
+			  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
 			  gen_tcp:send(Socket, io_lib:format("INFO# Successfully joined lobby, ~p", [Lobby_ID]) ++ "~"),
 		      send_classes(Socket, Diagrams),
 		      [Socket|Members];
 			_ -> 
 			  %Sends a message to the client telling the user that the password was incorrect
+			  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
 			  gen_tcp:send(Socket, io_lib:format("INFO# Wrong password to lobby, ~p", [Lobby_ID]) ++ "~"),
 			  Members
 		  end;
 		found_member -> 
 		  %Tells the user that they already joined this lobby
+		  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
 		  gen_tcp:send(Socket, io_lib:format("INFO# Already in lobby, ~p", [Lobby_ID]) ++ "~"),
 		  Members
 		end, Diagrams, Lobby_ID);
