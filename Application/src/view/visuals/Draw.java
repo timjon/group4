@@ -27,7 +27,7 @@ public class Draw {
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
 
     private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
-    private ArrayList<ClassRelationship> allClassRelationships = new ArrayList<>();//Stores the classdiagram relationships
+    private ArrayList<ClassRelationship> allClassRelationships = new ArrayList<>(); //Stores the classdiagram relationships
 
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
@@ -50,7 +50,8 @@ public class Draw {
         addClassDiagramClass("YOLOSWAG123");
         addClassDiagramClass("Dopeffs");
         // Adds a mocked relationship
-        ClassRelationship cl= new ClassRelationship("inheritance", allClassDiagramClasses.get(0).getCoordinates(),allClassDiagramClasses.get(1).getCoordinates(), 40);
+        ClassRelationship cl= new ClassRelationship("inheritance", allClassDiagramClasses.get(0).getCoordinates(),
+                allClassDiagramClasses.get(1).getCoordinates(), 40);
         allClassRelationships.add(cl);
 
     }
@@ -216,8 +217,7 @@ public class Draw {
         clear(canvas);
 
         // adds an animated gif file to the canvas with proper height and width.
-        canvas.getGraphicsContext2D().drawImage(animatedBackground,0,0,
-                this.canvas.getWidth(), this.canvas.getHeight());
+        canvas.getGraphicsContext2D().drawImage(animatedBackground,0,0, this.canvas.getWidth(), this.canvas.getHeight());
     }
 
     /**
