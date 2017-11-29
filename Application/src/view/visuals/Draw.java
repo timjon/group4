@@ -13,7 +13,7 @@ import view.visuals.component.*;
 import java.util.ArrayList;
 
 /**
- * @version 2.0
+ * @version 3.0
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborator Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -28,6 +28,7 @@ public class Draw {
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
 
     private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
+    private ArrayList<ClassRelationship> allClassRelationships = new ArrayList<>();//Stores the classdiagram relationships
 
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
@@ -49,6 +50,10 @@ public class Draw {
         // TODO: remove Mock input data for class diagram
         addClassDiagramClass("YOLOSWAG123");
         addClassDiagramClass("Dopeffs");
+        // Adds a mocked relationship
+        ClassRelationship cl= new ClassRelationship("inheritance", allClassDiagramClasses.get(0).getCoordinates(),allClassDiagramClasses.get(1).getCoordinates(), 40);
+        allClassRelationships.add(cl);
+
     }
 
     /**
@@ -176,6 +181,7 @@ public class Draw {
         renderClass();
         renderMessage();
         renderClassDiagramClass();
+        renderClassRelationship();
     }
 
     /**
@@ -234,9 +240,12 @@ public class Draw {
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
+        //rendering of class diagram's relationships
+        for (Renderable r: allClassRelationships)
+            r.render(graphicsContext);
         //rendering of class diagram
-        for (Renderable e: allClassDiagramClasses)
-            e.render(graphicsContext);
+        for (Renderable r: allClassDiagramClasses)
+            r.render(graphicsContext);
     }
 
     /**
@@ -247,6 +256,10 @@ public class Draw {
             r.update();
         for (Renderable r: messages)
             r.update();
+        //rendering of class diagram's relationships
+        for (Renderable r: allClassRelationships)
+            r.update();
+        //rendering of class diagram
         for (Renderable r: allClassDiagramClasses)
             r.update();
     }
@@ -299,6 +312,18 @@ public class Draw {
             int x = (space/2) + (i * space);
             int y = 50 + (space/2)/4;
             allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
+        }
+    }
+
+
+    void renderClassRelationship(){
+        if (allClassRelationships.size()==0) return;
+        int space = ((int)this.canvas_class.getWidth())/this.allClassRelationships.size();
+        for(int i = 0; i < allClassRelationships.size(); i++) {
+            //hardcoded, just get the first and the second island here
+            Coordinates fromNode = allClassDiagramClasses.get(0).getCoordinates();
+            Coordinates toNode = allClassDiagramClasses.get(1).getCoordinates();
+            allClassRelationships.get(i).init(fromNode,toNode,(space/2));
         }
     }
 
