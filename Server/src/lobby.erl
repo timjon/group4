@@ -81,9 +81,9 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	{message_sent, Did, From, To, Message, Message_number} -> 
 	  %Turns the result into binary
 	  %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-	  Format_result = io_lib:format("~p", [{Did, From, To, Message, Message_number}]) ++ "~",
+	  Format_result = io_lib:format("~p", [{Did, From, To, Message, Message_number}]),
       %Sends it to the client
-	  send_messages(Members, [Format_result]),
+	  send_messages(Members, [Format_result]  ++ "~"),
 	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
 	  
 	%This case happens when there are messages to print to the execution log
