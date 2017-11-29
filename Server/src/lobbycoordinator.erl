@@ -79,7 +79,10 @@ loop(Rooms, Lobby_increment) ->
 	  end,
 	  loop(Rooms, Lobby_increment);
 
-	{'DOWN', _Ref, _process, _Pid, _Reason} -> ok;
+	{'DOWN', _Ref, _process, _Pid, _Reason} -> 
+	   ok,
+	   loop(Rooms, Lobby_increment);
+	   
 	 _ -> 
 		loop(Rooms, Lobby_increment)
   end.
