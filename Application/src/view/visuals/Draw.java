@@ -295,7 +295,6 @@ public class Draw {
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            System.out.println("yo");
             int x = (space/2) + (i * space);
             int y = 50 + (space/2)/4;
             allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
