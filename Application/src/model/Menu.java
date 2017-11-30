@@ -27,7 +27,7 @@ import static controller.network.Net.changeMessage;
  * Handles all menu items and their states.
  * @author Pontus Laestadius
  * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
- * @version 1.1
+ * @version 1.2
  */
 public class Menu {
     //Boolean values to keep track of when to switch states of buttons. 'host' pertains to creating/removing a lobby.
@@ -397,10 +397,12 @@ public class Menu {
             return;
         }
 
-        String id = diagramView.getTab().getId();
 
         Platform.runLater(() -> {
 
+            // Enable other views when there is a diagram in view.
+            button_class.setDisable(false);
+            button_deployment.setDisable(false);
 
         // Updates optional view states.
         ArrayList<String> viewing = diagramView.getViewing();
