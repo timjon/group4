@@ -14,6 +14,6 @@ public class Relationships {
      * @return a formatted string.
      */
     public String format() {
-        return "[" + type + "," + superclass + "," + subclass + "]";
+        return "['" + type + "','" + superclass + "','" + subclass + "']";
     }
 }
