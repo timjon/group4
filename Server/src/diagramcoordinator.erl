@@ -19,8 +19,14 @@ init(Coordinator, Did, {L, Messages}) ->
 %Sends and receives messages until the list of messages is empty  
 loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
   receive
-    {next_message, Coordinator} -> 
-      Coordinator ! {simulation_done, Did, Message_number},
+  
+  % Add a class diagram
+  {class_diagram, Did, Classes, Relations, Coordinator} ->
+  	io:format("diagramcoordinator received class diagram"),
+  	loop(Coordinator, Did, Pids, [], Message_number, PrevList);
+  
+  {next_message, Coordinator} -> 
+    Coordinator ! {simulation_done, Did, Message_number},
 	  loop(Coordinator, Did ,Pids,[],Message_number, PrevList);
 	  
 	{previous_message, Coordinator} ->
@@ -32,6 +38,13 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
  %When there are no previous messages this case is used.
   loop(Coordinator, Did, Pids, [L|Ls], Message_number, []) ->
     receive
+    
+    % Add a class diagram
+  {class_diagram, Did, Classes, Relations, Coordinator} ->
+  	io:format("diagramcoordinator received class diagram"),
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, []);
+    
+    
     {next_message, Coordinator} -> 
       {From, To, Message} = L,
 	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
@@ -51,6 +64,12 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
 %This loop runs until the list is empty (when there are no more messages)
 loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) -> 
   receive
+  
+  % Add a class diagram
+  {class_diagram, Did, Classes, Relations, Coordinator} ->
+  	io:format("diagramcoordinator received class diagram"),
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList);
+  
     {next_message, Coordinator} -> 
       {From, To, Message} = L,
 	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 

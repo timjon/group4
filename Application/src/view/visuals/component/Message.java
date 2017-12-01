@@ -211,7 +211,7 @@ public class Message implements Renderable {
         // int y2 = this.node2.getY(); //Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
-
+        
         // Checks if we are supposed to be animating the message.
         if(keepAnimating) {
 

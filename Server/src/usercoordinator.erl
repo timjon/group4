@@ -2,7 +2,7 @@
 -export([init/1, find_diagram/2, use_input/3]).
 
 %%Author: Tim Jonasson
-%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
+%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06, Pontus Laestadius 2017-11-30
 %%Version: 2.4
 
 %Initializes the usercoordinator
@@ -13,7 +13,8 @@ init(Socket) ->
   
 loop(Socket, Diagrams) -> 
   receive
-    {tcp, Socket, Info} -> 
+
+  {tcp, Socket, Info} -> 
 	  %Scans the info read from the tcp connection
 	  {ok, Scanned, _} = erl_scan:string(binary_to_list(Info)),
 	  use_input(erl_parse:parse_term(Scanned ++ [{dot,0}]), Socket, Diagrams);
@@ -53,7 +54,11 @@ loop(Socket, Diagrams) ->
 		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
 		%Sends the result to client
 		gen_tcp:send(Socket, [Format_result ++ "~"]),
-		loop(Socket, Diagrams)
+		loop(Socket, Diagrams);
+		
+	_ -> 
+		io:format("invalid case"),
+	  loop(Socket, Diagrams)
 	  
   end.
  
@@ -61,6 +66,14 @@ loop(Socket, Diagrams) ->
 find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
+
+
+% If it is a class diagram
+use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
+	io:format("user coordinator received class diagram"),
+	Pid = find_diagram(Sid, Diagrams),
+	Pid ! {class_diagram, Did, Classes, Relations, self()},
+	loop(Socket, Diagrams);
 
 %if a user wishes to create a lobby.
 use_input({ok, {share, Password, Info}}, Socket, Diagrams) -> 
@@ -97,4 +110,5 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
 	  Self = self(),
 	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
 	_           -> already_created
-  end.
+  end.  
+

@@ -52,7 +52,7 @@ public class Parser {
      * Parses a class diagram.
      * @param inputJSON to parse
      */
-    public void parseClassDiagram(String inputJSON) {
+    public void parseClassDiagram(String inputJSON) throws IllegalStateException {
 
         try {
 
@@ -64,6 +64,7 @@ public class Parser {
             StringBuilder string = new StringBuilder();
 
             string.append("{");
+            string.append("class_diagram,");
             string.append(DiagramView.getDiagramViewInView().getTab().getId());
             string.append(",");
             string.append(UniqueCounter.getString());
