@@ -23,6 +23,15 @@ public class Trail {
         this.height = height;
     }
 
+    public void resize(double trailsize, double class_size_change, int trailOffset){
+
+        //Calculates the new position
+        this.setWidth(trailsize);
+        this.setHeight(trailsize);
+        int oldX = this.getXcoordinate();
+        this.setXcoordinate((int)(oldX * class_size_change + trailOffset));
+    }
+
     /**
      * Getter method for getting the x-coordinate for the trail image
      * @return xcoordinate

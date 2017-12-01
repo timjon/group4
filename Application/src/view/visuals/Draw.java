@@ -260,7 +260,9 @@ public class Draw {
             Coordinates node1 = allClasses.get(message.getFromNode()).getCoordinates();
             Coordinates node2 = allClasses.get(message.getToNode()).getCoordinates();
             // Changes the coordinates of the messages.
+            int oldClassSize = message.getClass_size();
             message.changeCoordinates(node1, node2, class_size);
+            //message.resizeTrail(oldClassSize);
         }
     }
 

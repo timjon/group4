@@ -154,15 +154,19 @@ public class Message implements Renderable {
     public void changeCoordinates(Coordinates node1, Coordinates node2, int class_size){
         this.node1 = node1;
         this.node2 = node2;
-        double class_size_change = (double)class_size/this.class_size;
         this.class_size = class_size;
+    }
 
-        //Checks if there is an existing trail for this message
+    public void resizeTrail(int oldClassSize){
+         //Checks if there is an existing trail for this message
         if(trails.size() == 0){
             return;
         }
         //Calculates the new size for the trail
         double trailsize = class_size/trailScale;
+        double class_size_change = (double)class_size/oldClassSize;
+
+        System.out.println(class_size_change);
 
         //Makes sure the trails doesnt move too much to the left
         int firstTrail = (int)(trails.get(0).getXcoordinate() * class_size_change);
@@ -183,18 +187,11 @@ public class Message implements Renderable {
         if(firstX < leftmostnode) {
             trailOffset = leftmostnode - firstX;
         }
-
-
-        //Calculates the new positions
         for(Trail t: trails){
-            t.setWidth(trailsize);
-            t.setHeight(trailsize);
-            int oldX = t.getXcoordinate();
-            t.setXcoordinate((int)(oldX * class_size_change + trailOffset));
+            t.resize(trailsize, class_size_change, trailOffset);
         }
 
     }
-
 
     /**
      * Renders a message on the canvas using the provided coordinates.
@@ -237,6 +234,8 @@ public class Message implements Renderable {
      */
     public void renderDefault(GraphicsContext gc) {
 
+
+
         //Draw trail for the message, for each instance in the arraylist
         for (Trail t: trails)
             gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
@@ -247,6 +246,12 @@ public class Message implements Renderable {
         //toNode Coordinates.
         int x2 = this.node2.getX(); //Not used atm.
         // int y2 = this.node2.getY(); //Not used atm.
+
+        //if ()
+
+        //int d = x1-x2;
+        //for (int i = 0; i < d; i+= size/5)
+        //    gc.drawImage(trail, x1+i, y1, size/5, size/5);
 
         y1 += offset; // Sets an offset from the previous message.
 
@@ -347,4 +352,7 @@ public class Message implements Renderable {
 
 	}
 
+	public int getClass_size(){
+	    return this.class_size;
+    }
 }
