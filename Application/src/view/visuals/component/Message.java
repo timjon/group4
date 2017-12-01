@@ -157,10 +157,14 @@ public class Message implements Renderable {
         double class_size_change = (double)class_size/this.class_size;
         this.class_size = class_size;
 
+        //Checks if there is an existing trail for this message
         if(trails.size() == 0){
             return;
         }
+        //Calculates the new size for the trail
         double trailsize = class_size/trailScale;
+
+        //Makes sure the trails doesnt move too much to the left
         int firstTrail = (int)(trails.get(0).getXcoordinate() * class_size_change);
         int lastTrail = (int)(trails.get(trails.size() - 1).getXcoordinate() * class_size_change);
         int firstX;
@@ -170,22 +174,23 @@ public class Message implements Renderable {
         } else {
             firstX = firstTrail;
         }
-        if(firstX < node1.getX()) {
-            trailOffset = node1.getX() - firstX;
+        int leftmostnode;
+        if(node1.getX() > node2.getX()){
+            leftmostnode = node2.getX();
+        } else {
+            leftmostnode = node1.getX();
+        }
+        if(firstX < leftmostnode) {
+            trailOffset = leftmostnode - firstX;
         }
 
 
+        //Calculates the new positions
         for(Trail t: trails){
             t.setWidth(trailsize);
             t.setHeight(trailsize);
             int oldX = t.getXcoordinate();
-            int oldY = t.getYcoordinate();
             t.setXcoordinate((int)(oldX * class_size_change + trailOffset));
-            //t.setYcoordinate((int)(oldY * class_size_change));
-            System.out.println("class_size = " + class_size);
-            System.out.println("class_size change value = " + class_size_change);
-            System.out.println("X: " + t.getXcoordinate());
-            System.out.println("Y: " + t.getYcoordinate());
         }
 
     }
