@@ -2,8 +2,8 @@
 -export([init/3]).
 
 %%Author: Tim Jonasson
-%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
-%%Version: 1.7
+%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06, Pontus Laestadius 2017-12-01
+%%Version: 1.8
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Coordinator, _Did, {[], _}) -> no_classes;
@@ -17,17 +17,19 @@ init(Coordinator, Did, {L, Messages}) ->
 	loop(Coordinator, Did, Pids, Messages, 1, []). 
 
 %Sends and receives messages until the list of messages is empty  
-loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
+loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
   receive
   
   % Add a class diagram
-  {class_diagram, Did, Classes, Relations, Coordinator} ->
-  	io:format("diagramcoordinator received class diagram"),
-  	loop(Coordinator, Did, Pids, [], Message_number, PrevList);
+  {class_diagram, Classid, Classes, Relations, Coordinator} ->
+		Coordinator !  {Did, print_information, ["Linked Class diagram"]},
+  	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}});
+  
   
   {next_message, Coordinator} -> 
     Coordinator ! {simulation_done, Did, Message_number},
-	  loop(Coordinator, Did ,Pids,[],Message_number, PrevList);
+	  loop(Coordinator, Did ,Pids,[],Message_number, PrevList, ClassDiagram);
+	  
 	  
 	{previous_message, Coordinator} ->
 	  [Prev_H|Prev_T] = PrevList,
@@ -40,8 +42,8 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
     receive
     
     % Add a class diagram
-  {class_diagram, Did, Classes, Relations, Coordinator} ->
-  	io:format("diagramcoordinator received class diagram"),
+  {class_diagram, Classid, Classes, Relations, Coordinator} ->
+  	Coordinator !  {Did, print_information, ["Linked Class diagram"]},
   	loop(Coordinator, Did, Pids, [L|Ls], Message_number, []);
     
     
@@ -54,7 +56,9 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
 		  %Sends info to the Coordinator that a message has been received by a node. To be printed in the executionlog
 		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
+	  
 	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|[]]);
+	  
 	  
 	{previous_message, Coordinator} ->
 	  Coordinator ! {Did, print_information, ["No previous message"]},
@@ -66,9 +70,10 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
   receive
   
   % Add a class diagram
-  {class_diagram, Did, Classes, Relations, Coordinator} ->
-  	io:format("diagramcoordinator received class diagram"),
+  {class_diagram, Classid, Classes, Relations, Coordinator} ->
+  	Coordinator !  {Did, print_information, ["Linked Class diagram"]},
   	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList);
+  
   
     {next_message, Coordinator} -> 
       {From, To, Message} = L,
@@ -80,6 +85,7 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
 	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList]);
+	  
 	  
 	{previous_message, Coordinator} ->
 	  [Prev_H| Prev_T] = PrevList,

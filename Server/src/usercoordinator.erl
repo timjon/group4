@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06, Pontus Laestadius 2017-11-30
-%%Version: 2.4
+%%Version: 2.5
 
 %Initializes the usercoordinator
 init(Socket) -> 
