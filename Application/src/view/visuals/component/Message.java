@@ -142,6 +142,14 @@ public class Message implements Renderable {
                // Set it's animation state to true.
                keepAnimating = true;
 
+               //Check if the message is a self-call and reset the offset.
+               if(fromNode == toNode) {
+                   offset -= 24;
+               }
+
+               //Resets counter for self-calls.
+               selfCallCounter = 1;
+
                // Resets static indicator.
                staticIndicator = false;
 
