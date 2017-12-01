@@ -47,4 +47,20 @@ public class Trail {
      */
     public double getHeight(){return height;}
 
+    public void setXcoordinate(int xcoordinate){
+        this.xcoordinate = xcoordinate;
+    }
+
+
+    public void setYcoordinate(int ycoordinate){
+        this.ycoordinate = ycoordinate;
+    }
+
+    public void setWidth(double width){
+        this.width = width;
+    }
+
+    public void setHeight(double height){
+        this.height = height;
+    }
 }

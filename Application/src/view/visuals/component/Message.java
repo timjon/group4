@@ -154,7 +154,40 @@ public class Message implements Renderable {
     public void changeCoordinates(Coordinates node1, Coordinates node2, int class_size){
         this.node1 = node1;
         this.node2 = node2;
+        double class_size_change = (double)class_size/this.class_size;
         this.class_size = class_size;
+
+        if(trails.size() == 0){
+            return;
+        }
+        double trailsize = class_size/trailScale;
+        int firstTrail = (int)(trails.get(0).getXcoordinate() * class_size_change);
+        int lastTrail = (int)(trails.get(trails.size() - 1).getXcoordinate() * class_size_change);
+        int firstX;
+        int trailOffset = 0;
+        if(firstTrail > lastTrail){
+            firstX = lastTrail;
+        } else {
+            firstX = firstTrail;
+        }
+        if(firstX < node1.getX()) {
+            trailOffset = node1.getX() - firstX;
+        }
+
+
+        for(Trail t: trails){
+            t.setWidth(trailsize);
+            t.setHeight(trailsize);
+            int oldX = t.getXcoordinate();
+            int oldY = t.getYcoordinate();
+            t.setXcoordinate((int)(oldX * class_size_change + trailOffset));
+            //t.setYcoordinate((int)(oldY * class_size_change));
+            System.out.println("class_size = " + class_size);
+            System.out.println("class_size change value = " + class_size_change);
+            System.out.println("X: " + t.getXcoordinate());
+            System.out.println("Y: " + t.getYcoordinate());
+        }
+
     }
 
 
