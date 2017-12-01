@@ -142,7 +142,7 @@ public class Message implements Renderable {
                // Set it's animation state to true.
                keepAnimating = true;
 
-               //Check of if the message is a self-call and reset the offset.
+               //Check if the message is a self-call and reset the offset.
                if(fromNode == toNode) {
                    offset -= 24;
                }
