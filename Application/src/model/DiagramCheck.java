@@ -11,7 +11,7 @@ import java.util.Collection;
  * @since 2017-10-10
  */
 
-class DiagramCheck {
+public class DiagramCheck {
 
     // Supported diagram types.
     private final static String[] allowedDiagrams = {"sequence_diagram", "class_diagram", "deployment_diagram"};
@@ -21,7 +21,7 @@ class DiagramCheck {
      * @return diagram type.
      * @param s collection of Strings that make up several JSON file
      */
-    static String ContainsDiagram(Collection<String> s){
+    public static String ContainsDiagram(Collection<String> s){
 
         for(String string: s) {
 
