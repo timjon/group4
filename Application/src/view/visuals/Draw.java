@@ -322,7 +322,7 @@ public class Draw {
             int x = (space/2) + (i * space);
             int y = 50 + (space/2)/4;
             allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
-    }
+        }
     }
 
     /**

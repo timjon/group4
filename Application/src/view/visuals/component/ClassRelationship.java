@@ -124,7 +124,6 @@ public class ClassRelationship implements Renderable {
             A = 2 * Math.abs(YDistance);
             B = A - 2 * Math.abs((XDistance));
             P = A - Math.abs((XDistance));
-            System.out.println("A"+ XDistance + "A" + YDistance);
             // decreasing the gap to show arrow correctly when it is a horizontal line
             if (YDistance == 0) {
                 gap += -2;
@@ -138,6 +137,7 @@ public class ClassRelationship implements Renderable {
                 gap += 1;
             }
         }
+
         // Using the Bresenham’s Line Algorithm on the Y axis as reference
         else {
             stepsParameter = Math.abs(YDistance);
@@ -145,7 +145,6 @@ public class ClassRelationship implements Renderable {
             A = 2 * Math.abs(XDistance);
             B = A - 2 * Math.abs((YDistance));
             P = A - Math.abs((YDistance));
-            System.out.println("B"+ XDistance + "B" + YDistance);
             // decreasing the gap to show arrow correctly when it is a vertical line line
             if (XDistance == 0) {
                 gap += -1;
@@ -183,18 +182,17 @@ public class ClassRelationship implements Renderable {
                 } else {
                     YOffset += offsetIncrementY;
                 }
-                // Draw bridge
-                //gc.drawImage(bridge, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
+
                 // increase offset accordingly
                 if (Math.abs(XDistance) > Math.abs(YDistance)) {
                     YOffset += offsetIncrementY;
                 } else {
                     XOffset += offsetIncrementX;
                 }
-                // Draw second bridge so that diagonal lines look better and wider
+                // Draw bridge sprites
                 gc.drawImage(bridge, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
-                // increase arrow size in the case of diagonal lines because bridges are wider then
-                arrowSize = 30;
+                // increase arrow size in the case of diagonal lines
+                arrowSize = 25;
 
                 P += B; //see Bresenham’s Line Algorithm
             }
