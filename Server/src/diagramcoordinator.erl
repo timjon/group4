@@ -14,7 +14,7 @@ init(Coordinator, Did, {L, Messages}) ->
 	%Sending information that the Coordinator has been spawned. To be printed in the executionlog
 	Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
 	Pids = spawn_nodes(L, Did, Coordinator),
-	loop(Coordinator, Did, Pids, Messages, 1, []). 
+	loop(Coordinator, Did, Pids, Messages, 1, [], none). 
 
 %Sends and receives messages until the list of messages is empty  
 loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
@@ -34,17 +34,17 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
 	{previous_message, Coordinator} ->
 	  [Prev_H|Prev_T] = PrevList,
 	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
-	  loop(Coordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
+	  loop(Coordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T, ClassDiagram)
   end;
  
  %When there are no previous messages this case is used.
-  loop(Coordinator, Did, Pids, [L|Ls], Message_number, []) ->
+  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram) ->
     receive
     
     % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
   	Coordinator !  {Did, print_information, ["Linked Class diagram"]},
-  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, []);
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram);
     
     
     {next_message, Coordinator} -> 
@@ -57,22 +57,22 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
 		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
 	  
-	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|[]]);
+	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|[]], ClassDiagram);
 	  
 	  
 	{previous_message, Coordinator} ->
 	  Coordinator ! {Did, print_information, ["No previous message"]},
-	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [])
+	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram)
   end;
   
 %This loop runs until the list is empty (when there are no more messages)
-loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) -> 
+loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram) -> 
   receive
   
   % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
   	Coordinator !  {Did, print_information, ["Linked Class diagram"]},
-  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList);
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram);
   
   
     {next_message, Coordinator} -> 
@@ -84,22 +84,27 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 		  %Sends info to the Coordinator that a message has been received by a node. To be printed in the executionlog
 		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
-	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList]);
+	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList], ClassDiagram);
 	  
 	  
 	{previous_message, Coordinator} ->
 	  [Prev_H| Prev_T] = PrevList,
 	  List = [L|Ls],
 	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
-	  loop(Coordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T)
+	  loop(Coordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T, ClassDiagram)
   end.
   
-%checks if a class has a process and spawns it if it doesnt exist
+%checks if a class has a process 
 find_pid([{Pid, Class_name}|_], Class_name) -> Pid;
 find_pid([_|Ls], Name)                      -> find_pid(Ls, Name). 
 
 %spawns nodes for every class in the list
 spawn_nodes(List, Did, Coordinator) ->[spawn_node(Class, Did, Coordinator) || Class <- List].
+
+
+% Finds a node with a given Class_name and returns it's pid.
+find_node(Class_name, Did, Coordinator) ->
+		
 
 %spawns a node and returns a tuple with the pid and the class name
 spawn_node(Class_name, Did, Coordinator) -> 
