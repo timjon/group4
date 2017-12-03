@@ -3,6 +3,7 @@ package view.visuals.component;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import view.visuals.Renderable;
+
 import java.util.ArrayList;
 
 /**
