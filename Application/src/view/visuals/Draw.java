@@ -262,7 +262,7 @@ public class Draw {
             // Changes the coordinates of the messages.
             int oldClassSize = message.getClass_size();
             message.changeCoordinates(node1, node2, class_size);
-            //message.resizeTrail(oldClassSize);
+            message.resizeTrail(oldClassSize);
         }
     }
 

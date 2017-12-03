@@ -159,33 +159,20 @@ public class Message implements Renderable {
 
     public void resizeTrail(int oldClassSize){
          //Checks if there is an existing trail for this message
+
         if(trails.size() == 0){
             return;
         }
-        //Calculates the new size for the trail
         double trailsize = class_size/trailScale;
         double class_size_change = (double)class_size/oldClassSize;
 
-        System.out.println(class_size_change);
-
         //Makes sure the trails doesnt move too much to the left
-        int firstTrail = (int)(trails.get(0).getXcoordinate() * class_size_change);
-        int lastTrail = (int)(trails.get(trails.size() - 1).getXcoordinate() * class_size_change);
-        int firstX;
-        int trailOffset = 0;
-        if(firstTrail > lastTrail){
-            firstX = lastTrail;
+        int firstX = (int)(trails.get(0).getXcoordinate() * class_size_change);
+        int trailOffset;
+        if(node2.getX() < node1.getX()) {
+            trailOffset = node2.getX() - firstX;
         } else {
-            firstX = firstTrail;
-        }
-        int leftmostnode;
-        if(node1.getX() > node2.getX()){
-            leftmostnode = node2.getX();
-        } else {
-            leftmostnode = node1.getX();
-        }
-        if(firstX < leftmostnode) {
-            trailOffset = leftmostnode - firstX;
+            trailOffset = node1.getX() - firstX;
         }
         for(Trail t: trails){
             t.resize(trailsize, class_size_change, trailOffset);
