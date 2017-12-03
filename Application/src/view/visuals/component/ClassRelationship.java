@@ -112,7 +112,7 @@ public class ClassRelationship implements Renderable {
         // To solve the issue with all the different cases of linking the classes, we used Bresenham’s Line Algorithm
         // http://csunplugged.org/wp-content/uploads/2014/12/Lines.pdf
         int A, B, P;
-        
+
         // This is used to find out whether to use the Y axis or the X axis as a parameter for the for loop
         // this avoids having 2 loops
         int stepsParameter;
@@ -124,7 +124,7 @@ public class ClassRelationship implements Renderable {
             A = 2 * Math.abs(YDistance);
             B = A - 2 * Math.abs((XDistance));
             P = A - Math.abs((XDistance));
-
+            System.out.println("A"+ XDistance + "A" + YDistance);
             // decreasing the gap to show arrow correctly when it is a horizontal line
             if (YDistance == 0) {
                 gap += -2;
@@ -132,6 +132,10 @@ public class ClassRelationship implements Renderable {
             // decreasing the gap to show arrow correctly when it is a horizontal line pointing right
             if (XDistance > 0) {
                 gap += -1;
+            }
+            // increasing the gap to show arrow correctly when it is a horizontal line pointing left
+            if (XDistance < 0) {
+                gap += 1;
             }
         }
         // Using the Bresenham’s Line Algorithm on the Y axis as reference
@@ -141,12 +145,10 @@ public class ClassRelationship implements Renderable {
             A = 2 * Math.abs(XDistance);
             B = A - 2 * Math.abs((YDistance));
             P = A - Math.abs((YDistance));
-
+            System.out.println("B"+ XDistance + "B" + YDistance);
             // decreasing the gap to show arrow correctly when it is a vertical line line
             if (XDistance == 0) {
                 gap += -1;
-            } else {
-                gap += -3;
             }
             // decreasing the gap to show arrow correctly when it is a vertical line pointing down
             if (YDistance > 0) {
@@ -182,7 +184,7 @@ public class ClassRelationship implements Renderable {
                     YOffset += offsetIncrementY;
                 }
                 // Draw bridge
-                gc.drawImage(bridge, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
+                //gc.drawImage(bridge, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
                 // increase offset accordingly
                 if (Math.abs(XDistance) > Math.abs(YDistance)) {
                     YOffset += offsetIncrementY;
