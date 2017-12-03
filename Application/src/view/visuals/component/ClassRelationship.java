@@ -16,10 +16,11 @@ import view.visuals.Renderable;
 
 public class ClassRelationship implements Renderable {
 
-    //Image for the bridge sprite which are used to resemble the relationships
-    private static Image bridge = new Image("resources/bridgeSprite.png");
+
+    //Image for the road sprite which are used to resemble the class diagram relationships
+    private static Image road = new Image("resources/roadSprite.png");
     //ImageView that contains the arrow, used ImageView to be able to rotate
-    private static ImageView arrow = new ImageView("resources/arrow.png");
+    private static ImageView arrow = new ImageView("resources/road-arrow.png");
     private Coordinates coordinates; //coordinates
     private Coordinates fromNode, toNode;
     private int size; //size of the allowed class space
@@ -33,7 +34,7 @@ public class ClassRelationship implements Renderable {
         this.size = size;
     }
 
-    // initialiser for rendering the bridge sprites between 2 classes
+    // initialiser for rendering the road sprites between a super class and a sub class
     public void init(Coordinates fromNode, Coordinates toNode, int size) {
         this.fromNode = fromNode;
         this.toNode = toNode;
@@ -155,7 +156,7 @@ public class ClassRelationship implements Renderable {
             }
         }
 
-        // This for loop is responsible for drawing the bridge sprites
+        // This for loop is responsible for drawing the road sprites
         for (int i = 0; i < stepsParameter / 15 + gap; i++) {
 
             // if P is less than 0, draw the next sprite on the same line as the last sprite
@@ -168,7 +169,7 @@ public class ClassRelationship implements Renderable {
                     YOffset += offsetIncrementY;
                 }
 
-                gc.drawImage(bridge, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
+                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
 
                 P += A; //see Bresenham’s Line Algorithm
             }
@@ -189,8 +190,8 @@ public class ClassRelationship implements Renderable {
                 } else {
                     XOffset += offsetIncrementX;
                 }
-                // Draw bridge sprites
-                gc.drawImage(bridge, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
+                // Draw road sprites
+                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
                 // increase arrow size in the case of diagonal lines
                 arrowSize = 25;
 
@@ -204,7 +205,7 @@ public class ClassRelationship implements Renderable {
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
         Image rotatedImage = arrow.snapshot(params, null);
-        // Draw an arrow at the end of the bridge
+        // Draw an arrow at the end of the road
         gc.drawImage(rotatedImage, startingPointX + XOffset, startingPointY + YOffset, arrowSize, arrowSize);
 
     }
