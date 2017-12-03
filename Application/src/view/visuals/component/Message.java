@@ -3,7 +3,6 @@ package view.visuals.component;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import view.visuals.Renderable;
-
 import java.util.ArrayList;
 
 /**
@@ -36,9 +35,13 @@ public class Message implements Renderable {
 
     // Static indicator.
     private boolean staticIndicator = false;
-  
+
     //Image for trail animation
-    private static Image trail = new Image("resources/cloud1.png");
+    private static Image trail = new Image("resources/trail.png");
+    //Image that stores rotated trail
+    private static Image rotatedTrail = new Image("resources/rotated-trail.png");
+    // Checks if the trail should be rotated depending on the direction of the message
+    private boolean rotated = false;
 
     /**
      * Constructor
@@ -128,8 +131,8 @@ public class Message implements Renderable {
                     selfCallCounter =1;
             }
         }
-      
-      
+
+
            // If it's being viewed in the past and not currently animating.
            if (staticIndicator) {
 
@@ -209,14 +212,19 @@ public class Message implements Renderable {
 
         //Draw trail for the message, for each instance in the arraylist
         for (Trail t: trails)
-            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+
+            if (rotated) {
+                gc.drawImage(rotatedTrail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+            }
+            else{
+                gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+            }
 
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
         //toNode Coordinates.
         int x2 = this.node2.getX(); //Not used atm.
-        // int y2 = this.node2.getY(); //Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
 
@@ -235,6 +243,9 @@ public class Message implements Renderable {
                 //draw the trail of the message
                 this.trails.add(new Trail((x1 - 15)+animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
+                // This visual change was added to have an "arrow dropping" animation
+                gc.drawImage(trail,(x1 - 15)+animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale);
 
                 switchImage = false;
             }
@@ -268,12 +279,17 @@ public class Message implements Renderable {
 
             //Checks if up image is supposed to be shown. if this one is used it is a return message.
             else if(switchImage){
+                // if it is a return message then flip the direction of the trail arrows
+                rotated = true;
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
                 //Draw the trail of the message
                 this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
+                // This visual change was added to have an "arrow dropping" animation
+                gc.drawImage(rotatedTrail,(x1 - 15)+animationBounds, y1 +(this.class_size),
+                        class_size/trailScale, class_size/trailScale);
 
                 switchImage = false;
             }
