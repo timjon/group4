@@ -24,11 +24,9 @@ public class ClassRelationship implements Renderable {
     private Coordinates coordinates; //coordinates
     private Coordinates fromNode, toNode;
     private int size; //size of the allowed class space
-    private String name; //Name of the relationship
 
     // constructor
-    public ClassRelationship(String name, Coordinates fromNode, Coordinates toNode, int size) {
-        this.name = name;
+    public ClassRelationship(Coordinates fromNode, Coordinates toNode, int size) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.size = size;
@@ -50,8 +48,9 @@ public class ClassRelationship implements Renderable {
         int endingPointY = toNode.getY(); // Points to the middle of the sub class, used for horizontal lines
         int XOffset = 0; // Vertical offset
         int YOffset = 0; // Vertical offset
-        int offsetIncrementX = 15; // Increments offset
-        int offsetIncrementY = 15; // Increments offset
+        // we need 2 offset increment integers for the case where we have to negate the operand of only one of them
+        int offsetIncrementX = 15; // Increments offset of the X axis offset
+        int offsetIncrementY = 15; // Increments offset of the Y axis offset
         int XDistance = endingPointX - startingPointX; //if this is negative, ending point it more to the left than starting point on X axis
         int YDistance = endingPointY - startingPointY; // if this is negative, same as above, for Y axis
         int gap = 0; // Used to remove steps from the for loops so that the arrow appears correctly
@@ -71,12 +70,12 @@ public class ClassRelationship implements Renderable {
             arrowAngle += 270;
         }
 
-        // point north
+        // point south
         else if (XDistance == 0 && YDistance > 0) {
             arrowAngle += 180;
         }
 
-        // point south
+        // point north
         else if (XDistance == 0 && YDistance < 0) {
             arrowAngle += 0;
         }

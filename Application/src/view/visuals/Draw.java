@@ -51,16 +51,17 @@ public class Draw {
         addClassDiagramClass("Class 2");
         addClassDiagramClass("Class 3");
         addClassDiagramClass("Class 4");
+        addClassDiagramClass("Class 5");
         // Initialises a mocked relationship
-        ClassRelationship cl= new ClassRelationship("inheritance", allClassDiagramClasses.get(0).getCoordinates(),
+        ClassRelationship cl= new ClassRelationship(allClassDiagramClasses.get(0).getCoordinates(),
                 allClassDiagramClasses.get(1).getCoordinates(), 40);
         allClassRelationships.add(cl);
         // Initialises  a mocked relationship
-        ClassRelationship c2= new ClassRelationship("inheritance", allClassDiagramClasses.get(2).getCoordinates(),
+        ClassRelationship c2= new ClassRelationship(allClassDiagramClasses.get(2).getCoordinates(),
                 allClassDiagramClasses.get(1).getCoordinates(), 40);
         allClassRelationships.add(c2);
         // Initialises  a mocked relationship
-        ClassRelationship c3= new ClassRelationship("inheritance", allClassDiagramClasses.get(2).getCoordinates(),
+        ClassRelationship c3= new ClassRelationship(allClassDiagramClasses.get(2).getCoordinates(),
                 allClassDiagramClasses.get(3).getCoordinates(), 40);
         allClassRelationships.add(c3);
 
