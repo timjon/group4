@@ -11,14 +11,14 @@ import view.visuals.Renderable;
  * Class for simulating the relationships of the class diagram
  *
  * @author Rashad Kamsheh
- * @version 1.0
+ * @version 1.1
  */
 
 public class ClassRelationship implements Renderable {
 
     //Image for the bridge sprite which are used to resemble the relationships
     private static Image bridge = new Image("resources/bridgeSprite.png");
-    //Image for the arrow at the end of the bridge
+    //ImageView that contains the arrow, used ImageView to be able to rotate
     private static ImageView arrow = new ImageView("resources/arrow.png");
     private Coordinates coordinates; //coordinates
     private Coordinates fromNode, toNode;
@@ -112,7 +112,9 @@ public class ClassRelationship implements Renderable {
         // To solve the issue with all the different cases of linking the classes, we used Bresenham’s Line Algorithm
         // http://csunplugged.org/wp-content/uploads/2014/12/Lines.pdf
         int A, B, P;
-        // This is used to find out whether to use the Y axis or the X axis as a parameter for the for loop, this avoids having 2 loops
+        
+        // This is used to find out whether to use the Y axis or the X axis as a parameter for the for loop
+        // this avoids having 2 loops
         int stepsParameter;
 
         /// Using the Bresenham’s Line Algorithm on X axis as reference

@@ -49,11 +49,11 @@ public class Draw {
         // TODO: remove Mock input data for class diagram
         addClassDiagramClass("YOLOSWAG123");
         addClassDiagramClass("Dopeffs");
-        addClassDiagramClass("Dopeffs");
-        // Adds a mocked relationship
+        // Initialises a mocked relationship
         ClassRelationship cl= new ClassRelationship("inheritance", allClassDiagramClasses.get(1).getCoordinates(),
                 allClassDiagramClasses.get(0).getCoordinates(), 40);
         allClassRelationships.add(cl);
+        // Initialises  a mocked relationship
         ClassRelationship c2= new ClassRelationship("inheritance", allClassDiagramClasses.get(1).getCoordinates(),
                 allClassDiagramClasses.get(2).getCoordinates(), 40);
         allClassRelationships.add(c2);
@@ -313,8 +313,8 @@ public class Draw {
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
             int x = (space/2) + (i * space);
-            int y = 80 + (space/2)/4;
-            allClassDiagramClasses.get(i).place(new Coordinates(y,x), (space/2));
+            int y = 50 + (space/2)/4;
+            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
         }
     }
 
