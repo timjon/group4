@@ -126,15 +126,15 @@ public class ClassRelationship implements Renderable {
             P = A - Math.abs((XDistance));
             // decreasing the gap to show arrow correctly when it is a horizontal line
             if (YDistance == 0) {
-                gap += -2;
+                gap -= 2;
             }
             // decreasing the gap to show arrow correctly when it is a horizontal line pointing right
             if (XDistance > 0) {
-                gap += -1;
+                gap -= 1;
             }
             // increasing the gap to show arrow correctly when it is a horizontal line pointing left
             if (XDistance < 0) {
-                gap += 1;
+                gap -= 1;
             }
         }
 
@@ -147,11 +147,11 @@ public class ClassRelationship implements Renderable {
             P = A - Math.abs((YDistance));
             // decreasing the gap to show arrow correctly when it is a vertical line line
             if (XDistance == 0) {
-                gap += -1;
+                gap -= 1;
             }
             // decreasing the gap to show arrow correctly when it is a vertical line pointing down
             if (YDistance > 0) {
-                gap += -1;
+                gap -= 1;
             }
         }
 
@@ -175,13 +175,6 @@ public class ClassRelationship implements Renderable {
 
             // if P was 0 or greater, draw the next sprite one line higher/lower than the last sprite
             if (P >= 0) {
-
-                // increase offset accordingly
-                if (Math.abs(XDistance) > Math.abs(YDistance)) {
-                    XOffset += offsetIncrementX;
-                } else {
-                    YOffset += offsetIncrementY;
-                }
 
                 // increase offset accordingly
                 if (Math.abs(XDistance) > Math.abs(YDistance)) {
