@@ -244,9 +244,6 @@ public class Message implements Renderable {
                 //draw the trail of the message
                 this.trails.add(new Trail((x1 - 15)+animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
-                // This visual change was added to have an "arrow dropping" animation
-                gc.drawImage(trail,(x1 - 15)+animationBounds, y1 +(this.class_size),
-                        class_size/trailScale, class_size/trailScale);
 
                 switchImage = false;
             }
@@ -288,9 +285,6 @@ public class Message implements Renderable {
                 //Draw the trail of the message
                 this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
-                // This visual change was added to have an "arrow dropping" animation
-                gc.drawImage(rotatedTrail,(x1 - 15)+animationBounds, y1 +(this.class_size),
-                        class_size/trailScale, class_size/trailScale);
 
                 switchImage = false;
             }
