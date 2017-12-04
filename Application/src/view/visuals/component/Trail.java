@@ -3,7 +3,8 @@ package view.visuals.component;
 /**
  * Class for the trail
  * @author Isabelle Törnqvist
- * @version 1.0
+ * @contributor Tim Jonasson
+ * @version 1.1
  */
 
 public class Trail {
