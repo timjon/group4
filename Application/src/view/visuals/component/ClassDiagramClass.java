@@ -47,9 +47,9 @@ public class ClassDiagramClass implements Renderable {
         gc.setFill(Color.BLACK);
         gc.fillText(
                 this.name,
-                this.coordinates.getX()- size/3,
-                this.coordinates.getY(),
-                classes.getWidth());
+                this.coordinates.getX() + (size/2)/4 -this.name.length()*2,
+                this.coordinates.getY() -(size/2),
+                size );
     }
 
     /**

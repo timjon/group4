@@ -53,6 +53,8 @@ public class Draw {
         addClassDiagramClass("222");
         addClassDiagramClass("333");
         addClassDiagramClass("444");
+        addClassDiagramClass("555");
+        addClassDiagramClass("666");
 
 
 
@@ -288,7 +290,7 @@ public class Draw {
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
         for(int i = 0; i < allClasses.size(); i++) {
-            int x = size+ (i*space);
+            int x = size + (i * space);
             int y = 25 +size/4;
             allClasses.get(i).place(new Coordinates(x,y), size);
         }
@@ -302,22 +304,22 @@ public class Draw {
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
 
-        int size = allClassDiagramClasses.size();
+        int matrixSize = allClassDiagramClasses.size();
         int col = 3;
         int rows;
         //Find how many rows in this matrix
         //If the size is less than the allowed column number, there is only one row
-        if(size <= col){ rows = 1;}
+        if(matrixSize <= col){ rows = 1;}
         //else if the size is dividable by 3, then that's how many rows there should be
-        else  if (size % col == 0) { rows = size / col; }
+        else  if (matrixSize % col == 0) { rows = matrixSize / col; }
         //else, there should be +1 row, but not a full one
-        else { rows = ((size / col) + 1); }
+        else { rows = ((matrixSize / col) + 1); }
 
         //Case for when there are less not a full row of elements in the diagram
         if(allClassDiagramClasses.size() < col){
             for (int c = 0; c < allClassDiagramClasses.size(); c++) {
-                int y = (int) ((this.canvas_class.getHeight() / 2));
-                int x = space / 2 + (c * space);
+                int y = (int)((this.canvas_class.getHeight()));
+                int x = (space / 2) + (c * space);
                 //placing of the images
                 allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
             }
@@ -327,15 +329,14 @@ public class Draw {
             for (int r = 0; r < rows; r++) {
                 int y = (int) ((this.canvas_class.getHeight() / 2) + (r * 50));
                 for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
-                    int x = space / 2 + (c * space);
+                    int x = space  + (c * space);
                     int element = (r * col) + c;
-                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space) / 2);
+                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
                 }
             }
         }
 
     }
-
 
     /**
      * Starts the global Animation thread for all Draw objects and views.
