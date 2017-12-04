@@ -38,8 +38,10 @@ public class Message implements Renderable {
     private boolean staticIndicator = false;
 
     //Image for trail animation
+    private static Image cloud = new Image("resources/cloud1.png");
+    //Image for trail arrow
     private static Image trail = new Image("resources/trail.png");
-    //Image that stores rotated trail
+    //Image that stores rotated trail arrow
     private static Image rotatedTrail = new Image("resources/rotated-trail.png");
     // Checks if the trail should be rotated depending on the direction of the message
     private boolean rotated = false;
@@ -212,14 +214,28 @@ public class Message implements Renderable {
     public void renderDefault(GraphicsContext gc) {
 
         //Draw trail for the message, for each instance in the arraylist
-        for (Trail t: trails)
+        for (int i = 0; i < trails.size()-1; i++){
+
+            // Index each trail
+            Trail t = trails.get(i);
+            // Index of the last trail
+            Trail last = trails.get(trails.size()-1);
+
 
             if (rotated) {
-                gc.drawImage(rotatedTrail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+                // Draw a cloud to indelicate a trail
+                gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+                // Draw an arrow to indicate direction
+                gc.drawImage(rotatedTrail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
             else{
-                gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+                // Draw a cloud to indelicate a trail
+                gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
+                // Draw an arrow to indicate direction
+                gc.drawImage(trail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
+
+        }
 
         //fromNode Coordinates.
         int x1 = this.node1.getX();
