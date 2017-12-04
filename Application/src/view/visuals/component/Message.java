@@ -172,11 +172,8 @@ public class Message implements Renderable {
         int firstX = (int)(trails.get(0).getXcoordinate() * class_size_change);
         int trailOffset;
         //Calculates the offset depending on the direction of the message
-        if(node2.getX() < node1.getX()) {
-            trailOffset = node2.getX() - firstX;
-        } else {
-            trailOffset = node1.getX() - firstX;
-        }
+        trailOffset = node1.getX() - firstX;
+
         //resizes all the trails
         for(Trail t: trails){
             t.resize(trailsize, class_size_change, trailOffset);
