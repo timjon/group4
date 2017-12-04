@@ -232,14 +232,8 @@ public class Message implements Renderable {
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
         //toNode Coordinates.
-        int x2 = this.node2.getX(); //Not used atm.
+        int x2 = this.node2.getX();
         // int y2 = this.node2.getY(); //Not used atm.
-
-        //if ()
-
-        //int d = x1-x2;
-        //for (int i = 0; i < d; i+= size/5)
-        //    gc.drawImage(trail, x1+i, y1, size/5, size/5);
 
         y1 += offset; // Sets an offset from the previous message.
 
