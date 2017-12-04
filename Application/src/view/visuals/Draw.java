@@ -53,9 +53,7 @@ public class Draw {
         addClassDiagramClass("222");
         addClassDiagramClass("333");
         addClassDiagramClass("444");
-        addClassDiagramClass("444");
-        addClassDiagramClass("444");
-        addClassDiagramClass("444");
+
 
 
     }
@@ -307,140 +305,36 @@ public class Draw {
         int size = allClassDiagramClasses.size();
         int col = 3;
         int rows;
-        int deduction = 0;
         //Find how many rows in this matrix
-        //and the deduction
+        //If the size is less than the allowed column number, there is only one row
         if(size <= col){ rows = 1;}
-        else  if (size % col == 0) {
-            rows = size / col;
-            deduction = 0;
-        }
-        else if  (size % col == 1){
-            rows = ((size / col) + 1);
-            deduction = 2;
-        }
-        else {
-            rows = ((size / col) + 1);
-            deduction = 2;
-        }
+        //else if the size is dividable by 3, then that's how many rows there should be
+        else  if (size % col == 0) { rows = size / col; }
+        //else, there should be +1 row, but not a full one
+        else { rows = ((size / col) + 1); }
 
-
-        //Debugg
-        System.out.println(" yooo Size: " + size + ", col: " + col + ", and rows: " + rows);
-
-
-        for (int r = 0; r < rows; r++) {
-            int y = (int) ((this.canvas_class.getHeight() / 2) + (r * 50));
-            for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
-                System.out.println("r: " + r + ", c:" + c + "deduction: " + deduction);
-                int x = space / 2 + (c * space);
-                int element = (r * col) + c;
-                System.out.println("element: " + element);
-                allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space) / 2);
-            }
-        }
-
-    }
-
-
-
-
-
-
-
-
-
-/*
-
-
-        while (size >= 0) {
-            int y = (int)((this.canvas_class.getHeight() / 2) + (rowCount * 5));
-            for (int i = 0; i <= col; i++) {
-                int x = space / 2 + (i * space);
-                allClassDiagramClasses.get(i).place(new Coordinates(x, y), space / 2);
-            }
-            size -= col;
-            rowCount++;
-        }
-    }
-
-
-
-
-
-
-
-
-        int chunks = 3;
-
-        if (allClassDiagramClasses.size() <= chunks) {
-            for (int i = 0; i < allClassDiagramClasses.size(); i++) {
-                int x = space / 2 + (i * space);
+        //Case for when there are less not a full row of elements in the diagram
+        if(allClassDiagramClasses.size() < col){
+            for (int c = 0; c < allClassDiagramClasses.size(); c++) {
                 int y = (int) ((this.canvas_class.getHeight() / 2));
-                allClassDiagramClasses.get(i).place(new Coordinates(x, y), space / 2);
+                int x = space / 2 + (c * space);
+                //placing of the images
+                allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
             }
-        } else {
-
-            for (int i = 0; i < allClassDiagramClasses.size() - chunks; i += chunks) {
-
-                int y = (int) ((this.canvas_class.getHeight() / 2) + (i * 5));
-
-                for (int j = i; j < chunks; j++) {
-
-                    int x = space / 2 + (j * space);
-
-                    allClassDiagramClasses.get(j).place(new Coordinates(x, y), (space) / 2);
+        }
+        //for all other cases
+        else {
+            for (int r = 0; r < rows; r++) {
+                int y = (int) ((this.canvas_class.getHeight() / 2) + (r * 50));
+                for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
+                    int x = space / 2 + (c * space);
+                    int element = (r * col) + c;
+                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space) / 2);
                 }
             }
         }
+
     }
-*/
-
-/*
-        for(int i = 0; i < 3; i++) {
-            int x = (space/2) + (i * space);
-            int y = (int) ((this.canvas_class.getHeight()/2));
-            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space)/2);
-        }
-        for(int i = 3; i < 6; i++) {
-            int t = 0;
-            int x = (space/2) + (t * space);
-            int y = (int) ((this.canvas_class.getHeight() / 2) - space/2) ;
-            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space)/2);
-            t++;
-        }
-
-
-
-        for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            for(int j = 0; j < allClassDiagramClasses.size()/2; j++){
-
-                int x = (space/2) + (i * space);
-                int y = (int) ((this.canvas_class.getHeight()/2) - space/2);
-                allClassDiagramClasses.get(j).place(new Coordinates(x,y), (space)/2);
-            }
-
-           int y = (int) ((this.canvas_class.getHeight() / 2));
-           int x = (space / 2) + ((i - 1) * space);
-
-
-
-
-            if(i >= 3) {
-                int t = i;
-                y = (int) ((this.canvas_class.getHeight() / 2));
-                x = (space / 2) + ((t - 1) * space);
-            }
-
-            if(i >= 6){
-                int t = i;
-                y = (int) ((this.canvas_class.getHeight() / 2) + space/2);
-                x = (space / 2) + ((t - 1) * space);
-            }*/
-
-           // allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space)/2);
-        //}
-
 
 
     /**
