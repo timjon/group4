@@ -16,6 +16,7 @@ init(Coordinator, Did, {L, Messages}) ->
 	Pids = spawn_nodes(L, Did, Coordinator),
 	loop(Coordinator, Did, Pids, Messages, 1, [], none). 
 
+
 %Sends and receives messages until the list of messages is empty  
 loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
   receive
@@ -93,10 +94,13 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram) ->
 	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
 	  loop(Coordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T, ClassDiagram)
   end.
+
   
-%checks if a class has a process 
+%checks if a class has a process, none if it does not exist.
+find_pid([], _) -> none;
 find_pid([{Pid, Class_name}|_], Class_name) -> Pid;
 find_pid([_|Ls], Name)                      -> find_pid(Ls, Name). 
+
 
 %spawns nodes for every class in the list
 spawn_nodes(List, Did, Coordinator) ->[spawn_node(Class, Did, Coordinator) || Class <- List].
@@ -104,7 +108,24 @@ spawn_nodes(List, Did, Coordinator) ->[spawn_node(Class, Did, Coordinator) || Cl
 
 % Finds a node with a given Class_name and returns it's pid.
 find_node(Class_name, Did, Coordinator) ->
+	not_implemented.
+
+% Gets the name of a specific node.
+getName(NodePid) ->
+	NodePid ! {self(), getName},
+	receive 
+		{getName, Name} -> Name
 		
+	after
+		1000 ->
+		  '404'
+	end.
+
+% Checks if there is a class diagram and formats a message to the coordinator.
+find_highlight(_, _, none) -> none;
+find_highlight(Coordinator, Did, {Classid, {Classes, Relations}}) ->
+	not_implemented.
+
 
 %spawns a node and returns a tuple with the pid and the class name
 spawn_node(Class_name, Did, Coordinator) -> 
@@ -113,8 +134,12 @@ spawn_node(Class_name, Did, Coordinator) ->
   Coordinator ! {Did, print_information, ["Spawned node " ++ atom_to_list(Class_name)]},
   {node:init(Self), Class_name}.
 
+
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did) ->
+	Name = getName(To_pid),
+	io:format("to: ~p", atom_to_list(Name)),
+
   Receiver ! {send_message, From, To, Message, To_pid, Message_number},
   receive
     {send_reply, From, To, Message, To_pid, Message_number} -> 

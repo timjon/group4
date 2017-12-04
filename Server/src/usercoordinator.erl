@@ -54,11 +54,7 @@ loop(Socket, Diagrams) ->
 		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
 		%Sends the result to client
 		gen_tcp:send(Socket, [Format_result ++ "~"]),
-		loop(Socket, Diagrams);
-		
-	_ -> 
-		io:format("invalid case"),
-	  loop(Socket, Diagrams)
+		loop(Socket, Diagrams)
 	  
   end.
  
@@ -69,11 +65,10 @@ find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
 
 % If it is a class diagram
-%use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
-%	io:format("user coordinator received class diagram"),
-%	Pid = find_diagram(Sid, Diagrams),
-%	Pid ! {class_diagram, Did, Classes, Relations, self()},
-%	loop(Socket, Diagrams);
+use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
+	Pid = find_diagram(Sid, Diagrams),
+	Pid ! {class_diagram, Did, Classes, Relations, self()},
+	loop(Socket, Diagrams);
 
 %if a user wishes to create a lobby.
 use_input({ok, {share, Password, Info}}, Socket, Diagrams) -> 
@@ -101,14 +96,19 @@ use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
 %This pattern will match when the first argument is in the format of a new diagram
 use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
   %Spawns a diagram coordinator for this diagram if it doesnt exist already 
-  case find_diagram(Did, Diagrams) of 
+  case find_diagram(Did, Diagrams) of
+  
     not_created -> 
 	  %Sends the class names and messages to the client
-      %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-      Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
-      gen_tcp:send(Socket, Format_result),
+    %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
+    Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
+    gen_tcp:send(Socket, Format_result),
+	  
 	  Self = self(),
-	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
+	  io:format("new diagram~n"),
+	  Pid = spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end),
+	  loop(Socket, [{Did, Pid}| Diagrams]);
+	  
 	_           -> already_created
   end. 
 
