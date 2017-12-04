@@ -69,11 +69,11 @@ find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
 
 % If it is a class diagram
-use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
-	io:format("user coordinator received class diagram"),
-	Pid = find_diagram(Sid, Diagrams),
-	Pid ! {class_diagram, Did, Classes, Relations, self()},
-	loop(Socket, Diagrams);
+%use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
+%	io:format("user coordinator received class diagram"),
+%	Pid = find_diagram(Sid, Diagrams),
+%	Pid ! {class_diagram, Did, Classes, Relations, self()},
+%	loop(Socket, Diagrams);
 
 %if a user wishes to create a lobby.
 use_input({ok, {share, Password, Info}}, Socket, Diagrams) -> 
@@ -110,5 +110,5 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
 	  Self = self(),
 	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
 	_           -> already_created
-  end.  
+  end. 
 
