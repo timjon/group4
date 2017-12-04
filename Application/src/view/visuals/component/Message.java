@@ -9,8 +9,8 @@ import java.util.ArrayList;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius
- * @version 4.1
+ * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius, Tim Jonasson
+ * @version 4.2
  */
 public class Message implements Renderable {
     private String name;
@@ -165,6 +165,29 @@ public class Message implements Renderable {
         this.class_size = class_size;
     }
 
+    public void resizeTrail(int oldClassSize){
+         //Checks if there is an existing trail for this message
+
+        //If there is no trail
+        if(trails.size() == 0){
+            return;
+        }
+        //Calculates the new size of the trail image and the difference between the window size
+        double trailsize = class_size/trailScale;
+        double class_size_change = (double)class_size/oldClassSize;
+
+        //Makes sure the trails doesnt move too much to the left
+        int firstX = (int)(trails.get(0).getXcoordinate() * class_size_change);
+        int trailOffset;
+        //Calculates the offset depending on the direction of the message
+        trailOffset = node1.getX() - firstX;
+
+        //resizes all the trails
+        for(Trail t: trails){
+            t.resize(trailsize, class_size_change, trailOffset);
+        }
+
+    }
 
     /**
      * Renders a message on the canvas using the provided coordinates.
@@ -207,6 +230,8 @@ public class Message implements Renderable {
      */
     public void renderDefault(GraphicsContext gc) {
 
+
+
         //Draw trail for the message, for each instance in the arraylist
         for (Trail t: trails)
             gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
@@ -215,7 +240,7 @@ public class Message implements Renderable {
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
         //toNode Coordinates.
-        int x2 = this.node2.getX(); //Not used atm.
+        int x2 = this.node2.getX();
         // int y2 = this.node2.getY(); //Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
@@ -317,4 +342,7 @@ public class Message implements Renderable {
 
 	}
 
+	public int getClass_size(){
+	    return this.class_size;
+    }
 }
