@@ -25,32 +25,49 @@ public class ClassRelationship implements Renderable {
     private Coordinates fromNode, toNode;
     private int size; //size of the allowed class space
 
-    // constructor
+    // Constructor
     public ClassRelationship(Coordinates fromNode, Coordinates toNode, int size) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.size = size;
     }
 
-    // initialiser for rendering the road sprites between a super class and a sub class
+    // Initialiser for rendering the road sprites between a super class and a sub class
     public void init(Coordinates fromNode, Coordinates toNode, int size) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.size = size;
     }
 
-    @Override
-    public void render(GraphicsContext gc) {
+    // To solve the issue with all the different cases of linking the classes, we used Bresenham’s Line Algorithm
+    // http://csunplugged.org/wp-content/uploads/2014/12/Lines.pdf
 
-        int startingPointX = fromNode.getX(); // Points to the middle of the super class, used for horizontal lines
-        int startingPointY = fromNode.getY(); // Points to the middle of the super class, user for vertical lines
-        int endingPointX = toNode.getX(); // Points to the middle of the sub class, used for horizontal lines
-        int endingPointY = toNode.getY(); // Points to the middle of the sub class, used for horizontal lines
-        int XDistance = endingPointX - startingPointX; //if this is negative, ending point it more to the left than starting point on X axis
-        int YDistance = endingPointY - startingPointY; // if this is negative, same as above, for Y axis
+    /**
+     * Used to initialise the parameters of Bresenham’s Line Algorithm
+     *
+     * @param XDistance the difference between 2 points on the X axis
+     * @param YDistance the difference between 2 points on the Y axis
+     * @return bresenhamsParametersArray
+     */
+    private int[] initBresenhamsParameters(int XDistance, int YDistance) {
+        int[] bresenhamsParametersArray = new int[4];
+        bresenhamsParametersArray[0] = Math.abs(XDistance); //stepsParameter
+        bresenhamsParametersArray[1] = 2 * Math.abs(YDistance); // A
+        bresenhamsParametersArray[2] = bresenhamsParametersArray[1] - 2 * Math.abs((XDistance)); // B
+        bresenhamsParametersArray[3] = bresenhamsParametersArray[1] - Math.abs((XDistance)); // P
 
-        // the following 8 if statements are used to rotate the arrow according to vertical and horizontal distance,
-        // note: looking for a better solution with less complexity
+        return bresenhamsParametersArray;
+    }
+
+    /**
+     * Method get the proper angle to rotate the inheritance arrow accordingly
+     *
+     * @param XDistance the difference between 2 points on the X axis
+     * @param YDistance the difference between 2 points on the Y axis
+     * @return arrowAngle
+     */
+    private int getAngle(int XDistance, int YDistance) {
+
         int arrowAngle = 0; // used to rotate the arrow to 8 different directions
 
         // point east
@@ -93,11 +110,27 @@ public class ClassRelationship implements Renderable {
             arrowAngle += 225;
         }
 
+        return arrowAngle;
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+
+        // Coordinates
+        int startingPointX = fromNode.getX(); // Points to the middle of the super class, used for horizontal lines
+        int startingPointY = fromNode.getY(); // Points to the middle of the super class, user for vertical lines
+        int endingPointX = toNode.getX(); // Points to the middle of the sub class, used for horizontal lines
+        int endingPointY = toNode.getY(); // Points to the middle of the sub class, used for horizontal lines
+        // Deltas od distances
+        int XDistance = endingPointX - startingPointX; //if this is negative, ending point it more to the left than starting point on X axis
+        int YDistance = endingPointY - startingPointY; // if this is negative, same as above, for Y axis
+        // Offsets
         int XOffset = 0; // Vertical offset
         int YOffset = 0; // Vertical offset
         // we need 2 offset increment integers for the case where we have to negate the operand of only one of them
         int offsetIncrementX = 15; // Increments offset of the X axis offset
         int offsetIncrementY = 15; // Increments offset of the Y axis offset
+
         // negates the operand
         if (XDistance < 0) {
             offsetIncrementX *= (-1);
@@ -107,45 +140,50 @@ public class ClassRelationship implements Renderable {
             offsetIncrementY *= (-1);
         }
 
-        // To solve the issue with all the different cases of linking the classes, we used Bresenham’s Line Algorithm
-        // http://csunplugged.org/wp-content/uploads/2014/12/Lines.pdf
-        int A, B, P;
-
         // This is used to find out whether to use the Y axis or the X axis as a parameter for the for loop
-        // this avoids having 2 loops
         int stepsParameter;
-
+        int A, B, P; // Variables used for Bresenham’s Line Algorithm
         int gap = 0; // Used to remove steps from the for loops so that the arrow appears correctly
 
         /// Using the Bresenham’s Line Algorithm on X axis as reference
         if (Math.abs(XDistance) > Math.abs(YDistance)) {
-            stepsParameter = Math.abs(XDistance);
+            int[] params = initBresenhamsParameters(XDistance, YDistance);
+            stepsParameter = params[0];
+            A = params[1];
+            B = params[2];
+            P = params[3];
 
-            A = 2 * Math.abs(YDistance);
-            B = A - 2 * Math.abs((XDistance));
-            P = A - Math.abs((XDistance));
-            // decreasing the gap to show arrow correctly when it is a horizontal line
-            if (YDistance == 0) {
+            // decreasing the gap to show arrow correctly when it is a horizontal line pointing right
+            if (XDistance > 0 && YDistance == 0) {
+                gap -= 3;
+            }
+            // decreasing the gap to show arrow correctly when it is a horizontal line pointing left
+            if (XDistance < 0 && YDistance == 0) {
                 gap -= 2;
             }
-            // decreasing the gap to show arrow correctly when it is a horizontal line pointing right
-            if (XDistance != 0) {
-                gap -= 1;
-            }
         }
-        // Using the Bresenham’s Line Algorithm on the Y axis as reference
+        // Using the Bresenham’s Line Algorithm on the Y axis as reference by swapping the parameters
         else {
-            stepsParameter = Math.abs(YDistance);
+            int[] params = initBresenhamsParameters(YDistance, XDistance);
+            stepsParameter = params[0];
+            A = params[1];
+            B = params[2];
+            P = params[3];
 
-            A = 2 * Math.abs(XDistance);
-            B = A - 2 * Math.abs((YDistance));
-            P = A - Math.abs((YDistance));
-            // decreasing the gap to show arrow correctly when it is a vertical line line
-            if (XDistance == 0) {
+            // decreasing the gap to show arrow correctly when it is a vertical line pointing down
+            if (XDistance == 0 && YDistance > 0) {
+                gap -= 2;
+            }
+            // decreasing the gap to show arrow correctly when it is a vertical line pointing up
+            if (XDistance == 0 && YDistance < 0) {
                 gap -= 1;
             }
-            // decreasing the gap to show arrow correctly when it is a vertical line pointing down
-            if (YDistance > 0) {
+            // decreasing the gap to show arrow correctly when it is a diagonal line pointing down
+            if (YDistance > 0 && XDistance > 0) {
+                gap -= 3;
+            }
+            // decreasing the gap to show arrow correctly when it is a diagonal line pointing up
+            if (YDistance < 0 && XDistance < 0) {
                 gap -= 1;
             }
         }
@@ -164,6 +202,7 @@ public class ClassRelationship implements Renderable {
                     YOffset += offsetIncrementY;
                 }
 
+                // Draw road sprites
                 gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
 
                 P += A; //see Bresenham’s Line Algorithm
@@ -172,19 +211,9 @@ public class ClassRelationship implements Renderable {
             // if P was 0 or greater, draw the next sprite one line higher/lower than the last sprite
             if (P >= 0) {
 
-                // increase offset accordingly
-                if (Math.abs(XDistance) > Math.abs(YDistance)) {
-                    XOffset += offsetIncrementX;
-                } else {
-                    YOffset += offsetIncrementY;
-                }
-
-                // increase offset accordingly
-                if (Math.abs(XDistance) > Math.abs(YDistance)) {
-                    YOffset += offsetIncrementY;
-                } else {
-                    XOffset += offsetIncrementX;
-                }
+                // increase both offsets
+                XOffset += offsetIncrementX;
+                YOffset += offsetIncrementY;
                 // Draw road sprites
                 gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, 15, 15);
                 // increase arrow size in the case of diagonal lines
@@ -194,8 +223,9 @@ public class ClassRelationship implements Renderable {
             }
 
         }
+
         // Rotate arrow image
-        arrow.setRotate(arrowAngle);
+        arrow.setRotate(getAngle(XDistance, YDistance));
         // Converts imageView into image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
