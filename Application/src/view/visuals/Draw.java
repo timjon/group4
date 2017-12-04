@@ -16,7 +16,6 @@ import java.util.ArrayList;
  * @version 2.1
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborators Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
- * Touched by Tim Jonasson
  */
 
 public class Draw {
