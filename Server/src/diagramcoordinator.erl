@@ -11,7 +11,7 @@ init(_Coordinator, _Did, {[], _}) -> no_classes;
 init(_Coordinator, _Did, {_, []}) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Coordinator, Did, {L, Messages}) -> 
-	%Sending information that the Coordinator has been spawned. To be printed in the executionlog
+	%Sending information that the Coordinator has been spawned. To be printed client-side.
 	Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
 	Pids = spawn_nodes(L, Did, Coordinator),
 	loop(Coordinator, Did, Pids, Messages, 1, [], none). 
@@ -23,6 +23,10 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
   
   % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
+  
+  	% Set all the nodes data.
+  	io:format("Classes: ~p~n", Classes),
+  
 		Coordinator !  {Did, print_information, ["Linked Class diagram"]},
   	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}});
   
@@ -54,7 +58,7 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
       receive
 	    {message_done, From, To, Message, Message_number} ->
 		  Coordinator ! {message_sent, Did, From, To, Message, Message_number},
-		  %Sends info to the Coordinator that a message has been received by a node. To be printed in the executionlog
+		  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
 	  
@@ -82,7 +86,7 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram) ->
       receive
 	    {message_done, From, To, Message, Message_number} ->
 		  Coordinator ! {message_sent, Did, From, To, Message, Message_number},
-		  %Sends info to the Coordinator that a message has been received by a node. To be printed in the executionlog
+		  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
 	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList], ClassDiagram);
@@ -138,7 +142,14 @@ spawn_node(Class_name, Did, Coordinator) ->
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did) ->
 	Name = getName(To_pid),
-	io:format("to: ~p", atom_to_list(Name)),
+	case Name of
+		none  -> none;
+		'404' -> err; 
+		
+		% Catches all.
+		Valid -> 	io:format("to: ~p", atom_to_list(Valid))
+	end,
+
 
   Receiver ! {send_message, From, To, Message, To_pid, Message_number},
   receive

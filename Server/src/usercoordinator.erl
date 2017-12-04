@@ -105,7 +105,6 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
     gen_tcp:send(Socket, Format_result),
 	  
 	  Self = self(),
-	  io:format("new diagram~n"),
 	  Pid = spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end),
 	  loop(Socket, [{Did, Pid}| Diagrams]);
 	  
