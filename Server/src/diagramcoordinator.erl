@@ -23,11 +23,10 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
   
   % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
-  
-  	% Set all the nodes data.
-  	io:format("Classes: ~p~n", Classes),
+  	
   
 		Coordinator !  {Did, print_information, ["Linked Class diagram"]},
+		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
   	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}});
   
   
@@ -150,7 +149,7 @@ send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, D
 		Valid -> 	io:format("to: ~p", atom_to_list(Valid))
 	end,
 
-
+	
   Receiver ! {send_message, From, To, Message, To_pid, Message_number},
   receive
     {send_reply, From, To, Message, To_pid, Message_number} -> 
