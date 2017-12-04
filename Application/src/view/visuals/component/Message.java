@@ -9,8 +9,8 @@ import java.util.ArrayList;
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius
- * @version 4.1
+ * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius, Tim Jonasson
+ * @version 4.2
  */
 public class Message implements Renderable {
     private String name;
