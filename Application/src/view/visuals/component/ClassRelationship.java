@@ -46,19 +46,12 @@ public class ClassRelationship implements Renderable {
         int startingPointY = fromNode.getY(); // Points to the middle of the super class, user for vertical lines
         int endingPointX = toNode.getX(); // Points to the middle of the sub class, used for horizontal lines
         int endingPointY = toNode.getY(); // Points to the middle of the sub class, used for horizontal lines
-        int XOffset = 0; // Vertical offset
-        int YOffset = 0; // Vertical offset
-        // we need 2 offset increment integers for the case where we have to negate the operand of only one of them
-        int offsetIncrementX = 15; // Increments offset of the X axis offset
-        int offsetIncrementY = 15; // Increments offset of the Y axis offset
         int XDistance = endingPointX - startingPointX; //if this is negative, ending point it more to the left than starting point on X axis
         int YDistance = endingPointY - startingPointY; // if this is negative, same as above, for Y axis
-        int gap = 0; // Used to remove steps from the for loops so that the arrow appears correctly
-        int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
-        int arrowAngle = 0; // used to rotate the arrow to 8 different directions
 
         // the following 8 if statements are used to rotate the arrow according to vertical and horizontal distance,
         // note: looking for a better solution with less complexity
+        int arrowAngle = 0; // used to rotate the arrow to 8 different directions
 
         // point east
         if (XDistance > 0 && YDistance == 0) {
@@ -100,6 +93,11 @@ public class ClassRelationship implements Renderable {
             arrowAngle += 225;
         }
 
+        int XOffset = 0; // Vertical offset
+        int YOffset = 0; // Vertical offset
+        // we need 2 offset increment integers for the case where we have to negate the operand of only one of them
+        int offsetIncrementX = 15; // Increments offset of the X axis offset
+        int offsetIncrementY = 15; // Increments offset of the Y axis offset
         // negates the operand
         if (XDistance < 0) {
             offsetIncrementX *= (-1);
@@ -117,6 +115,8 @@ public class ClassRelationship implements Renderable {
         // this avoids having 2 loops
         int stepsParameter;
 
+        int gap = 0; // Used to remove steps from the for loops so that the arrow appears correctly
+
         /// Using the Bresenham’s Line Algorithm on X axis as reference
         if (Math.abs(XDistance) > Math.abs(YDistance)) {
             stepsParameter = Math.abs(XDistance);
@@ -129,15 +129,10 @@ public class ClassRelationship implements Renderable {
                 gap -= 2;
             }
             // decreasing the gap to show arrow correctly when it is a horizontal line pointing right
-            if (XDistance > 0) {
-                gap -= 1;
-            }
-            // increasing the gap to show arrow correctly when it is a horizontal line pointing left
-            if (XDistance < 0) {
+            if (XDistance != 0) {
                 gap -= 1;
             }
         }
-
         // Using the Bresenham’s Line Algorithm on the Y axis as reference
         else {
             stepsParameter = Math.abs(YDistance);
@@ -155,6 +150,7 @@ public class ClassRelationship implements Renderable {
             }
         }
 
+        int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
         // This for loop is responsible for drawing the road sprites
         for (int i = 0; i < stepsParameter / 15 + gap; i++) {
 
@@ -175,6 +171,13 @@ public class ClassRelationship implements Renderable {
 
             // if P was 0 or greater, draw the next sprite one line higher/lower than the last sprite
             if (P >= 0) {
+
+                // increase offset accordingly
+                if (Math.abs(XDistance) > Math.abs(YDistance)) {
+                    XOffset += offsetIncrementX;
+                } else {
+                    YOffset += offsetIncrementY;
+                }
 
                 // increase offset accordingly
                 if (Math.abs(XDistance) > Math.abs(YDistance)) {
