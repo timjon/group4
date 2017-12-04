@@ -51,8 +51,12 @@ public class Draw {
         // TODO: remove Mock input data for class diagram
         addClassDiagramClass("1111");
         addClassDiagramClass("222");
-        addClassDiagramClass("33");
+        addClassDiagramClass("333");
         addClassDiagramClass("444");
+        addClassDiagramClass("444");
+        addClassDiagramClass("444");
+        addClassDiagramClass("444");
+
 
     }
 
@@ -296,20 +300,103 @@ public class Draw {
      * Places the classes in the class diagram
      */
 
-    void renderClassDiagramClass(){
+    void renderClassDiagramClass() {
         if (allClassDiagramClasses.size() == 0) return;
-        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
+        int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
 
-        int[] original = new int[allClassDiagramClasses.size()];
-
-        int chunk = 3; // chunk size to divide
-        for(int i = 0; i <original.length; i+= chunk){
-            Arrays.toString(Arrays.copyOfRange(original, i, Math.min(original.length,i+chunk)));
+        int size = allClassDiagramClasses.size();
+        int col = 3;
+        int rows;
+        int deduction = 0;
+        //Find how many rows in this matrix
+        //and the deduction
+        if(size <= col){ rows = 1;}
+        else  if (size % col == 0) {
+            rows = size / col;
+            deduction = 0;
+        }
+        else if  (size % col == 1){
+            rows = ((size / col) + 1);
+            deduction = 2;
+        }
+        else {
+            rows = ((size / col) + 1);
+            deduction = 2;
         }
 
 
+        //Debugg
+        System.out.println(" yooo Size: " + size + ", col: " + col + ", and rows: " + rows);
 
 
+        for (int r = 0; r < rows; r++) {
+            int y = (int) ((this.canvas_class.getHeight() / 2) + (r * 50));
+            for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
+                System.out.println("r: " + r + ", c:" + c + "deduction: " + deduction);
+                int x = space / 2 + (c * space);
+                int element = (r * col) + c;
+                System.out.println("element: " + element);
+                allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space) / 2);
+            }
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+/*
+
+
+        while (size >= 0) {
+            int y = (int)((this.canvas_class.getHeight() / 2) + (rowCount * 5));
+            for (int i = 0; i <= col; i++) {
+                int x = space / 2 + (i * space);
+                allClassDiagramClasses.get(i).place(new Coordinates(x, y), space / 2);
+            }
+            size -= col;
+            rowCount++;
+        }
+    }
+
+
+
+
+
+
+
+
+        int chunks = 3;
+
+        if (allClassDiagramClasses.size() <= chunks) {
+            for (int i = 0; i < allClassDiagramClasses.size(); i++) {
+                int x = space / 2 + (i * space);
+                int y = (int) ((this.canvas_class.getHeight() / 2));
+                allClassDiagramClasses.get(i).place(new Coordinates(x, y), space / 2);
+            }
+        } else {
+
+            for (int i = 0; i < allClassDiagramClasses.size() - chunks; i += chunks) {
+
+                int y = (int) ((this.canvas_class.getHeight() / 2) + (i * 5));
+
+                for (int j = i; j < chunks; j++) {
+
+                    int x = space / 2 + (j * space);
+
+                    allClassDiagramClasses.get(j).place(new Coordinates(x, y), (space) / 2);
+                }
+            }
+        }
+    }
+*/
+
+/*
         for(int i = 0; i < 3; i++) {
             int x = (space/2) + (i * space);
             int y = (int) ((this.canvas_class.getHeight()/2));
@@ -325,14 +412,6 @@ public class Draw {
 
 
 
-
-
-
-
-
-
-
-/*
         for(int i = 0; i < allClassDiagramClasses.size(); i++) {
             for(int j = 0; j < allClassDiagramClasses.size()/2; j++){
 
@@ -361,7 +440,7 @@ public class Draw {
 
            // allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space)/2);
         //}
-    }
+
 
 
     /**
