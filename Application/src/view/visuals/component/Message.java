@@ -1,17 +1,18 @@
-package visuals;
+package view.visuals.component;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import view.visuals.Renderable;
 
 import java.util.ArrayList;
 
 /**
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
- * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius
- * @version 4.0
+ * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius, Tim Jonasson
+ * @version 4.2
  */
-public class Message implements Renderable{
+public class Message implements Renderable {
     private String name;
     private int size;
     private Coordinates coordinates , node1, node2; // The coordinates of the nodes that the message is supposed to pass between.
@@ -141,6 +142,14 @@ public class Message implements Renderable{
                // Set it's animation state to true.
                keepAnimating = true;
 
+               //Check if the message is a self-call and reset the offset.
+               if(fromNode == toNode) {
+                   offset -= 24;
+               }
+
+               //Resets counter for self-calls.
+               selfCallCounter = 1;
+
                // Resets static indicator.
                staticIndicator = false;
 
@@ -156,6 +165,29 @@ public class Message implements Renderable{
         this.class_size = class_size;
     }
 
+    public void resizeTrail(int oldClassSize){
+         //Checks if there is an existing trail for this message
+
+        //If there is no trail
+        if(trails.size() == 0){
+            return;
+        }
+        //Calculates the new size of the trail image and the difference between the window size
+        double trailsize = class_size/trailScale;
+        double class_size_change = (double)class_size/oldClassSize;
+
+        //Makes sure the trails doesnt move too much to the left
+        int firstX = (int)(trails.get(0).getXcoordinate() * class_size_change);
+        int trailOffset;
+        //Calculates the offset depending on the direction of the message
+        trailOffset = node1.getX() - firstX;
+
+        //resizes all the trails
+        for(Trail t: trails){
+            t.resize(trailsize, class_size_change, trailOffset);
+        }
+
+    }
 
     /**
      * Renders a message on the canvas using the provided coordinates.
@@ -198,6 +230,8 @@ public class Message implements Renderable{
      */
     public void renderDefault(GraphicsContext gc) {
 
+
+
         //Draw trail for the message, for each instance in the arraylist
         for (Trail t: trails)
             gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
@@ -206,7 +240,7 @@ public class Message implements Renderable{
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
         //toNode Coordinates.
-        // int x2 = this.node2.getX(); //Not used atm.
+        int x2 = this.node2.getX();
         // int y2 = this.node2.getY(); //Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
@@ -276,6 +310,13 @@ public class Message implements Renderable{
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
                 switchImage = true;
             }
+        } else {
+
+            int x = x1-x2;
+
+            // Sets the message above the trail.
+            gc.fillText(this.name, x1-x/2 -this.name.length()*2, y1 +this.class_size*1.2); // Message description.
+
         }
     }
 
@@ -301,4 +342,7 @@ public class Message implements Renderable{
 
 	}
 
+	public int getClass_size(){
+	    return this.class_size;
+    }
 }

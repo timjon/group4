@@ -1,6 +1,7 @@
-package net;
+package controller.network;
 
-import visuals.ExecutionLog;
+import view.DiagramView;
+import view.ExecutionLog;
 import javafx.application.Platform;
 
 import java.util.PriorityQueue;
@@ -8,7 +9,7 @@ import java.util.Queue;
 
 /**
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class Net implements Runnable {
 
@@ -102,8 +103,15 @@ public class Net implements Runnable {
                     // Run the decode on the Platform instance.
                     Platform.runLater(() -> {
 
+                        // Pull a message from the received messages queue.
+                        String message = received.poll();
+
+                        // Due to threading, messages can be pulled and there can not be any.
+                        if (message == null) return;
+
                         // Decodes the received message.
-                        (new Decode(received.poll())).execute();
+                        (new Decode(message)).execute();
+
                     });
                 }
             }
@@ -126,6 +134,19 @@ public class Net implements Runnable {
                 System.err.println(e);
             }
 
+        }
+    }
+
+    /**
+     * Sends a message of the given message type to the server
+     * @param MessageType The message type, either previous_message or next_message
+     */
+    public static void changeMessage(String MessageType){
+        String tabID = DiagramView.getDiagramViewInView().getTab().getId();
+        if (tabID.contains("l")){
+            Net.push("{share, {" + tabID + ", " + MessageType + "}}");
+        } else {
+            Net.push("{" + tabID + ", " + MessageType + "}");
         }
     }
 

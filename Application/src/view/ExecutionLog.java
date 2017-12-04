@@ -1,4 +1,4 @@
-package visuals;
+package view;
 
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -8,6 +8,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.control.ListView;
+import view.visuals.Draw;
+import view.visuals.component.Message;
 
 import java.util.Collections;
 import java.util.List;

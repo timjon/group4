@@ -1,4 +1,4 @@
-package net;
+package controller.network;
 
 import java.io.*;
 import java.net.*;

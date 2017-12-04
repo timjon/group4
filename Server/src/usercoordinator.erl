@@ -1,9 +1,9 @@
 -module(usercoordinator).
--export([init/1]).
+-export([init/1, find_diagram/2, use_input/3]).
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
-%%Version: 2.3
+%%Version: 2.4
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -62,6 +62,16 @@ find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
+%if a user wishes to create a lobby.
+use_input({ok, {share, Password, Info}}, Socket, Diagrams) -> 
+  lobbycoordinator ! {Socket, Info, Password},
+  loop(Socket, Diagrams);
+  
+%If the user wants to interact with a lobby
+use_input({ok, {share, Info}}, Socket, Diagrams) -> 
+  lobbycoordinator ! {Socket, Info},
+  loop(Socket, Diagrams);
+  
 %If the message is the Diagram id and the Message_request.
 use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
   %Checks if the diagram exists
@@ -71,9 +81,6 @@ use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
 	  %Sends the message to the diagram coordinator.
 	  Pid ! {Message_request, self()},
 	  %Confirmation that the diagram coordinator received the message
-	  receive
-		ok -> ok
-	  end,
 	  %Receives the result from the diagram coordinator and sends it to the client
 	  loop(Socket, Diagrams)
   end;

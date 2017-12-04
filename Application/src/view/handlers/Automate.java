@@ -1,11 +1,10 @@
-package visuals.handlers;
+package view.handlers;
 
+import controller.network.Net;
 import model.Menu;
-import net.Net;
-import visuals.DiagramView;
-import visuals.Draw;
-import visuals.ExecutionLog;
-import visuals.Message;
+import view.DiagramView;
+import view.ExecutionLog;
+import view.visuals.component.Message;
 
 /**
  * Handles automating the Sequence Diagram execution.
@@ -74,13 +73,12 @@ public class Automate extends Thread {
 
                     // If the last message is done animating.
                     if (!message.isKeepAnimating()) {
-                        Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                        Net.changeMessage("next_message");
                     }
                 }
                 // If there are no messages
                 catch (ArrayIndexOutOfBoundsException ex) {
-                    // send a request for a message.
-                    Net.push("{" + DiagramView.getDiagramViewInView().getTab().getId() + ", next_message}");
+                    Net.changeMessage("next_message");
                 }
             }
 

@@ -1,8 +1,10 @@
-package model;
+package controller;
 
+import controller.network.Net;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.Parser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @version 0.3
+ * @version 1.0
  * @author Pontus Laestadius
  * @since 2017-10-06
  */
@@ -84,7 +86,7 @@ public class Import {
                 sb.append(file.toString());
                 sb.append('\n');
             }
-            disp("", sb.toString());
+            disp("Import error", "Unable to parse the following file(s):", sb.toString());
         }
 
         return files_content;
@@ -95,11 +97,68 @@ public class Import {
      * @param title of the dialog window.
      * @param content message to be displayed.
      */
-    private static void disp(String title, String content) {
+    public static void disp(String title, String headerText, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Import error " + title);
-        alert.setHeaderText("Unable to parse the following file(s):");
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
         alert.setContentText(content);
         alert.show();
+    }
+
+    /**
+     * Handels importing a diagram
+     * @param share True if the diagram is supposed to be shared othervise false
+     */
+    public static void importDiagram(Stage stage, Boolean share) {
+        Collection<String> result = Import.file(stage);
+        if (result == null) return;
+        if (result.isEmpty()) return;
+
+        // Parse the element if it contains a supported diagram
+        Parser parse = new Parser();
+
+        for (String file : result) {
+            switch (model.DiagramCheck.ContainsDiagram(result)) {
+                case "sequence_diagram":
+                    parse.parseSequenceDiagram(file);
+
+                    // Catches if there are no diagrams.
+                    try {
+                        if(share) {
+                            Net.push("{share, " + parse.getDiagram() + "}");
+                        }else{
+                            Net.push(parse.getDiagram());
+                        }
+                    } catch (NullPointerException e) {
+                        continue;
+                    }
+
+                    // Catches a nullpointer exception if there is no parallel diagram.
+                    try {
+                        if(share) {
+                            Net.push("{share, " + parse.getParallelSequenceDiagram() + "}");
+                        }else {
+                            Net.push(parse.getParallelSequenceDiagram());
+                        }
+                    } catch (NullPointerException e) {
+                        continue;
+                    }
+
+                    break;
+                case "class_diagram":
+                    parse.parseClassDiagram(file);
+                    System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
+                    if(share) {
+                        Net.push("{share, " + parse.getDiagram() + "}");
+                    }else{
+                        Net.push(parse.getDiagram());
+                    }
+                    break;
+            }
+
+        }
+        // if the diagram is not included in the switch case, check if the diagram is invalid
+        model.DiagramCheck.ContainsDiagram(result);
+        model.Menu.getInstance().identifyState();
     }
 }
