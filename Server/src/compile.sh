@@ -2,7 +2,8 @@
 # Version: 1.2
 
 # Intro message.
-echo "-----------ERLANG COMPILATION SCRIPT VERSION 1.2-----------"
+    echo "-----------ERLANG COMPILATION SCRIPT VERSION 1.2-----------"
+FINISHED="-------------------------FINISHED!-------------------------"
 
 # Iterates over all erlang source files in the current directory.
 for f in *.erl; do
@@ -28,6 +29,7 @@ RESU=
 	# Runs the erlang EXECUTE with no shell and stops once finished.
 	$(erl -noshell -run $EXECUTE -s init stop)
 
+
 # Store sthe data in the dump file.
 date +"%T" >> $DUMP
 
@@ -38,7 +40,5 @@ echo $RESU
 $RES >> $DUMP
 
 # Outro message.
-
-echo "-----------ERLANG COMPILATION SCRIPT VERSION 1.2-----------"
-echo "-------------------------FINISHED!-------------------------"
+echo $FINISHED
 

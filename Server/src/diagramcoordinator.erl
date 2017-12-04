@@ -23,10 +23,8 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
   
   % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
-  	
-  
-		Coordinator !  {Did, print_information, ["Linked Class diagram"]},
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Classes))]},
   	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}});
   
   
@@ -47,14 +45,17 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
     
     % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
-  	Coordinator !  {Did, print_information, ["Linked Class diagram"]},
-  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram);
+		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Classes))]},
+  	loop(Coordinator, Did, Pids, [], Message_number, [], {Classid, {Classes, Relations}});
     
     
     {next_message, Coordinator} -> 
       {From, To, Message} = L,
-	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
+      
+	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did, get_class_diagram_id(ClassDiagram)), 
       receive
+      
 	    {message_done, From, To, Message, Message_number} ->
 		  Coordinator ! {message_sent, Did, From, To, Message, Message_number},
 		  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
@@ -72,16 +73,17 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
 %This loop runs until the list is empty (when there are no more messages)
 loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram) -> 
   receive
-  
-  % Add a class diagram
+
+	% Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
-  	Coordinator !  {Did, print_information, ["Linked Class diagram"]},
-  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram);
-  
-  
+		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Classes))]},
+  	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}});
+  	
+  	
     {next_message, Coordinator} -> 
       {From, To, Message} = L,
-	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
+	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did, get_class_diagram_id(ClassDiagram)), 
       receive
 	    {message_done, From, To, Message, Message_number} ->
 		  Coordinator ! {message_sent, Did, From, To, Message, Message_number},
@@ -109,9 +111,6 @@ find_pid([_|Ls], Name)                      -> find_pid(Ls, Name).
 spawn_nodes(List, Did, Coordinator) ->[spawn_node(Class, Did, Coordinator) || Class <- List].
 
 
-% Finds a node with a given Class_name and returns it's pid.
-find_node(Class_name, Did, Coordinator) ->
-	not_implemented.
 
 % Gets the name of a specific node.
 getName(NodePid) ->
@@ -124,10 +123,10 @@ getName(NodePid) ->
 		  '404'
 	end.
 
-% Checks if there is a class diagram and formats a message to the coordinator.
-find_highlight(_, _, none) -> none;
-find_highlight(Coordinator, Did, {Classid, {Classes, Relations}}) ->
-	not_implemented.
+
+% Returns the wrapped Class diagram id or none.
+get_class_diagram_id(none) -> none;
+get_class_diagram_id({Id, {_, _}}) -> Id.
 
 
 %spawns a node and returns a tuple with the pid and the class name
@@ -138,15 +137,51 @@ spawn_node(Class_name, Did, Coordinator) ->
   {node:init(Self), Class_name}.
 
 
+
+%% Sets the nodes class names and fields. 
+
+% No more classes, Valid case because no more processes.
+name_classes([], [[]]) -> ok;
+% No more processes. Invalid case when you run out of pids but still got classes.
+name_classes([], _) -> err;
+% No more classes. Invalid case when you run out of classes but still got pids.
+name_classes(_, [[]]) -> err;
+% Only has a class and no fields.
+name_classes([Pid | PidRest], [[Class] | Classes]) -> 
+	Pid ! {setName, Class},
+	name_classes(PidRest, [Classes]);
+% Has class and fields.
+name_classes([Pid | PidRest], [[Class | Fields] | Classes]) -> % ------------------------------------------------------------- BROKEN RIGHT HERE
+	Pid ! {setFields, Fields},
+	Pid ! {setName, Class},
+	name_classes(PidRest, [Classes]).
+
+
 %sends a message to the given node
-send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did) ->
-	Name = getName(To_pid),
-	case Name of
-		none  -> none;
-		'404' -> err; 
+send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did, ClassId) ->
+
+  % If there is a class diagram 
+  case ClassId of 
+   none -> none;
+   % Catches all.
+   _ -> 
+
+		% Gets the name of the class with it's Pid.
+		Name = getName(To_pid),
+	
+		% Matches if it has a name or not.
+		case Name of
+	
+			% None has been provided.
+			none  -> none;
 		
-		% Catches all.
-		Valid -> 	io:format("to: ~p", atom_to_list(Valid))
+			% Could not talk to the node.
+			'404' -> err;
+		
+			% Catches all valid names.
+			% Tells the client to highlight it.
+			Valid -> Coordinator ! {class_diagram, ClassId, Did, higlight, Valid}
+		end
 	end,
 
 	
