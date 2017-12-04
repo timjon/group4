@@ -10,7 +10,9 @@ import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @version 2.0
@@ -36,7 +38,7 @@ public class Draw {
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
     private static Image animatedBackground = new Image("resources/SkyGIF.gif");
 
-    private static Image classDiagramBackground  = new Image("resources/OceanBackgroundMuted.png");
+    private static Image classDiagramBackground  = new Image("resources/grassland.png");
 
     /**
      * Constructor
@@ -47,8 +49,11 @@ public class Draw {
         canvas_deployment = new Canvas(0,0);
 
         // TODO: remove Mock input data for class diagram
-        addClassDiagramClass("YOLOSWAG123");
-        addClassDiagramClass("Dopeffs");
+        addClassDiagramClass("1111");
+        addClassDiagramClass("222");
+        addClassDiagramClass("33");
+        addClassDiagramClass("444");
+
     }
 
     /**
@@ -294,12 +299,70 @@ public class Draw {
     void renderClassDiagramClass(){
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
-        for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            int x = (space/2) + (i * space);
-            int y = 50 + (space/2)/4;
-            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
+
+        int[] original = new int[allClassDiagramClasses.size()];
+
+        int chunk = 3; // chunk size to divide
+        for(int i = 0; i <original.length; i+= chunk){
+            Arrays.toString(Arrays.copyOfRange(original, i, Math.min(original.length,i+chunk)));
         }
+
+
+
+
+        for(int i = 0; i < 3; i++) {
+            int x = (space/2) + (i * space);
+            int y = (int) ((this.canvas_class.getHeight()/2));
+            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space)/2);
+        }
+        for(int i = 3; i < 6; i++) {
+            int t = 0;
+            int x = (space/2) + (t * space);
+            int y = (int) ((this.canvas_class.getHeight() / 2) - space/2) ;
+            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space)/2);
+            t++;
+        }
+
+
+
+
+
+
+
+
+
+
+/*
+        for(int i = 0; i < allClassDiagramClasses.size(); i++) {
+            for(int j = 0; j < allClassDiagramClasses.size()/2; j++){
+
+                int x = (space/2) + (i * space);
+                int y = (int) ((this.canvas_class.getHeight()/2) - space/2);
+                allClassDiagramClasses.get(j).place(new Coordinates(x,y), (space)/2);
+            }
+
+           int y = (int) ((this.canvas_class.getHeight() / 2));
+           int x = (space / 2) + ((i - 1) * space);
+
+
+
+
+            if(i >= 3) {
+                int t = i;
+                y = (int) ((this.canvas_class.getHeight() / 2));
+                x = (space / 2) + ((t - 1) * space);
+            }
+
+            if(i >= 6){
+                int t = i;
+                y = (int) ((this.canvas_class.getHeight() / 2) + space/2);
+                x = (space / 2) + ((t - 1) * space);
+            }*/
+
+           // allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space)/2);
+        //}
     }
+
 
     /**
      * Starts the global Animation thread for all Draw objects and views.
