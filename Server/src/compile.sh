@@ -2,7 +2,7 @@
 # Version: 1.2
 
 # Intro message.
-    echo "-----------ERLANG COMPILATION SCRIPT VERSION 1.2-----------"
+echo "-----------ERLANG COMPILATION SCRIPT VERSION 1.2-----------"
 FINISHED="-------------------------FINISHED!-------------------------"
 
 # Iterates over all erlang source files in the current directory.

@@ -137,24 +137,15 @@ spawn_node(Class_name, Did, Coordinator) ->
   {node:init(Self), Class_name}.
 
 
-
-%% Sets the nodes class names and fields. 
-
-% No more classes, Valid case because no more processes.
-name_classes([], [[]]) -> ok;
-% No more processes. Invalid case when you run out of pids but still got classes.
-name_classes([], _) -> err;
-% No more classes. Invalid case when you run out of classes but still got pids.
-name_classes(_, [[]]) -> err;
-% Only has a class and no fields.
-name_classes([Pid | PidRest], [[Class] | Classes]) -> 
-	Pid ! {setName, Class},
-	name_classes(PidRest, [Classes]);
-% Has class and fields.
-name_classes([Pid | PidRest], [[Class | Fields] | Classes]) -> % ------------------------------------------------------------- BROKEN RIGHT HERE
-	Pid ! {setFields, Fields},
-	Pid ! {setName, Class},
-	name_classes(PidRest, [Classes]).
+% Test version with list comprehension.
+name_classes(Pids, Classes) -> 
+  [
+  	[Pid ! {set, Thing} || Thing <- Things]
+  	|| 
+  	Class <- Classes, 
+  	{Pid, _Retard} <- Pids
+  ],
+  ok.
 
 
 %sends a message to the given node
