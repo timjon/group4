@@ -242,7 +242,8 @@ public class Message implements Renderable {
         for (int i = 0; i < trails.size()-1; i++){
 
             // Index each trail
-            Trail t = trails.get(i);
+			// Starts with the second index to fix visual issue with the first cloud sprite
+            Trail t = trails.get(i+1);
             // Index of the last trail
             Trail last = trails.get(trails.size()-1);
 
