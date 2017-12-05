@@ -60,13 +60,13 @@ loop(Socket, Diagrams) ->
 		% Did = Diagram Id
 		% Seid = Sequence Diagram Id
 	{class_diagram, Did, SeId, ClassDiagram} -> 
-	  Format_result = io_lib:format("~p", [{Did, SeId, ClassDiagram}]) ++ "~",
+	  Format_result = io_lib:format("~p", [{class_diagram, Did, SeId, ClassDiagram}]) ++ "~",
 		gen_tcp:send(Socket, Format_result),
 		loop(Socket, Diagrams);
 		
 		% Highlight a specific class.
 	{class_diagram, Did, SeId, highlight, Name} ->
-	  Format_result = io_lib:format("~p", [{Did, SeId, highlight_class_diagram, Name}]) ++ "~",
+	  Format_result = io_lib:format("~p", [{class_diagram, Did, SeId, highlight_class_diagram, Name}]) ++ "~",
 		gen_tcp:send(Socket, Format_result),
 		loop(Socket, Diagrams)
 	  

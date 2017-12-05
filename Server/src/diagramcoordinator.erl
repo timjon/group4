@@ -120,7 +120,7 @@ getName(NodePid) ->
 		
 	after
 		1000 ->
-		  '404'
+		  err
 	end.
 
 
@@ -137,28 +137,29 @@ spawn_node(Class_name, Did, Coordinator) ->
   {node:init(Self), Class_name}.
 
 
-% Test version with list comprehension.
+% Iterates over the Pids and classes and propogates the data to the Pid.
 name_classes(Pids, Classes) -> 
   [
-  	[Pid ! {set, Thing} || Thing <- Things]
+  	[Pid ! {set, Item} || Item <- Class]
   	|| 
   	Class <- Classes, 
-  	{Pid, _Retard} <- Pids
+  	{Pid, _} <- Pids
   ],
   ok.
 
 
-%sends a message to the given node
-send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did, ClassId) ->
-
-  % If there is a class diagram 
-  case ClassId of 
+% Notifies the client if there is a class diagram, to highlight a specific class.
+notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) -> 
+	  % If there is a class diagram 
+  case ClassDiagramId of 
+  
+  % There is no class diagram.
    none -> none;
    % Catches all.
    _ -> 
 
 		% Gets the name of the class with it's Pid.
-		Name = getName(To_pid),
+		Name = getName(Pid),
 	
 		% Matches if it has a name or not.
 		case Name of
@@ -166,15 +167,21 @@ send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, D
 			% None has been provided.
 			none  -> none;
 		
-			% Could not talk to the node.
-			'404' -> err;
+			% Node did not responde.
+			err -> err;
 		
 			% Catches all valid names.
 			% Tells the client to highlight it.
-			Valid -> Coordinator ! {class_diagram, ClassId, Did, higlight, Valid}
+			Valid -> Coordinator ! {class_diagram, ClassDiagramId, Did, higlight, Valid}
 		end
-	end,
+	end.
+	
 
+%sends a message to the given node
+send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did, ClassId) ->
+
+	% Notify the class diagram to highlight a specific class.
+	notify_class_diagram(Coordinator, Did, ClassId, To_pid),
 	
   Receiver ! {send_message, From, To, Message, To_pid, Message_number},
   receive

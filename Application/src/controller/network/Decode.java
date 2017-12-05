@@ -33,6 +33,7 @@ class Decode {
         if (rawStringToDecode == null) return;
 
         System.out.println(rawStringToDecode); // TODO remove.
+        if (rawStringToDecode.contains("class_diagram")) return; // TODO remove.
 
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
