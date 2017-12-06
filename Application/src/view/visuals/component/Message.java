@@ -38,7 +38,7 @@ public class Message implements Renderable {
     private boolean staticIndicator = false;
 
     //Image for trail animation
-    private static Image cloud = new Image("resources/cloud1.png");
+    private static Image trail = new Image("resources/cloud1.png");
     //Image for trail arrow
     private static Image arrow = new Image("resources/trail.png");
     //Image that stores directionSwitched trail arrow
@@ -242,7 +242,7 @@ public class Message implements Renderable {
             //Draws all trails except the first and last one
             for (int i = 1; i < trails.size() - 1; i++) {
                 tempTrail = trails.get(i);
-                gc.drawImage(cloud, tempTrail.getXcoordinate(), (tempTrail.getYcoordinate() + 18), tempTrail.getWidth(), tempTrail.getHeight());
+                gc.drawImage(trail, tempTrail.getXcoordinate(), (tempTrail.getYcoordinate() + 18), tempTrail.getWidth(), tempTrail.getHeight());
             }
 
             int trailSize = trails.size() - 1;
