@@ -292,10 +292,10 @@ public class Draw {
 
     void renderClassDiagramClass() {
         if (allClassDiagramClasses.size() == 0) return;
-        int col = 3; //The "up to" -number of columns in the matrix, counting from 0.
-        int space = ((int) this.canvas_class.getWidth()) / (this.allClassDiagramClasses.size()/col);
+        int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
         //The size of the matrix structure, i.e the amount of elements/classes
         int matrixSize = allClassDiagramClasses.size();
+        int col = 3; //The "up to" -number of columns in the matrix, counting from 0.
         //Rows depending on size of matrix
         int rows;
         //Find how many rows in this matrix
@@ -305,28 +305,28 @@ public class Draw {
         else  if (matrixSize % col == 0) { rows = matrixSize / col; }
         //else, there should be +1 row, but not a full one
         else { rows = ((matrixSize / col) + 1); }
-        //Y-coordinate for classes
-        int y = (int) ((this.canvas_class.getHeight() / (allClassDiagramClasses.size()/(col))));
 
         //Case for when there's not a full row of elements/classes in the diagram
         if(allClassDiagramClasses.size() < col){
             for (int c = 0; c < allClassDiagramClasses.size(); c++) {
                 int x = space / 2 + (c * space);
+                int y = (int) ((this.canvas_class.getHeight() / 2));
                 //placing of the classes
-                allClassDiagramClasses.get(c).place(new Coordinates(x, space/2+y), (space) / 2);
+                allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
             }
         }
         //for all other cases
         else {
             //For each row, i.e where the y-positioning ought to be the same
             for (int r = 0; r < rows; r++) {
+                int y = (int) ((this.canvas_class.getWidth()/2) + (r * 50));
                 //For each class in the diagram
                 for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
                     int x = c * (int)this.canvas_class.getWidth()/col + space/col;
                     //get the element which is to be placed
                     int element = (r * col) + c;
                     //Placing of the classes
-                    allClassDiagramClasses.get(element).place(new Coordinates(x, space/2+y*r), (space/2));
+                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
                 }
             }
         }
