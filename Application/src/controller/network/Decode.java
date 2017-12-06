@@ -105,7 +105,15 @@ class Decode {
 
             // New relationship list.
             if(classes_and_relations[1].contains("inheritance")) {
-                classRelation(class_ID, classes_and_relations[1]);
+
+                // Split relationship list into items.
+                String[] split_relations = classes_and_relations[1].split("],");
+
+                // Remove all brackets and quotes, then send as comma separated strings.
+                for (int i = 0; i < split_relations.length; i++) {
+                    String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '\'');
+                    classRelation(class_ID, class_relation);
+                }
             }
 
         } else {
@@ -259,6 +267,18 @@ class Decode {
      */
     private void classRelation(String id, String relationship) {
 
+        // Split on comma.
+        String[] single_relationship = relationship.split(",");
+        // Class id.
+        System.out.println("Class diagram ID: " + id);
+        // Relationship type.
+        System.out.println("Relationship type: " + single_relationship[0]);
+        // Super class.
+        System.out.println("Super class: " + single_relationship[1]);
+        // All classes afterwards, i.e. subclasses.
+        for (int i = 2; i < single_relationship.length; i++) {
+            System.out.println("Subclass: " + single_relationship[i]);
+        }
     }
 
     /**
