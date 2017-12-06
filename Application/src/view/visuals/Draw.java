@@ -47,8 +47,8 @@ public class Draw {
         canvas_deployment = new Canvas(0,0);
 
         // TODO: remove Mock input data for class diagram
-        addClassDiagramClass("YOLOSWAG123");
-        addClassDiagramClass("Dopeffs");
+        //addClassDiagramClass("YOLOSWAG123");
+       // addClassDiagramClass("Dopeffs");
     }
 
     /**

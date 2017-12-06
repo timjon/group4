@@ -101,7 +101,8 @@ class Decode {
             String[] classes_and_relations = attributes_list.split("]],");
 
             // New class diagram.
-            classDiagramClasses(classes_and_relations[0], class_ID, related_s_ID);
+            String[] class_diagram_classes = classes_and_relations[0].split("],");
+            classDiagramClasses(classes_and_relations, class_ID, related_s_ID);
 
             // New relationship list.
             if(classes_and_relations[1].contains("inheritance")) {
@@ -256,8 +257,36 @@ class Decode {
      * @param id of the diagram
      * @param SDID the ID of the connected sequence diagram
      */
-    private void classDiagramClasses(String classes, String id, String SDID) {
+    private void classDiagramClasses(String[] classes, String id, String SDID) {
 
+        // Creates a new view with the tab name.
+        DiagramView diagramView = new DiagramView("SDid: " + id, id);
+
+        // Add the tab to the collection of tabs.
+        tabPane.getTabs().add(diagramView.getTab());
+
+        // Retrieve the draw object to add the classes too.
+        Draw draw = diagramView.getDraw();
+
+        Platform.runLater(() -> {
+
+            // Remove brackets and quotes.
+            for (int i = 0; i < classes.length; i++) {
+                String single_class = removeCharactersFromString(classes[i], '[', ']', '\'');
+                int name_index = single_class.indexOf(",");
+                // Split the name of the class.
+                String class_name = single_class.substring(0, name_index);
+                // Attributes list.
+                String fields = single_class.substring(name_index + 1);
+                // Add the class to the draw object.
+                draw.addClassDiagramClass(class_name);
+                // Print class name.
+                System.out.println("Class name: " + class_name + ", fields: " + fields);
+                }
+
+            // Turns on animations.
+            Draw.animate(true);
+        });
     }
 
     /**
