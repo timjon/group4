@@ -7,7 +7,7 @@ import view.visuals.Renderable;
 
 /**
  * Class for Class diagrams
- * @version 1.0
+ * @version 1.1
  * @author Isabelle Törnqvist
  */
 
