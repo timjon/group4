@@ -249,13 +249,8 @@ public class Message implements Renderable {
             int trailSize = trails.size() - 1;
             if(trailSize != 0) {
                 Trail last = trails.get(trailSize);
-                //Puts an arrow on the last location of the trail array
-                //The if statement changes the direction of the arrow if necessary
-                if (directionSwitched) {
-                    gc.drawImage(flippedArrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
-                } else {
-                    gc.drawImage(arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
-                }
+                //Puts an arrow on the last location of the trail array depending on the direction
+                    gc.drawImage(directionSwitched?flippedArrow:arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
         }
         //fromNode Coordinates.
