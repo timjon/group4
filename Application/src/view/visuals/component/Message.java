@@ -40,9 +40,9 @@ public class Message implements Renderable {
     //Image for trail animation
     private static Image cloud = new Image("resources/cloud1.png");
     //Image for trail arrow
-    private static Image trail = new Image("resources/trail.png");
+    private static Image arrow = new Image("resources/trail.png");
     //Image that stores rotated trail arrow
-    private static Image rotatedTrail = new Image("resources/rotated-trail.png");
+    private static Image rotatedArrow = new Image("resources/rotated-trail.png");
     // Checks if the trail should be rotated depending on the direction of the message
     private boolean rotated = false;
 
@@ -237,32 +237,23 @@ public class Message implements Renderable {
     public void renderDefault(GraphicsContext gc) {
 
 
-
-        //Draw trail for the message, for each instance in the arraylist
-        for (int i = 0; i < trails.size()-1; i++){
-
-            // Index each trail
-			// Starts with the second index to fix visual issue with the first cloud sprite
-            Trail t = trails.get(i+1);
-            // Index of the last trail
-            Trail last = trails.get(trails.size()-1);
-
-            // Draw a trail from left to right
-            if (rotated) {
-                // Draw a cloud to indicate a trail
-                gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
-                // Draw an arrow to indicate direction
-                gc.drawImage(rotatedTrail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+        if(trails.size() != 0) {
+            Trail tempTrail;
+            //Draws all trails except the first and last one
+            for (int i = 1; i < trails.size() - 1; i++) {
+                tempTrail = trails.get(i);
+                gc.drawImage(cloud, tempTrail.getXcoordinate(), (tempTrail.getYcoordinate() + 18), tempTrail.getWidth(), tempTrail.getHeight());
             }
-            // Draw a trail from right to left
-            else{
-                // Draw a cloud to indicate a trail
-                gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
-                // Draw an arrow to indicate direction
-                gc.drawImage(trail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+
+            Trail last = trails.get(trails.size() - 1);
+            //Puts an arrow on the last location of the trail array
+            //The if statement changes the direction of the arrow if necessary
+            if (rotated) {
+                gc.drawImage(rotatedArrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+            } else {
+                gc.drawImage(arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
         }
-
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
