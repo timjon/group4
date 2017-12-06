@@ -238,12 +238,12 @@ public class Message implements Renderable {
 
 
         if(trails.size() != 0) {
-            Trail first;
+            Trail t;
             //Draws all trails except the first and last one
             for (int i = 1; i < trails.size() - 1; i++) {
                 // Points to the first index of the trail array
-                first = trails.get(i);
-                gc.drawImage(trail, first.getXcoordinate(), (first.getYcoordinate() + 18), first.getWidth(), first.getHeight());
+                t = trails.get(i);
+                gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
             }
 
             int trailSize = trails.size() - 1;
