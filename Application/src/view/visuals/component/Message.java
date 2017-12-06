@@ -247,27 +247,26 @@ public class Message implements Renderable {
             // Index of the last trail
             Trail last = trails.get(trails.size()-1);
 
-
+            // Draw a trail from left to right
             if (rotated) {
-                // Draw a cloud to indelicate a trail
+                // Draw a cloud to indicate a trail
                 gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
                 // Draw an arrow to indicate direction
                 gc.drawImage(rotatedTrail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
+            // Draw a trail from right to left
             else{
-                // Draw a cloud to indelicate a trail
+                // Draw a cloud to indicate a trail
                 gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
                 // Draw an arrow to indicate direction
                 gc.drawImage(trail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
-
         }
 
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
         //toNode Coordinates.
-
         int x2 = this.node2.getX();
         // int y2 = this.node2.getY(); //Not used atm.
 
