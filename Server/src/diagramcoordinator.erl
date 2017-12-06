@@ -179,6 +179,7 @@ notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) ->
 
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did, ClassId) ->
+	io:format("hi"),
 
 	% Notify the class diagram to highlight a specific class.
 	notify_class_diagram(Coordinator, Did, ClassId, To_pid),
