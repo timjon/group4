@@ -241,8 +241,7 @@ public class Message implements Renderable {
         //Draw trail for the message, for each instance in the arraylist
         for (int i = 0; i < trails.size()-1; i++){
 
-            // Index each trail
-			// Starts with the second index to fix visual issue with the first cloud sprite
+            // Index each trail, but skipping the first index to fix visual bug
             Trail t = trails.get(i+1);
             // Index of the last trail
             Trail last = trails.get(trails.size()-1);
@@ -252,14 +251,14 @@ public class Message implements Renderable {
                 // Draw a cloud to indicate a trail
                 gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
                 // Draw an arrow to indicate direction
-                gc.drawImage(rotatedTrail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+                gc.drawImage(rotatedTrail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth()+2, last.getHeight()+2);
             }
             // Draw a trail from right to left
             else{
                 // Draw a cloud to indicate a trail
                 gc.drawImage(cloud, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
                 // Draw an arrow to indicate direction
-                gc.drawImage(trail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+                gc.drawImage(trail, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth()+2, last.getHeight()+2);
             }
         }
 
