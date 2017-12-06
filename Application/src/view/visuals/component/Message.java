@@ -41,10 +41,10 @@ public class Message implements Renderable {
     private static Image cloud = new Image("resources/cloud1.png");
     //Image for trail arrow
     private static Image arrow = new Image("resources/trail.png");
-    //Image that stores rotated trail arrow
-    private static Image rotatedArrow = new Image("resources/rotated-trail.png");
-    // Checks if the trail should be rotated depending on the direction of the message
-    private boolean rotated = false;
+    //Image that stores directionSwitched trail arrow
+    private static Image flippedArrow = new Image("resources/rotated-trail.png");
+    // Checks if the trail should be flipped depending on the direction of the message
+    private boolean directionSwitched = false;
 
     /**
      * Constructor
@@ -250,8 +250,8 @@ public class Message implements Renderable {
                 Trail last = trails.get(trailSize);
                 //Puts an arrow on the last location of the trail array
                 //The if statement changes the direction of the arrow if necessary
-                if (rotated) {
-                    gc.drawImage(rotatedArrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+                if (directionSwitched) {
+                    gc.drawImage(flippedArrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
                 } else {
                     gc.drawImage(arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
                 }
@@ -315,7 +315,7 @@ public class Message implements Renderable {
             //Checks if up image is supposed to be shown. if this one is used it is a return message.
             else if(switchImage){
                 // if it is a return message then flip the direction of the trail arrows
-                rotated = true;
+                directionSwitched = true;
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
