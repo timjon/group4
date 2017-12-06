@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @version 2.0
+ * @version 2.1
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborator Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -318,8 +318,8 @@ public class Draw {
         //Case for when there are less not a full row of elements in the diagram
         if(allClassDiagramClasses.size() < col){
             for (int c = 0; c < allClassDiagramClasses.size(); c++) {
-                int y = (int)((this.canvas_class.getHeight()));
-                int x = (space / 2) + (c * space);
+                int x = space / 2 + (c * space);
+                int y = (int) ((this.canvas_class.getHeight() / 2));
                 //placing of the images
                 allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
             }
@@ -327,15 +327,15 @@ public class Draw {
         //for all other cases
         else {
             for (int r = 0; r < rows; r++) {
-                int y = (int) ((this.canvas_class.getHeight() / 2) + (r * 50));
+                int y = (int) ((this.canvas_class.getWidth()/2) + (r * 50));
                 for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
-                    int x = space  + (c * space);
+                    //int x = space  + (c * (space * 2));
+                    int x = c * (int)this.canvas_class.getWidth()/col + space/3;
                     int element = (r * col) + c;
                     allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
                 }
             }
         }
-
     }
 
     /**
