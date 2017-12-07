@@ -107,11 +107,6 @@ find_pid([{Pid, Class_name}|_], Class_name) -> Pid;
 find_pid([_|Ls], Name)                      -> find_pid(Ls, Name). 
 
 
-%spawns nodes for every class in the list
-spawn_nodes(List, Did, Coordinator) ->[spawn_node(Class, Did, Coordinator) || Class <- List].
-
-
-
 % Gets the name of a specific node.
 getName(NodePid) ->
 	NodePid ! {self(), getName},
@@ -127,6 +122,10 @@ getName(NodePid) ->
 % Returns the wrapped Class diagram id or none.
 get_class_diagram_id(none) -> none;
 get_class_diagram_id({Id, {_, _}}) -> Id.
+
+
+%spawns nodes for every class in the list
+spawn_nodes(List, Did, Coordinator) ->[spawn_node(Class, Did, Coordinator) || Class <- List].
 
 
 %spawns a node and returns a tuple with the pid and the class name
@@ -152,7 +151,7 @@ notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) ->
   
   % There is no class diagram.
    none -> none;
-   % Catches all.
+   % Catches all.	
    _ -> 
 
 		% Gets the name of the class with it's Pid.
