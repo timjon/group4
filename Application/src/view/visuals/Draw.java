@@ -53,7 +53,9 @@ public class Draw {
         addClassDiagramClass("3");
         addClassDiagramClass("4");
         addClassDiagramClass("5");
-        addClassDiagramClass("2");
+        addClassDiagramClass("6");
+        addClassDiagramClass("7");
+        addClassDiagramClass("8");
 
     }
 
@@ -326,7 +328,7 @@ public class Draw {
         else {
             //For each row, i.e where the y-positioning ought to be the same
             for (int r = 0; r < rows; r++) {
-                int y = (int) ((this.canvas_class.getHeight()/5) + (r * 50));
+                int y = (int) ((this.canvas_class.getHeight()/5) + (r * this.canvas_class.getHeight()/(rows*rows)));
                 //For each class in the diagram
                 for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
                     int x = c * (int)this.canvas_class.getWidth()/col + space/col;
