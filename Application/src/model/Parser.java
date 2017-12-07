@@ -2,8 +2,9 @@ package model;
 
 import model.classDiagram.*;
 import model.sequenceDiagramParser.*;
+
 import view.DiagramView;
-import view.handlers.UniqueCounter;
+
 import controller.Import;
 
 import com.google.gson.Gson;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * collaborator: Pontus Laestadius
- * @version 1.4
+ * @version 1.1
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects

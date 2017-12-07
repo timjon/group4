@@ -7,7 +7,7 @@ import view.visuals.Renderable;
 
 /**
  * Class for Class diagrams
- * @version 1.0
+ * @version 1.1
  * @author Isabelle Törnqvist
  */
 
@@ -18,11 +18,11 @@ public class ClassDiagramClass implements Renderable {
     String name; //Name of the class
 
     //Images for classes
-    private static Image island1 = new Image("resources/Island_with_trees.png");
-    private static Image island2 = new Image("resources/Island_with_trees2.png");
+    private static Image class1 = new Image("resources/castle_default.png");
+    private static Image class2 = new Image("resources/castle_default2.png");
 
     //Animation of Island
-    private Image[] islandStates = {island1, island2};
+    private Image[] classStates = {class1, class2};
     private double animationIndex = 0.0;
 
     /**
@@ -35,21 +35,21 @@ public class ClassDiagramClass implements Renderable {
 
         gc.setFill(Color.TRANSPARENT);
 
-        Image island = islandStates[(int)animationIndex];
+        Image classes = classStates[(int)animationIndex];
         //Draw class
-        gc.drawImage(island,
+        gc.drawImage(classes,
                 this.coordinates.getX() - size/2,
                 this.coordinates.getY() - size/2,
                 size,
-                size*(island.getHeight()/island.getWidth()));
+                size*(classes.getHeight()/classes.getWidth()));
 
         //Sets the name of the class
         gc.setFill(Color.BLACK);
         gc.fillText(
                 this.name,
-                this.coordinates.getX()- size/3,
-                this.coordinates.getY(),
-                island.getWidth());
+                this.coordinates.getX() + (size/2)/4 -this.name.length()*2,
+                this.coordinates.getY() -(size/2),
+                size );
     }
 
     /**
@@ -58,7 +58,7 @@ public class ClassDiagramClass implements Renderable {
     @Override
     public void update() {
         animationIndex += 0.25;
-        if (animationIndex >= islandStates.length)
+        if (animationIndex >= classStates.length)
             animationIndex = 0;
     }
 
