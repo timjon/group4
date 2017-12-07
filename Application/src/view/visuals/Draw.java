@@ -53,9 +53,8 @@ public class Draw {
         addClassDiagramClass("3");
         addClassDiagramClass("4");
         addClassDiagramClass("5");
-        addClassDiagramClass("6");
-        addClassDiagramClass("7");
-        addClassDiagramClass("8");
+        addClassDiagramClass("2");
+
     }
 
     /**
@@ -314,31 +313,27 @@ public class Draw {
         //else, there should be +1 row, but not a full one
         else { rows = ((matrixSize / col) + 1); }
 
-        int y = (int) ((this.canvas_class.getHeight() / (allClassDiagramClasses.size()/(col))));
-
         //Case for when there's not a full row of elements/classes in the diagram
         if(allClassDiagramClasses.size() < col){
             for (int c = 0; c < allClassDiagramClasses.size(); c++) {
                 int x = space / 2 + (c * space);
-                //int y = (int) ((this.canvas_class.getHeight() / 2));
+                int y = (int) ((this.canvas_class.getHeight()/2));
                 //placing of the classes
-               // allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
-                allClassDiagramClasses.get(c).place(new Coordinates(x, space/2+y), (space) / 2);
+               allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
             }
         }
         //for all other cases
         else {
             //For each row, i.e where the y-positioning ought to be the same
             for (int r = 0; r < rows; r++) {
-               // int y = (int) ((this.canvas_class.getWidth()/2) + (r * 50));
+                int y = (int) ((this.canvas_class.getHeight()/5) + (r * 50));
                 //For each class in the diagram
                 for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
                     int x = c * (int)this.canvas_class.getWidth()/col + space/col;
                     //get the element which is to be placed
                     int element = (r * col) + c;
                     //Placing of the classes
-                 //   allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
-                    allClassDiagramClasses.get(element).place(new Coordinates(x, space/2+y*r), (space/2));
+                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
                 }
             }
         }
