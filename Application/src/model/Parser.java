@@ -2,7 +2,6 @@ package model;
 
 import model.classDiagram.*;
 import model.sequenceDiagramParser.*;
-import view.handlers.UniqueCounter;
 import controller.Import;
 
 import com.google.gson.Gson;

@@ -1,4 +1,4 @@
-package view.handlers;
+package model;
 
 /**
  * Holds a static unique counter that increments on every call.
