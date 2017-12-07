@@ -19,6 +19,7 @@ loop(Coordinator, Data) ->
   	
   % Adds data to the node.
   {set, NewData} ->
+  	io:format("~p > ~p~n", self(), NewData),
   	loop(Coordinator, [NewData|Data]);
   
     %Case for when the node sends a message for another node

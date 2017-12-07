@@ -56,14 +56,6 @@ loop(Socket, Diagrams) ->
 		gen_tcp:send(Socket, [Format_result ++ "~"]),
 		loop(Socket, Diagrams);
 		
-		%This case happens when there is a class diagram to add.
-		% Did = Diagram Id
-		% Seid = Sequence Diagram Id
-	{class_diagram, Did, SeId, ClassDiagram} -> 
-	  Format_result = io_lib:format("~p", [{class_diagram, Did, SeId, ClassDiagram}]) ++ "~",
-		gen_tcp:send(Socket, Format_result),
-		loop(Socket, Diagrams);
-		
 		% Highlight a specific class.
 	{class_diagram, Did, SeId, highlight, Name} ->
 	  Format_result = io_lib:format("~p", [{class_diagram, Did, SeId, highlight_class_diagram, Name}]) ++ "~",
