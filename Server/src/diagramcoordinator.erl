@@ -85,10 +85,10 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram) ->
       {From, To, Message} = L,
 	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did, get_class_diagram_id(ClassDiagram)), 
       receive
-	    {message_done, From, To, Message, Message_number} ->
-		  Coordinator ! {message_sent, Did, From, To, Message, Message_number},
-		  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
-		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
+	    	{message_done, From, To, Message, Message_number} ->
+		  	Coordinator ! {message_sent, Did, From, To, Message, Message_number},
+		  	%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
+		  	Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
 	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList], ClassDiagram);
 	  
@@ -133,7 +133,7 @@ spawn_node(Class_name, Did, Coordinator) ->
   Self = self(),
   %Sends info to the Coordinator, that a node has been spawned. To be printed in the executionlog
   Coordinator ! {Did, print_information, ["Spawned node " ++ atom_to_list(Class_name)]},
-  {node:init(Self), Class_name}.
+  {node:init(Self, Class_name), Class_name}.
 
 
 % Iterates over the Pids and classes and propogates the data to the Pid.

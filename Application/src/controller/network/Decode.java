@@ -7,12 +7,13 @@ import view.visuals.Draw;
 import view.ExecutionLog;
 
 import static controller.Import.disp;
+import static view.DiagramView.getDiagramViewInView;
 import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
  * Collaborators: Sebastian Fransson, Tim Jonasson
- * @version 1.4
+ * @version 1.5
  */
 class Decode {
     // Raw string to be decoded.
@@ -35,6 +36,10 @@ class Decode {
         // TODO remove when 39 is done.
         if (rawStringToDecode.contains("class_diagram")) {
             System.out.println(rawStringToDecode);
+
+            // Convert the name from the class name to the class you want to highlight using:
+            // convertInstantiatedClassToClassIdentifier("SEQUENCE DIAGRAM NAME")
+            // Sequence diagram NAME exists as the last parameter for higlight_class_diagram protocol.
             return;
         }
 
