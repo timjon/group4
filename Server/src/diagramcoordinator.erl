@@ -47,7 +47,7 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram) ->
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Classes))]},
-  	loop(Coordinator, Did, Pids, [], Message_number, [], {Classid, {Classes, Relations}});
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], {Classid, {Classes, Relations}});
     
     
     {next_message, Coordinator} -> 
@@ -78,7 +78,7 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram) ->
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Classes))]},
-  	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}});
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, {Classid, {Classes, Relations}});
   	
   	
     {next_message, Coordinator} -> 
