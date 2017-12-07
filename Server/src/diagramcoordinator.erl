@@ -138,16 +138,13 @@ spawn_node(Class_name, Did, Coordinator) ->
 
 
 % Iterates over the Pids and classes and propogates the data to the Pid.
-name_classes(Pids, Classes) -> 
-  [
-  	[Pid ! {set, Item} || Item <- Class]
-  	|| 
-  	Class <- Classes, 
-  	{Pid, _} <- Pids
-  ],
-  ok.
-
-
+name_classes([{H1, _}], [H2]) -> H1 ! {set, H2}, ok;
+name_classes([{H1, _}|T1], [H2|T2]) -> 
+	H1 ! {set, H2},
+	name_classes(T1, T2);
+name_classes(_,_) -> err.
+	
+	
 % Notifies the client if there is a class diagram, to highlight a specific class.
 notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) -> 
 	  % If there is a class diagram 

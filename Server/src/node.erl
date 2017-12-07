@@ -14,12 +14,15 @@ loop(Coordinator, Data) ->
   
   % Gets the name of the node.
   {Pid, getName} -> 
-  	Pid ! {getName, get_last(Data)},
+  	Pid ! {getName, 
+  	
+  	% Flattens the list and retrieves the head.
+  	hd(lists:flatten(Data))},
   	loop(Coordinator, Data);
   	
   % Adds data to the node.
   {set, NewData} ->
-  	io:format("~p > ~p~n", self(), NewData),
+  	io:format("~p~n", [NewData]),
   	loop(Coordinator, [NewData|Data]);
   
     %Case for when the node sends a message for another node
@@ -34,8 +37,4 @@ loop(Coordinator, Data) ->
       Coordinator ! {message_done, From, To, Message, Message_number},
       loop(Coordinator, Data)
   end.
-  
-% Return the last element in a list.
-get_last([]) -> [];
-get_last([H]) -> H;
-get_last([_|T]) -> get_last(T).
+
