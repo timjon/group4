@@ -395,7 +395,7 @@ public class Draw {
         }
 
         // If the given class name does not match any identifier.
-        throw new NullPointerException("No matching Class!");
+        throw new NullPointerException("No class matching: " + name);
     }
 
 }

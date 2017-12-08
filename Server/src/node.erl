@@ -29,7 +29,6 @@ loop(Coordinator, Name, Class, Fields, Relations) ->
     %Case for when the node sends a message for another node
 	{send_message, From, To, Message, To_pid, Message_number} ->
 	  To_pid ! {receive_message, From, To, Message, Message_number},
-	  %Line bellow changed from "Coordinator ! {send_reply},"
 	  Coordinator ! {send_reply, From, To, Message, To_pid, Message_number},
   	loop(Coordinator, Name, Class, Fields, Relations);
     
