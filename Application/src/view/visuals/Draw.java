@@ -273,15 +273,7 @@ public class Draw {
             message.resizeTrail(oldClassSize);
         }
     }
-
-    /**
-     * checks a canvas properties to validate if it is in view or not.
-     * @param canvas to check
-     */
-    private boolean inView(Canvas canvas) {
-        return canvas.getWidth() == 0 && canvas.getHeight() == 0;
-    }
-
+    
     /**
      * Updates the class to fit the resized window.
      */
@@ -379,21 +371,15 @@ public class Draw {
      */
     public String convertInstantiatedClassToClassIdentifier(String name) throws NullPointerException {
         for (Renderable item: allClasses) {
-
             // To be able to match class specific method calls.
             if (item instanceof DiagramClass) {
-
                 // Matches the name with the identifier.
                 if (item.getName().equals(name)) {
-
                     // This conversion is safe because of previous instance check.
                     return ((DiagramClass) item).getClassName();
                 }
-
             }
-
         }
-
         // If the given class name does not match any identifier.
         throw new NullPointerException("No class matching: " + name);
     }
