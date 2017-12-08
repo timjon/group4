@@ -14,7 +14,7 @@ init(Coordinator, Did, {Classes, Messages}, Class_names) ->
 	%Sending information that the Coordinator has been spawned. To be printed client-side.
 	Coordinator ! {Did, print_information, ["Spawned diagram coordinator"]},
 	Pids = spawn_nodes(Classes, Did, Coordinator),
-	loop(Coordinator, Did, Pids, Messages, 1, [], none). 
+	loop(Coordinator, Did, Pids, Messages, 1, [], none, Class_names). 
 
 
 %Sends and receives messages until the list of messages is empty  
@@ -126,10 +126,10 @@ find_pid([_|Ls], Name)                      -> find_pid(Ls, Name).
 
 
 % Gets the name of a specific node.
-getName(NodePid) ->
-	NodePid ! {self(), getName},
+getClass(NodePid) ->
+	NodePid ! {self(), getClass},
 	receive 
-		{getName, Name} -> Name
+		{getClass, Class} -> Class
 		
 	after
 		1000 ->
@@ -160,14 +160,14 @@ name_classes(Pids, Names) -> [find_a_thing(Pid, Names) || Pid <- Pids], ok.
 find_a_thing(Pid, Names) -> 
 	find_a_thing2(Pid, 
 		[{
-			hd(string:split(Name, atom_to_list(':')), 
-			tl(string:split(Name, atom_to_list(':'))} 
+			hd(string:split(Name, atom_to_list(':'))), 
+			tl(string:split(Name, atom_to_list(':')))} 
 			|| Name <- Names]).
 
 find_a_thing2(_, []) -> ok;
-find_a_thing2({Pid, Name}, [{Class, [Name]} || Rest]) -> 
+find_a_thing2({Pid, Name}, [{Class, [Name]} | _]) -> 
 	Pid ! {setClass, Class};
-find_a_thing2(Pid, [_ || Rest]) -> find_a_thing2(Pid, Rest).
+find_a_thing2(Pid, [_ | Rest]) -> find_a_thing2(Pid, Rest).
 	
 	
 % Notifies the client if there is a class diagram, to highlight a specific class.
