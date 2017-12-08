@@ -59,6 +59,8 @@ public class Draw {
 
         addDeploymentDiagramClass("6");
         addDeploymentDiagramClass("7");
+        addDeploymentDiagramClass("8");
+        addDeploymentDiagramClass("9");
 
     }
 
@@ -106,7 +108,7 @@ public class Draw {
      * Draws the actor class on the canvas.
      */
     public void addActor(String name) {
-    	allClasses.add(new ActorClass(name));
+        allClasses.add(new ActorClass(name));
     }
 
     /**
@@ -329,9 +331,29 @@ public class Draw {
     void renderClassDiagramClass() {
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
-        //The size of the matrix structure, i.e the amount of elements/classes
-        int matrixSize = allClassDiagramClasses.size();
-        int col = 3; //The "up to" -number of columns in the matrix, counting from 0.
+        Matrix(allClassDiagramClasses, 3, space,this.canvas_class);
+    }
+
+    /**
+     * Places the nodes in the Deployment diagram
+     */
+    void renderDeploymentDiagram(){
+        if (allDeploymentClasses.size() == 0) return;
+        int space = ((int) this.canvas_deployment.getWidth()) / this.allDeploymentClasses.size();
+        Matrix(allDeploymentClasses, 3, space,this.canvas_deployment);
+    }
+
+    /**
+     *Matrix structure, used for class and deployment diagrams
+     * @param diagram
+     * @param columns
+     * @param space
+     * @param canvas
+     */
+    private void Matrix(ArrayList<Renderable> diagram, int columns, int space, Canvas canvas){
+        //The size of the matrix structure, i.e the amount of elements/classes/nodes
+        int matrixSize = diagram.size();
+        int col =  columns; //The "up to" -number of columns in the matrix, counting from 0.
         //Rows depending on size of matrix
         int rows;
         //Find how many rows in this matrix
@@ -343,38 +365,28 @@ public class Draw {
         else { rows = ((matrixSize / col) + 1); }
 
         //Case for when there's not a full row of elements/classes in the diagram
-        if(allClassDiagramClasses.size() < col){
-            for (int c = 0; c < allClassDiagramClasses.size(); c++) {
+        if(diagram.size() < col){
+            for (int c = 0; c < diagram.size(); c++) {
                 int x = space / 2 + (c * space);
-                int y = (int) ((this.canvas_class.getHeight()/2));
+                int y = (int) ((canvas.getHeight()/2));
                 //placing of the classes
-               allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
+                diagram.get(c).place(new Coordinates(x, y), (space) / 2);
             }
         }
         //for all other cases
         else {
             //For each row, i.e where the y-positioning ought to be the same
             for (int r = 0; r < rows; r++) {
-                int y = (int) ((this.canvas_class.getHeight()/5) + (r * this.canvas_class.getHeight()/(rows*rows)));
+                int y = (int) ((canvas.getHeight()/5) + (r * canvas.getHeight()/(rows*rows)));
                 //For each class in the diagram
-                for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
-                    int x = c * (int)this.canvas_class.getWidth()/col + space/col;
+                for (int c = 0; c < diagram.size() - (col * r); c++) {
+                    int x = c * (int)canvas.getWidth()/col + space/col;
                     //get the element which is to be placed
                     int element = (r * col) + c;
                     //Placing of the classes
-                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
+                    diagram.get(element).place(new Coordinates(x, y), (space/2));
                 }
             }
-        }
-    }
-
-    void renderDeploymentDiagram(){
-        if (allDeploymentClasses.size() == 0) return;
-        int space = ((int) this.canvas_deployment.getWidth()) / this.allDeploymentClasses.size();
-        for (int i = 0; i < allDeploymentClasses.size(); i++){
-            int x = 10 + (i * space);
-            int y = 25 +10/4;
-            allDeploymentClasses.get(i).place(new Coordinates(x,y), space);
         }
     }
 
