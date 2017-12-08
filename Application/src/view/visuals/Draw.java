@@ -273,7 +273,7 @@ public class Draw {
             message.resizeTrail(oldClassSize);
         }
     }
-    
+
     /**
      * Updates the class to fit the resized window.
      */

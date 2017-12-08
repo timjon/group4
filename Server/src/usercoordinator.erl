@@ -101,6 +101,7 @@ use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
   
 %This pattern will match when the first argument is in the format of a new diagram
 use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
+
   %Spawns a diagram coordinator for this diagram if it doesnt exist already 
   case find_diagram(Did, Diagrams) of
   
@@ -111,7 +112,7 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
     gen_tcp:send(Socket, Format_result),
 	  
 	  Self = self(),
-	  Pid = spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end),
+	  Pid = spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}, Class_names) end),
 	  loop(Socket, [{Did, Pid}| Diagrams]);
 	  
 	_           -> already_created
