@@ -6,29 +6,29 @@ import javafx.scene.paint.Color;
 import view.visuals.Renderable;
 
 /**
- * Class for Class diagrams
- * @version 1.1
+ * Class for Deployment diagrams
+ * @version 1.0
  * @author Isabelle Törnqvist
  */
 
-public class ClassDiagramClass implements Renderable {
+public class DeploymentDiagramClass implements  Renderable {
 
     private Coordinates coordinates; //coordinates
     int size; //size of the allowed class space
     String name; //Name of the class
 
-    //Images for classes
-    private static Image class1 = new Image("resources/castle_default.png");
-    private static Image class2 = new Image("resources/castle_default2.png");
+    //Images for Islands
+    private static Image class1 = new Image("resources/Island_with_trees.png");
+    private static Image class2 = new Image("resources/Island_with_trees2.png");
 
-    //Animation of castle
+    //Animation of Island
     private Image[] classStates = {class1, class2};
     private double animationIndex = 0.0;
 
     /**
-     * @param name class name setter
+     * @param name name setter
      */
-    public ClassDiagramClass(String name) { this.name = name; }
+    public DeploymentDiagramClass(String name) { this.name = name; }
 
     @Override
     public void render(GraphicsContext gc) {
@@ -53,7 +53,7 @@ public class ClassDiagramClass implements Renderable {
     }
 
     /**
-     * Changes between the two castles, making it "animated"
+     * Changes between the two island, making it "animated"
      */
     @Override
     public void update() {
@@ -97,4 +97,13 @@ public class ClassDiagramClass implements Renderable {
         this.coordinates = coordinates;
         this.size = size;
     }
+
+
 }
+
+
+
+
+
+
+
