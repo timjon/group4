@@ -180,16 +180,7 @@ notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) ->
    _ -> 
 		% Gets the name of the class with it's Pid.
 		Name = getClass(Pid),
-		% Matches if it has a name or not.
-		case Name of
-			% None has been provided.
-			none  -> none;
-			% Node did not responde.
-			err -> err;
-			% Catches all valid names.
-			% Propogates to highlight the class.
-			Valid -> Coordinator ! {class_diagram, ClassDiagramId, Did, highlight, Valid}
-		end
+		Coordinator ! {class_diagram, ClassDiagramId, Did, highlight, Name}
 	end.
 	
 
