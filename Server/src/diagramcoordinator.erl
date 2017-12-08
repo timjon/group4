@@ -154,7 +154,9 @@ name_classes([{H1, _}], [H2]) -> H1 ! {set, H2}, ok;
 name_classes([{H1, _}|T1], [H2|T2]) -> 
 	H1 ! {set, H2},
 	name_classes(T1, T2);
-name_classes(_,_) -> err.
+
+% If no matching values. Return a value to indicate it.
+name_classes(_,_) -> true.
 	
 	
 % Notifies the client if there is a class diagram, to highlight a specific class.
