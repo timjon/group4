@@ -28,8 +28,8 @@ public class Draw {
     private Canvas canvas_deployment; // Draws and handles class diagram graphical context.
 
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
-
     private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
+    private ArrayList<Renderable> allDeploymentClasses = new ArrayList<>(); //Stores the Deploymentdiagram nodes
 
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
@@ -40,6 +40,9 @@ public class Draw {
 
     //Background for class diagram view
     private static Image classDiagramBackground  = new Image("resources/grassland.png");
+
+    //Background for deployment diagram view
+    private static Image deploymentDiagramBackground  = new Image("resources/OceanBackgroundMuted.png");
 
     /**
      * Constructor
@@ -53,9 +56,9 @@ public class Draw {
         addClassDiagramClass("3");
         addClassDiagramClass("4");
         addClassDiagramClass("5");
-        addClassDiagramClass("6");
-        addClassDiagramClass("7");
-        addClassDiagramClass("8");
+
+        addDeploymentDiagramClass("6");
+        addDeploymentDiagramClass("7");
 
     }
 
@@ -117,9 +120,16 @@ public class Draw {
      * Adds class to arraylist, to be drawn
      * @param name
      */
-
     public void addClassDiagramClass (String name){
         allClassDiagramClasses.add(new ClassDiagramClass(name));
+    }
+
+    /**
+     * Adds nodes to arraylist, to be drawn
+     * @param name
+     */
+    public void addDeploymentDiagramClass (String name){
+        allDeploymentClasses.add(new DeploymentDiagramClass(name));
     }
 
     /**
@@ -184,6 +194,7 @@ public class Draw {
         renderClass();
         renderMessage();
         renderClassDiagramClass();
+        renderDeploymentDiagram();
     }
 
     /**
@@ -192,11 +203,10 @@ public class Draw {
     public void redraw() {
         init(canvas);
         initClassDiagram(canvas_class.getGraphicsContext2D());
+        initDeploymentDiagram(canvas_deployment.getGraphicsContext2D());
 
         renderItems();
         renderContainer();
-        clear(canvas_deployment);
-        canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
     }
 
     /**
@@ -207,6 +217,15 @@ public class Draw {
         gc.clearRect(0,0,getWidth(), getHeight());
         // adds the background to class diagram canvas
         gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
+    }
+
+    /**
+     * Initializes the drawing of deployment diagram
+     * @param gc
+     */
+    void initDeploymentDiagram(GraphicsContext gc){
+        gc.clearRect(0,0,getWidth(),getHeight());
+        gc.drawImage(deploymentDiagramBackground,0,0, this.canvas_deployment.getWidth(),this.canvas_deployment.getHeight());
     }
 
     /**
@@ -237,14 +256,18 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        GraphicsContext graphicsContext = canvas_class.getGraphicsContext2D(); //content for class diagram
+        GraphicsContext graphicsContextClass = canvas_class.getGraphicsContext2D(); //content for class diagram
+        GraphicsContext graphicsContextDeployment = canvas_deployment.getGraphicsContext2D(); //content for deployment diagram
         for (Renderable r: allClasses)
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
         //rendering of class diagram
         for (Renderable e: allClassDiagramClasses)
-            e.render(graphicsContext);
+            e.render(graphicsContextClass);
+        //rendering of deployment diagram
+        for (Renderable d: allDeploymentClasses)
+            d.render(graphicsContextDeployment);
     }
 
     /**
@@ -256,6 +279,8 @@ public class Draw {
         for (Renderable r: messages)
             r.update();
         for (Renderable r: allClassDiagramClasses)
+            r.update();
+        for (Renderable r: allDeploymentClasses)
             r.update();
     }
 
@@ -340,6 +365,16 @@ public class Draw {
                     allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
                 }
             }
+        }
+    }
+
+    void renderDeploymentDiagram(){
+        if (allDeploymentClasses.size() == 0) return;
+        int space = ((int) this.canvas_deployment.getWidth()) / this.allDeploymentClasses.size();
+        for (int i = 0; i < allDeploymentClasses.size(); i++){
+            int x = 10 + (i * space);
+            int y = 25 +10/4;
+            allDeploymentClasses.get(i).place(new Coordinates(x,y), space);
         }
     }
 
