@@ -124,19 +124,6 @@ find_pid([], _) -> none;
 find_pid([{Pid, Class_name}|_], Class_name) -> Pid;
 find_pid([_|Ls], Name)                      -> find_pid(Ls, Name). 
 
-
-% Gets the name of a specific node.
-getClass(NodePid) ->
-	NodePid ! {self(), getClass},
-	receive 
-		{getClass, Class} -> Class
-		
-	after
-		1000 ->
-		  err
-	end.
-
-
 % Returns the wrapped Class diagram id or none.
 get_class_diagram_id(none) -> none;
 get_class_diagram_id({Id, {_, _}}) -> Id.
@@ -165,11 +152,18 @@ find_a_thing(Pid, Names) ->
 			|| Name <- Names]).
 
 find_a_thing2(_, []) -> ok;
-find_a_thing2({Pid, Name}, [{Class, [Name]} | _]) -> 
-	Pid ! {setClass, Class};
-find_a_thing2(Pid, [_ | Rest]) -> find_a_thing2(Pid, Rest).
-	
-	
+find_a_thing2(Pid, [{Class, [Name2]}]) -> 
+	case node:getName(Pid) == list_to_atom(Name2) of
+		true  -> Pid ! {setClass, Class};
+		false -> err
+	end;
+find_a_thing2(Pid, [{Class, [Name2]} | Rest]) -> 
+	case node:getName(Pid) == list_to_atom(Name2) of
+		true  -> Pid ! {setClass, Class};
+		false -> find_a_thing2(Pid, Rest)
+	end.
+
+
 % Notifies the client if there is a class diagram, to highlight a specific class.
 notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) -> 
 	  % If there is a class diagram 
@@ -179,8 +173,7 @@ notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) ->
    % Catches all.	
    _ -> 
 		% Gets the name of the class with it's Pid.
-		Name = getClass(Pid),
-		Coordinator ! {class_diagram, ClassDiagramId, Did, highlight, Name}
+		Coordinator ! {class_diagram, ClassDiagramId, Did, highlight, node:getClass(Pid)}
 	end.
 	
 

@@ -1,5 +1,5 @@
 -module(node).
--export([init/2]).
+-export([init/2, getName/1, getClass/1]).
 
 %%Author: Tim Jonasson
 %%Collaborators: Pontus Laestadius 2017-12-04
@@ -22,11 +22,11 @@ loop(Coordinator, Name, Class) ->
   	Pid ! {getClass, Class},
   	loop(Coordinator, Name, Class);
   	
-  % Adds data to the node.
+  % Sets the name of the node.
   {setName, NewName} ->
   	loop(Coordinator, NewName, Class);
   	
-  	  % Adds data to the node.
+  % Sets the class of the node.
   {setClass, NewClass} ->
   	loop(Coordinator, Name, NewClass);
   
@@ -41,4 +41,27 @@ loop(Coordinator, Name, Class) ->
     Coordinator ! {message_done, From, To, Message, Message_number},
   	loop(Coordinator, Name, Class)
   end.
+
+% Gets the name of a specific node.
+getName(NodePid)  ->
+	NodePid ! {self(), getName},
+	receive 
+		{getName, Name} -> Name
+		
+	after
+		1000 ->
+		  err
+	end.
+
+% Gets the class of a specific node.
+getClass(NodePid) ->
+	NodePid ! {self(), getClass},
+	receive 
+		{getClass, Class} -> Class
+		
+	after
+		1000 ->
+		  err
+	end.
+
 
