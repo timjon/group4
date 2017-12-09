@@ -364,24 +364,4 @@ public class Draw {
         return this.messages.get(index);
     }
 
-    /**
-     * Given a name will return the class that created it.
-     * @param name to convert.
-     * @return the class name that made it.
-     */
-    public String convertInstantiatedClassToClassIdentifier(String name) throws NullPointerException {
-        for (Renderable item: allClasses) {
-            // To be able to match class specific method calls.
-            if (item instanceof DiagramClass) {
-                // Matches the name with the identifier.
-                if (item.getName().equals(name)) {
-                    // This conversion is safe because of previous instance check.
-                    return ((DiagramClass) item).getClassName();
-                }
-            }
-        }
-        // If the given class name does not match any identifier.
-        throw new NullPointerException("No class matching: " + name);
-    }
-
 }

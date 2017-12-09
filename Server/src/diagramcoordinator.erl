@@ -25,7 +25,7 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_n
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 		%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
-	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Class_names))]},
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Pids, Class_names)]},
 	 
   	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}}, Class_names);
   
@@ -54,7 +54,7 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_n
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 		%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
-	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Class_names))]},
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Pids, Class_names)]},
   	loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], {Classid, {Classes, Relations}}, Class_names);
     
     % Sends the class diagram upstreams.
@@ -90,7 +90,7 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Cla
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 		%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
-	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ atom_to_list(name_classes(Pids, Class_names))]},
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Pids, Class_names)]},
   	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, {Classid, {Classes, Relations}}, Class_names);
   	
   	
@@ -142,25 +142,45 @@ spawn_node(Class_name, Did, Coordinator) ->
 
 
 % Iterates over the Pids and classes and propogates the data to the Pid.
-name_classes(Pids, Names) -> [find_a_thing(Pid, Names) || Pid <- Pids], ok.
+name_classes(Pids, Names) -> 
+	% Returns if all of the names were matched or any errors.
+	Result = [iter_split(Pid, Names) || Pid <- Pids],
+	atom_to_list(if_err(Result)).
+	
 
-find_a_thing(Pid, Names) -> 
-	find_a_thing2(Pid, 
+% Return if the list has the atom 'err' in it or not.
+if_err([]) -> ok;
+if_err([err]) -> err;
+if_err([err | _]) -> err;
+if_err([_ | Rest]) -> if_err(Rest).
+
+
+% Iterates over the names and splits them to from Class:Name to {Class, [Name]}.  Then matches the Pid with the names.
+iter_split({Pid, _}, Names) -> 
+	% Call the matching function.
+	iter_match(Pid, 
 		[{
+			% Gets the class.
 			hd(string:split(Name, atom_to_list(':'))), 
+			% Gets the Name.
 			tl(string:split(Name, atom_to_list(':')))} 
 			|| Name <- Names]).
 
-find_a_thing2(_, []) -> ok;
-find_a_thing2(Pid, [{Class, [Name2]}]) -> 
-	case node:getName(Pid) == list_to_atom(Name2) of
+
+% Matches a node's name with a class.
+iter_match(_, []) -> ok;
+
+iter_match(Pid, [{Class, [Name]}]) -> 
+	case node:getName(Pid) == list_to_atom(Name) of
 		true  -> Pid ! {setClass, Class};
+		% If the last case is not a match, Return err.
 		false -> err
 	end;
-find_a_thing2(Pid, [{Class, [Name2]} | Rest]) -> 
-	case node:getName(Pid) == list_to_atom(Name2) of
+	
+iter_match(Pid, [{Class, [Name]} | Rest]) -> 
+	case node:getName(Pid) == list_to_atom(Name) of
 		true  -> Pid ! {setClass, Class};
-		false -> find_a_thing2(Pid, Rest)
+		false -> iter_match(Pid, Rest)
 	end.
 
 

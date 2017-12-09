@@ -7,7 +7,6 @@ import view.visuals.Draw;
 import view.ExecutionLog;
 
 import static controller.Import.disp;
-import static view.DiagramView.getDiagramViewInView;
 import static view.DiagramView.tabPane;
 
 /**
@@ -36,11 +35,7 @@ class Decode {
         // TODO remove when 39 is done.
         if (rawStringToDecode.contains("class_diagram")) {
             System.out.println(rawStringToDecode);
-
-            // Convert the name from the class name to the class you want to highlight using:
-            // convertInstantiatedClassToClassIdentifier("SEQUENCE DIAGRAM NAME")
-            // Sequence diagram NAME exists as the last parameter for higlight_class_diagram protocol.
-            return;
+          return;
         }
 
         // Split the rawStringToDecode string in to fields.
@@ -166,7 +161,6 @@ class Decode {
      * @param classes to draw up the diagram with.
      */
     private void diagramClasses(String classes, String id) {
-        // TODO check if diagram_id is unique
 
         // Creates a new view with the tab name.
         DiagramView diagramView = new DiagramView("SDid: " + id, id);
