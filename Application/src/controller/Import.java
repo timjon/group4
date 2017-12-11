@@ -121,7 +121,7 @@ public class Import {
             switch (model.DiagramCheck.ContainsDiagram(result)) {
                 case "sequence_diagram":
                     parse.parseSequenceDiagram(file);
-
+                    System.out.println(parse.getDiagram()); //TODO REMOVE
                     // Catches if there are no diagrams.
                     try {
                         if(share) {
@@ -152,6 +152,20 @@ public class Import {
                         Net.push("{share, " + parse.getDiagram() + "}");
                     }else{
                         Net.push(parse.getDiagram());
+                    }
+                    break;
+
+                case "deployment_diagram":
+                    try {
+                        parse.parseDeploymentDiagram(file);
+                        System.out.println(parse.getDiagram()); //TODO TEST FORMAT
+                        if (share) {
+                            Net.push("{share, " + parse.getDiagram() + "}");
+                        } else {
+                            Net.push(parse.getDiagram());
+                        }
+                    }catch(NullPointerException np) {
+                        continue;
                     }
                     break;
             }
