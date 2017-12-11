@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
  * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius, Tim Jonasson
- * @version 4.3
+ * @version 4.4
  */
 public class Message implements Renderable {
     private String name;
@@ -90,76 +90,76 @@ public class Message implements Renderable {
     @Override
     public void update() {
 
+        // If we are animating
+        if (keepAnimating) {
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-           if(keepAnimating && node2.getX() > node1.getX()) { // Sending a message.
-               if ((animationBounds += (class_size/6)) > this.node2.getX() - this.node1.getX())
-                   keepAnimating = false;
-           }
-            //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-           else if(keepAnimating && node1.getX() > node2.getX()){ // Sending a return message.
-               if((animationBounds -= (class_size/6)) < (this.node2.getX())  - this.node1.getX())
-                   keepAnimating = false;
-           }
+            if(node2.getX() > node1.getX()) { // Sending a message.
+                if ((animationBounds += (class_size/6)) > this.node2.getX() - this.node1.getX())
+                    keepAnimating = false;
 
-        //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-        else if (keepAnimating && node1.getX() == node2.getX()) { //Sending a self referencing message
-            switch (selfCallCounter) {
-                case 1:
-                    switchDirection = true; // Switch state of the dragon's flying direction
-                    // Move the message to the right of the class
-                    if ((animationBounds += (class_size / 6)) > this.class_size) {
-                        switchDirection = false; // Original state of the dragon's flying direction
-                        selfCallCounter = 2;
-                    }
-                    break;
+                // Reverse message.
+            } else if(node1.getX() > node2.getX()){ // Sending a return message.
 
-                case 2:
-                    // Multiple increments to lower the message vertically
-                    for (int i = 0; i < 3; i++) {
+                if((animationBounds -= (class_size/6)) < (this.node2.getX())  - this.node1.getX())
+                    keepAnimating = false;
 
-                        offset += 8;
-                    }
-                    selfCallCounter = 3;
-                    break;
+                // Self calls
+            } else /*if (node1.getX() == node2.getX())*/ {
 
-                case 3:
-                    // move back to starting point
-                    if ((animationBounds -= (class_size / 6)) < 1) {
-                        keepAnimating = false;
-                    }
-                    break;
+                switch (selfCallCounter) {
+                    case 1:
+                        switchDirection = true; // Switch state of the dragon's flying direction
+                        // Move the message to the right of the class
+                        if ((animationBounds += (class_size / 6)) > this.class_size) {
+                            switchDirection = false; // Original state of the dragon's flying direction
+                            selfCallCounter = 2;
+                        }
+                        break;
 
-                //default case
-                default :
-                    selfCallCounter =1;
+                    case 2:
+                        // Multiple increments to lower the message vertically
+                        offset += 8*3;
+                        selfCallCounter = 3;
+                        break;
+
+                    case 3:
+                        // move back to starting point
+                        if ((animationBounds -= (class_size / 6)) < 1) {
+                            keepAnimating = false;
+                        }
+                        break;
+
+                    //default case
+                    default :
+                        selfCallCounter =1;
+                }
             }
         }
 
+        // If it's being viewed in the past and not currently animating.
+        if (staticIndicator) {
 
-           // If it's being viewed in the past and not currently animating.
-           if (staticIndicator) {
+            // Remove all trails
+            trails.clear();
 
-               // Remove all trails
-               trails.clear();
+            // Which direction is it pointing at determines original location.
+            animationBounds = 0;
 
-               // Which direction is it pointing at determines original location.
-               animationBounds = 0;
+            // Set it's animation state to true.
+            keepAnimating = true;
 
-               // Set it's animation state to true.
-               keepAnimating = true;
+            //Check if the message is a self-call and reset the offset.
+            if(fromNode == toNode) {
+                offset -= 24;
+            }
 
-               //Check if the message is a self-call and reset the offset.
-               if(fromNode == toNode) {
-                   offset -= 24;
-               }
+            //Resets counter for self-calls.
+            selfCallCounter = 1;
 
-               //Resets counter for self-calls.
-               selfCallCounter = 1;
+            // Resets static indicator.
+            staticIndicator = false;
 
-               // Resets static indicator.
-               staticIndicator = false;
-
-           }
+        }
     }
 
     /**
@@ -172,7 +172,7 @@ public class Message implements Renderable {
     }
 
     public void resizeTrail(int oldClassSize){
-         //Checks if there is an existing trail for this message
+        //Checks if there is an existing trail for this message
 
         //If there is no trail
         if(trails.size() == 0){
@@ -249,7 +249,7 @@ public class Message implements Renderable {
             if(trailSize != 0) {
                 Trail last = trails.get(trailSize);
                 //Puts an arrow on the last location of the trail array depending on the direction
-                    gc.drawImage(directionSwitched?flippedArrow:arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+                gc.drawImage(directionSwitched?flippedArrow:arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
         }
         //fromNode Coordinates.
@@ -276,8 +276,6 @@ public class Message implements Renderable {
                 //draw the trail of the message
                 this.trails.add(new Trail((x1 - 15)+animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
-
-                switchImage = false;
             }
 
             // Checks if down image is supposed to be shown and if we are sending a message and not a return.
@@ -285,7 +283,6 @@ public class Message implements Renderable {
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
-                switchImage = true;
             }
 
             // Handling the switch of the dragon's flying direction when visualising self calls
@@ -297,14 +294,12 @@ public class Message implements Renderable {
                 // Draw the trail of the self referencing message
                 this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
-                switchImage = false;
             }
             // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
-            else if (switchDirection && !switchImage) {
+            else if (switchDirection) {
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessage2, x1 + animationBounds,
                         y1 + (this.class_size), class_size / messageScale, class_size / messageScale); //State Wings Down.
-                switchImage = true;
             }
 
             //Checks if up image is supposed to be shown. if this one is used it is a return message.
@@ -317,8 +312,6 @@ public class Message implements Renderable {
                 //Draw the trail of the message
                 this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
                         class_size/trailScale, class_size/trailScale));
-
-                switchImage = false;
             }
 
             //Checks if down image is supposed to be shown. if this one is used we are sending a return message.
@@ -326,8 +319,10 @@ public class Message implements Renderable {
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev2, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
-                switchImage = true;
             }
+
+            // Swaps the image.
+            switchImage = !switchImage;
         } else {
 
             int x = x1-x2;
@@ -342,10 +337,10 @@ public class Message implements Renderable {
      * Getter for the name of the message.
      * @return name
      */
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
     /**
      * Uses the coordinates and size passed as arguments
@@ -353,14 +348,14 @@ public class Message implements Renderable {
      * @param coordinates
      * @param size
      */
-	@Override
-	public void place(Coordinates coordinates, int size) {
+    @Override
+    public void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
         this.size = size;
 
-	}
+    }
 
-	public int getClass_size(){
-	    return this.class_size;
+    public int getClass_size(){
+        return this.class_size;
     }
 }
