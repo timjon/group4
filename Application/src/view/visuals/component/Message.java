@@ -90,17 +90,19 @@ public class Message implements Renderable {
     @Override
     public void update() {
 
+        int move = class_size/6;
+
         // If we are animating
         if (keepAnimating) {
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
             if(node2.getX() > node1.getX()) { // Sending a message.
-                if ((animationBounds += (class_size/6)) > this.node2.getX() - this.node1.getX())
+                if ((animationBounds += move) > this.node2.getX() - this.node1.getX())
                     keepAnimating = false;
 
                 // Reverse message.
             } else if(node1.getX() > node2.getX()){ // Sending a return message.
 
-                if((animationBounds -= (class_size/6)) < (this.node2.getX())  - this.node1.getX())
+                if((animationBounds -= move) < (this.node2.getX())  - this.node1.getX())
                     keepAnimating = false;
 
                 // Self calls
@@ -110,7 +112,7 @@ public class Message implements Renderable {
                     case 1:
                         switchDirection = true; // Switch state of the dragon's flying direction
                         // Move the message to the right of the class
-                        if ((animationBounds += (class_size / 6)) > this.class_size) {
+                        if ((animationBounds += move) > this.class_size) {
                             switchDirection = false; // Original state of the dragon's flying direction
                             selfCallCounter = 2;
                         }
@@ -118,44 +120,38 @@ public class Message implements Renderable {
 
                     case 2:
                         // Multiple increments to lower the message vertically
-                        offset += 8*3;
+                        offset += 24;
                         selfCallCounter = 3;
                         break;
 
                     case 3:
                         // move back to starting point
-                        if ((animationBounds -= (class_size / 6)) < 1) {
+                        if ((animationBounds -= move) < 1) {
                             keepAnimating = false;
                         }
                         break;
 
                     //default case
                     default :
-                        selfCallCounter =1;
+                        selfCallCounter = 1;
                 }
             }
         }
 
         // If it's being viewed in the past and not currently animating.
         if (staticIndicator) {
-
             // Remove all trails
             trails.clear();
-
             // Which direction is it pointing at determines original location.
             animationBounds = 0;
-
             // Set it's animation state to true.
             keepAnimating = true;
-
             //Check if the message is a self-call and reset the offset.
             if(fromNode == toNode) {
                 offset -= 24;
             }
-
             //Resets counter for self-calls.
             selfCallCounter = 1;
-
             // Resets static indicator.
             staticIndicator = false;
 
@@ -236,6 +232,7 @@ public class Message implements Renderable {
      */
     public void renderDefault(GraphicsContext gc) {
 
+        directionSwitched = fromNode > toNode;
 
         if(trails.size() != 0) {
             //Draws all trails except the first and last one
@@ -264,62 +261,25 @@ public class Message implements Renderable {
         // Checks if we are supposed to be animating the message.
         if(keepAnimating) {
 
+            // Image to draw.
+            Image dragon = switchImage?dragonMessage:dragonMessage2;
+            double height = class_size/messageScale;
+            double width = class_size/messageScale;
+
+            // If it's switched direction.
+            if (directionSwitched)
+                dragon = switchImage?dragonMessageRev2:dragonMessageRev;
+
             //Sets the message text centered above the "dragon".
             gc.fillText(this.name, x1+animationBounds, y1 + (this.class_size - 2)); // Message description.
 
-            // Checks if up image is supposed to be shown and if we are sending a message and not a return.
-            if (switchImage && fromNode < toNode) {
-                //sets the dimensions of the dragon according to the current class size.
-                gc.drawImage(dragonMessage, x1 + animationBounds,
-                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Up.
+            // Draws the trails every other frame.
+            if (switchImage)
+                this.trails.add(new Trail(x1+animationBounds, y1 +(this.class_size),class_size/trailScale, height));
 
-                //draw the trail of the message
-                this.trails.add(new Trail((x1 - 15)+animationBounds, y1 +(this.class_size),
-                        class_size/trailScale, class_size/trailScale));
-            }
-
-            // Checks if down image is supposed to be shown and if we are sending a message and not a return.
-            else if (!switchImage && fromNode < toNode) {
-                //sets the dimensions of the dragon according to the current class size.
-                gc.drawImage(dragonMessage2, x1 + animationBounds,
-                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
-            }
-
-            // Handling the switch of the dragon's flying direction when visualising self calls
-            // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
-            else if (switchDirection && switchImage) {
-                //sets the dimensions of the dragon according to the current class size.
-                gc.drawImage(dragonMessage, x1 + animationBounds,
-                        y1 + (this.class_size), class_size / messageScale, class_size / messageScale); //State Wings Down.
-                // Draw the trail of the self referencing message
-                this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
-                        class_size/trailScale, class_size/trailScale));
-            }
-            // Checks if up image is supposed to be shown and if the direction of flying dragon should be switched.
-            else if (switchDirection) {
-                //sets the dimensions of the dragon according to the current class size.
-                gc.drawImage(dragonMessage2, x1 + animationBounds,
-                        y1 + (this.class_size), class_size / messageScale, class_size / messageScale); //State Wings Down.
-            }
-
-            //Checks if up image is supposed to be shown. if this one is used it is a return message.
-            else if(switchImage){
-                // if it is a return message then flip the direction of the trail arrows
-                directionSwitched = true;
-                //sets the dimensions of the dragon according to the current class size.
-                gc.drawImage(dragonMessageRev, x1 + animationBounds,
-                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
-                //Draw the trail of the message
-                this.trails.add(new Trail((x1)+ animationBounds, y1 +(this.class_size),
-                        class_size/trailScale, class_size/trailScale));
-            }
-
-            //Checks if down image is supposed to be shown. if this one is used we are sending a return message.
-            else{
-                //sets the dimensions of the dragon according to the current class size.
-                gc.drawImage(dragonMessageRev2, x1 + animationBounds,
-                        y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings Down.
-            }
+            // Draws the dragon.
+            gc.drawImage(dragon, x1 + animationBounds,
+                    y1 + (this.class_size), width, height); //State Wings Up.
 
             // Swaps the image.
             switchImage = !switchImage;
