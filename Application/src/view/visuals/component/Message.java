@@ -94,16 +94,23 @@ public class Message implements Renderable {
 
         // If we are animating
         if (keepAnimating) {
+
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
-            if(node2.getX() > node1.getX()) { // Sending a message.
-                if ((animationBounds += move) > this.node2.getX() - this.node1.getX())
-                    keepAnimating = false;
 
-                // Reverse message.
-            } else if(node1.getX() > node2.getX()){ // Sending a return message.
 
-                if((animationBounds -= move) < (this.node2.getX())  - this.node1.getX())
+            // Sending a message.
+            if(node2.getX() > node1.getX()) {
+
+                if ((animationBounds += move) > this.node2.getX() - this.node1.getX()) {
                     keepAnimating = false;
+                }
+
+                // Sending a return message.
+            } else if(node1.getX() > node2.getX()){
+
+                if((animationBounds -= move) < (this.node2.getX())  - this.node1.getX()) {
+                    keepAnimating = false;
+                }
 
                 // Self calls
             } else /*if (node1.getX() == node2.getX())*/ {
@@ -278,17 +285,14 @@ public class Message implements Renderable {
                 this.trails.add(new Trail(x1+animationBounds, y1 +(this.class_size),class_size/trailScale, height));
 
             // Draws the dragon.
-            gc.drawImage(dragon, x1 + animationBounds,
-                    y1 + (this.class_size), width, height); //State Wings Up.
+            gc.drawImage(dragon, x1 + animationBounds, y1 + (this.class_size), width, height);
 
             // Swaps the image.
             switchImage = !switchImage;
         } else {
 
-            int x = x1-x2;
-
             // Sets the message above the trail.
-            gc.fillText(this.name, x1-x/2 -this.name.length()*2, y1 +this.class_size*1.2); // Message description.
+            gc.fillText(this.name, x1-(x1-x2)/2 -this.name.length()*2, y1 +this.class_size*1.2); // Message description.
 
         }
     }
@@ -303,10 +307,10 @@ public class Message implements Renderable {
     }
 
     /**
-     * Uses the coordinates and size passed as arguments
+     * Uses the coordinates and size passed as arguments.
      * to place the message on the canvas.
-     * @param coordinates
-     * @param size
+     * @param coordinates of the message.
+     * @param size of the message.
      */
     @Override
     public void place(Coordinates coordinates, int size) {
