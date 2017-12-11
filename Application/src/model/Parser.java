@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * collaborator: Pontus Laestadius
- * @version 1.1
+ * @version 1.2
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects
@@ -140,6 +140,7 @@ public class Parser {
             // Wraps them up and gives them an unique id.
             diagram = wrap(diagram);
 
+
             // If there is a parallel diagram.
             if (parsedSequenceDiagram.getDiagram().getContent().size() > 1) {
                 parallel = parseMessages(parsedSequenceDiagram.getDiagram().getContent().get(1).getMessages());
@@ -175,16 +176,17 @@ public class Parser {
             // Add a formatted string for the from and to of the message.
             String r = "{" + m.getFrom() + "," + m.getTo() + ",[";
             result.append(r);
+            result.append("'");
 
             // Iterate through the message content.
             for (String s: m.getMessage()) {
 
                 result.append(s);
-                result.append(",");
+                result.append("','");
             }
 
             // Removes extra comma, and applies formatting.
-            result.replace(result.length()-1, result.length(), "]},");
+            result.replace(result.length()-2, result.length(), "]},");
         }
 
         // Removes extra comma.
@@ -207,7 +209,6 @@ public class Parser {
      */
     public String getParallelSequenceDiagram() throws NullPointerException {
         if (diagram == null) throw new NullPointerException("No diagram parsed");
-
         return parallel;
     }
 }
