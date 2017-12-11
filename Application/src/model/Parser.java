@@ -1,8 +1,7 @@
 package model;
 
 import model.classDiagram.*;
-import model.deploymentDiagram.DeploymentDiagram;
-import model.deploymentDiagram.Mapping;
+import model.deploymentDiagram.*;
 import model.sequenceDiagramParser.*;
 import controller.Import;
 
@@ -13,8 +12,8 @@ import java.util.List;
 
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * collaborator: Pontus Laestadius
- * @version 1.1
+ * collaborator: Pontus Laestadius, Sebastian Fransson
+ * @version 1.2
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects

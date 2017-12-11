@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius
  * @since 2017-10-06
  */
