@@ -69,7 +69,8 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) ->
 	  loop(Coordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T)
   end.
   
-%checks if a class has a process and spawns it if it doesnt exist
+%checks if a class has a process and returns none if it does not.
+find_pid([], _) -> none;
 find_pid([{Pid, Class_name}|_], Class_name) -> Pid;
 find_pid([_|Ls], Name)                      -> find_pid(Ls, Name). 
 
@@ -85,9 +86,16 @@ spawn_node(Class_name, Did, Coordinator) ->
 
 %sends a message to the given node
 send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did) ->
-  Receiver ! {send_message, From, To, Message, To_pid, Message_number},
-  receive
-    {send_reply, From, To, Message, To_pid, Message_number} -> 
-		%Sends info to the Coordinator, that the node sucessfully sent a message. To be printed in the executionlog	
-		Coordinator ! {Did, print_information, ["Node " ++ atom_to_list(From) ++ " sent a message to " ++ atom_to_list(To)]} 
-		end.
+
+	% Checks if there is a valid pid provided.
+	case To_pid of 
+		none -> none;
+		_    -> Receiver ! {send_message, From, To, Message, To_pid, Message_number},
+				receive
+					{send_reply, From, To, Message, To_pid, Message_number} -> 
+					%Sends info to the Coordinator, that the node sucessfully sent a message. To be printed in the executionlog	
+					Coordinator ! {Did, print_information, ["Node " ++ atom_to_list(From) ++ " sent a message to " ++ atom_to_list(To)]} 
+				end
+	end.
+
+  
