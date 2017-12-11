@@ -51,16 +51,15 @@ public class Draw {
         canvas = new Canvas(w, h);
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
-        addClassDiagramClass("1");
-        addClassDiagramClass("2");
-        addClassDiagramClass("3");
-        addClassDiagramClass("4");
-        addClassDiagramClass("5");
+        addClassDiagramClass("g");
+        addClassDiagramClass("u1");
+        addClassDiagramClass("u2");
+        addClassDiagramClass("u3");
 
-        addDeploymentDiagramClass("6");
-        addDeploymentDiagramClass("7");
-        addDeploymentDiagramClass("8");
-        addDeploymentDiagramClass("9");
+        addDeploymentDiagramClass("Server", "g");
+        addDeploymentDiagramClass("Smartphone", "u1");
+        addDeploymentDiagramClass("desktop_computer1", "u2");
+        addDeploymentDiagramClass("desktop_computer1", "u3");
 
     }
 
@@ -128,10 +127,11 @@ public class Draw {
 
     /**
      * Adds nodes to arraylist, to be drawn
-     * @param name
+     * @param device
+     * @param process
      */
-    public void addDeploymentDiagramClass (String name){
-        allDeploymentClasses.add(new DeploymentDiagramClass(name));
+    public void addDeploymentDiagramClass (String device, String process){
+        allDeploymentClasses.add(new DeploymentDiagramClass(device, process));
     }
 
     /**
