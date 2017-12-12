@@ -11,63 +11,43 @@ init(_Coordinator, _Did, {[], _}) -> no_classes;
 init(_Coordinator, _Did, {_, []}) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Coordinator, Did, {L, Messages}) -> 
-    gen_tcp:connect("127.0.0.1", 8041, [binary, {packet, 0}]),
+    %gen_tcp:connect("127.0.0.1", 8041, [binary, {packet, 0}]),
 	%Sending information that the Coordinator has been spawned. To be printed in the executionlog
 	Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
 	Pids = spawn_nodes(L, Did, Coordinator),
 	loop(Coordinator, Did, Pids, Messages, 1, []). 
 
-%Sends and receives messages until the list of messages is empty  
-loop(Coordinator, Did, Pids, [], Message_number, PrevList) ->
-  receive
-    {next_message, Coordinator} -> 
-      Coordinator ! {simulation_done, Did, Message_number},
-	  loop(Coordinator, Did ,Pids,[],Message_number, PrevList);
-	  
-	{previous_message, Coordinator} ->
-	  [Prev_H|Prev_T] = PrevList,
-	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
-	  loop(Coordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T)
-  end;
- 
- %When there are no previous messages this case is used.
-  loop(Coordinator, Did, Pids, [L|Ls], Message_number, []) ->
-    receive
-    {next_message, Coordinator} -> 
-      {From, To, Message} = L,
-	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
-      receive
-	    {message_done, From, To, Message, Message_number} ->
-		  Coordinator ! {message_sent, Did, From, To, Message, Message_number},
-		  %Sends info to the Coordinator that a message has been received by a node. To be printed in the executionlog
-		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
-	  end,
-	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|[]]);
-	  
-	{previous_message, Coordinator} ->
-	  Coordinator ! {Did, print_information, ["No previous message"]},
-	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [])
-  end;
-  
 %This loop runs until the list is empty (when there are no more messages)
-loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList) -> 
+loop(Coordinator, Did, Pids, NextList, Message_number, PrevList) -> 
   receive
     {next_message, Coordinator} -> 
-      {From, To, Message} = L,
-	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
-      receive
-	    {message_done, From, To, Message, Message_number} ->
-		  Coordinator ! {message_sent, Did, From, To, Message, Message_number},
-		  %Sends info to the Coordinator that a message has been received by a node. To be printed in the executionlog
-		  Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
-	  end,
-	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList]);
+	  case NextList of
+	    [] -> 
+		  Coordinator ! {simulation_done, Did, Message_number},
+	      loop(Coordinator, Did , Pids, [], Message_number, PrevList);
+		
+		[L|Ls] -> 
+          {From, To, Message} = L,
+	      send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did), 
+          receive
+	        {message_done, From, To, Message, Message_number} ->
+		      Coordinator ! {message_sent, Did, From, To, Message, Message_number},
+		      %Sends info to the Coordinator that a message has been received by a node. To be printed in the executionlog
+		      Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
+	      end,
+	      loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList])
+	  end;
 	  
 	{previous_message, Coordinator} ->
-	  [Prev_H| Prev_T] = PrevList,
-	  List = [L|Ls],
-	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
-	  loop(Coordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T)
+	  case PrevList of
+	    [] -> 
+		  Coordinator ! {Did, print_information, ["No previous message"]},
+	      loop(Coordinator, Did, Pids, NextList, Message_number, []);
+		  
+	    [Prev_H| Prev_T] -> 
+	      Coordinator ! {previous_confirmation, Did, ["Previous message"]},
+	      loop(Coordinator, Did, Pids, [Prev_H| NextList], Message_number - 1, Prev_T)
+	  end
   end.
   
 %checks if a class has a process and spawns it if it doesnt exist
