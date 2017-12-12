@@ -1,5 +1,5 @@
 # Author: Pontus Laestadius
-# Version: 1.2
+# Version: 1.1
 
 # Intro message.
 echo "-----------ERLANG COMPILATION SCRIPT VERSION 1.2-----------"
