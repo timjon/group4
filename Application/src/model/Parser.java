@@ -67,11 +67,11 @@ public class Parser {
 
             //Add Mappings to the string.
             for (Mapping maps : dd.mapping) {
-                deployString.append("[");
+                deployString.append("['");
                 deployString.append(maps.process);
-                deployString.append(",");
+                deployString.append("','");
                 deployString.append(maps.device);
-                deployString.append("],");
+                deployString.append("'],");
             }
 
             //Remove unnecessary comma and add an end.
