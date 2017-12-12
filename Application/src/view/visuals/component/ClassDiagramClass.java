@@ -7,8 +7,9 @@ import view.visuals.Renderable;
 
 /**
  * Class for Class diagrams
- * @version 1.1
+ * @version 1.2
  * @author Isabelle Törnqvist
+ * Collaborators: Pontus Laestadius
  */
 
 public class ClassDiagramClass implements Renderable {
@@ -16,6 +17,7 @@ public class ClassDiagramClass implements Renderable {
     private Coordinates coordinates; //coordinates
     int size; //size of the allowed class space
     String name; //Name of the class
+    private boolean highlight = false; // State of highlighting
 
     //Images for classes
     private static Image class1 = new Image("resources/castle_default.png");
@@ -32,6 +34,13 @@ public class ClassDiagramClass implements Renderable {
 
     @Override
     public void render(GraphicsContext gc) {
+
+        // If this class in highlighted.
+        if (highlight) {
+            gc.setFill(Color.YELLOW);
+            gc.fillRoundRect(this.coordinates.getX() -size/2 -5, this.coordinates.getY() -size/2 -5, size +10, size +10,
+                    size/3, size/3);
+        }
 
         gc.setFill(Color.TRANSPARENT);
 
@@ -96,5 +105,13 @@ public class ClassDiagramClass implements Renderable {
     public void place(Coordinates coordinates, int size) {
         this.coordinates = coordinates;
         this.size = size;
+    }
+
+    /**
+     * Sets the highlight state of this class.
+     * @param state false to disable true to enable.
+     */
+    public void highlight(boolean state) {
+        this.highlight = state;
     }
 }
