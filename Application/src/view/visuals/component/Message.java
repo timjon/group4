@@ -20,13 +20,14 @@ public class Message implements Renderable {
     private int offset; // offset for the message "ordering".
     private int class_size; // identifier for the current class size so that messages can scale.
     private int animationBounds = 0; //Starts and stops the animation at the correct bounds.
-    private boolean keepAnimating = true; // State of the animation. Beginning or ending.
+    private boolean animating = true; // State of the animation. Beginning or ending.
     private boolean switchImage; // Keeps track of which image to show.
     private double messageScale = 1.5;
     private int selfCallCounter = 1; // Used for the hardcoded trajectory of self referencing message.
-    private boolean switchDirection = false; // Keeps track whether a the dragon's flying direction should be switched
     private double trailScale = 3.5; //Scale of the trail image
     private ArrayList<Trail> trails = new ArrayList<>(); //Stores the trails that appear after the dragons
+    private boolean directionSwitched = false; // if the trail should be flipped depending on the direction of the message
+    private boolean staticIndicator = false;    // Static indicator used for the execution log.
 
     //Images for dragon animation.
     private static Image dragonMessage = new Image("resources/DragonBro.png"); //Wings Up
@@ -34,17 +35,10 @@ public class Message implements Renderable {
     private static Image dragonMessageRev = new Image("resources/DragonBroRev.png"); //Rev Wings Up
     private static Image dragonMessageRev2 = new Image("resources/DragonBroRev2.png"); //Rev Wings Down
 
-    // Static indicator.
-    private boolean staticIndicator = false;
+    private static Image trail = new Image("resources/cloud1.png");    //Image for trail animation
+    private static Image arrow = new Image("resources/trail.png");    //Image for trail arrow
+    private static Image flippedArrow = new Image("resources/rotated-trail.png");    //Image that stores trail arrow
 
-    //Image for trail animation
-    private static Image trail = new Image("resources/cloud1.png");
-    //Image for trail arrow
-    private static Image arrow = new Image("resources/trail.png");
-    //Image that stores directionSwitched trail arrow
-    private static Image flippedArrow = new Image("resources/rotated-trail.png");
-    // Checks if the trail should be flipped depending on the direction of the message
-    private boolean directionSwitched = false;
 
     /**
      * Constructor
@@ -79,8 +73,8 @@ public class Message implements Renderable {
     /**
      * @return if it is still animating or not.
      */
-    public boolean isKeepAnimating() {
-        return keepAnimating;
+    public boolean isAnimating() {
+        return animating;
     }
 
     /**
@@ -93,7 +87,7 @@ public class Message implements Renderable {
         int move = class_size/6;
 
         // If we are animating
-        if (keepAnimating) {
+        if (animating) {
 
             //Checks if we are supposed to keep animating, set animationBounds according to how diagramClasses are scaled.
 
@@ -102,14 +96,14 @@ public class Message implements Renderable {
             if(node2.getX() > node1.getX()) {
 
                 if ((animationBounds += move) > this.node2.getX() - this.node1.getX()) {
-                    keepAnimating = false;
+                    animating = false;
                 }
 
                 // Sending a return message.
             } else if(node1.getX() > node2.getX()){
 
                 if((animationBounds -= move) < (this.node2.getX())  - this.node1.getX()) {
-                    keepAnimating = false;
+                    animating = false;
                 }
 
                 // Self calls
@@ -117,10 +111,10 @@ public class Message implements Renderable {
 
                 switch (selfCallCounter) {
                     case 1:
-                        switchDirection = true; // Switch state of the dragon's flying direction
                         // Move the message to the right of the class
                         if ((animationBounds += move) > this.class_size) {
-                            switchDirection = false; // Original state of the dragon's flying direction
+                            // Original state of the dragon's flying direction
+                            directionSwitched = !directionSwitched;
                             selfCallCounter = 2;
                         }
                         break;
@@ -134,7 +128,7 @@ public class Message implements Renderable {
                     case 3:
                         // move back to starting point
                         if ((animationBounds -= move) < 1) {
-                            keepAnimating = false;
+                            animating = false;
                         }
                         break;
 
@@ -152,7 +146,7 @@ public class Message implements Renderable {
             // Which direction is it pointing at determines original location.
             animationBounds = 0;
             // Set it's animation state to true.
-            keepAnimating = true;
+            animating = true;
             //Check if the message is a self-call and reset the offset.
             if(fromNode == toNode) {
                 offset -= 24;
@@ -230,7 +224,7 @@ public class Message implements Renderable {
     public void setStatic(boolean staticIndicator)  {
         this.staticIndicator = staticIndicator;
         if (!staticIndicator)
-            this.keepAnimating = false;
+            this.animating = false;
     }
 
     /**
@@ -239,7 +233,9 @@ public class Message implements Renderable {
      */
     public void renderDefault(GraphicsContext gc) {
 
-        directionSwitched = fromNode > toNode;
+        // Does not apply to self calls.
+        if (fromNode != toNode)
+            directionSwitched = fromNode > toNode;
 
         if(trails.size() != 0) {
             //Draws all trails except the first and last one
@@ -249,9 +245,8 @@ public class Message implements Renderable {
                 gc.drawImage(trail, currentTrail.getXcoordinate(), (currentTrail.getYcoordinate() + 18), currentTrail.getWidth(), currentTrail.getHeight());
             }
 
-            int trailSize = trails.size() - 1;
-            if(trailSize != 0) {
-                Trail last = trails.get(trailSize);
+            if(trails.size() > 1) {
+                Trail last = trails.get(trails.size() -1);
                 //Puts an arrow on the last location of the trail array depending on the direction
                 gc.drawImage(directionSwitched?flippedArrow:arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
             }
@@ -266,7 +261,7 @@ public class Message implements Renderable {
         y1 += offset; // Sets an offset from the previous message.
 
         // Checks if we are supposed to be animating the message.
-        if(keepAnimating) {
+        if(animating) {
 
             // Image to draw.
             Image dragon = switchImage?dragonMessage:dragonMessage2;
