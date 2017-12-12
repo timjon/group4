@@ -1,14 +1,14 @@
 package model.classDiagram;
 
 /**
- * Stores fetchable data used for the GSON parser.
+ * Stores fetch-able data used for the GSON parser.
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class Relationships {
-    public String type;
-    public String superclass;
-    public String subclass;
+    private String type;
+    private String superclass;
+    private String subclass;
 
     /**
      * @return a formatted string.

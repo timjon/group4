@@ -56,17 +56,9 @@ loop(Socket, Diagrams) ->
 		gen_tcp:send(Socket, [Format_result ++ "~"]),
 		loop(Socket, Diagrams);
 		
-		%This case happens when there is a class diagram to add.
-		% Did = Diagram Id
-		% Seid = Sequence Diagram Id
-	{class_diagram, Did, SeId, ClassDiagram} -> 
-	  Format_result = io_lib:format("~p", [{class_diagram, Did, SeId, ClassDiagram}]) ++ "~",
-		gen_tcp:send(Socket, Format_result),
-		loop(Socket, Diagrams);
-		
 		% Highlight a specific class.
-	{class_diagram, Did, SeId, highlight, Name} ->
-	  Format_result = io_lib:format("~p", [{class_diagram, Did, SeId, highlight_class_diagram, Name}]) ++ "~",
+	{class_diagram, Did, SequenceDiagramId, highlight, Name} ->
+	  Format_result = io_lib:format("~p", [{class_diagram, Did, SequenceDiagramId, highlight_class_diagram, Name}]) ++ "~",
 		gen_tcp:send(Socket, Format_result),
 		loop(Socket, Diagrams)
 	  
@@ -109,6 +101,7 @@ use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
   
 %This pattern will match when the first argument is in the format of a new diagram
 use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
+
   %Spawns a diagram coordinator for this diagram if it doesnt exist already 
   case find_diagram(Did, Diagrams) of
   
@@ -119,7 +112,7 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
     gen_tcp:send(Socket, Format_result),
 	  
 	  Self = self(),
-	  Pid = spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end),
+	  Pid = spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}, Class_names) end),
 	  loop(Socket, [{Did, Pid}| Diagrams]);
 	  
 	_           -> already_created

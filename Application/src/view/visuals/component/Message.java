@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
  * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius, Tim Jonasson
- * @version 4.2
+ * @version 4.3.01
  */
 public class Message implements Renderable {
     private String name;
@@ -36,9 +36,15 @@ public class Message implements Renderable {
 
     // Static indicator.
     private boolean staticIndicator = false;
-  
+
     //Image for trail animation
     private static Image trail = new Image("resources/cloud1.png");
+    //Image for trail arrow
+    private static Image arrow = new Image("resources/trail.png");
+    //Image that stores directionSwitched trail arrow
+    private static Image flippedArrow = new Image("resources/rotated-trail.png");
+    // Checks if the trail should be flipped depending on the direction of the message
+    private boolean directionSwitched = false;
 
     /**
      * Constructor
@@ -128,8 +134,8 @@ public class Message implements Renderable {
                     selfCallCounter =1;
             }
         }
-      
-      
+
+
            // If it's being viewed in the past and not currently animating.
            if (staticIndicator) {
 
@@ -231,11 +237,21 @@ public class Message implements Renderable {
     public void renderDefault(GraphicsContext gc) {
 
 
+        if(trails.size() != 0) {
+            //Draws all trails except the first and last one
+            for (int i = 1; i < trails.size() - 1; i++) {
+                // Points to the first index of the trail array
+                Trail currentTrail = trails.get(i);
+                gc.drawImage(trail, currentTrail.getXcoordinate(), (currentTrail.getYcoordinate() + 18), currentTrail.getWidth(), currentTrail.getHeight());
+            }
 
-        //Draw trail for the message, for each instance in the arraylist
-        for (Trail t: trails)
-            gc.drawImage(trail, t.getXcoordinate(), (t.getYcoordinate() + 18), t.getWidth(), t.getHeight());
-
+            int trailSize = trails.size() - 1;
+            if(trailSize != 0) {
+                Trail last = trails.get(trailSize);
+                //Puts an arrow on the last location of the trail array depending on the direction
+                    gc.drawImage(directionSwitched?flippedArrow:arrow, last.getXcoordinate(), (last.getYcoordinate() + 18), last.getWidth(), last.getHeight());
+            }
+        }
         //fromNode Coordinates.
         int x1 = this.node1.getX();
         int y1 = this.node1.getY();
@@ -293,6 +309,8 @@ public class Message implements Renderable {
 
             //Checks if up image is supposed to be shown. if this one is used it is a return message.
             else if(switchImage){
+                // if it is a return message then flip the direction of the trail arrows
+                directionSwitched = true;
                 //sets the dimensions of the dragon according to the current class size.
                 gc.drawImage(dragonMessageRev, x1 + animationBounds,
                         y1 + (this.class_size), class_size/messageScale, class_size/messageScale); //State Wings up.
