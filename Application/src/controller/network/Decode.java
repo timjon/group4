@@ -76,6 +76,8 @@ class Decode {
             // Class diagram detected.
         } else if (rawStringToDecode.contains("class_diagram")) {
 
+            System.out.println("server returned: " + rawStringToDecode);
+/*
             // Split the server output into 3 array items using the commas.
             String[] class_values = rawStringToDecode.split(",", 3);
 
@@ -116,7 +118,7 @@ class Decode {
                     classRelation(class_ID, class_relation);
                 }
             }
-
+*/
         } else {
 
             // Gets the message content.

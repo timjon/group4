@@ -48,18 +48,6 @@ public class Draw {
         canvas = new Canvas(w, h);
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
-        addClassDiagramClass("1");
-        addClassDiagramClass("2");
-        addClassDiagramClass("3");
-        addClassDiagramClass("4");
-        addClassDiagramClass("5");
-        addClassDiagramClass("6");
-        addClassDiagramClass("7");
-        addClassDiagramClass("8");
-
-        // TODO: remove Mock input data for class diagram
-        //addClassDiagramClass("YOLOSWAG123");
-       // addClassDiagramClass("Dopeffs");
     }
 
     /**
