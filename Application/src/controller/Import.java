@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * @version 1.1
  * @author Pontus Laestadius
+ * collaborator: Sebastian Fransson
  * @since 2017-10-06
  */
 
