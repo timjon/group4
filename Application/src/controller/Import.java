@@ -121,7 +121,6 @@ public class Import {
             switch (model.DiagramCheck.ContainsDiagram(result)) {
                 case "sequence_diagram":
                     parse.parseSequenceDiagram(file);
-                    System.out.println(parse.getDiagram()); //TODO REMOVE
                     // Catches if there are no diagrams.
                     try {
                         if(share) {
@@ -156,6 +155,7 @@ public class Import {
                     break;
 
                 case "deployment_diagram":
+                    // if the file is incomplete, catches a null pointer.
                     try {
                         parse.parseDeploymentDiagram(file);
                         System.out.println(parse.getDiagram()); //TODO TEST FORMAT
