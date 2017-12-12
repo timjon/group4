@@ -11,6 +11,7 @@ init(_Coordinator, _Did, {[], _}) -> no_classes;
 init(_Coordinator, _Did, {_, []}) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Coordinator, Did, {L, Messages}) -> 
+    gen_tcp:connect("127.0.0.1", 8041, [binary, {packet, 0}]),
 	%Sending information that the Coordinator has been spawned. To be printed in the executionlog
 	Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
 	Pids = spawn_nodes(L, Did, Coordinator),
