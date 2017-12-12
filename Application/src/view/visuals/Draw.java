@@ -276,14 +276,6 @@ public class Draw {
     }
 
     /**
-     * checks a canvas properties to validate if it is in view or not.
-     * @param canvas to check
-     */
-    private boolean inView(Canvas canvas) {
-        return canvas.getWidth() == 0 && canvas.getHeight() == 0;
-    }
-
-    /**
      * Updates the class to fit the resized window.
      */
     private void renderClass() {
@@ -389,5 +381,4 @@ public class Draw {
             }
         }
     }
-
 }
