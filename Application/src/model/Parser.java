@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * collaborator: Pontus Laestadius, Sebastian Fransson
- * @version 2.0
+ * @version 2.1
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects
