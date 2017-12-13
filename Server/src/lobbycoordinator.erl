@@ -63,6 +63,14 @@ loop(Rooms, Lobby_increment) ->
 	  end,
 	  loop(Rooms, Lobby_increment);
 	  
+	{Creator_Socket, {class_diagram, Sid, Did, Classes, Relations}} ->
+	  %Get lobby and send deployment through.
+	  case find_room(Rooms, list_to_integer(get_lobby_ID(Sid))) of 
+	    not_created -> no_lobby_created;
+		Pid         -> Pid ! {class_diagram, Creator_Socket, {class_diagram, Sid, Did, Classes, Relations}}
+	  end,
+	  loop(Rooms, Lobby_increment);
+	  
 	%This happens when you send a new diagram to the lobby
 	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
 	  io:format("Im creating stuff ~n"),

@@ -105,9 +105,12 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
 	  
 	%This case happens when a class diagram wants to be linked.
-    {class_diagram, ClassDiagram} ->
-      Format_result = io_lib:format("~p", [ClassDiagram]) ++ "~",
+    {class_diagram, _Creator_Socket, {class_diagram, Sid, Did, Classes, Relations}} ->
+	  Pid = find_diagram(Sid, Diagrams),
+	  %Sends the message to the diagram coordinator.
+	  Pid ! {class_diagram, Did, Classes, Relations, self()},
 	  %Send Diagrams to the clients.
+      Format_result = io_lib:format("~p", [{class_diagram, Sid, Did, Classes, Relations}]) ++ "~",
 	  send_messages(Members, Format_result),
       loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) 	
   end.
