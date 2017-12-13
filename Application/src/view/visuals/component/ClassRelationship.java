@@ -97,32 +97,22 @@ public class ClassRelationship implements Renderable {
             A = params[1];
             B = params[2];
             P = params[3];
-            System.out.println("AX" + XDistance + "AY" + YDistance);
-
-//            // this is similar to the if statement above, but i don't know what the if statement above doesn't handle this
-//            // decreasing the gap to show arrow correctly when it is a diagonal line pointing more down
-//            if (XDistance < 300 && YDistance > 150) {
-//                gap -= 8;
-
         }
         // Using the Bresenham’s Line Algorithm on the Y axis as reference by swapping the parameters
         else {
-            int[] params = initBresenhamsParameters(YDistance, XDistance);
+            int[] params;
+            //Parameters swapped
+            params = initBresenhamsParameters(YDistance, XDistance);
             stepsParameter = params[0];
             A = params[1];
             B = params[2];
             P = params[3];
-            System.out.println("BX" + XDistance + "BY" + YDistance);
         }
 
         int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
-        //The gap variable is used to remove steps from the for loops so that the arrow appears correctly
-        int[] GapArray = getAngleAndGap(XDistance, YDistance); //initialising gap array
-        int gap = GapArray[1]; // get gap variable value
 
         // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < stepsParameter / 15+gap; i++) {
-        System.out.println(gap);
+        for (int i = 0; i < stepsParameter / 15; i++) {
             // if P is less than 0, draw the next sprite on the same line as the last sprite
             if (P < 0) {
 
@@ -152,112 +142,70 @@ public class ClassRelationship implements Renderable {
 
                 P += B; //see Bresenham’s Line Algorithm
             }
-
         }
 
-
-        int[] angleArray = getAngleAndGap(XDistance, YDistance); //initialising arrowAngle array
-        int arrowAngle = angleArray[0]; // gets arrow angle
-        // Rotate arrow image
-        arrow.setRotate(arrowAngle);
+        // Rotate inheritance arrow
+        arrow.setRotate(getArrowAngle(XDistance, YDistance));
         // Converts imageView into image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
         Image rotatedImage = arrow.snapshot(params, null);
         // Draw an arrow at the end of the road
         gc.drawImage(rotatedImage, startingPointX + XOffset, startingPointY + YOffset, arrowSize, arrowSize);
-
     }
 
     /**
-     * Method get the proper angle to rotate the inheritance arrow and change the gap accordingly
+     * Method get the proper angle to rotate the inheritance arrow
      *
      * @param XDistance the difference between 2 points on the X axis
      * @param YDistance the difference between 2 points on the Y axis
-     * @return angleAndGapArray which stores an int for the arrow angle and an int for the gap variable
+     * @return arrowAngle
      */
-    private int[] getAngleAndGap(int XDistance, int YDistance) {
+    private int getArrowAngle(int XDistance, int YDistance) {
 
-        int[] angleAndGapArray = new int[2];
-        angleAndGapArray[0] = 0; // used to rotate the inheritance arrow to 8 different directions
-        angleAndGapArray[1] = 0; // used to decide the gap variable for decreasing the gap to show arrow correctly
+        int arrowAngle = 0; // used to rotate the inheritance arrow to 8 different directions
 
         // pointing east
         if (XDistance > 0 && YDistance == 0) {
-            angleAndGapArray[0] += 90;
-            // horizontal line pointing east
-            angleAndGapArray[1] -= 3;
+            arrowAngle += 90;
         }
 
         // pointing west
         else if (XDistance < 0 && YDistance == 0) {
-            angleAndGapArray[0] += 270;
-            // horizontal line pointing west
-            angleAndGapArray[1] -= 2;
+            arrowAngle += 270;
         }
 
         // pointing south
         else if (XDistance == 0 && YDistance > 0) {
-            angleAndGapArray[0] += 180;
-            // vertical line pointing south
-            angleAndGapArray[1] -= 2;
+            arrowAngle += 180;
         }
 
         // pointing north
         else if (XDistance == 0 && YDistance < 0) {
-            angleAndGapArray[0] += 0;
-            // vertical line pointing north
-            angleAndGapArray[1] -= 1;
+            arrowAngle += 0;
         }
 
         // pointing south east
         else if (XDistance > 0 && YDistance > 0) {
-            angleAndGapArray[0] += 135;
-            // diagonal line pointing south east
-            angleAndGapArray[1] -= 3;
-            // pointing far south west
-            if (XDistance > 300) {
-                angleAndGapArray[1] -= 8;
-            }
+            arrowAngle += 135;
         }
 
         // pointing north east
         else if (XDistance > 0 && YDistance < 0) {
-            angleAndGapArray[0] += 45;
-            if (XDistance < 300)
-            // diagonal line pointing north east
-            angleAndGapArray[1] -= 10;
-            else {
-                // diagonal line pointing far north east
-                angleAndGapArray[1] -= 16;
-            }
+            arrowAngle += 45;
         }
 
         // pointing north west
         else if (XDistance < 0 && YDistance < 0) {
-            angleAndGapArray[0] += 315;
-            if (XDistance > -300)
-            // diagonal line pointing north west
-            angleAndGapArray[1] -= 1;
-            else {
-                // diagonal line pointing far north west
-                angleAndGapArray[1] -= 9;
-            }
+            arrowAngle += 315;
         }
 
         // pointing south west
         else if (XDistance < 0 && YDistance > 0) {
-            angleAndGapArray[0] += 225;
-            if (XDistance > -300)
-                // diagonal line pointing south west
-            angleAndGapArray[1] -= 8;
-            else {
-                // diagonal line pointing far south west
-                angleAndGapArray[1] -= 16;
-            }
+            arrowAngle += 225;
         }
 
-        return angleAndGapArray;
+        return arrowAngle;
     }
 
     /**
