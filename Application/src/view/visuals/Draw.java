@@ -135,7 +135,6 @@ public class Draw {
     /**
      * Adds nodes to arraylist, to be drawn
      * @param device
-     *
      */
     public void addDeploymentDiagramClass (String device){
         allDeploymentClasses.add(new DeploymentDiagramClass(device));
@@ -143,8 +142,8 @@ public class Draw {
 
     /**
      * Maps process to device
-     * @param device
-     * @param process
+     * @param device to map processes to
+     * @param process to map onto device
      */
     public void addProcessToDevice(String device, String process) {
         for (Renderable renderable: allDeploymentClasses) {
@@ -353,7 +352,7 @@ public class Draw {
     void renderClassDiagramClass() {
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
-        Matrix(allClassDiagramClasses, 3, space,this.canvas_class);
+        matrix(allClassDiagramClasses, 3, space,this.canvas_class);
     }
 
     /**
@@ -362,17 +361,17 @@ public class Draw {
     void renderDeploymentDiagram(){
         if (allDeploymentClasses.size() == 0) return;
         int space = ((int) this.canvas_deployment.getWidth()) / this.allDeploymentClasses.size();
-        Matrix(allDeploymentClasses, 3, space,this.canvas_deployment);
+        matrix(allDeploymentClasses, 3, space,this.canvas_deployment);
     }
 
     /**
      *Matrix structure, used for class and deployment diagrams
-     * @param diagram
-     * @param columns
-     * @param space
-     * @param canvas
+     * @param diagram the diagram
+     * @param columns the columns of the matrix
+     * @param space allowed space
+     * @param canvas canvas for the elements to be placed on
      */
-    private void Matrix(ArrayList<Renderable> diagram, int columns, int space, Canvas canvas){
+    private void matrix(ArrayList<Renderable> diagram, int columns, int space, Canvas canvas){
         //The size of the matrix structure, i.e the amount of elements/classes/nodes
         int matrixSize = diagram.size();
         int col =  columns; //The "up to" -number of columns in the matrix, counting from 0.
