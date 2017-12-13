@@ -54,7 +54,6 @@ public class ClassRelationship implements Renderable {
      */
     private int[] initBresenhamsParameters(int XDistance, int YDistance) {
         int[] bresenhamsParametersArray = new int[4];
-        bresenhamsParametersArray[0] = Math.abs(XDistance); //stepsParameter
         bresenhamsParametersArray[1] = 2 * Math.abs(YDistance); // A
         bresenhamsParametersArray[2] = bresenhamsParametersArray[1] - 2 * Math.abs((XDistance)); // B
         bresenhamsParametersArray[3] = bresenhamsParametersArray[1] - Math.abs((XDistance)); // P
@@ -112,7 +111,7 @@ public class ClassRelationship implements Renderable {
             params = initBresenhamsParameters(YDistance, XDistance);
         }
 
-        stepsParameter = params[0];
+        //stepsParameter = params[0];
         A = params[1];
         B = params[2];
         P = params[3];
@@ -120,19 +119,17 @@ public class ClassRelationship implements Renderable {
         int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
 
         // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < stepsParameter / 25; i++) {
+        for (int i = 0; i < 7; i++) {
 
             // if P is less than 0, draw the next sprite on the same line as the last sprite
             if (P < 0) {
 
                 // increase offset accordingly
                 if (Math.abs(XDistance) > Math.abs(YDistance)) {
-                    XOffset += offsetIncrementX;
+                    XOffset += offsetIncrementX + 5;
                 } else {
-                    YOffset += offsetIncrementY;
+                    YOffset += offsetIncrementY - 8;
                 }
-                // Draw road sprites
-                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
 
                 P += A;
             }
@@ -140,18 +137,21 @@ public class ClassRelationship implements Renderable {
             // if P was 0 or greater, draw the next sprite one line higher/lower than the last sprite
             if (P >= 0) {
 
+                if (XDistance < 0 && YDistance > 0) {
+                    XOffset += offsetIncrementX;
+                    YOffset += offsetIncrementY -5;
+                }
                 // increase both offsets
-                XOffset += offsetIncrementX;
-                YOffset += offsetIncrementY;
+                else {XOffset += offsetIncrementX -13;
+                YOffset += offsetIncrementY + 5 ;}
 
                 // increase arrow size in the case of diagonal lines
                 arrowSize = 25;
-                // Draw road sprites
-                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
+
                 P += B; //see Bresenham’s Line Algorithm
             }
-
-
+            // Draw road sprites
+            gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
 
         }
 
