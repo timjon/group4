@@ -57,9 +57,28 @@ public class Draw {
         addClassDiagramClass("7");
         addClassDiagramClass("8");
 
+        addClassDiagramRelation("1", "5");
+    }
+
+
+    public void addClassDiagramRelation(String class1, String class2) {
+
         // Initialises a mocked relationship
-        ClassRelationship cl= new ClassRelationship(allClassDiagramClasses.get(4).getCoordinates(),
-                allClassDiagramClasses.get(1).getCoordinates(), 15);
+        ClassRelationship cl= new ClassRelationship(null,null,0);
+
+        int one = 0;
+        int two = 0;
+        for (int i = 0; i < allClassDiagramClasses.size(); i++) {
+            if (allClassDiagramClasses.get(i).getName().equals(class1)) {
+                one = i;
+            }
+            if (allClassDiagramClasses.get(i).getName().equals(class2)) {
+                two = i;
+            }
+        }
+
+        cl.setParents(one, two);
+
         allClassRelationships.add(cl);
     }
 
@@ -354,12 +373,17 @@ public class Draw {
         if (allClassRelationships.size()==0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
 
-        // Place mocked relationship from the 5th class to the 8th
-        Coordinates fromNode = allClassDiagramClasses.get(4).getCoordinates();
-        Coordinates toNode = allClassDiagramClasses.get(7).getCoordinates();
-        allClassRelationships.get(0).init(fromNode,toNode,(space) / 6);
+        for (Renderable renderable: allClassRelationships) {
+            if (renderable instanceof ClassRelationship) {
+                ClassRelationship cr = (ClassRelationship) renderable;
+                Coordinates c1 = allClassDiagramClasses.get(cr.class1Index).getCoordinates();
+                Coordinates c2 = allClassDiagramClasses.get(cr.class2Index).getCoordinates();
+                cr.init(c1,c2,space/6);
 
+            }
         }
+
+    }
 
     /**
      * Starts the global Animation thread for all Draw objects and views.

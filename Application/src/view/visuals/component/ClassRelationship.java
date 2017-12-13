@@ -11,12 +11,12 @@ import view.visuals.Renderable;
  * Class for simulating the relationships of the class diagram
  *
  * @author Rashad Kamsheh
+ * Collaborator: Pontus Laestadius
  * @version 1.1
  */
 
 public class ClassRelationship implements Renderable {
-
-
+    
     //Image for the road sprite which are used to resemble the class diagram relationships
     private static Image road = new Image("resources/roadSprite.png");
     //ImageView that contains the arrow, used ImageView to be able to rotate
@@ -24,6 +24,9 @@ public class ClassRelationship implements Renderable {
     private Coordinates coordinates; //coordinates
     private Coordinates fromNode, toNode;
     private int size; //size of the allowed class space
+    public int class1Index = 0;
+    public int class2Index = 0;
+
 
     // Constructor
     public ClassRelationship(Coordinates fromNode, Coordinates toNode, int size) {
@@ -59,8 +62,17 @@ public class ClassRelationship implements Renderable {
         return bresenhamsParametersArray;
     }
 
+
+    public void setParents(int one, int two) {
+        this.class1Index = one;
+        this.class2Index = two;
+    }
+
     @Override
     public void render(GraphicsContext gc) {
+
+        // If we got no size to work with.
+        if (size == 0) return;
 
         // Coordinates
         int startingPointX = fromNode.getX(); // Points to the middle of the super class, used for horizontal lines
@@ -89,30 +101,26 @@ public class ClassRelationship implements Renderable {
         // This is used to find out whether to use the Y axis or the X axis as a parameter for the for loop
         int stepsParameter;
         int A, B, P; // Variables used for Bresenham’s Line Algorithm
+        int[] params;
 
         /// Using the Bresenham’s Line Algorithm on X axis as reference
         if (Math.abs(XDistance) > Math.abs(YDistance)) {
-            int[] params = initBresenhamsParameters(XDistance, YDistance);
-            stepsParameter = params[0];
-            A = params[1];
-            B = params[2];
-            P = params[3];
+            params = initBresenhamsParameters(XDistance, YDistance);
         }
-        // Using the Bresenham’s Line Algorithm on the Y axis as reference by swapping the parameters
+        //Parameters swapped for Y axis.
         else {
-            int[] params;
-            //Parameters swapped
             params = initBresenhamsParameters(YDistance, XDistance);
-            stepsParameter = params[0];
-            A = params[1];
-            B = params[2];
-            P = params[3];
         }
+
+        stepsParameter = params[0];
+        A = params[1];
+        B = params[2];
+        P = params[3];
 
         int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
 
         // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < stepsParameter / 20; i++) {
+        for (int i = 0; i < stepsParameter / size; i++) {
 
             // if P is less than 0, draw the next sprite on the same line as the last sprite
             if (P < 0) {
@@ -124,10 +132,7 @@ public class ClassRelationship implements Renderable {
                     YOffset += offsetIncrementY;
                 }
 
-                // Draw road sprites
-                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
-
-                P += A; //see Bresenham’s Line Algorithm
+                P += A;
             }
 
             // if P was 0 or greater, draw the next sprite one line higher/lower than the last sprite
@@ -136,23 +141,24 @@ public class ClassRelationship implements Renderable {
                 // increase both offsets
                 XOffset += offsetIncrementX;
                 YOffset += offsetIncrementY;
-                // Draw road sprites
-                System.out.println(size);
-                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
 
                 // increase arrow size in the case of diagonal lines
                 arrowSize = 25;
 
                 P += B; //see Bresenham’s Line Algorithm
             }
+
+            // Draw road sprites
+            gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
+
         }
 
         // Rotate inheritance arrow
         arrow.setRotate(getArrowAngle(XDistance, YDistance));
         // Converts imageView into image
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
-        Image rotatedImage = arrow.snapshot(params, null);
+        SnapshotParameters snapshotParameters = new SnapshotParameters();
+        snapshotParameters.setFill(Color.TRANSPARENT);
+        Image rotatedImage = arrow.snapshot(snapshotParameters, null);
         // Draw an arrow at the end of the road
         gc.drawImage(rotatedImage, startingPointX + XOffset, startingPointY + YOffset, arrowSize, arrowSize);
     }
