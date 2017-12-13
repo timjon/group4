@@ -12,8 +12,11 @@ init(_Coordinator, _Did, {_, []}, _) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Coordinator, Did, {Classes, Messages}, Class_names) -> 
 	%Sending information that the Coordinator has been spawned. To be printed client-side.
+	io:format("no1"),
 	Coordinator ! {Did, print_information, ["Spawned diagram coordinator"]},
+	io:format("no2"),
 	Pids = spawn_nodes(Classes, Did, Coordinator),
+	io:format("YEEEEES"),
 	loop(Coordinator, Did, Pids, Messages, 1, [], none, Class_names, none). 
 
 
@@ -25,6 +28,7 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_n
 	  Coordinator ! {deployment_diagram, DeploymentID, Did, Mappings},
 	  Coordinator !  {Did, print_information, ["Linked a Deployment Diagram"]},
 	  loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_names, {DeploymentID, Mappings});
+	  
   % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},

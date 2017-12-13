@@ -50,7 +50,8 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Diagram_ID, Class_names}]) ++ "~",
       send_messages(Members, Format_result),
 	  Self = self(),
-	  loop(Creator_Socket, Password, Members, [{Diagram_ID, Class_names, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}) end)}| Diagrams], Lobby_ID);
+	  io:format("Hello im now spawning diagram ~n"),
+	  loop(Creator_Socket, Password, Members, [{Diagram_ID, Class_names, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}, Class_names) end)}| Diagrams], Lobby_ID);
 	
 	%This case happens when the message recieved contains a command for simulating the diagram
 	{command, Creator_Socket, {Did, Message_request}} -> 
@@ -91,7 +92,24 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
       %Sends the result to client
 	  send_messages(Members, [Format_result ++ "~"]),
-	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID)
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
+	 
+    %This case happens when a deployment diagram wants to be linked.	 
+	{deployment_diagram, _Creator_Socket, {deployment_diagram, Sid, Did, Mappings}} ->  
+	  Pid = find_diagram(Sid, Diagrams),
+	  %Sends the message to the diagram coordinator.
+	  Pid ! {deployment_diagram, Did, Mappings, self()},
+	  Format_result = io_lib:format("~p", [{deployment_diagram, Sid, Did, Mappings}]) ++ "~",
+	  %Send Diagrams to the clients.
+	  send_messages(Members, Format_result),
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
+	  
+	%This case happens when a class diagram wants to be linked.
+    {class_diagram, ClassDiagram} ->
+      Format_result = io_lib:format("~p", [ClassDiagram]) ++ "~",
+	  %Send Diagrams to the clients.
+	  send_messages(Members, Format_result),
+      loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) 	
   end.
   
 %Sends the classes of all given diagrams to the given user
