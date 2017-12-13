@@ -5,7 +5,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
 
-
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
@@ -70,7 +69,6 @@ public class Draw {
         ClassRelationship c3= new ClassRelationship(allClassDiagramClasses.get(2).getCoordinates(),
                 allClassDiagramClasses.get(3).getCoordinates(), 40);
         allClassRelationships.add(c3);
-
     }
 
     /**
@@ -380,9 +378,6 @@ public class Draw {
         allClassRelationships.get(2).init(fromNode2,toNode2,(space/2));
         }
 
-
-
-
     /**
      * Starts the global Animation thread for all Draw objects and views.
      */
@@ -412,7 +407,6 @@ public class Draw {
         return this.messages.get(index);
     }
 
-
     /**
      * remove highlights from all classes and highlights the provided one.
      * @param className to match and highlight.
@@ -430,4 +424,3 @@ public class Draw {
         }
     }
 }
-
