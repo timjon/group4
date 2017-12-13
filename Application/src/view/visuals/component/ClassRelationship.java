@@ -12,7 +12,7 @@ import view.visuals.Renderable;
  *
  * @author Rashad Kamsheh
  * Collaborator: Pontus Laestadius
- * @version 1.1
+ * @version 1.2
  */
 
 public class ClassRelationship implements Renderable {
@@ -84,73 +84,20 @@ public class ClassRelationship implements Renderable {
         // Offsets
         int XOffset = 0; // Vertical offset
         int YOffset = 0; // Vertical offset
-        // we need 2 offset increment integers for the case where we have to negate the operand of only one of them
-        int offsetIncrementX = 15; // Increments offset of the X axis offset
-        int offsetIncrementY = 15; // Increments offset of the Y axis offset
 
-        // negates the operand
-        if (XDistance < 0) {
-            offsetIncrementX *= (-1);
-        }
-        // negates the operand
-        if (YDistance < 0) {
-            offsetIncrementY *= (-1);
-        }
-
-        int A, B, P; // Variables used for Bresenham’s Line Algorithm
-        int[] params;
-
-        /// Using the Bresenham’s Line Algorithm on X axis as reference
-        if (Math.abs(XDistance) > Math.abs(YDistance)) {
-            params = initBresenhamsParameters(XDistance, YDistance);
-        }
-        //Parameters swapped for Y axis.
-        else {
-            params = initBresenhamsParameters(YDistance, XDistance);
-        }
-
-        //stepsParameter = params[0];
-        A = params[1];
-        B = params[2];
-        P = params[3];
-
-        int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
+        int mmmmmmmmmmagic = Math.abs(XDistance)/size == 0?1:Math.abs(XDistance)/size;
+        int Yinc = YDistance/mmmmmmmmmmagic;
+        int magic = (XDistance<0?-1:1)*size;
 
         // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < mmmmmmmmmmagic; i++) {
+            XOffset += magic;
+            YOffset += Yinc;
+            int x = startingPointX + XOffset;
+            int y = startingPointY + YOffset;
 
-            // if P is less than 0, draw the next sprite on the same line as the last sprite
-            if (P < 0) {
-
-                // increase offset accordingly
-                if (Math.abs(XDistance) > Math.abs(YDistance)) {
-                    XOffset += offsetIncrementX + 5;
-                } else {
-                    YOffset += offsetIncrementY - 8;
-                }
-
-                P += A;
-            }
-
-            // if P was 0 or greater, draw the next sprite one line higher/lower than the last sprite
-            if (P >= 0) {
-
-                if (XDistance < 0 && YDistance > 0) {
-                    XOffset += offsetIncrementX;
-                    YOffset += offsetIncrementY -5;
-                }
-                // increase both offsets
-                else {XOffset += offsetIncrementX -13;
-                YOffset += offsetIncrementY + 5 ;}
-
-                // increase arrow size in the case of diagonal lines
-                arrowSize = 25;
-
-                P += B; //see Bresenham’s Line Algorithm
-            }
             // Draw road sprites
-            gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
-
+            gc.drawImage(road, x, y, size*1.2, size*1.2);
         }
 
         // Rotate inheritance arrow
@@ -160,7 +107,7 @@ public class ClassRelationship implements Renderable {
         snapshotParameters.setFill(Color.TRANSPARENT);
         Image rotatedImage = arrow.snapshot(snapshotParameters, null);
         // Draw an arrow at the end of the road
-        gc.drawImage(rotatedImage, startingPointX + XOffset, startingPointY + YOffset, arrowSize, arrowSize);
+        gc.drawImage(rotatedImage, startingPointX + XOffset -magic*2, startingPointY + YOffset -Yinc*2, size, size);
     }
 
     /**
