@@ -32,10 +32,54 @@ class Decode {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
 
-        // TODO remove when 39 is done.
+        // Class diagram has been found.
         if (rawStringToDecode.contains("class_diagram")) {
-            System.out.println("server: " + rawStringToDecode);
-            return;
+
+            // Replace all newlines and whitespaces in the string.
+            rawStringToDecode = rawStringToDecode.replaceAll("\n", "")
+                    .replaceAll("\\s", "");
+
+            // Split the server output into 3 array items using the commas.
+            String[] class_values = rawStringToDecode.split(",", 3);
+
+            // Second array item is the class diagram ID.
+            String related_s_ID = class_values[1];
+
+            // Whole third item is the sequence diagram ID concatenated with the classes.
+            String id_and_classes = class_values[2];
+
+            // Get the index of the first comma.
+            int c_ID_index = id_and_classes.indexOf(",");
+
+            // Get the sequence diagram ID.
+            String class_ID = id_and_classes.substring(0, c_ID_index);
+
+            // Remove the CID.
+            String attributes = id_and_classes.replace(class_ID, "");
+
+            // Get the list without the comma in front of it.
+            String attributes_list = attributes.substring(1);
+
+            // Split the list into classes and relationships.
+            String[] classes_and_relations = attributes_list.split("]],");
+
+            // New class diagram sending all the classes in a String array.
+            String[] class_diagram_classes = classes_and_relations[0].split("],");
+            classDiagramClasses(class_diagram_classes, class_ID, related_s_ID);
+
+            // New relationship list, supports inheritance only for now.
+            if(classes_and_relations[1].contains("inheritance")) {
+
+                // Split relationship list into items.
+                String[] split_relations = classes_and_relations[1].split("],");
+
+                // Remove all brackets and quotes, then send as comma separated strings.
+                for (int i = 0; i < split_relations.length; i++) {
+                    String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '}', '\'');
+                    // New relation.
+                    classRelation(class_ID, class_relation);
+                }
+            }
         }
 
         // Split the rawStringToDecode string in to fields.
@@ -78,52 +122,7 @@ class Decode {
         } else if (rawStringToDecode.contains("INFO#")) {
             //Send through the rawStringToDecode starting at the 6th character to skip the INFO#.
             disp("Info", rawStringToDecode.substring(6), "");
-
-            // Class diagram detected.
-        }
-            /*
-            // Split the server output into 3 array items using the commas.
-            String[] class_values = rawStringToDecode.split(",", 3);
-
-            // Second array item is the class diagram ID.
-            String class_ID = class_values[1];
-
-            // Whole third item is the sequence diagram ID concatenated with the classes.
-            String id_and_classes = class_values[2];
-
-            // Get the index of the first comma.
-            int s_ID_index = id_and_classes.indexOf(",");
-
-            // Get the sequence diagram ID.
-            String related_s_ID = id_and_classes.substring(0, s_ID_index);
-
-            // Remove the SID.
-            String attributes = id_and_classes.replace(related_s_ID, "");
-
-            // Get the list without the comma in front of it.
-            String attributes_list = attributes.substring(1);
-
-            // Split the list into classes and relationships.
-            String[] classes_and_relations = attributes_list.split("]],");
-
-            // New class diagram.
-            String[] class_diagram_classes = classes_and_relations[0].split("],");
-            classDiagramClasses(classes_and_relations, class_ID, related_s_ID);
-
-            // New relationship list.
-            if(classes_and_relations[1].contains("inheritance")) {
-
-                // Split relationship list into items.
-                String[] split_relations = classes_and_relations[1].split("],");
-
-                // Remove all brackets and quotes, then send as comma separated strings.
-                for (int i = 0; i < split_relations.length; i++) {
-                    String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '\'');
-                    classRelation(class_ID, class_relation);
-                }
-            }
-*/
-         else {
+        } else {
 
             // Gets the message content.
             String message = retrieveMessage(rawStringToDecode);
@@ -265,34 +264,34 @@ class Decode {
      */
     private void classDiagramClasses(String[] classes, String id, String SDID) {
 
-        // Creates a new view with the tab name.
-        DiagramView diagramView = new DiagramView("SDid: " + id, id);
-
-        // Add the tab to the collection of tabs.
-        tabPane.getTabs().add(diagramView.getTab());
-
         // Retrieve the draw object to add the classes too.
-        Draw draw = diagramView.getDraw();
+       // Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
-        Platform.runLater(() -> {
+       // Platform.runLater(() -> {
 
             // Remove brackets and quotes.
+            System.out.println(); // Empty line for readability.
             for (int i = 0; i < classes.length; i++) {
                 String single_class = removeCharactersFromString(classes[i], '[', ']', '\'');
-                int name_index = single_class.indexOf(",");
-                // Split the name of the class.
-                String class_name = single_class.substring(0, name_index);
-                // Attributes list.
-                String fields = single_class.substring(name_index + 1);
-                // Add the class to the draw object.
-                draw.addClassDiagramClass(class_name);
-                // Print class name.
-                System.out.println("Class name: " + class_name + ", fields: " + fields);
+                // Check if there are attributes
+                if(classes[i].contains(",")) {
+                    int name_index = single_class.indexOf(",");
+                    // Split the name of the class.
+                    String class_name = single_class.substring(0, name_index);
+                    // Attributes list.
+                    String fields = single_class.substring(name_index + 1);
+                    // Add the class to the draw object.
+                    //draw.addClassDiagramClass(class_name);
+                    // Print class name and fields.
+                    System.out.println("Class name: " + class_name + ", fields: " + fields);
+                } else {
+                    System.out.println("Class name (no fields): " + single_class);
                 }
+            }
 
             // Turns on animations.
             Draw.animate(true);
-        });
+      //  });
     }
 
     /**
@@ -302,6 +301,7 @@ class Decode {
      */
     private void classRelation(String id, String relationship) {
 
+        System.out.println();
         // Split on comma.
         String[] single_relationship = relationship.split(",");
         // Class id.
