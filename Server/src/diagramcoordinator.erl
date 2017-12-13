@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06, Pontus Laestadius 2017-12-01
-%%Version: 1.8
+%%Version: 1.9
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Coordinator, _Did, {[], _}, _) -> no_classes;
@@ -14,53 +14,62 @@ init(Coordinator, Did, {Classes, Messages}, Class_names) ->
 	%Sending information that the Coordinator has been spawned. To be printed client-side.
 	Coordinator ! {Did, print_information, ["Spawned diagram coordinator"]},
 	Pids = spawn_nodes(Classes, Did, Coordinator),
-	loop(Coordinator, Did, Pids, Messages, 1, [], none, Class_names). 
+	loop(Coordinator, Did, Pids, Messages, 1, [], none, Class_names, none). 
 
 
 %Sends and receives messages until the list of messages is empty  
-loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_names) ->
+loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram) ->
   receive
-  
+    % Links a deployment diagram to the current sequence.
+	{deployment_diagram, DeploymentID, Mappings, Coordinator} ->
+	  Coordinator ! {deployment_diagram, DeploymentID, Did, Mappings},
+	  Coordinator !  {Did, print_information, ["Linked a Deployment Diagram"]},
+	  loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_names, {DeploymentID, Mappings});
+	  
   % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 		%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Pids, Class_names)]},
-	 
-  	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}}, Class_names);
+  	loop(Coordinator, Did, Pids, [], Message_number, PrevList, {Classid, {Classes, Relations}}, Class_names, DeploymentDiagram);
   
   % Sends the class diagram upstreams.
   {request_class_diagram, Pid} ->
   	Pid ! {class_diagram_request, ClassDiagram},
-  	loop(Coordinator, Did ,Pids,[],Message_number, PrevList, ClassDiagram, Class_names);
+  	loop(Coordinator, Did ,Pids,[],Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram);
   
   % Next message
   {next_message, Coordinator} -> 
     Coordinator ! {simulation_done, Did, Message_number},
-	  loop(Coordinator, Did ,Pids,[],Message_number, PrevList, ClassDiagram, Class_names);
+	  loop(Coordinator, Did ,Pids,[],Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram);
 	  
 	 % Previous message
 	{previous_message, Coordinator} ->
 	  [Prev_H|Prev_T] = PrevList,
 	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
-	  loop(Coordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T, ClassDiagram, Class_names)
+	  loop(Coordinator, Did, Pids, [Prev_H|[]], Message_number - 1, Prev_T, ClassDiagram, Class_names, DeploymentDiagram)
   end;
  
  %When there are no previous messages this case is used.
-  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram, Class_names) ->
+  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram, Class_names, DeploymentDiagram) ->
     receive
-    
+    % Links a deployment diagram to the current sequence.
+	{deployment_diagram, DeploymentID, Mappings, Coordinator} ->
+	  Coordinator ! {deployment_diagram, DeploymentID, Did, Mappings},
+	  Coordinator !  {Did, print_information, ["Linked a Deployment Diagram"]},
+	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram, Class_names, {DeploymentID, Mappings});
+	
     % Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 		%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Pids, Class_names)]},
-  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], {Classid, {Classes, Relations}}, Class_names);
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], {Classid, {Classes, Relations}}, Class_names, DeploymentDiagram);
     
     % Sends the class diagram upstreams.
   {request_class_diagram, Pid} ->
   	Pid ! {class_diagram_request, ClassDiagram},
-	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram, Class_names);
+	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram, Class_names, DeploymentDiagram);
     
     {next_message, Coordinator} -> 
       {From, To, Message} = L,
@@ -74,32 +83,37 @@ loop(Coordinator, Did, Pids, [], Message_number, PrevList, ClassDiagram, Class_n
 					Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
 	  
-	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|[]], ClassDiagram, Class_names);
+	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|[]], ClassDiagram, Class_names, DeploymentDiagram);
 	  
 	  
 	{previous_message, Coordinator} ->
 	  Coordinator ! {Did, print_information, ["No previous message"]},
-	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram, Class_names)
+	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, [], ClassDiagram, Class_names, DeploymentDiagram)
   end;
   
 %This loop runs until the list is empty (when there are no more messages)
-loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Class_names) -> 
+loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram) -> 
   receive
-
+    % Links a deployment diagram to the current sequence.
+	{deployment_diagram, DeploymentID, Mappings, Coordinator} ->
+	  Coordinator ! {deployment_diagram, DeploymentID, Did, Mappings},
+	  Coordinator !  {Did, print_information, ["Linked a Deployment Diagram"]},
+	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Class_names, {DeploymentID, Mappings});
+	  
 	% Add a class diagram
   {class_diagram, Classid, Classes, Relations, Coordinator} ->
 		Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 		%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Pids, Class_names)]},
-  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, {Classid, {Classes, Relations}}, Class_names);
+  	loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, {Classid, {Classes, Relations}}, Class_names, DeploymentDiagram);
   	
   	
   % Sends the class diagram upstreams.
   {request_class_diagram, Pid} ->
   	Pid ! {class_diagram_request, ClassDiagram},
-	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Class_names);
+	  loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram);
   	
-    {next_message, Coordinator} -> 
+  {next_message, Coordinator} -> 
       {From, To, Message} = L,
 	  send_message(find_pid(Pids, From), From, To, Message, find_pid(Pids, To), Message_number, Coordinator, Did, get_class_diagram_id(ClassDiagram)), 
       receive
@@ -108,14 +122,14 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Cla
 		  	%Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 		  	Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 	  end,
-	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList], ClassDiagram, Class_names);
+	  loop(Coordinator, Did, Pids, Ls, Message_number + 1, [L|PrevList], ClassDiagram, Class_names, DeploymentDiagram);
 	  
 	  
-	{previous_message, Coordinator} ->
+  {previous_message, Coordinator} ->
 	  [Prev_H| Prev_T] = PrevList,
 	  List = [L|Ls],
 	  Coordinator ! {previous_confirmation, Did, ["Previous message"]},
-	  loop(Coordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T, ClassDiagram, Class_names)
+	  loop(Coordinator, Did, Pids, [Prev_H| List], Message_number - 1, Prev_T, ClassDiagram, Class_names, DeploymentDiagram)
   end.
 
   
