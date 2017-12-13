@@ -59,60 +59,6 @@ public class ClassRelationship implements Renderable {
         return bresenhamsParametersArray;
     }
 
-    /**
-     * Method get the proper angle to rotate the inheritance arrow accordingly
-     *
-     * @param XDistance the difference between 2 points on the X axis
-     * @param YDistance the difference between 2 points on the Y axis
-     * @return arrowAngle
-     */
-    private int getAngle(int XDistance, int YDistance) {
-
-        int arrowAngle = 0; // used to rotate the arrow to 8 different directions
-
-        // point east
-        if (XDistance > 0 && YDistance == 0) {
-            arrowAngle += 90;
-        }
-
-        // point west
-        else if (XDistance < 0 && YDistance == 0) {
-            arrowAngle += 270;
-        }
-
-        // point south
-        else if (XDistance == 0 && YDistance > 0) {
-            arrowAngle += 180;
-        }
-
-        // point north
-        else if (XDistance == 0 && YDistance < 0) {
-            arrowAngle += 0;
-        }
-
-        // point south east
-        else if (XDistance > 0 && YDistance > 0) {
-            arrowAngle += 135;
-        }
-
-        // point north east
-        else if (XDistance > 0 && YDistance < 0) {
-            arrowAngle += 45;
-        }
-
-        // point north west
-        else if (XDistance < 0 && YDistance < 0) {
-            arrowAngle += 315;
-        }
-
-        // point south west
-        else if (XDistance < 0 && YDistance > 0) {
-            arrowAngle += 225;
-        }
-
-        return arrowAngle;
-    }
-
     @Override
     public void render(GraphicsContext gc) {
 
@@ -143,7 +89,6 @@ public class ClassRelationship implements Renderable {
         // This is used to find out whether to use the Y axis or the X axis as a parameter for the for loop
         int stepsParameter;
         int A, B, P; // Variables used for Bresenham’s Line Algorithm
-        int gap = 0; // Used to remove steps from the for loops so that the arrow appears correctly
 
         /// Using the Bresenham’s Line Algorithm on X axis as reference
         if (Math.abs(XDistance) > Math.abs(YDistance)) {
@@ -152,15 +97,13 @@ public class ClassRelationship implements Renderable {
             A = params[1];
             B = params[2];
             P = params[3];
+            System.out.println("AX" + XDistance + "AY" + YDistance);
 
-            // decreasing the gap to show arrow correctly when it is a horizontal line pointing right
-            if (XDistance > 0 && YDistance == 0) {
-                gap -= 3;
-            }
-            // decreasing the gap to show arrow correctly when it is a horizontal line pointing left
-            if (XDistance < 0 && YDistance == 0) {
-                gap -= 2;
-            }
+//            // this is similar to the if statement above, but i don't know what the if statement above doesn't handle this
+//            // decreasing the gap to show arrow correctly when it is a diagonal line pointing more down
+//            if (XDistance < 300 && YDistance > 150) {
+//                gap -= 8;
+
         }
         // Using the Bresenham’s Line Algorithm on the Y axis as reference by swapping the parameters
         else {
@@ -169,29 +112,17 @@ public class ClassRelationship implements Renderable {
             A = params[1];
             B = params[2];
             P = params[3];
-
-            // decreasing the gap to show arrow correctly when it is a vertical line pointing down
-            if (XDistance == 0 && YDistance > 0) {
-                gap -= 2;
-            }
-            // decreasing the gap to show arrow correctly when it is a vertical line pointing up
-            if (XDistance == 0 && YDistance < 0) {
-                gap -= 1;
-            }
-            // decreasing the gap to show arrow correctly when it is a diagonal line pointing down
-            if (YDistance > 0 && XDistance > 0) {
-                gap -= 3;
-            }
-            // decreasing the gap to show arrow correctly when it is a diagonal line pointing up
-            if (YDistance < 0 && XDistance < 0) {
-                gap -= 1;
-            }
+            System.out.println("BX" + XDistance + "BY" + YDistance);
         }
 
         int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
-        // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < stepsParameter / 15 + gap; i++) {
+        //The gap variable is used to remove steps from the for loops so that the arrow appears correctly
+        int[] GapArray = getAngleAndGap(XDistance, YDistance); //initialising gap array
+        int gap = GapArray[1]; // get gap variable value
 
+        // This for loop is responsible for drawing the road sprites
+        for (int i = 0; i < stepsParameter / 15+gap; i++) {
+        System.out.println(gap);
             // if P is less than 0, draw the next sprite on the same line as the last sprite
             if (P < 0) {
 
@@ -224,8 +155,11 @@ public class ClassRelationship implements Renderable {
 
         }
 
+
+        int[] angleArray = getAngleAndGap(XDistance, YDistance); //initialising arrowAngle array
+        int arrowAngle = angleArray[0]; // gets arrow angle
         // Rotate arrow image
-        arrow.setRotate(getAngle(XDistance, YDistance));
+        arrow.setRotate(arrowAngle);
         // Converts imageView into image
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
@@ -235,6 +169,96 @@ public class ClassRelationship implements Renderable {
 
     }
 
+    /**
+     * Method get the proper angle to rotate the inheritance arrow and change the gap accordingly
+     *
+     * @param XDistance the difference between 2 points on the X axis
+     * @param YDistance the difference between 2 points on the Y axis
+     * @return angleAndGapArray which stores an int for the arrow angle and an int for the gap variable
+     */
+    private int[] getAngleAndGap(int XDistance, int YDistance) {
+
+        int[] angleAndGapArray = new int[2];
+        angleAndGapArray[0] = 0; // used to rotate the inheritance arrow to 8 different directions
+        angleAndGapArray[1] = 0; // used to decide the gap variable for decreasing the gap to show arrow correctly
+
+        // pointing east
+        if (XDistance > 0 && YDistance == 0) {
+            angleAndGapArray[0] += 90;
+            // horizontal line pointing east
+            angleAndGapArray[1] -= 3;
+        }
+
+        // pointing west
+        else if (XDistance < 0 && YDistance == 0) {
+            angleAndGapArray[0] += 270;
+            // horizontal line pointing west
+            angleAndGapArray[1] -= 2;
+        }
+
+        // pointing south
+        else if (XDistance == 0 && YDistance > 0) {
+            angleAndGapArray[0] += 180;
+            // vertical line pointing south
+            angleAndGapArray[1] -= 2;
+        }
+
+        // pointing north
+        else if (XDistance == 0 && YDistance < 0) {
+            angleAndGapArray[0] += 0;
+            // vertical line pointing north
+            angleAndGapArray[1] -= 1;
+        }
+
+        // pointing south east
+        else if (XDistance > 0 && YDistance > 0) {
+            angleAndGapArray[0] += 135;
+            // diagonal line pointing south east
+            angleAndGapArray[1] -= 3;
+            // pointing far south west
+            if (XDistance > 300) {
+                angleAndGapArray[1] -= 8;
+            }
+        }
+
+        // pointing north east
+        else if (XDistance > 0 && YDistance < 0) {
+            angleAndGapArray[0] += 45;
+            if (XDistance < 300)
+            // diagonal line pointing north east
+            angleAndGapArray[1] -= 10;
+            else {
+                // diagonal line pointing far north east
+                angleAndGapArray[1] -= 16;
+            }
+        }
+
+        // pointing north west
+        else if (XDistance < 0 && YDistance < 0) {
+            angleAndGapArray[0] += 315;
+            if (XDistance > -300)
+            // diagonal line pointing north west
+            angleAndGapArray[1] -= 1;
+            else {
+                // diagonal line pointing far north west
+                angleAndGapArray[1] -= 9;
+            }
+        }
+
+        // pointing south west
+        else if (XDistance < 0 && YDistance > 0) {
+            angleAndGapArray[0] += 225;
+            if (XDistance > -300)
+                // diagonal line pointing south west
+            angleAndGapArray[1] -= 8;
+            else {
+                // diagonal line pointing far south west
+                angleAndGapArray[1] -= 16;
+            }
+        }
+
+        return angleAndGapArray;
+    }
 
     /**
      * Sets the coordinates and size, used to place the class
