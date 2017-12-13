@@ -147,7 +147,6 @@ public class Import {
                     break;
                 case "class_diagram":
                     parse.parseClassDiagram(file);
-                    System.out.println(parse.getDiagram()); // TODO print until backend is implemented.
                     if(share) {
                         Net.push("{share, " + parse.getDiagram() + "}");
                     }else{
