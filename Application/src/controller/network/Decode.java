@@ -41,22 +41,32 @@ class Decode {
             // Removes whitespaces and new lines.
             rawStringToDecode = rawStringToDecode.replaceAll("\n", "").replaceAll("\\s", "");
 
+            // Splits the input.
             String[] split = rawStringToDecode.split(",");
 
+            // Start on the third value (ignoring the first, second and third.)
             for (int i = 3; i < split.length; i++) {
 
+                // Remove not required characters.
                 String field = removeCharactersFromString(split[i], '[', ']');
                 String second = "";
 
                 if (!field.contains("]")) {
+
+                    // Iterate i as we pull the next item.
                     i += 1;
+
+                    // Remove not required characters.
                     second = split[i].replace("]", "");
                 }
 
+                // Get the draw object.
                 Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
+                // Add a diagram class to it.
                 draw.addDeploymentDiagramClass(second);
 
+                // Add a process device to it.
                 draw.addProcessToDevice(second, field);
             }
 
