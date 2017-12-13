@@ -5,14 +5,17 @@ import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
 
+
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
- * @version 2.1
+ * @version 2.2
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborators Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -32,11 +35,12 @@ public class Draw {
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
     private int class_size = 0; // Used for message positioning
-	
+
     //stores an animated gif file specifically made for this application, which contains an 8-bit animation of a sky/ocean view
     private static Image animatedBackground = new Image("resources/SkyGIF.gif");
 
-    private static Image classDiagramBackground  = new Image("resources/OceanBackgroundMuted.png");
+    //Background for class diagram view
+    private static Image classDiagramBackground  = new Image("resources/grassland.png");
 
     /**
      * Constructor
@@ -45,13 +49,15 @@ public class Draw {
         canvas = new Canvas(w, h);
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
+        addClassDiagramClass("1");
+        addClassDiagramClass("2");
+        addClassDiagramClass("3");
+        addClassDiagramClass("4");
+        addClassDiagramClass("5");
+        addClassDiagramClass("6");
+        addClassDiagramClass("7");
+        addClassDiagramClass("8");
 
-        // TODO: remove Mock input data for class diagram
-        addClassDiagramClass("Class 1");
-        addClassDiagramClass("Class 2");
-        addClassDiagramClass("Class 3");
-        addClassDiagramClass("Class 4");
-        addClassDiagramClass("Class 5");
         // Initialises a mocked relationship
         ClassRelationship cl= new ClassRelationship(allClassDiagramClasses.get(0).getCoordinates(),
                 allClassDiagramClasses.get(1).getCoordinates(), 40);
@@ -106,7 +112,7 @@ public class Draw {
     private int getWidth() {
         return (int)DiagramView.tabPane.getWidth();
     }
-    
+
     /**
      * Draws the actor class on the canvas.
      */
@@ -291,14 +297,6 @@ public class Draw {
     }
 
     /**
-     * checks a canvas properties to validate if it is in view or not.
-     * @param canvas to check
-     */
-    private boolean inView(Canvas canvas) {
-        return canvas.getWidth() == 0 && canvas.getHeight() == 0;
-    }
-
-    /**
      * Updates the class to fit the resized window.
      */
     private void renderClass() {
@@ -307,7 +305,7 @@ public class Draw {
         int size = space/2; // The size of the objects is half of it's given space.
         class_size = size/2;
         for(int i = 0; i < allClasses.size(); i++) {
-            int x = size+ (i*space);
+            int x = size + (i * space);
             int y = 25 +size/4;
             allClasses.get(i).place(new Coordinates(x,y), size);
         }
@@ -317,13 +315,45 @@ public class Draw {
      * Places the classes in the class diagram
      */
 
-    void renderClassDiagramClass(){
+    void renderClassDiagramClass() {
         if (allClassDiagramClasses.size() == 0) return;
-        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
-        for(int i = 0; i < allClassDiagramClasses.size(); i++) {
-            int x = (space/2) + (i * space);
-            int y = 50 + (space/2)/4;
-            allClassDiagramClasses.get(i).place(new Coordinates(x,y), (space/2));
+        int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
+        //The size of the matrix structure, i.e the amount of elements/classes
+        int matrixSize = allClassDiagramClasses.size();
+        int col = 3; //The "up to" -number of columns in the matrix, counting from 0.
+        //Rows depending on size of matrix
+        int rows;
+        //Find how many rows in this matrix
+        //If the size is less than the allowed column number, there is only one row
+        if(matrixSize <= col){ rows = 1;}
+        //else if the size is dividable by 3, then that's how many rows there should be
+        else  if (matrixSize % col == 0) { rows = matrixSize / col; }
+        //else, there should be +1 row, but not a full one
+        else { rows = ((matrixSize / col) + 1); }
+
+        //Case for when there's not a full row of elements/classes in the diagram
+        if(allClassDiagramClasses.size() < col){
+            for (int c = 0; c < allClassDiagramClasses.size(); c++) {
+                int x = space / 2 + (c * space);
+                int y = (int) ((this.canvas_class.getHeight()/2));
+                //placing of the classes
+               allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
+            }
+        }
+        //for all other cases
+        else {
+            //For each row, i.e where the y-positioning ought to be the same
+            for (int r = 0; r < rows; r++) {
+                int y = (int) ((this.canvas_class.getHeight()/5) + (r * this.canvas_class.getHeight()/(rows*rows)));
+                //For each class in the diagram
+                for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
+                    int x = c * (int)this.canvas_class.getWidth()/col + space/col;
+                    //get the element which is to be placed
+                    int element = (r * col) + c;
+                    //Placing of the classes
+                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
+                }
+            }
         }
     }
 
@@ -381,4 +411,23 @@ public class Draw {
             throw new ArrayIndexOutOfBoundsException("Index: " + index + "Size: " + this.messages.size());
         return this.messages.get(index);
     }
+
+
+    /**
+     * remove highlights from all classes and highlights the provided one.
+     * @param className to match and highlight.
+     */
+    public void highlightClass(String className) {
+        for (Renderable renderable: allClassDiagramClasses) {
+            // Convert renderable to ClassDiagramClass scope
+            if (renderable instanceof ClassDiagramClass) {
+                ClassDiagramClass classDiagramClass = (ClassDiagramClass) renderable;
+
+                // Uses equality of the name with the provided class name to highlight it or not.
+                classDiagramClass.highlight(renderable.getName().equals(className));
+
+            }
+        }
+    }
 }
+

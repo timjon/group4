@@ -1,14 +1,18 @@
 # Author: Pontus Laestadius
-# Version: 1.0
+# Version: 1.1
+
+# Intro message.
+echo "-----------ERLANG COMPILATION SCRIPT VERSION 1.2-----------"
+FINISHED="-------------------------FINISHED!-------------------------"
 
 # Iterates over all erlang source files in the current directory.
 for f in *.erl; do
 	
+	# Echo the terminal that it is compiling
+	echo "> $f"
+	
 	# Compiles the erlang file.
 	erlc -v $f
-	
-	# Echo the terminal that it compiled.
-	echo "compiled -> $f"
 done
 
 # Dump file
@@ -25,6 +29,7 @@ RESU=
 	# Runs the erlang EXECUTE with no shell and stops once finished.
 	$(erl -noshell -run $EXECUTE -s init stop)
 
+
 # Store sthe data in the dump file.
 date +"%T" >> $DUMP
 
@@ -33,3 +38,7 @@ echo $RESU
 
 # Store the result in the DUMP file.
 $RES >> $DUMP
+
+# Outro message.
+echo $FINISHED
+

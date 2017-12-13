@@ -1,7 +1,11 @@
 package model;
 
 import model.classDiagram.*;
+import model.deploymentDiagram.*;
 import model.sequenceDiagramParser.*;
+
+import view.DiagramView;
+
 import controller.Import;
 
 import com.google.gson.Gson;
@@ -11,8 +15,8 @@ import java.util.List;
 
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * collaborator: Pontus Laestadius
- * @version 1.1
+ * collaborator: Pontus Laestadius, Sebastian Fransson
+ * @version 2.0
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects
@@ -47,10 +51,50 @@ public class Parser {
     private String parallel = null;
 
     /**
+     * Parses a deployment diagram.
+     * @param inputJSON
+     */
+    public void parseDeploymentDiagram(String inputJSON){
+
+        try {
+            //Parsing the diagram
+            Gson gson = new Gson();
+            DeploymentDiagram dd = gson.fromJson(inputJSON, DeploymentDiagram.class);
+
+            //Formating the parsed diagram
+            StringBuilder deployString = new StringBuilder();
+
+             deployString.append("{");
+             deployString.append(UniqueCounter.getString()); // adds a unique id to the parsed string.
+             deployString.append(",[");
+
+            //Add Mappings to the string.
+            for (Mapping maps : dd.mapping) {
+                deployString.append("['");
+                deployString.append(maps.process);
+                deployString.append("','");
+                deployString.append(maps.device);
+                deployString.append("'],");
+            }
+
+            //Remove unnecessary comma and add an end.
+            deployString.replace(deployString.length()-1, deployString.length(), "]}");
+
+            diagram = deployString.toString();
+
+        }catch(Exception e){
+            e.printStackTrace();
+            Import.disp("Import Failed","Unknown Syntax",e.toString());
+        }
+
+    }
+
+
+    /**
      * Parses a class diagram.
      * @param inputJSON to parse
      */
-    public void parseClassDiagram(String inputJSON) {
+    public void parseClassDiagram(String inputJSON) throws IllegalStateException {
 
         try {
 
@@ -62,20 +106,25 @@ public class Parser {
             StringBuilder string = new StringBuilder();
 
             string.append("{");
+            string.append("class_diagram,");
+            string.append(DiagramView.getDiagramViewInView().getTab().getId());
+            string.append(",");
             string.append(UniqueCounter.getString());
             string.append(",[");
 
             // Add the classes.
             for (Classes s: cd.classes) {
-                string.append("[");
+                string.append("['");
                 string.append(s.name);
-                string.append(",");
+                string.append("',");
 
                 // Add the fields for the classes.
                 for (FieldTuple ft: s.fields) {
+                    string.append("'");
                     string.append(ft.name);
                     string.append(":");
                     string.append(ft.type);
+                    string.append("'");
                     string.append(",");
                 }
 
