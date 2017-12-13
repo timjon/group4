@@ -12,7 +12,7 @@ import static view.DiagramView.tabPane;
 /**
  * @author Pontus Laestadius
  * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
- * @version 1.5
+ * @version 1.6
  */
 class Decode {
     // Raw string to be decoded.
@@ -31,6 +31,36 @@ class Decode {
     void execute() {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
+
+        // Deployment diagram has been found.
+        if (rawStringToDecode.contains("deployment_diagram")) {
+
+            // Remove the curly brackets.
+            rawStringToDecode = removeCharactersFromString(rawStringToDecode, '{', '}', '"');
+
+            // Removes whitespaces and new lines.
+            rawStringToDecode = rawStringToDecode.replaceAll("\n", "").replaceAll("\\s", "");
+
+            String[] split = rawStringToDecode.split(",");
+
+            for (int i = 3; i < split.length; i++) {
+
+                String field = removeCharactersFromString(split[i], '[', ']');
+                String second = "";
+
+                if (!field.contains("]")) {
+                    i += 1;
+                    second = split[i].replace("]", "");
+                }
+
+                Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+                draw.addDeploymentDiagramClass(second);
+
+                draw.addProcessToDevice(second, field);
+            }
+
+        }
 
         // Class diagram has been found.
         if (rawStringToDecode.contains("class_diagram")) {
