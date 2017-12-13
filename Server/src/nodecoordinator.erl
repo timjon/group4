@@ -20,12 +20,16 @@ loop(Socket, Nodes) ->
   	
   	    % Gets the class of the node.
         {getClass, Name} -> 
-		  find_node(Nodes, Name) ! {self(), getClass},
+		  io:format("Name: ~p~n", [list_to_atom(Name)]),
+		  Pid = find_node(Nodes, list_to_atom(Name)),
+		  Pid ! {self(), getClass},
 		  loop(Socket, Nodes);
 
         % Sets the class of the node.
-        {setClass, NewClass, Name} -> 
-		  find_node(Nodes, Name) ! {setClass, NewClass},
+        {setClass, NewClass, Name} ->
+          io:format("Name: ~p~n", [list_to_atom(Name)]),		
+		  Pid = find_node(Nodes, list_to_atom(Name)) ! {setClass, NewClass},
+		  Pid ! {setClass, NewClass},
 		  loop(Socket, Nodes);
 	  
 	    {spawn_node, Did, Name} -> 
@@ -35,6 +39,7 @@ loop(Socket, Nodes) ->
 		  loop(Socket, [{Name, node:init(Self, Name)}| Nodes]);
 		  
 	    {send_message, From, To, Message, Message_number} -> 
+		  io:format("Name: ~p~n", [From]),
 		  Pid = find_node(Nodes, From),
 		  Pid ! {send_message, From, To, Message, Message_number},
 		  loop(Socket, Nodes);
@@ -53,7 +58,7 @@ loop(Socket, Nodes) ->
 	  loop(Socket, Nodes)
   end.
 
-find_node(Nodes, Name) -> find_node_aux(Nodes, list_to_atom(Name)).
+find_node(Nodes, Name) -> find_node_aux(Nodes, Name).
 
 find_node_aux([{Name, Pid}|_], Name) -> Pid;
 find_node_aux([{Name2, _}| Nodes], Name) -> 

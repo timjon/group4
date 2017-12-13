@@ -11,7 +11,7 @@ init(_Coordinator, _Did, {[], _}, _) -> no_classes;
 init(_Coordinator, _Did, {_, []}, _) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Coordinator, Did, {Classes, Messages},  Class_names) -> 
-  Sockets = tcp_connect("10.0.48.187", [8041, 8042, 8043]),
+  Sockets = tcp_connect("10.0.151.42", [8041, 8042, 8043]),
   %Sending information that the Coordinator has been spawned. To be printed in the executionlog
   io:format("hello"),
   Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
@@ -30,7 +30,9 @@ loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, Cla
     {class_diagram, Classid, Classes2, Relations, Coordinator} ->
 	  Coordinator ! {class_diagram, Classid, Did, {Classes2, Relations}},
 	  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
-	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Classes, Class_names, Classes)]},
+	  io:format("Classes: ~p~n", [Classes]),
+	  io:format("Classes2: ~p~n", [Classes2]),
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Classes2, Class_names, Classes)]},
   	  loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, {Classid, {Classes2, Relations}}, Class_names);
   	
   	
@@ -117,6 +119,8 @@ message_response(ToSocket, Did, Coordinator) ->
 % Iterates over the Pids and classes and propogates the data to the Pid.
 name_classes(Class_names, Names, Classes) -> 
 	% Returns if all of the names were matched or any errors.
+	io:format("Class_names: ~p ~n", [Names]),
+	io:format("Class_names head: ~p ~n", [hd(Class_names)]),
 	Result = [iter_split(Class_name, Names, Classes) || Class_name <- Class_names],
 	atom_to_list(if_err(Result)).
 	
@@ -127,10 +131,9 @@ if_err([err | _]) -> err;
 if_err([_ | Rest]) -> if_err(Rest).
 
 % Iterates over the names and splits them to from Class:Name to {Class, [Name]}.  Then matches the Pid with the names.
-iter_split({Socket, Bob}, Names, Classes) -> 
-	io:format("~p", [{Socket, Bob}]),
+iter_split(_List, Names, Classes) -> 
 	% Call the matching function.
-	iter_match(Socket, 
+	iter_match( 
 		[{
 			% Gets the class.
 			hd(string:split(Name, atom_to_list(':'))), 
@@ -140,25 +143,15 @@ iter_split({Socket, Bob}, Names, Classes) ->
 
 
 % Matches a node's name with a class.
-iter_match(_, [], _) -> ok;
+iter_match([], _) -> ok;
 
-iter_match(Socket, [{Class, [Name]}], Classes) ->
-	io:format("~p ", [atom_to_list(getName(Classes, list_to_atom(Name)))]), 
-		io:format("~p~n", [Name]), 
-	case [atom_to_list(getName(Classes, list_to_atom(Name)))] == [Name] of
-		true  -> 
-			io:format("true"),
-			gen_tcp:send(Socket, term_to_binary({setClass, Class, Name}));
-		% If the last case is not a match, Return err.
-		false -> err
-	end;
-	
-iter_match(Socket, [{Class, [Name]} | Rest], Classes) -> 
-	case getName(Classes, Name) == list_to_atom(Name) of
-		true  -> gen_tcp:send(Socket, term_to_binary({setClass, Class, Name}));
-		false -> iter_match(Socket, Rest, Classes)
-	end.
-      
+iter_match([{Class, [Name]} | Rest], Classes) -> 
+  Socket = find_class(Classes, list_to_atom(Name)),
+  io:format("Socket: ~p ~n ", [Socket]),
+  io:format("Name: ~p ~n ", [Name]),
+  gen_tcp:send(Socket, term_to_binary({setClass, Class, Name})),
+  iter_match(Rest, Classes).
+  
 
 % Notifies the client if there is a class diagram, to highlight a specific class.
 notify_class_diagram(Classes, Coordinator, Did, ClassDiagramId, Name) -> 
