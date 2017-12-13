@@ -57,7 +57,7 @@ public class Draw {
         addClassDiagramClass("7");
         addClassDiagramClass("8");
 
-        addClassDiagramRelation("1", "5");
+        addClassDiagramRelation("2", "5");
     }
 
 

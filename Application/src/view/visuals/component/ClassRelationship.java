@@ -120,7 +120,7 @@ public class ClassRelationship implements Renderable {
         int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
 
         // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < stepsParameter / size; i++) {
+        for (int i = 0; i < stepsParameter / 25; i++) {
 
             // if P is less than 0, draw the next sprite on the same line as the last sprite
             if (P < 0) {
@@ -131,6 +131,8 @@ public class ClassRelationship implements Renderable {
                 } else {
                     YOffset += offsetIncrementY;
                 }
+                // Draw road sprites
+                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
 
                 P += A;
             }
@@ -144,12 +146,12 @@ public class ClassRelationship implements Renderable {
 
                 // increase arrow size in the case of diagonal lines
                 arrowSize = 25;
-
+                // Draw road sprites
+                gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
                 P += B; //see Bresenham’s Line Algorithm
             }
 
-            // Draw road sprites
-            gc.drawImage(road, startingPointX + XOffset, startingPointY + YOffset, size, size);
+
 
         }
 
