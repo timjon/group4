@@ -2,7 +2,7 @@
 # Version: 1.3
 
 # Intro message.
-echo "-----------FUML SERVER COMPILNATION SCRIPT VERSION 1.3-----------"
+echo "--- FUML SERVER SCRIPT 1.3 ---"
 
 # Iterates over all erlang source files in the current directory.
 cd Server/src
@@ -16,10 +16,6 @@ for f in *.erl; do
 done
 
 cd ../../
-
-# What erlang module function to run.
-EXECUTE="loadbalancer init"
-
 
 echo "--- DOCKER ---"
 
