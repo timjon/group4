@@ -64,20 +64,6 @@ public class Draw {
         addProcessToDevice("desktop_computer1", "u1");
         addProcessToDevice("desktop_computer1", "u2");
 
-        addClassDiagramClass("1");
-        addClassDiagramClass("2");
-        addClassDiagramClass("3");
-        addClassDiagramClass("4");
-        addClassDiagramClass("5");
-        addClassDiagramRelation("1", "2");
-        addClassDiagramRelation("1", "3");
-        addClassDiagramRelation("1", "4");
-        addClassDiagramRelation("1", "5");
-        addClassDiagramRelation("2", "3");
-        addClassDiagramRelation("2", "4");
-        addClassDiagramRelation("2", "5");
-        addClassDiagramRelation("3", "4");
-        addClassDiagramRelation("4", "5");
 
     }
 

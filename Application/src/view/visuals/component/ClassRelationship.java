@@ -42,25 +42,6 @@ public class ClassRelationship implements Renderable {
         this.size = size;
     }
 
-    // To solve the issue with all the different cases of linking the classes, we used Bresenham’s Line Algorithm
-    // http://csunplugged.org/wp-content/uploads/2014/12/Lines.pdf
-
-    /**
-     * Used to initialise the parameters of Bresenham’s Line Algorithm
-     *
-     * @param XDistance the difference between 2 points on the X axis
-     * @param YDistance the difference between 2 points on the Y axis
-     * @return bresenhamsParametersArray
-     */
-    private int[] initBresenhamsParameters(int XDistance, int YDistance) {
-        int[] bresenhamsParametersArray = new int[4];
-        bresenhamsParametersArray[1] = 2 * Math.abs(YDistance); // A
-        bresenhamsParametersArray[2] = bresenhamsParametersArray[1] - 2 * Math.abs((XDistance)); // B
-        bresenhamsParametersArray[3] = bresenhamsParametersArray[1] - Math.abs((XDistance)); // P
-
-        return bresenhamsParametersArray;
-    }
-
 
     public void setParents(int one, int two) {
         this.class1Index = one;
@@ -78,19 +59,19 @@ public class ClassRelationship implements Renderable {
         int startingPointY = fromNode.getY(); // Points to the middle of the super class, user for vertical lines
         int endingPointX = toNode.getX(); // Points to the middle of the sub class, used for horizontal lines
         int endingPointY = toNode.getY(); // Points to the middle of the sub class, used for horizontal lines
-        // Deltas od distances
-        int XDistance = endingPointX - startingPointX; //if this is negative, ending point it more to the left than starting point on X axis
+        // Deltas of distances
+        int XDistance = endingPointX - startingPointX; //if this is negative, ending point is more to the left than starting point on X axis
         int YDistance = endingPointY - startingPointY; // if this is negative, same as above, for Y axis
         // Offsets
-        int XOffset = 0; // Vertical offset
+        int XOffset = 0; // Horizontal offset
         int YOffset = 0; // Vertical offset
-
-        int mmmmmmmmmmagic = Math.abs(XDistance)/size == 0?1:Math.abs(XDistance)/size;
-        int Yinc = YDistance/mmmmmmmmmmagic;
+        
+        int stepsParameter = Math.abs(XDistance)/size == 0?1:Math.abs(XDistance)/size;
+        int Yinc = YDistance/stepsParameter;
         int magic = (XDistance<0?-1:1)*size;
 
         // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < mmmmmmmmmmagic; i++) {
+        for (int i = 0; i < stepsParameter; i++) {
             XOffset += magic;
             YOffset += Yinc;
             int x = startingPointX + XOffset;
@@ -105,9 +86,14 @@ public class ClassRelationship implements Renderable {
         // Converts imageView into image
         SnapshotParameters snapshotParameters = new SnapshotParameters();
         snapshotParameters.setFill(Color.TRANSPARENT);
-        Image rotatedImage = arrow.snapshot(snapshotParameters, null);
+        Image rotatedArrow = arrow.snapshot(snapshotParameters, null);
+        double arrowSize;
+        arrowSize= size*1.2;
+        if (Math.abs(YDistance) > 0 && Math.abs(XDistance) > 0){
+            arrowSize = size*1.2+5;
+        }
         // Draw an arrow at the end of the road
-        gc.drawImage(rotatedImage, startingPointX + XOffset -magic*2, startingPointY + YOffset -Yinc*2, size, size);
+        gc.drawImage(rotatedArrow, startingPointX + XOffset -magic*2.3, startingPointY + YOffset - -Yinc*2, arrowSize, arrowSize);
     }
 
     /**
