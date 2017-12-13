@@ -58,17 +58,10 @@ public class Draw {
         addClassDiagramClass("8");
 
         // Initialises a mocked relationship
-        ClassRelationship cl= new ClassRelationship(allClassDiagramClasses.get(0).getCoordinates(),
-                allClassDiagramClasses.get(1).getCoordinates(), 40);
+        ClassRelationship cl= new ClassRelationship(allClassDiagramClasses.get(4).getCoordinates(),
+                allClassDiagramClasses.get(1).getCoordinates(), 15);
         allClassRelationships.add(cl);
-        // Initialises  a mocked relationship
-        ClassRelationship c2= new ClassRelationship(allClassDiagramClasses.get(2).getCoordinates(),
-                allClassDiagramClasses.get(1).getCoordinates(), 40);
-        allClassRelationships.add(c2);
-        // Initialises  a mocked relationship
-        ClassRelationship c3= new ClassRelationship(allClassDiagramClasses.get(2).getCoordinates(),
-                allClassDiagramClasses.get(3).getCoordinates(), 40);
-        allClassRelationships.add(c3);
+
     }
 
     /**
@@ -360,22 +353,13 @@ public class Draw {
      */
     void renderClassRelationship(){
         if (allClassRelationships.size()==0) return;
-        int space = ((int)this.canvas_class.getWidth())/this.allClassRelationships.size();
+        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
 
-        // Drawing 3 mocked up relationships
+        // Place mocked relationship
+        Coordinates fromNode = allClassDiagramClasses.get(4).getCoordinates();
+        Coordinates toNode = allClassDiagramClasses.get(7).getCoordinates();
+        allClassRelationships.get(0).init(fromNode,toNode,(space) / 6);
 
-        // Place first relationship
-        Coordinates fromNode = allClassDiagramClasses.get(0).getCoordinates();
-        Coordinates toNode = allClassDiagramClasses.get(1).getCoordinates();
-        allClassRelationships.get(0).init(fromNode,toNode,(space/2));
-        // Place second relationship
-        Coordinates fromNode1 = allClassDiagramClasses.get(2).getCoordinates();
-        Coordinates toNode1 = allClassDiagramClasses.get(1).getCoordinates();
-        allClassRelationships.get(1).init(fromNode1,toNode1,(space/2));
-        // Place third relationship
-        Coordinates fromNode2 = allClassDiagramClasses.get(2).getCoordinates();
-        Coordinates toNode2 = allClassDiagramClasses.get(3).getCoordinates();
-        allClassRelationships.get(2).init(fromNode2,toNode2,(space/2));
         }
 
     /**
