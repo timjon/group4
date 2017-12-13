@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06, Pontus Laestadius 2017-11-30
-%%Version: 2.5
+%%Version: 2.6
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -66,8 +66,15 @@ loop(Socket, Diagrams) ->
 	{class_diagram, Diagram} ->
 	  Format_result = io_lib:format("~p", [Diagram]) ++ "~",
 		gen_tcp:send(Socket, Format_result),
-		loop(Socket, Diagrams)
-	  
+		loop(Socket, Diagrams);
+		
+	%Sends a deployment diagram client-side.
+	{deployment_diagram, DeploymentDiagram} ->
+      %Formats the message into a sendable format.
+	  io:format("Who dis"),
+	  Format_result = io_lib:format("~p", [DeploymentDiagram]) ++ "~",
+	  gen_tcp:send(Socket, Format_result),
+	  loop(Socket, Diagrams)
   end.
  
 %Finds the correct diagram from the given list
@@ -75,14 +82,17 @@ find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
+%Speparator for start of use_input.
+
 %If it is a deployment diagram.
-use_input({ok, {deployment_diagram, Sid, Did, Mappings}}, Socket, Diagram) ->
-  Pid = find_diagram(Sid, Diagram),
-  Pid ! {deployment_diagram, Did, Maps, self()},
+use_input({ok, {deployment_diagram, Sid, Did, Mappings}}, Socket, Diagrams) ->
+  Pid = find_diagram(Sid, Diagrams),
+  Pid ! {deployment_diagram, Did, Mappings, self()},
+  self() ! {deployment_diagram, {deployment_diagram, Sid, Did, Mappings}},
   loop(Socket, Diagrams);
   
 %Shared deployment diagrams.
-use_input({ok {share, {deployment_diagrams, Sid, Did, Mappings}}, Socket, Diagram) ->
+use_input({ok, {share, {deployment_diagram, Sid, Did, Mappings}}}, Socket, Diagrams) ->
   lobbycoordinator ! {Socket,{deployment_diagram, Sid, Did, Mappings}},
   loop(Socket, Diagrams);
 
@@ -94,8 +104,8 @@ use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams)
 	loop(Socket, Diagrams);
 
 % Shared class diagrams
-use_input({ok {share, {class_diagram, Sid, Did, Classes, Relations}}}, Socket, Diagrams) ->
-  lobbycoordinator ! {Socket, {class_diagram, Sid, Did, Classes, Relations}}
+use_input({ok, {share, {class_diagram, Sid, Did, Classes, Relations}}}, Socket, Diagrams) ->
+  lobbycoordinator ! {Socket, {class_diagram, Sid, Did, Classes, Relations}},
   loop(Socket, Diagrams);  
 	
 %If a user wishes to create a lobby.

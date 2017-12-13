@@ -55,6 +55,14 @@ loop(Rooms, Lobby_increment) ->
 	  gen_tcp:send(User_Socket, io_lib:format("INFO# Successfully left the lobby at PID:, ~p", [LPid]) ++ "~"),
 	  loop(Rooms, Lobby_increment);
 	  
+	{Creator_Socket, {deployment_diagram, Sid, Did, Mappings}} ->
+	  %Get lobby id.
+	  case find_room(Rooms, list_to_integer(get_lobby_ID(Did))) of 
+	    not_created -> no_lobby_created;
+		Pid         -> Pid ! {deployment_diagram, Did, Mappings, self()}
+	  end,
+	  loop(Rooms, Lobby_increment);
+	  
 	%This happens when you send a new diagram to the lobby
 	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
 	  %Gets the lobby id

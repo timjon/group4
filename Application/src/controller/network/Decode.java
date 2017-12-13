@@ -40,6 +40,7 @@ class Decode {
 
         if(rawStringToDecode.contains("deployment_diagram")) {
             System.out.println(rawStringToDecode); //TODO TEST FOR BACKEND. REMOVE WHEN MERGE.
+            return;
         }
 
         // Split the rawStringToDecode string in to fields.
