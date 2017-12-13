@@ -20,15 +20,16 @@ loop(Socket, Nodes) ->
   	
   	    % Gets the class of the node.
         {getClass, Name} -> 
-		  io:format("Name: ~p~n", [list_to_atom(Name)]),
-		  Pid = find_node(Nodes, list_to_atom(Name)),
+		  io:format("Name: ~p~n", [Name]),
+		  Pid = find_node(Nodes, Name),
 		  Pid ! {self(), getClass},
 		  loop(Socket, Nodes);
 
         % Sets the class of the node.
         {setClass, NewClass, Name} ->
           io:format("Name: ~p~n", [list_to_atom(Name)]),		
-		  Pid = find_node(Nodes, list_to_atom(Name)) ! {setClass, NewClass},
+		  Pid = find_node(Nodes, list_to_atom(Name)) ,
+		  io:format("Pid: ~p~n", [Pid]),
 		  Pid ! {setClass, NewClass},
 		  loop(Socket, Nodes);
 	  
