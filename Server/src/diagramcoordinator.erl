@@ -119,11 +119,7 @@ loop(Coordinator, Did, Pids, [L|Ls], Message_number, PrevList, ClassDiagram, Cla
   end.
 
   
-<<<<<<< HEAD
 %checks if a class has a process, none if it does not exist.
-=======
-%checks if a class has a process and returns none if it does not.
->>>>>>> origin/testcases
 find_pid([], _) -> none;
 find_pid([{Pid, Class_name}|_], Class_name) -> Pid;
 find_pid([_|Ls], Name)                      -> find_pid(Ls, Name). 
@@ -202,7 +198,6 @@ notify_class_diagram(Coordinator, Did, ClassDiagramId, Pid) ->
 	
 
 %sends a message to the given node
-<<<<<<< HEAD
 send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did, ClassId) ->
 
 	% Notify the class diagram to highlight a specific class.
@@ -214,19 +209,3 @@ send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, D
 		%Sends info to the Coordinator, that the node sucessfully sent a message. To be printed in the executionlog	
 		Coordinator ! {Did, print_information, ["Node " ++ atom_to_list(From) ++ " sent a message to " ++ atom_to_list(To)]} 
 		end.
-=======
-send_message(Receiver, From, To, Message, To_pid, Message_number, Coordinator, Did) ->
-
-	% Checks if there is a valid pid provided.
-	case To_pid of 
-		none -> none;
-		_    -> Receiver ! {send_message, From, To, Message, To_pid, Message_number},
-				receive
-					{send_reply, From, To, Message, To_pid, Message_number} -> 
-					%Sends info to the Coordinator, that the node sucessfully sent a message. To be printed in the executionlog	
-					Coordinator ! {Did, print_information, ["Node " ++ atom_to_list(From) ++ " sent a message to " ++ atom_to_list(To)]} 
-				end
-	end.
-
-  
->>>>>>> origin/testcases

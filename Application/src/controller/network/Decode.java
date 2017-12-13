@@ -32,63 +32,56 @@ class Decode {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
 
-        // Highlighting message.
+        // Class diagram has been found.
         if (rawStringToDecode.contains("class_diagram")) {
 
-            if (rawStringToDecode.contains("highlight_class")) {
+            // Replace all newlines and whitespaces in the string.
+            rawStringToDecode = rawStringToDecode.replaceAll("\n", "")
+                    .replaceAll("\\s", "");
 
-                System.out.println("Highlight: " + rawStringToDecode);
+            // Split the server output into 3 array items using the commas.
+            String[] class_values = rawStringToDecode.split(",", 3);
 
-            } else {
+            // Second array item is the class diagram ID.
+            String related_s_ID = class_values[1];
 
-                // Replace all newlines and whitespaces in the string.
-                rawStringToDecode = rawStringToDecode.replaceAll("\n", "")
-                        .replaceAll("\\s", "");
+            // Whole third item is the sequence diagram ID concatenated with the classes.
+            String id_and_classes = class_values[2];
 
-                // Split the server output into 3 array items using the commas.
-                String[] class_values = rawStringToDecode.split(",", 3);
+            // Get the index of the first comma.
+            int c_ID_index = id_and_classes.indexOf(",");
 
-                // Second array item is the class diagram ID.
-                String related_s_ID = class_values[1];
+            // Get the sequence diagram ID.
+            String class_ID = id_and_classes.substring(0, c_ID_index);
 
-                // Whole third item is the sequence diagram ID concatenated with the classes.
-                String id_and_classes = class_values[2];
+            // Remove the CID.
+            String attributes = id_and_classes.replace(class_ID, "");
 
-                // Get the index of the first comma.
-                int c_ID_index = id_and_classes.indexOf(",");
+            // Get the list without the comma in front of it.
+            String attributes_list = attributes.substring(1);
 
-                // Get the sequence diagram ID.
-                String class_ID = id_and_classes.substring(0, c_ID_index);
+            // Split the list into classes and relationships.
+            String[] classes_and_relations = attributes_list.split("]],");
 
-                // Remove the CID.
-                String attributes = id_and_classes.replace(class_ID, "");
+            // New class diagram sending all the classes in a String array.
+            String[] class_diagram_classes = classes_and_relations[0].split("],");
+            classDiagramClasses(class_diagram_classes, class_ID, related_s_ID);
 
-                // Get the list without the comma in front of it.
-                String attributes_list = attributes.substring(1);
+            // New relationship list, supports inheritance only for now.
+            if(classes_and_relations[1].contains("inheritance")) {
 
-                // Split the list into classes and relationships.
-                String[] classes_and_relations = attributes_list.split("]],");
+                // Split relationship list into items.
+                String[] split_relations = classes_and_relations[1].split("],");
 
-                // New class diagram sending all the classes in a String array.
-                String[] class_diagram_classes = classes_and_relations[0].split("],");
-                classDiagramClasses(class_diagram_classes, class_ID, related_s_ID);
-
-                // New relationship list, supports inheritance only for now.
-                if(classes_and_relations[1].contains("inheritance")) {
-
-                    // Split relationship list into items.
-                    String[] split_relations = classes_and_relations[1].split("],");
-
-                    // Remove all brackets and quotes, then send as comma separated strings.
-                    for (int i = 0; i < split_relations.length; i++) {
-                        String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '}', '\'');
-                        // New relation.
-                        classRelation(class_ID, class_relation);
-                    }
+                // Remove all brackets and quotes, then send as comma separated strings.
+                for (int i = 0; i < split_relations.length; i++) {
+                    String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '}', '\'');
+                    // New relation.
+                    classRelation(class_ID, class_relation);
                 }
             }
-
         }
+
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
 
@@ -409,7 +402,7 @@ class Decode {
         // Finds the end of the message content.
         int msg_end = string.indexOf("]");
 
-        // Message content as a substring.
-        return string.substring(msg_start+1, msg_end==-1?string.length():msg_end);
+        // Message content as a substring.g
+        return string.substring(msg_start+1, msg_end);
     }
 }
