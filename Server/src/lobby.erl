@@ -1,6 +1,6 @@
 -module(lobby).
 -export([init/3]).
-%%Version: 1.0
+%%Version: 1.1
 %%Authors: Sebastian Fransson, Tim Jonasson
 %%This module manages a lobby and all the diagrams connected to it
 
