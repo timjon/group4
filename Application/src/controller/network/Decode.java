@@ -32,6 +32,12 @@ class Decode {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
 
+        // TODO remove when 39 is done.
+        if (rawStringToDecode.contains("class_diagram")) {
+            System.out.println("server: " + rawStringToDecode);
+            return;
+        }
+
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
 
@@ -74,10 +80,8 @@ class Decode {
             disp("Info", rawStringToDecode.substring(6), "");
 
             // Class diagram detected.
-        } else if (rawStringToDecode.contains("class_diagram")) {
-
-            System.out.println("server returned: " + rawStringToDecode);
-/*
+        }
+            /*
             // Split the server output into 3 array items using the commas.
             String[] class_values = rawStringToDecode.split(",", 3);
 
@@ -119,7 +123,7 @@ class Decode {
                 }
             }
 */
-        } else {
+         else {
 
             // Gets the message content.
             String message = retrieveMessage(rawStringToDecode);
