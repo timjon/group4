@@ -16,7 +16,6 @@ init(Coordinator, Did, {Classes, Messages}, Class_names) ->
 	Coordinator ! {Did, print_information, ["Spawned diagram coordinator"]},
 	io:format("no2"),
 	Pids = spawn_nodes(Classes, Did, Coordinator),
-	io:format("YEEEEES"),
 	loop(Coordinator, Did, Pids, Messages, 1, [], none, Class_names, none). 
 
 

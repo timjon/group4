@@ -71,7 +71,6 @@ loop(Socket, Diagrams) ->
 	%Sends a deployment diagram client-side.
 	{deployment_diagram, DeploymentDiagram} ->
       %Formats the message into a sendable format.
-	  io:format("Who dis"),
 	  Format_result = io_lib:format("~p", [DeploymentDiagram]) ++ "~",
 	  gen_tcp:send(Socket, Format_result),
 	  loop(Socket, Diagrams)

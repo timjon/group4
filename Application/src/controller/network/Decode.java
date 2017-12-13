@@ -142,7 +142,6 @@ class Decode {
             return;
         }
 
-
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
 
