@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import javafx.scene.paint.Color;
+import model.classDiagram.ClassDiagram;
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
@@ -355,4 +356,20 @@ public class Draw {
         return this.messages.get(index);
     }
 
+    /**
+     * remove highlights from all classes and highlights the provided one.
+     * @param className to match and highlight.
+     */
+    public void highlightClass(String className) {
+        for (Renderable renderable: allClassDiagramClasses) {
+            // Convert renderable to ClassDiagramClass scope
+            if (renderable instanceof ClassDiagramClass) {
+                ClassDiagramClass classDiagramClass = (ClassDiagramClass) renderable;
+
+                // Uses equality of the name with the provided class name to highlight it or not.
+                classDiagramClass.highlight(renderable.getName().equals(className));
+
+            }
+        }
+    }
 }

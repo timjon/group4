@@ -1,6 +1,7 @@
 package model;
 
 import model.classDiagram.*;
+import model.deploymentDiagram.*;
 import model.sequenceDiagramParser.*;
 
 import view.DiagramView;
@@ -14,7 +15,7 @@ import java.util.List;
 
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * collaborator: Pontus Laestadius
+ * collaborator: Pontus Laestadius, Sebastian Fransson
  * @version 2.0
  * @since 2017-10-16
  *
@@ -48,6 +49,46 @@ public class Parser {
 
     // Stores a possible parallel version of a diagram.
     private String parallel = null;
+
+    /**
+     * Parses a deployment diagram.
+     * @param inputJSON
+     */
+    public void parseDeploymentDiagram(String inputJSON){
+
+        try {
+            //Parsing the diagram
+            Gson gson = new Gson();
+            DeploymentDiagram dd = gson.fromJson(inputJSON, DeploymentDiagram.class);
+
+            //Formating the parsed diagram
+            StringBuilder deployString = new StringBuilder();
+
+             deployString.append("{");
+             deployString.append(UniqueCounter.getString()); // adds a unique id to the parsed string.
+             deployString.append(",[");
+
+            //Add Mappings to the string.
+            for (Mapping maps : dd.mapping) {
+                deployString.append("['");
+                deployString.append(maps.process);
+                deployString.append("','");
+                deployString.append(maps.device);
+                deployString.append("'],");
+            }
+
+            //Remove unnecessary comma and add an end.
+            deployString.replace(deployString.length()-1, deployString.length(), "]}");
+
+            diagram = deployString.toString();
+
+        }catch(Exception e){
+            e.printStackTrace();
+            Import.disp("Import Failed","Unknown Syntax",e.toString());
+        }
+
+    }
+
 
     /**
      * Parses a class diagram.
