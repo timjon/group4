@@ -15,8 +15,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @version 1.0
+ * @version 1.1
  * @author Pontus Laestadius
+ * collaborator: Sebastian Fransson
  * @since 2017-10-06
  */
 
@@ -121,7 +122,6 @@ public class Import {
             switch (model.DiagramCheck.ContainsDiagram(result)) {
                 case "sequence_diagram":
                     parse.parseSequenceDiagram(file);
-
                     // Catches if there are no diagrams.
                     try {
                         if(share) {
@@ -152,6 +152,21 @@ public class Import {
                         Net.push("{share, " + parse.getDiagram() + "}");
                     }else{
                         Net.push(parse.getDiagram());
+                    }
+                    break;
+
+                case "deployment_diagram":
+                    // if the file is incomplete, catches a null pointer.
+                    try {
+                        parse.parseDeploymentDiagram(file);
+                        System.out.println(parse.getDiagram()); //TODO TEST FORMAT
+                        if (share) {
+                            Net.push("{share, " + parse.getDiagram() + "}");
+                        } else {
+                            Net.push(parse.getDiagram());
+                        }
+                    }catch(NullPointerException np) {
+                        continue;
                     }
                     break;
             }

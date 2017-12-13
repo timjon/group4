@@ -8,7 +8,7 @@ import view.visuals.Renderable;
 /**
  * A DiagramClass wrapper for coordinates with extra properties that implements Renderable.
  * @author Pontus Laestadius
- * @version 1.0
+ * @version 1.1
  */
 public class DiagramClass implements Renderable {
     private Coordinates coordinates; // The coordinates of the object.
@@ -52,6 +52,14 @@ public class DiagramClass implements Renderable {
     public String getName() {
         String[] s = name.split(":");
         return s[1];
+    }
+
+    /**
+     * @return the class that created this object.
+     */
+    public String getClassName() {
+        String[] s = name.split(":");
+        return s[0];
     }
 
     /**

@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * Class for creating the messages to pass between "classes".
  * @author Sebastian Fransson
  * Collaborator Rashad Kamsheh, Isabelle Törnqvist, Pontus Laestadius, Tim Jonasson
- * @version 4.3
+ * @version 4.4
  */
 public class Message implements Renderable {
     private String name;
@@ -260,7 +260,7 @@ public class Message implements Renderable {
         // int y2 = this.node2.getY(); //Not used atm.
 
         y1 += offset; // Sets an offset from the previous message.
-
+        
         // Checks if we are supposed to be animating the message.
         if(keepAnimating) {
 

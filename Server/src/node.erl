@@ -1,22 +1,38 @@
 -module(node).
--export([init/1]).
+-export([init/2]).
 
 %%Author: Tim Jonasson
-%%Version: 1.3
+%%Collaborators: Pontus Laestadius 2017-12-04
+%%Version: 1.4
 
 %Initialized the process for the node
-init(Coordinator) ->
-  spawn(fun () ->  loop(Coordinator) end).
+init(Coordinator, Name) ->
+  spawn(fun () ->  loop(Coordinator, Name, none) end).
 
-loop(Coordinator) ->
+loop(Coordinator, Name, Class) ->
   receive
+  
+    % Gets the name of the node.
+    %{Pid, getName} -> 
+  	 % Pid ! {getName, Name},
+  	  %loop(Coordinator, Name, Class);
+  	
+  	% Gets the class of the node.
+    {Pid, getClass} -> 
+  	  Pid ! {getClass, Class},
+  	  loop(Coordinator, Name, Class);
+  	
+    % Sets the class of the node.
+    {setClass, NewClass} ->
+  	  loop(Coordinator, Name, NewClass);
+  
     %Case for when the node sends a message for another node
-	{send_message, From, To, Message, Message_number} ->
+    {send_message, From, To, Message, Message_number} ->
 	  Coordinator ! {send_reply, From, To, Message, Message_number},
-      loop(Coordinator);
+      loop(Coordinator, Name, Class);
     
 	%Case for when the node receives a message from another node 
 	{receive_message, From, To, Message, Message_number} ->
       Coordinator ! {message_done, From, To, Message, Message_number},
-      loop(Coordinator)
+  	  loop(Coordinator, Name, Class)
   end.

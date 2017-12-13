@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import javafx.scene.paint.Color;
+import model.classDiagram.ClassDiagram;
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @version 2.1
+ * @version 2.2
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborators Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -275,14 +276,6 @@ public class Draw {
     }
 
     /**
-     * checks a canvas properties to validate if it is in view or not.
-     * @param canvas to check
-     */
-    private boolean inView(Canvas canvas) {
-        return canvas.getWidth() == 0 && canvas.getHeight() == 0;
-    }
-
-    /**
      * Updates the class to fit the resized window.
      */
     private void renderClass() {
@@ -370,5 +363,22 @@ public class Draw {
         if (this.messages.size() == 0 || index >= this.messages.size())
             throw new ArrayIndexOutOfBoundsException("Index: " + index + "Size: " + this.messages.size());
         return this.messages.get(index);
+    }
+
+    /**
+     * remove highlights from all classes and highlights the provided one.
+     * @param className to match and highlight.
+     */
+    public void highlightClass(String className) {
+        for (Renderable renderable: allClassDiagramClasses) {
+            // Convert renderable to ClassDiagramClass scope
+            if (renderable instanceof ClassDiagramClass) {
+                ClassDiagramClass classDiagramClass = (ClassDiagramClass) renderable;
+
+                // Uses equality of the name with the provided class name to highlight it or not.
+                classDiagramClass.highlight(renderable.getName().equals(className));
+
+            }
+        }
     }
 }

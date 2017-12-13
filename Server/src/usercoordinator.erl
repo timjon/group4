@@ -2,8 +2,8 @@
 -export([init/1, find_diagram/2, use_input/3]).
 
 %%Author: Tim Jonasson
-%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06
-%%Version: 2.4
+%%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06, Pontus Laestadius 2017-11-30
+%%Version: 2.5
 
 %Initializes the usercoordinator
 init(Socket) -> 
@@ -13,7 +13,8 @@ init(Socket) ->
   
 loop(Socket, Diagrams) -> 
   receive
-    {tcp, Socket, Info} -> 
+
+  {tcp, Socket, Info} -> 
 	  %Scans the info read from the tcp connection
 	  {ok, Scanned, _} = erl_scan:string(binary_to_list(Info)),
 	  use_input(erl_parse:parse_term(Scanned ++ [{dot,0}]), Socket, Diagrams);
@@ -53,6 +54,12 @@ loop(Socket, Diagrams) ->
 		Format_result = io_lib:format("~p", [{Did, print_information, Msg}]),
 		%Sends the result to client
 		gen_tcp:send(Socket, [Format_result ++ "~"]),
+		loop(Socket, Diagrams);
+		
+		% Highlight a specific class.
+	{class_diagram, Did, SequenceDiagramId, highlight, Name} ->
+	  Format_result = io_lib:format("~p", [{class_diagram, Did, SequenceDiagramId, highlight_class_diagram, Name}]) ++ "~",
+		gen_tcp:send(Socket, Format_result),
 		loop(Socket, Diagrams)
 	  
   end.
@@ -61,6 +68,13 @@ loop(Socket, Diagrams) ->
 find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
+
+
+% If it is a class diagram
+use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
+	Pid = find_diagram(Sid, Diagrams),
+	Pid ! {class_diagram, Did, Classes, Relations, self()},
+	loop(Socket, Diagrams);
 
 %if a user wishes to create a lobby.
 use_input({ok, {share, Password, Info}}, Socket, Diagrams) -> 
@@ -87,14 +101,20 @@ use_input({ok, {Did, Message_request}}, Socket, Diagrams) ->
   
 %This pattern will match when the first argument is in the format of a new diagram
 use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
+
   %Spawns a diagram coordinator for this diagram if it doesnt exist already 
-  case find_diagram(Did, Diagrams) of 
+  case find_diagram(Did, Diagrams) of
+  
     not_created -> 
 	  %Sends the class names and messages to the client
-      %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
-      Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
-      gen_tcp:send(Socket, Format_result),
+    %The character ~ is used as the stop character for when the client should stop reading from the tcp connection
+    Format_result = io_lib:format("~p", [{Did, Class_names}]) ++ "~",
+    gen_tcp:send(Socket, Format_result),
+	  
 	  Self = self(),
-	  loop(Socket, [{Did, spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}) end)}| Diagrams]);
+	  Pid = spawn(fun () -> diagramcoordinator:init(Self, Did, {Classes, Messages}, Class_names) end),
+	  loop(Socket, [{Did, Pid}| Diagrams]);
+	  
 	_           -> already_created
-  end.
+  end. 
+

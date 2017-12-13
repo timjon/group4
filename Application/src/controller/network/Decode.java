@@ -12,7 +12,7 @@ import static view.DiagramView.tabPane;
 /**
  * @author Pontus Laestadius
  * Collaborators: Sebastian Fransson, Tim Jonasson
- * @version 1.4
+ * @version 1.5
  */
 class Decode {
     // Raw string to be decoded.
@@ -31,6 +31,12 @@ class Decode {
     void execute() {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
+
+        // TODO remove when 39 is done.
+        if (rawStringToDecode.contains("class_diagram")) {
+            System.out.println(rawStringToDecode);
+          return;
+        }
 
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
@@ -155,7 +161,6 @@ class Decode {
      * @param classes to draw up the diagram with.
      */
     private void diagramClasses(String classes, String id) {
-        // TODO check if diagram_id is unique
 
         // Creates a new view with the tab name.
         DiagramView diagramView = new DiagramView("SDid: " + id, id);
