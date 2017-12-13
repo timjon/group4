@@ -75,15 +75,30 @@ find_diagram(_, []) -> not_created;
 find_diagram(Diagram_id, [{Diagram_id, Pid} | _]) -> Pid;
 find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
+%If it is a deployment diagram.
+use_input({ok, {deployment_diagram, Sid, Did, Mappings}}, Socket, Diagram) ->
+  Pid = find_diagram(Sid, Diagram),
+  Pid ! {deployment_diagram, Did, Maps, self()},
+  loop(Socket, Diagrams);
+  
+%Shared deployment diagrams.
+use_input({ok {share, {deployment_diagrams, Sid, Did, Mappings}}, Socket, Diagram) ->
+  lobbycoordinator ! {Socket,{deployment_diagram, Sid, Did, Mappings}},
+  loop(Socket, Diagrams);
 
-% If it is a class diagram
+%If it is a class diagram
 use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
 	Pid = find_diagram(Sid, Diagrams),
 	Pid ! {class_diagram, Did, Classes, Relations, self()},
 	self() ! {class_diagram, {class_diagram, Sid, Did, Classes, Relations}},
 	loop(Socket, Diagrams);
 
-%if a user wishes to create a lobby.
+% Shared class diagrams
+use_input({ok {share, {class_diagram, Sid, Did, Classes, Relations}}}, Socket, Diagrams) ->
+  lobbycoordinator ! {Socket, {class_diagram, Sid, Did, Classes, Relations}}
+  loop(Socket, Diagrams);  
+	
+%If a user wishes to create a lobby.
 use_input({ok, {share, Password, Info}}, Socket, Diagrams) -> 
   lobbycoordinator ! {Socket, Info, Password},
   loop(Socket, Diagrams);

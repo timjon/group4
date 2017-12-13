@@ -63,8 +63,10 @@ public class Parser {
 
             //Formating the parsed diagram
             StringBuilder deployString = new StringBuilder();
-             deployString.append("deployment_diagram,");
              deployString.append("{");
+             deployString.append("deployment_diagram,");
+             deployString.append(DiagramView.getDiagramViewInView().getTab().getId()); // retrieve the current Sid.
+             deployString.append(",");
              deployString.append(UniqueCounter.getString()); // adds a unique id to the parsed string.
              deployString.append(",[");
 
