@@ -55,14 +55,6 @@ public class Draw {
         /**
          * Todo Mock data
          */
-        addClassDiagramClass("1");
-        addClassDiagramClass("2");
-        addClassDiagramClass("3");
-        addClassDiagramClass("4");
-        addClassDiagramClass("5");
-        addClassDiagramClass("6");
-        addClassDiagramClass("7");
-        addClassDiagramClass("8");
 
         addDeploymentDiagramClass("Server");
         addDeploymentDiagramClass("Smartphone");
@@ -71,13 +63,7 @@ public class Draw {
         addProcessToDevice("Server", "g");
         addProcessToDevice("desktop_computer1", "u1");
         addProcessToDevice("desktop_computer1", "u2");
-
-        addClassDiagramRelation("2", "5");
-        addClassDiagramRelation("5", "6");
-        addClassDiagramRelation("5", "3");
-        addClassDiagramRelation("5", "7");
     }
-
 
     public void addClassDiagramRelation(String class1, String class2) {
 

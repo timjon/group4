@@ -325,8 +325,7 @@ class Decode {
             // Split on comma.
             String[] single_relationship = relationship.split(",");
 
-            // TODO implement after inheritance has been finished
-            // draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
+            draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
         });
     }
 
