@@ -97,8 +97,6 @@ public class ClassRelationship implements Renderable {
             offsetIncrementY *= (-1);
         }
 
-        // This is used to find out whether to use the Y axis or the X axis as a parameter for the for loop
-        int stepsParameter;
         int A, B, P; // Variables used for Bresenham’s Line Algorithm
         int[] params;
 
