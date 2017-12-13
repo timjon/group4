@@ -38,6 +38,10 @@ class Decode {
           return;
         }
 
+        if(rawStringToDecode.contains("deployment_diagram")) {
+            System.out.println(rawStringToDecode); //TODO TEST FOR BACKEND. REMOVE WHEN MERGE.
+        }
+
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
 
