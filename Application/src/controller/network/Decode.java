@@ -138,6 +138,8 @@ class Decode {
                     }
                 }
             }
+            // Ignores rest of the cases.
+            return;
         }
 
 
