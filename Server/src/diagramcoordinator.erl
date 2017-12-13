@@ -11,7 +11,7 @@ init(_Coordinator, _Did, {[], _}, _) -> no_classes;
 init(_Coordinator, _Did, {_, []}, _) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 init(Coordinator, Did, {Classes, Messages},  Class_names) -> 
-  Sockets = tcp_connect("10.0.151.42", [8041, 8042, 8043]),
+  Sockets = tcp_connect("10.0.48.187", [8041, 8042, 8043]),
   %Sending information that the Coordinator has been spawned. To be printed in the executionlog
   io:format("hello"),
   Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
@@ -28,6 +28,7 @@ loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, Cla
   receive
 	% Add a class diagram
     {class_diagram, Classid, Classes, Relations, Coordinator} ->
+    io:format("classdiagram"),
 	  Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
 	  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Classes, Class_names, Classes)]},
