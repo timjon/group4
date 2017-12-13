@@ -297,6 +297,9 @@ class Decode {
                     String class_name = single_class.substring(0, name_index);
                     // Attributes list.
                     String fields = single_class.substring(name_index + 1);
+                    // TODO implement the lines below in Draw
+                    // String[] classFields = fields.split(",");
+                    // draw.addClassFields(class_name, classFields);
                     // Add the class to the draw object.
                     draw.addClassDiagramClass(class_name);
                     // Print class name and fields.
@@ -319,19 +322,26 @@ class Decode {
      */
     private void classRelation(String id, String relationship) {
 
-        System.out.println();
-        // Split on comma.
-        String[] single_relationship = relationship.split(",");
-        // Class id.
-        System.out.println("Class diagram ID: " + id);
-        // Relationship type.
-        System.out.println("Relationship type: " + single_relationship[0]);
-        // Super class.
-        System.out.println("Super class: " + single_relationship[1]);
-        // All classes afterwards, i.e. subclasses.
-        for (int i = 2; i < single_relationship.length; i++) {
-            System.out.println("Subclass: " + single_relationship[i]);
-        }
+        // Retrieve the draw object to add the classes too.
+        Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+        Platform.runLater(() -> {
+
+            System.out.println();
+            // Split on comma.
+            String[] single_relationship = relationship.split(",");
+            // Class id.
+            System.out.println("Class diagram ID: " + id);
+            // Relationship type.
+            System.out.println("Relationship type: " + single_relationship[0]);
+            // Superclass.
+            System.out.println("Super class: " + single_relationship[1]);
+            // Subclass.
+            System.out.println("Subclass: " + single_relationship[2]);
+
+            // TODO implement after inheritance has been finished
+            // draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
+        });
     }
 
     /**
