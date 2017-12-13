@@ -127,7 +127,7 @@ message_response(ToSocket, Did, Coordinator) ->
 % Iterates over the Pids and classes and propogates the data to the Pid.
 name_classes(Names, Classes) -> 
 	% Returns if all of the names were matched or any errors.
-	Result = iter_split(Names, Classes),
+	Result = [iter_split(Names, Classes)],
 	atom_to_list(if_err(Result)).
 	
 % Return if the list has the atom 'err' in it or not.
