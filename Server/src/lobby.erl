@@ -50,7 +50,6 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	  Format_result = io_lib:format("~p", [{Diagram_ID, Class_names}]) ++ "~",
       send_messages(Members, Format_result),
 	  Self = self(),
-	  io:format("Hello im now spawning diagram ~n"),
 	  loop(Creator_Socket, Password, Members, [{Diagram_ID, Class_names, spawn(fun () -> diagramcoordinator:init(Self, Diagram_ID, {Classes, Messages}, Class_names) end)}| Diagrams], Lobby_ID);
 	
 	%This case happens when the message recieved contains a command for simulating the diagram
