@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @version 2.1
+ * @version 2.2
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborators Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
