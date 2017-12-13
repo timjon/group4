@@ -37,8 +37,6 @@ class Decode {
 
             if (rawStringToDecode.contains("highlight")) {
 
-                // Empty line for readability.
-                System.out.println();
                 // Remove the curly brackets.
                 rawStringToDecode = removeCharactersFromString(rawStringToDecode, '{', '}', '"');
                 // Split into fields.
@@ -287,7 +285,6 @@ class Decode {
         Platform.runLater(() -> {
 
             // Remove brackets and quotes.
-            System.out.println(); // Empty line for readability.
             for (int i = 0; i < classes.length; i++) {
                 String single_class = removeCharactersFromString(classes[i], '[', ']', '\'');
                 // Check if there are attributes
@@ -302,10 +299,8 @@ class Decode {
                     // draw.addClassFields(class_name, classFields);
                     // Add the class to the draw object.
                     draw.addClassDiagramClass(class_name);
-                    // Print class name and fields.
-                    System.out.println("Class name: " + class_name + ", fields: " + fields);
                 } else {
-                    System.out.println("Class name (no fields): " + single_class);
+                    // Single class, no fields.
                     draw.addClassDiagramClass(single_class);
                 }
             }
@@ -327,17 +322,8 @@ class Decode {
 
         Platform.runLater(() -> {
 
-            System.out.println();
             // Split on comma.
             String[] single_relationship = relationship.split(",");
-            // Class id.
-            System.out.println("Class diagram ID: " + id);
-            // Relationship type.
-            System.out.println("Relationship type: " + single_relationship[0]);
-            // Superclass.
-            System.out.println("Super class: " + single_relationship[1]);
-            // Subclass.
-            System.out.println("Subclass: " + single_relationship[2]);
 
             // TODO implement after inheritance has been finished
             // draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
@@ -354,7 +340,7 @@ class Decode {
         Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
         Platform.runLater(() -> {
-            System.out.println("Class highlight: " + className);
+            // Add the highlight to a Draw object.
             draw.highlightClass(className);
         });
     }
