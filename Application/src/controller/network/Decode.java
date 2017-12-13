@@ -35,49 +35,58 @@ class Decode {
         // Class diagram has been found.
         if (rawStringToDecode.contains("class_diagram")) {
 
-            // Replace all newlines and whitespaces in the string.
-            rawStringToDecode = rawStringToDecode.replaceAll("\n", "")
-                    .replaceAll("\\s", "");
+            if (rawStringToDecode.contains("highlight")) {
+                System.out.println();
+                System.out.println("Highlight: " + rawStringToDecode);
 
-            // Split the server output into 3 array items using the commas.
-            String[] class_values = rawStringToDecode.split(",", 3);
+                return;
 
-            // Second array item is the class diagram ID.
-            String related_s_ID = class_values[1];
+            } else {
+                // Replace all newlines and whitespaces in the string.
 
-            // Whole third item is the sequence diagram ID concatenated with the classes.
-            String id_and_classes = class_values[2];
+                rawStringToDecode = rawStringToDecode.replaceAll("\n", "")
+                        .replaceAll("\\s", "");
 
-            // Get the index of the first comma.
-            int c_ID_index = id_and_classes.indexOf(",");
+                // Split the server output into 3 array items using the commas.
+                String[] class_values = rawStringToDecode.split(",", 3);
 
-            // Get the sequence diagram ID.
-            String class_ID = id_and_classes.substring(0, c_ID_index);
+                // Second array item is the class diagram ID.
+                String related_s_ID = class_values[1];
 
-            // Remove the CID.
-            String attributes = id_and_classes.replace(class_ID, "");
+                // Whole third item is the sequence diagram ID concatenated with the classes.
+                String id_and_classes = class_values[2];
 
-            // Get the list without the comma in front of it.
-            String attributes_list = attributes.substring(1);
+                // Get the index of the first comma.
+                int c_ID_index = id_and_classes.indexOf(",");
 
-            // Split the list into classes and relationships.
-            String[] classes_and_relations = attributes_list.split("]],");
+                // Get the sequence diagram ID.
+                String class_ID = id_and_classes.substring(0, c_ID_index);
 
-            // New class diagram sending all the classes in a String array.
-            String[] class_diagram_classes = classes_and_relations[0].split("],");
-            classDiagramClasses(class_diagram_classes, class_ID, related_s_ID);
+                // Remove the CID.
+                String attributes = id_and_classes.replace(class_ID, "");
 
-            // New relationship list, supports inheritance only for now.
-            if(classes_and_relations[1].contains("inheritance")) {
+                // Get the list without the comma in front of it.
+                String attributes_list = attributes.substring(1);
 
-                // Split relationship list into items.
-                String[] split_relations = classes_and_relations[1].split("],");
+                // Split the list into classes and relationships.
+                String[] classes_and_relations = attributes_list.split("]],");
 
-                // Remove all brackets and quotes, then send as comma separated strings.
-                for (int i = 0; i < split_relations.length; i++) {
-                    String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '}', '\'');
-                    // New relation.
-                    classRelation(class_ID, class_relation);
+                // New class diagram sending all the classes in a String array.
+                String[] class_diagram_classes = classes_and_relations[0].split("],");
+                classDiagramClasses(class_diagram_classes, class_ID, related_s_ID);
+
+                // New relationship list, supports inheritance only for now.
+                if (classes_and_relations[1].contains("inheritance")) {
+
+                    // Split relationship list into items.
+                    String[] split_relations = classes_and_relations[1].split("],");
+
+                    // Remove all brackets and quotes, then send as comma separated strings.
+                    for (int i = 0; i < split_relations.length; i++) {
+                        String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '}', '\'');
+                        // New relation.
+                        classRelation(class_ID, class_relation);
+                    }
                 }
             }
         }
