@@ -12,9 +12,8 @@ init(_Coordinator, _Did, {_, []}, _) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 
 init(Coordinator, Did, {Classes, Messages},  Class_names) -> 
-  Sockets = tcp_connect("10.0.151.42", [8041, 8042, 8043]),
+  Sockets = tcp_connect("192.168.0.102", [8041, 8042, 8043]),
   %Sending information that the Coordinator has been spawned. To be printed in the executionlog
-  io:format("hello"),
   Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
   Nodes = spawn_nodes(Sockets, Classes, Did, Coordinator, []),
   loop(Sockets, Coordinator, Did, Nodes, Messages, 1, [], none, Class_names, none). 
@@ -38,8 +37,6 @@ loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, Cla
     {class_diagram, Classid, Classes2, Relations, Coordinator} ->
 	  Coordinator ! {class_diagram, Classid, Did, {Classes2, Relations}},
 	  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
-	  io:format("Classes: ~p~n", [Classes]),
-	  io:format("Classes2: ~p~n", [Classes2]),
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Class_names, Classes)]},
   	  loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, {Classid, {Classes2, Relations}}, Class_names, DeploymentDiagram);
   	
@@ -93,7 +90,6 @@ get_class_diagram_id({Id, {_, _}}) -> Id.
 spawn_nodes(_, [], _, _, _) -> [];
 spawn_nodes([], Classes, Did, Coordinator, UsedSockets) -> spawn_nodes(UsedSockets, Classes, Did, Coordinator, []);
 spawn_nodes([Socket|Sockets], [Class|Classes], Did, Coordinator, UsedSockets) ->
-  io:format("class: ~p~n", [Class]),
   [spawn_node(Socket, Class, Did, Coordinator)| spawn_nodes(Sockets, Classes, Did, Coordinator, [Socket|UsedSockets])].
 
 
@@ -104,7 +100,6 @@ spawn_node(Socket, Class_name, Did, Coordinator) ->
     {tcp, _Socket, Info} -> 
       Coordinator ! binary_to_term(Info)
   end,
-  io:format("~p~n", [{Socket, Class_name}]),
   {Socket, Class_name}.
 
 %sends a message to the given node
@@ -153,8 +148,6 @@ iter_match([], _) -> ok;
 
 iter_match([{Class, [Name]} | Rest], Classes) -> 
   Socket = find_class(Classes, list_to_atom(Name)),
-  io:format("Socket: ~p ~n ", [Socket]),
-  io:format("Name: ~p ~n ", [Name]),
   gen_tcp:send(Socket, term_to_binary({setClass, Class, Name})),
   iter_match(Rest, Classes).
   
