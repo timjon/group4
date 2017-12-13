@@ -70,6 +70,9 @@ class Decode {
                 draw.addProcessToDevice(second, field);
             }
 
+            // Ignore the rest of decoding.
+            return;
+
         }
 
         // Class diagram has been found.
@@ -137,10 +140,6 @@ class Decode {
             }
         }
 
-        if(rawStringToDecode.contains("deployment_diagram")) {
-            System.out.println(rawStringToDecode); //TODO TEST FOR BACKEND. REMOVE WHEN MERGE.
-            return;
-        }
 
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
