@@ -23,7 +23,7 @@ public class ClassDiagramClass implements Renderable {
     private static Image class1 = new Image("resources/castle_default.png");
     private static Image class2 = new Image("resources/castle_default2.png");
 
-    //Animation of Island
+    //Animation of castle
     private Image[] classStates = {class1, class2};
     private double animationIndex = 0.0;
 
@@ -31,6 +31,8 @@ public class ClassDiagramClass implements Renderable {
      * @param name class name setter
      */
     public ClassDiagramClass(String name) { this.name = name; }
+
+    public ClassDiagramClass() { }
 
     @Override
     public void render(GraphicsContext gc) {
@@ -62,7 +64,7 @@ public class ClassDiagramClass implements Renderable {
     }
 
     /**
-     * Changes between the two island, making it "animated"
+     * Changes between the two castles, making it "animated"
      */
     @Override
     public void update() {
@@ -92,8 +94,7 @@ public class ClassDiagramClass implements Renderable {
      */
     @Override
     public String getName() {
-        String[] s = name.split(":");
-        return s[1];
+        return name;
     }
 
     /**

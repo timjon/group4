@@ -60,6 +60,12 @@ loop(Socket, Diagrams) ->
 	{class_diagram, Did, SequenceDiagramId, highlight, Name} ->
 	  Format_result = io_lib:format("~p", [{class_diagram, Did, SequenceDiagramId, highlight_class_diagram, Name}]) ++ "~",
 		gen_tcp:send(Socket, Format_result),
+		loop(Socket, Diagrams);
+		
+		% Sends the class diagram.
+	{class_diagram, Diagram} ->
+	  Format_result = io_lib:format("~p", [Diagram]) ++ "~",
+		gen_tcp:send(Socket, Format_result),
 		loop(Socket, Diagrams)
 	  
   end.
@@ -74,6 +80,7 @@ find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
 	Pid = find_diagram(Sid, Diagrams),
 	Pid ! {class_diagram, Did, Classes, Relations, self()},
+	self() ! {class_diagram, {class_diagram, Sid, Did, Classes, Relations}},
 	loop(Socket, Diagrams);
 
 %if a user wishes to create a lobby.

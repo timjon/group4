@@ -29,8 +29,8 @@ public class Draw {
     private Canvas canvas_deployment; // Draws and handles class diagram graphical context.
 
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
-
     private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
+    private ArrayList<Renderable> allDeploymentClasses = new ArrayList<>(); //Stores the Deploymentdiagram nodes
 
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
     private int offset; // Used for message ordering
@@ -42,6 +42,9 @@ public class Draw {
     //Background for class diagram view
     private static Image classDiagramBackground  = new Image("resources/grassland.png");
 
+    //Background for deployment diagram view
+    private static Image deploymentDiagramBackground  = new Image("resources/OceanBackgroundMuted.png");
+
     /**
      * Constructor
      */
@@ -49,14 +52,22 @@ public class Draw {
         canvas = new Canvas(w, h);
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
-        addClassDiagramClass("1");
-        addClassDiagramClass("2");
-        addClassDiagramClass("3");
-        addClassDiagramClass("4");
-        addClassDiagramClass("5");
-        addClassDiagramClass("6");
-        addClassDiagramClass("7");
-        addClassDiagramClass("8");
+
+        /**
+         * Todo Mock data
+         */
+        addClassDiagramClass("g");
+        addClassDiagramClass("u1");
+        addClassDiagramClass("u2");
+        addClassDiagramClass("u3");
+
+        addDeploymentDiagramClass("Server");
+        addDeploymentDiagramClass("Smartphone");
+        addDeploymentDiagramClass("desktop_computer1");
+
+        addProcessToDevice("Server", "g");
+        addProcessToDevice("desktop_computer1", "u1");
+        addProcessToDevice("desktop_computer1", "u2");
 
     }
 
@@ -104,7 +115,7 @@ public class Draw {
      * Draws the actor class on the canvas.
      */
     public void addActor(String name) {
-    	allClasses.add(new ActorClass(name));
+        allClasses.add(new ActorClass(name));
     }
 
     /**
@@ -118,9 +129,31 @@ public class Draw {
      * Adds class to arraylist, to be drawn
      * @param name
      */
-
     public void addClassDiagramClass (String name){
         allClassDiagramClasses.add(new ClassDiagramClass(name));
+    }
+
+    /**
+     * Adds nodes to arraylist, to be drawn
+     * @param device
+     */
+    public void addDeploymentDiagramClass (String device){
+        allDeploymentClasses.add(new DeploymentDiagramClass(device));
+    }
+
+    /**
+     * Maps process to device
+     * @param device to map processes to
+     * @param process to map onto device
+     */
+    public void addProcessToDevice(String device, String process) {
+        for (Renderable renderable: allDeploymentClasses) {
+            if (renderable.getName().equals(device)) {
+                if (renderable instanceof DeploymentDiagramClass) {
+                    ((DeploymentDiagramClass) renderable).addProcess(process);
+                }
+            }
+        }
     }
 
     /**
@@ -185,6 +218,7 @@ public class Draw {
         renderClass();
         renderMessage();
         renderClassDiagramClass();
+        renderDeploymentDiagram();
     }
 
     /**
@@ -193,11 +227,10 @@ public class Draw {
     public void redraw() {
         init(canvas);
         initClassDiagram(canvas_class.getGraphicsContext2D());
+        initDeploymentDiagram(canvas_deployment.getGraphicsContext2D());
 
         renderItems();
         renderContainer();
-        clear(canvas_deployment);
-        canvas_deployment.getGraphicsContext2D().fillRect(0,0,canvas_deployment.getWidth(), canvas_deployment.getHeight());
     }
 
     /**
@@ -208,6 +241,15 @@ public class Draw {
         gc.clearRect(0,0,getWidth(), getHeight());
         // adds the background to class diagram canvas
         gc.drawImage(classDiagramBackground,0,0, this.canvas_class.getWidth(), this.canvas_class.getHeight());
+    }
+
+    /**
+     * Initializes the drawing of deployment diagram
+     * @param gc
+     */
+    void initDeploymentDiagram(GraphicsContext gc){
+        gc.clearRect(0,0,getWidth(),getHeight());
+        gc.drawImage(deploymentDiagramBackground,0,0, this.canvas_deployment.getWidth(),this.canvas_deployment.getHeight());
     }
 
     /**
@@ -238,14 +280,18 @@ public class Draw {
     void renderContainer() {
         if (!DiagramView.inView(this)) return;
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        GraphicsContext graphicsContext = canvas_class.getGraphicsContext2D(); //content for class diagram
+        GraphicsContext graphicsContextClass = canvas_class.getGraphicsContext2D(); //content for class diagram
+        GraphicsContext graphicsContextDeployment = canvas_deployment.getGraphicsContext2D(); //content for deployment diagram
         for (Renderable r: allClasses)
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
         //rendering of class diagram
         for (Renderable e: allClassDiagramClasses)
-            e.render(graphicsContext);
+            e.render(graphicsContextClass);
+        //rendering of deployment diagram
+        for (Renderable d: allDeploymentClasses)
+            d.render(graphicsContextDeployment);
     }
 
     /**
@@ -257,6 +303,8 @@ public class Draw {
         for (Renderable r: messages)
             r.update();
         for (Renderable r: allClassDiagramClasses)
+            r.update();
+        for (Renderable r: allDeploymentClasses)
             r.update();
     }
 
@@ -297,9 +345,29 @@ public class Draw {
     void renderClassDiagramClass() {
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
-        //The size of the matrix structure, i.e the amount of elements/classes
-        int matrixSize = allClassDiagramClasses.size();
-        int col = 3; //The "up to" -number of columns in the matrix, counting from 0.
+        matrix(allClassDiagramClasses, 3, space,this.canvas_class);
+    }
+
+    /**
+     * Places the nodes in the Deployment diagram
+     */
+    void renderDeploymentDiagram(){
+        if (allDeploymentClasses.size() == 0) return;
+        int space = ((int) this.canvas_deployment.getWidth()) / this.allDeploymentClasses.size();
+        matrix(allDeploymentClasses, 3, space,this.canvas_deployment);
+    }
+
+    /**
+     *Matrix structure, used for class and deployment diagrams
+     * @param diagram the diagram
+     * @param columns the columns of the matrix
+     * @param space allowed space
+     * @param canvas canvas for the elements to be placed on
+     */
+    private void matrix(ArrayList<Renderable> diagram, int columns, int space, Canvas canvas){
+        //The size of the matrix structure, i.e the amount of elements/classes/nodes
+        int matrixSize = diagram.size();
+        int col =  columns; //The "up to" -number of columns in the matrix, counting from 0.
         //Rows depending on size of matrix
         int rows;
         //Find how many rows in this matrix
@@ -311,26 +379,26 @@ public class Draw {
         else { rows = ((matrixSize / col) + 1); }
 
         //Case for when there's not a full row of elements/classes in the diagram
-        if(allClassDiagramClasses.size() < col){
-            for (int c = 0; c < allClassDiagramClasses.size(); c++) {
+        if(diagram.size() < col){
+            for (int c = 0; c < diagram.size(); c++) {
                 int x = space / 2 + (c * space);
-                int y = (int) ((this.canvas_class.getHeight()/2));
+                int y = (int) ((canvas.getHeight()/2));
                 //placing of the classes
-               allClassDiagramClasses.get(c).place(new Coordinates(x, y), (space) / 2);
+                diagram.get(c).place(new Coordinates(x, y), (space) / 2);
             }
         }
         //for all other cases
         else {
             //For each row, i.e where the y-positioning ought to be the same
             for (int r = 0; r < rows; r++) {
-                int y = (int) ((this.canvas_class.getHeight()/5) + (r * this.canvas_class.getHeight()/(rows*rows)));
+                int y = (int) ((canvas.getHeight()/5) + (r * canvas.getHeight()/(rows*rows)));
                 //For each class in the diagram
-                for (int c = 0; c < allClassDiagramClasses.size() - (col * r); c++) {
-                    int x = c * (int)this.canvas_class.getWidth()/col + space/col;
+                for (int c = 0; c < diagram.size() - (col * r); c++) {
+                    int x = c * (int)canvas.getWidth()/col + space/col;
                     //get the element which is to be placed
                     int element = (r * col) + c;
                     //Placing of the classes
-                    allClassDiagramClasses.get(element).place(new Coordinates(x, y), (space/2));
+                    diagram.get(element).place(new Coordinates(x, y), (space/2));
                 }
             }
         }
