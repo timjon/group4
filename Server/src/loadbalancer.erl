@@ -1,15 +1,20 @@
 -module(loadbalancer).
--export([init/0]).
+-export([main/1, init/0]).
 
 %%Author: Tim Jonasson
 %%Collaborator: Sebastian Fransson
 %%Version: 1.1
 
-%Initializes the server and spawns the lobbymonitor.
+% Makes it possible to initialize the server with an escript command
+main(_) -> 
+  init().
+
+%Initializes the server and spawns the lobbymonitor.  
 init() -> 
   {ok, ListenSocket} = gen_tcp:listen(8040, [{active,true}, binary]),
   spawn(fun() -> lobbymonitor:init() end),
   loop(ListenSocket).
+  
   
 %Accepts connections and spawns a proccess for it
 loop(ListenSocket) ->
