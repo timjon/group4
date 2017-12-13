@@ -141,6 +141,8 @@ public class Message implements Renderable {
 
         // If it's being viewed in the past and not currently animating.
         if (staticIndicator) {
+            // Reset direction.
+            directionSwitched = false;
             // Remove all trails
             trails.clear();
             // Which direction is it pointing at determines original location.
