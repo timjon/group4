@@ -92,8 +92,7 @@ public class ClassDiagramClass implements Renderable {
      */
     @Override
     public String getName() {
-        String[] s = name.split(":");
-        return s[1];
+        return name;
     }
 
     /**

@@ -36,9 +36,17 @@ class Decode {
         if (rawStringToDecode.contains("class_diagram")) {
 
             if (rawStringToDecode.contains("highlight")) {
-                System.out.println();
-                System.out.println("Highlight: " + rawStringToDecode);
 
+                // Empty line for readability.
+                System.out.println();
+                // Remove the curly brackets.
+                rawStringToDecode = removeCharactersFromString(rawStringToDecode, '{', '}', '"');
+                // Split into fields.
+                String[] highlight_class_data = rawStringToDecode.split(",");
+                // The name of the class is the last item in this array.
+                String highlight = highlight_class_data[4];
+                // New highlight.
+                highlight(highlight);
                 return;
 
             } else {
@@ -276,7 +284,7 @@ class Decode {
         // Retrieve the draw object to add the classes too.
         Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
-       // Platform.runLater(() -> {
+        Platform.runLater(() -> {
 
             // Remove brackets and quotes.
             System.out.println(); // Empty line for readability.
@@ -301,7 +309,7 @@ class Decode {
 
             // Turns on animations.
             Draw.animate(true);
-      //  });
+        });
     }
 
     /**
@@ -324,6 +332,21 @@ class Decode {
         for (int i = 2; i < single_relationship.length; i++) {
             System.out.println("Subclass: " + single_relationship[i]);
         }
+    }
+
+    /**
+     * Adds a highlight to a Draw object.
+     * @param className name of the class to highlight
+     */
+    private void highlight(String className) {
+
+        // Retrieve the draw object to add the classes too.
+        Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+        Platform.runLater(() -> {
+            System.out.println("Class highlight: " + className);
+            draw.highlightClass(className);
+        });
     }
 
     /**
