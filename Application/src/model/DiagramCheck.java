@@ -5,7 +5,7 @@ import controller.Import;
 import java.util.Collection;
 
 /**
- * @version 1.0
+ * @version 1.1
  * @author Tim Jonasson & Kosara Golemshinska
  * collaborator: Pontus Laestadius
  * @since 2017-10-10
@@ -28,7 +28,7 @@ public class DiagramCheck {
             for (String diagramType : allowedDiagrams) {
 
                 // If the collection contains a supported type, return it.
-                if (string.contains("\"type\" : \"" + diagramType + "\"")) {
+                if (string.contains("\"type\" : \"" + diagramType + "\"") || string.contains("\"type\": \"" + diagramType + "\"")) {
                     return diagramType;
                 }
             }

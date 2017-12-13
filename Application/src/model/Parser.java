@@ -189,6 +189,7 @@ public class Parser {
             // Wraps them up and gives them an unique id.
             diagram = wrap(diagram);
 
+
             // If there is a parallel diagram.
             if (parsedSequenceDiagram.getDiagram().getContent().size() > 1) {
                 parallel = parseMessages(parsedSequenceDiagram.getDiagram().getContent().get(1).getMessages());
@@ -225,15 +226,26 @@ public class Parser {
             String r = "{" + m.getFrom() + "," + m.getTo() + ",[";
             result.append(r);
 
-            // Iterate through the message content.
-            for (String s: m.getMessage()) {
+            // Check if there are any messages or not.
+            if (m.getMessage() != null) {
+                result.append("'");
 
-                result.append(s);
-                result.append(",");
+                // Iterate through the message content.
+                for (String s: m.getMessage()) {
+
+                    result.append(s);
+                    result.append("','");
+                }
+
+                // Removes extra comma, and applies formatting.
+                result.replace(result.length()-2, result.length(), "]},");
+            } else {
+                // No messages, so just end the list.
+                result.append("]},");
             }
 
-            // Removes extra comma, and applies formatting.
-            result.replace(result.length()-1, result.length(), "]},");
+
+
         }
 
         // Removes extra comma.
@@ -256,7 +268,6 @@ public class Parser {
      */
     public String getParallelSequenceDiagram() throws NullPointerException {
         if (diagram == null) throw new NullPointerException("No diagram parsed");
-
         return parallel;
     }
 }
