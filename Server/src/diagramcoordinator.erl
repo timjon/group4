@@ -83,6 +83,7 @@ get_class_diagram_id({Id, {_, _}}) -> Id.
 spawn_nodes(_, [], _, _, _) -> [];
 spawn_nodes([], Classes, Did, Coordinator, UsedSockets) -> spawn_nodes(UsedSockets, Classes, Did, Coordinator, []);
 spawn_nodes([Socket|Sockets], [Class|Classes], Did, Coordinator, UsedSockets) ->
+  io:format("class: ~p~n", [Class]),
   [spawn_node(Socket, Class, Did, Coordinator)| spawn_nodes(Sockets, Classes, Did, Coordinator, [Socket|UsedSockets])].
 
 
@@ -93,6 +94,7 @@ spawn_node(Socket, Class_name, Did, Coordinator) ->
     {tcp, _Socket, Info} -> 
       Coordinator ! binary_to_term(Info)
   end,
+  io:format("~p~n", [{Socket, Class_name}]),
   {Socket, Class_name}.
 
 %sends a message to the given node
@@ -125,7 +127,8 @@ if_err([err | _]) -> err;
 if_err([_ | Rest]) -> if_err(Rest).
 
 % Iterates over the names and splits them to from Class:Name to {Class, [Name]}.  Then matches the Pid with the names.
-iter_split({Socket, _}, Names, Classes) -> 
+iter_split({Socket, Bob}, Names, Classes) -> 
+	io:format("~p", [{Socket, Bob}]),
 	% Call the matching function.
 	iter_match(Socket, 
 		[{
@@ -139,8 +142,10 @@ iter_split({Socket, _}, Names, Classes) ->
 % Matches a node's name with a class.
 iter_match(_, [], _) -> ok;
 
-iter_match(Socket, [{Class, [Name]}], Classes) -> 
-	case atom_to_list(getName(Classes, list_to_atom(Name))) == [Name] of
+iter_match(Socket, [{Class, [Name]}], Classes) ->
+	io:format("~p ", [atom_to_list(getName(Classes, list_to_atom(Name)))]), 
+		io:format("~p~n", [Name]), 
+	case [atom_to_list(getName(Classes, list_to_atom(Name)))] == [Name] of
 		true  -> 
 			io:format("true"),
 			gen_tcp:send(Socket, term_to_binary({setClass, Class, Name}));

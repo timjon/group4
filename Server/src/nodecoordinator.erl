@@ -24,7 +24,7 @@ loop(Socket, Nodes) ->
 		  loop(Socket, Nodes);
 
         % Sets the class of the node.
-        {setClass, NewClass, Name} ->
+        {setClass, NewClass, Name} -> 
 		  find_node(Nodes, Name) ! {setClass, NewClass},
 		  loop(Socket, Nodes);
 	  
@@ -52,6 +52,12 @@ loop(Socket, Nodes) ->
 	  gen_tcp:send(Socket, term_to_binary(Message)),
 	  loop(Socket, Nodes)
   end.
-  
-find_node([{Name, Pid}|_], Name) -> Pid;
-find_node([_| Nodes], Name) -> find_node(Nodes, Name).
+
+find_node(Nodes, Name) -> find_node_aux(Nodes, list_to_atom(Name)).
+
+find_node_aux([{Name, Pid}|_], Name) -> Pid;
+find_node_aux([{Name2, _}| Nodes], Name) -> 
+  io:format("name1 ~p ~n", [Name2]),
+  io:format("name2 ~p ~n", [Name]),
+  find_node_aux(Nodes, Name).
+
