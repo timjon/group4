@@ -11,7 +11,7 @@ import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
- * Collaborators: Sebastian Fransson, Tim Jonasson
+ * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
  * @version 1.5
  */
 class Decode {
@@ -26,22 +26,81 @@ class Decode {
     }
 
     /**
-     * Decodes the rawStringToDecode string and allocates it to it's associated diagram.
+     * Decodes the rawStringToDecode string and allocates it to its associated diagram.
      */
     void execute() {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
 
-        // TODO remove when 39 is done.
+        // Class diagram has been found.
         if (rawStringToDecode.contains("class_diagram")) {
-            System.out.println(rawStringToDecode);
-          return;
+
+            if (rawStringToDecode.contains("highlight")) {
+
+                // Remove the curly brackets.
+                rawStringToDecode = removeCharactersFromString(rawStringToDecode, '{', '}', '"');
+                // Split into fields.
+                String[] highlight_class_data = rawStringToDecode.split(",");
+                // The name of the class is the last item in this array.
+                String highlight = highlight_class_data[4];
+                // New highlight.
+                highlight(highlight);
+                return;
+
+            } else {
+                // Replace all newlines and whitespaces in the string.
+
+                rawStringToDecode = rawStringToDecode.replaceAll("\n", "")
+                        .replaceAll("\\s", "");
+
+                // Split the server output into 3 array items using the commas.
+                String[] class_values = rawStringToDecode.split(",", 3);
+
+                // Second array item is the class diagram ID.
+                String related_s_ID = class_values[1];
+
+                // Whole third item is the sequence diagram ID concatenated with the classes.
+                String id_and_classes = class_values[2];
+
+                // Get the index of the first comma.
+                int c_ID_index = id_and_classes.indexOf(",");
+
+                // Get the sequence diagram ID.
+                String class_ID = id_and_classes.substring(0, c_ID_index);
+
+                // Remove the CID.
+                String attributes = id_and_classes.replace(class_ID, "");
+
+                // Get the list without the comma in front of it.
+                String attributes_list = attributes.substring(1);
+
+                // Split the list into classes and relationships.
+                String[] classes_and_relations = attributes_list.split("]],");
+
+                // New class diagram sending all the classes in a String array.
+                String[] class_diagram_classes = classes_and_relations[0].split("],");
+                classDiagramClasses(class_diagram_classes, class_ID, related_s_ID);
+
+                // New relationship list, supports inheritance only for now.
+                if (classes_and_relations[1].contains("inheritance")) {
+
+                    // Split relationship list into items.
+                    String[] split_relations = classes_and_relations[1].split("],");
+
+                    // Remove all brackets and quotes, then send as comma separated strings.
+                    for (int i = 0; i < split_relations.length; i++) {
+                        String class_relation = removeCharactersFromString(split_relations[i], '[', ']', '}', '\'');
+                        // New relation.
+                        classRelation(class_ID, class_relation);
+                    }
+                }
+            }
         }
 
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");
 
-        // Retrieves the Diagram_ID.
+        // Retrieves the ID of the diagram.
         String id = rawStringToDecode.substring(1, id_index);
 
         // If the simulation is finished.
@@ -78,7 +137,6 @@ class Decode {
         } else if (rawStringToDecode.contains("INFO#")) {
             //Send through the rawStringToDecode starting at the 6th character to skip the INFO#.
             disp("Info", rawStringToDecode.substring(6), "");
-
         } else {
 
             // Gets the message content.
@@ -161,6 +219,7 @@ class Decode {
      * @param classes to draw up the diagram with.
      */
     private void diagramClasses(String classes, String id) {
+        // TODO check if diagram_id is unique
 
         // Creates a new view with the tab name.
         DiagramView diagramView = new DiagramView("SDid: " + id, id);
@@ -210,6 +269,80 @@ class Decode {
 
         });
 
+    }
+
+    /**
+     * Adds a class diagram to the Draw object.
+     * @param classes used to draw up the diagram
+     * @param id of the diagram
+     * @param SDID the ID of the connected sequence diagram
+     */
+    private void classDiagramClasses(String[] classes, String id, String SDID) {
+
+        // Retrieve the draw object to add the classes too.
+        Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+        Platform.runLater(() -> {
+
+            // Remove brackets and quotes.
+            for (int i = 0; i < classes.length; i++) {
+                String single_class = removeCharactersFromString(classes[i], '[', ']', '\'');
+                // Check if there are attributes
+                if(classes[i].contains(",")) {
+                    int name_index = single_class.indexOf(",");
+                    // Split the name of the class.
+                    String class_name = single_class.substring(0, name_index);
+                    // Attributes list.
+                    String fields = single_class.substring(name_index + 1);
+                    // TODO implement the lines below in Draw
+                    // String[] classFields = fields.split(",");
+                    // draw.addClassFields(class_name, classFields);
+                    // Add the class to the draw object.
+                    draw.addClassDiagramClass(class_name);
+                } else {
+                    // Single class, no fields.
+                    draw.addClassDiagramClass(single_class);
+                }
+            }
+
+            // Turns on animations.
+            Draw.animate(true);
+        });
+    }
+
+    /**
+     * Adds a relationship to the Draw object.
+     * @param id of the diagram
+     * @param relationship type between class diagra classes
+     */
+    private void classRelation(String id, String relationship) {
+
+        // Retrieve the draw object to add the classes too.
+        Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+        Platform.runLater(() -> {
+
+            // Split on comma.
+            String[] single_relationship = relationship.split(",");
+
+            // TODO implement after inheritance has been finished
+            // draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
+        });
+    }
+
+    /**
+     * Adds a highlight to a Draw object.
+     * @param className name of the class to highlight
+     */
+    private void highlight(String className) {
+
+        // Retrieve the draw object to add the classes too.
+        Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+        Platform.runLater(() -> {
+            // Add the highlight to a Draw object.
+            draw.highlightClass(className);
+        });
     }
 
     /**
@@ -285,7 +418,7 @@ class Decode {
     }
 
     /**
-     * retrieves a message incapsulated in a list. i.e [message].
+     * retrieves a message encapsulated in a list. i.e [message].
      * @param string to find the message inside.
      * @return the content of the message.
      */
