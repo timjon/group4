@@ -61,7 +61,6 @@ public class Draw {
         ClassRelationship cl= new ClassRelationship(allClassDiagramClasses.get(4).getCoordinates(),
                 allClassDiagramClasses.get(1).getCoordinates(), 15);
         allClassRelationships.add(cl);
-
     }
 
     /**
@@ -355,7 +354,7 @@ public class Draw {
         if (allClassRelationships.size()==0) return;
         int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
 
-        // Place mocked relationship
+        // Place mocked relationship from the 5th class to the 8th
         Coordinates fromNode = allClassDiagramClasses.get(4).getCoordinates();
         Coordinates toNode = allClassDiagramClasses.get(7).getCoordinates();
         allClassRelationships.get(0).init(fromNode,toNode,(space) / 6);

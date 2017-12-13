@@ -112,7 +112,7 @@ public class ClassRelationship implements Renderable {
         int arrowSize = 15; // Initial arrow size is 15 but doubled later for diagonal lines
 
         // This for loop is responsible for drawing the road sprites
-        for (int i = 0; i < stepsParameter/20; i++) {
+        for (int i = 0; i < stepsParameter / 20; i++) {
 
             // if P is less than 0, draw the next sprite on the same line as the last sprite
             if (P < 0) {
