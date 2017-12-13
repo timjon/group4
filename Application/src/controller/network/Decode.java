@@ -12,7 +12,7 @@ import static view.DiagramView.tabPane;
 /**
  * @author Pontus Laestadius
  * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
- * @version 1.5
+ * @version 1.6
  */
 class Decode {
     // Raw string to be decoded.
@@ -31,6 +31,49 @@ class Decode {
     void execute() {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
+
+        // Deployment diagram has been found.
+        if (rawStringToDecode.contains("deployment_diagram")) {
+
+            // Remove the curly brackets.
+            rawStringToDecode = removeCharactersFromString(rawStringToDecode, '{', '}', '"');
+
+            // Removes whitespaces and new lines.
+            rawStringToDecode = rawStringToDecode.replaceAll("\n", "").replaceAll("\\s", "");
+
+            // Splits the input.
+            String[] split = rawStringToDecode.split(",");
+
+            // Start on the third value (ignoring the first, second and third.)
+            for (int i = 3; i < split.length; i++) {
+
+                // Remove not required characters.
+                String field = removeCharactersFromString(split[i], '[', ']');
+                String second = "";
+
+                if (!field.contains("]")) {
+
+                    // Iterate i as we pull the next item.
+                    i += 1;
+
+                    // Remove not required characters.
+                    second = split[i].replace("]", "");
+                }
+
+                // Get the draw object.
+                Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+                // Add a diagram class to it.
+                draw.addDeploymentDiagramClass(second);
+
+                // Add a process device to it.
+                draw.addProcessToDevice(second, field);
+            }
+
+            // Ignore the rest of decoding.
+            return;
+
+        }
 
         // Class diagram has been found.
         if (rawStringToDecode.contains("class_diagram")) {
@@ -95,12 +138,10 @@ class Decode {
                     }
                 }
             }
-        }
-
-        if(rawStringToDecode.contains("deployment_diagram")) {
-            System.out.println(rawStringToDecode); //TODO TEST FOR BACKEND. REMOVE WHEN MERGE.
+            // Ignores rest of the cases.
             return;
         }
+
 
         // Split the rawStringToDecode string in to fields.
         int id_index = rawStringToDecode.indexOf(",");

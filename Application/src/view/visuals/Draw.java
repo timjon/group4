@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * @version 2.2
+ * @version 2.3
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborators Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -52,23 +52,6 @@ public class Draw {
         canvas = new Canvas(w, h);
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
-
-        /**
-         * Todo Mock data
-         */
-        addClassDiagramClass("g");
-        addClassDiagramClass("u1");
-        addClassDiagramClass("u2");
-        addClassDiagramClass("u3");
-
-        addDeploymentDiagramClass("Server");
-        addDeploymentDiagramClass("Smartphone");
-        addDeploymentDiagramClass("desktop_computer1");
-
-        addProcessToDevice("Server", "g");
-        addProcessToDevice("desktop_computer1", "u1");
-        addProcessToDevice("desktop_computer1", "u2");
-
     }
 
     /**
@@ -138,7 +121,8 @@ public class Draw {
      * @param device
      */
     public void addDeploymentDiagramClass (String device){
-        allDeploymentClasses.add(new DeploymentDiagramClass(device));
+        if (!allClassDiagramClasses.contains(device))
+            allDeploymentClasses.add(new DeploymentDiagramClass(device));
     }
 
     /**
