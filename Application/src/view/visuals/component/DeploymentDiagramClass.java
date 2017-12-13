@@ -5,19 +5,22 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import view.visuals.Renderable;
 
+import java.util.ArrayList;
+
 /**
  * Class for Deployment diagrams
  * @version 1.0
  * @author Isabelle Törnqvist
  */
 
-public class DeploymentDiagramClass implements  Renderable {
+public class DeploymentDiagramClass extends ClassDiagramClass {
 
     private Coordinates coordinates; //coordinates
     int size; //size of the allowed node space
     String device; //Name of the device/node/island
     int process_size;
-    String process; //Name of the class/process that is mapped on device
+    //Arraylist of processes mapped to device
+    private ArrayList<String> processes = new ArrayList<>();
 
     //Images for Islands
     private static Image device1 = new Image("resources/Island_with_trees.png");
@@ -30,11 +33,17 @@ public class DeploymentDiagramClass implements  Renderable {
     private double animationIndex = 0.0;
 
     /**
-     *
      * @param device setter
-     * @param process setter
      */
-    public DeploymentDiagramClass(String device, String process) { this.device = device; this.process = process; }
+    public DeploymentDiagramClass(String device) {
+        this.device = device;
+    }
+
+
+    //Maps process to device
+    public void addProcess(String process) {
+        processes.add(process);
+    }
 
     @Override
     public void render(GraphicsContext gc) {
@@ -57,22 +66,26 @@ public class DeploymentDiagramClass implements  Renderable {
                 this.coordinates.getY() -(size/2),
                 size );
 
-        //Draw processes
-        process_size = size/4;
+        for(String process : processes){
 
-        gc.drawImage(processImg,
-                this.coordinates.getX() - process_size/2,
-                this.coordinates.getY() - process_size/2,
-                process_size,
-                process_size*(processImg.getHeight()/processImg.getWidth()));
+            process_size = size/4;
 
-        //Sets the name of the process
-        gc.setFill(Color.BLACK);
-        gc.fillText(
-                this.process,
-                this.coordinates.getX() + (process_size/2)/4 -this.process.length()*2,
-                this.coordinates.getY() -(process_size/2),
-                process_size );
+            gc.drawImage(processImg,
+                    this.coordinates.getX() - process_size/2,
+                    this.coordinates.getY() - process_size/2,
+                    process_size,
+                    process_size*(processImg.getHeight()/processImg.getWidth()));
+
+            //Sets the name of the process
+            gc.setFill(Color.BLACK);
+            gc.fillText(
+                    process,
+                    this.coordinates.getX() + (process_size/2)/4 - process.length()*2,
+                    this.coordinates.getY() -(process_size/2),
+                    process_size );
+
+
+        }
     }
 
     /**
@@ -106,8 +119,7 @@ public class DeploymentDiagramClass implements  Renderable {
      */
     @Override
     public String getName() {
-        String[] s = device.split(":");
-        return s[1];
+        return device;
     }
 
     /**

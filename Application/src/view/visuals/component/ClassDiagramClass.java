@@ -30,6 +30,9 @@ public class ClassDiagramClass implements Renderable {
      */
     public ClassDiagramClass(String name) { this.name = name; }
 
+    public ClassDiagramClass() {
+    }
+
     @Override
     public void render(GraphicsContext gc) {
 

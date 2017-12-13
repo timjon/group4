@@ -56,10 +56,14 @@ public class Draw {
         addClassDiagramClass("u2");
         addClassDiagramClass("u3");
 
-        addDeploymentDiagramClass("Server", "g");
-        addDeploymentDiagramClass("Smartphone", "u1");
-        addDeploymentDiagramClass("desktop_computer1", "u2");
-        addDeploymentDiagramClass("desktop_computer1", "u3");
+        addDeploymentDiagramClass("Server");
+        addDeploymentDiagramClass("Smartphone");
+        addDeploymentDiagramClass("desktop_computer1");
+
+        addProcessToDevice("Server", "g");
+
+        addProcessToDevice("desktop_computer1", "u1");
+        addProcessToDevice("desktop_computer1", "u2");
 
     }
 
@@ -128,10 +132,29 @@ public class Draw {
     /**
      * Adds nodes to arraylist, to be drawn
      * @param device
+     *
+     */
+    public void addDeploymentDiagramClass (String device){
+        allDeploymentClasses.add(new DeploymentDiagramClass(device));
+    }
+
+    /**
+     * Maps process to device
+     * @param device
      * @param process
      */
-    public void addDeploymentDiagramClass (String device, String process){
-        allDeploymentClasses.add(new DeploymentDiagramClass(device, process));
+    public void addProcessToDevice(String device, String process) {
+        for (Renderable renderable: allDeploymentClasses) {
+            if (renderable.getName() == null) {
+                System.out.println("NULL");
+                continue;
+            }
+            if (renderable.getName().equals(device)) {
+                if (renderable instanceof DeploymentDiagramClass) {
+                    ((DeploymentDiagramClass) renderable).addProcess(process);
+                }
+            }
+        }
     }
 
     /**
@@ -341,6 +364,18 @@ public class Draw {
         if (allDeploymentClasses.size() == 0) return;
         int space = ((int) this.canvas_deployment.getWidth()) / this.allDeploymentClasses.size();
         Matrix(allDeploymentClasses, 3, space,this.canvas_deployment);
+
+        /*
+        for (int i = 0; i < allDeploymentClasses.size(); i++){
+            ArrayList<Renderable> processList = new ArrayList<>();
+
+            if(allDeploymentClasses.get(i).getName().equals(allDeploymentClasses.get(i+1).getName())){
+                processList.add(allClassDiagramClasses.get(i));
+                System.out.println("Yo bby this is where it happens: " + allClassDiagramClasses.get(i).getName());
+            }
+            Matrix(processList,3, (space/5), this.canvas_deployment);
+            System.out.println("Yo bby this is where it happens: " + allClassDiagramClasses.get(i).getName());
+        }*/
     }
 
     /**
