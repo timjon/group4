@@ -1,5 +1,5 @@
 -module(nodebalancer).
--export().
+-export([main/1, init/0]).
 
 %%Author: Tim Jonasson
 %%Version: 1.0
