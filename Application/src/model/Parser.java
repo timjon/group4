@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * collaborator: Pontus Laestadius, Sebastian Fransson
- * @version 2.0
+ * @version 2.1
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects
@@ -63,8 +63,10 @@ public class Parser {
 
             //Formating the parsed diagram
             StringBuilder deployString = new StringBuilder();
-
              deployString.append("{");
+             deployString.append("deployment_diagram,");
+             deployString.append(DiagramView.getDiagramViewInView().getTab().getId()); // retrieve the current Sid.
+             deployString.append(",");
              deployString.append(UniqueCounter.getString()); // adds a unique id to the parsed string.
              deployString.append(",[");
 

@@ -3,49 +3,57 @@
 
 %%Author: Tim Jonasson
 %%Collaborators: Isabelle Törnqvist 2017-10-30, Sebastian Fransson 2017-11-06, Pontus Laestadius 2017-12-01
-%%Version: 1.8
+%%Version: 1.9
 
 %Returns no_classes when there was no classes in the given diagram 
 init(_Coordinator, _Did, {[], _}, _) -> no_classes;
 %Returns no_messages when there was no messages in the given diagram 
 init(_Coordinator, _Did, {_, []}, _) -> no_messages;
 %Spawns and Initializes the diagram coordinator
+
 init(Coordinator, Did, {Classes, Messages},  Class_names) -> 
   Sockets = tcp_connect("10.0.151.42", [8041, 8042, 8043]),
   %Sending information that the Coordinator has been spawned. To be printed in the executionlog
   io:format("hello"),
   Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
   Nodes = spawn_nodes(Sockets, Classes, Did, Coordinator, []),
-  loop(Sockets, Coordinator, Did, Nodes, Messages, 1, [], none, Class_names). 
-	
+  loop(Sockets, Coordinator, Did, Nodes, Messages, 1, [], none, Class_names, none). 
+
 tcp_connect(_Ip, []) -> [];
 tcp_connect(Ip,  [Port|Ports]) ->
   {ok, Socket} = gen_tcp:connect(Ip, Port, [binary, {packet, 0}]),
   [Socket | tcp_connect(Ip, Ports)].
 
 %This loop runs until the list is empty (when there are no more messages)
-loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, ClassDiagram, Class_names) -> 
+loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram) -> 
   receive
+  
+    % Links a deployment diagram to the current sequence.
+	{deployment_diagram, DeploymentID, Mappings, Coordinator} ->
+	  Coordinator ! {deployment_diagram, DeploymentID, Did, Mappings},
+	  Coordinator !  {Did, print_information, ["Linked a Deployment Diagram"]},
+	  loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, ClassDiagram, Class_names, {DeploymentID, Mappings});
+	  
 	% Add a class diagram
     {class_diagram, Classid, Classes2, Relations, Coordinator} ->
 	  Coordinator ! {class_diagram, Classid, Did, {Classes2, Relations}},
 	  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 	  io:format("Classes: ~p~n", [Classes]),
 	  io:format("Classes2: ~p~n", [Classes2]),
-	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Classes2, Class_names, Classes)]},
-  	  loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, {Classid, {Classes2, Relations}}, Class_names);
+	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Class_names, Classes)]},
+  	  loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, {Classid, {Classes2, Relations}}, Class_names, DeploymentDiagram);
   	
   	
     % Sends the class diagram upstreams.
     {request_class_diagram, Pid} ->
   	  Pid ! {class_diagram_request, ClassDiagram},
-	  loop(Sockets, Coordinator, Did, Sockets, Classes, Message_number, PrevList, ClassDiagram, Class_names);
+	  loop(Sockets, Coordinator, Did, Sockets, Classes, Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram);
   	
     {next_message, Coordinator} -> 
 	  case NextList of
 	    [] -> 
 		  Coordinator ! {simulation_done, Did, Message_number},
-	      loop(Sockets, Coordinator, Did , Classes, [], Message_number, PrevList, ClassDiagram, Class_names);
+	      loop(Sockets, Coordinator, Did , Classes, [], Message_number, PrevList, ClassDiagram, Class_names, DeploymentDiagram);
 		
 		[L|Ls] -> 
           {From, To, Message} = L,
@@ -61,18 +69,18 @@ loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, Cla
 		          Coordinator !  {Did, print_information, ["Node " ++ atom_to_list(To) ++ " received a message from " ++ atom_to_list(From)]}
 			  end
 	      end,
-	      loop(Sockets, Coordinator, Did, Classes, Ls, Message_number + 1, [L|PrevList], ClassDiagram, Class_names)
+	      loop(Sockets, Coordinator, Did, Classes, Ls, Message_number + 1, [L|PrevList], ClassDiagram, Class_names, DeploymentDiagram)
 	  end;
 	  
 	{previous_message, Coordinator} ->
 	  case PrevList of
 	    [] -> 
 		  Coordinator ! {Did, print_information, ["No previous message"]},
-	      loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, [], ClassDiagram, Class_names);
+	      loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, [], ClassDiagram, Class_names, DeploymentDiagram);
 		  
 	    [Prev_H| Prev_T] -> 
 	      Coordinator ! {previous_confirmation, Did, ["Previous message"]},
-	      loop(Sockets, Coordinator, Did, Classes, [Prev_H| NextList], Message_number - 1, Prev_T, ClassDiagram, Class_names)
+	      loop(Sockets, Coordinator, Did, Classes, [Prev_H| NextList], Message_number - 1, Prev_T, ClassDiagram, Class_names, DeploymentDiagram)
 	  end
   end.
 
@@ -117,11 +125,9 @@ message_response(ToSocket, Did, Coordinator) ->
   end.
 
 % Iterates over the Pids and classes and propogates the data to the Pid.
-name_classes(Class_names, Names, Classes) -> 
+name_classes(Names, Classes) -> 
 	% Returns if all of the names were matched or any errors.
-	io:format("Class_names: ~p ~n", [Names]),
-	io:format("Class_names head: ~p ~n", [hd(Class_names)]),
-	Result = [iter_split(Class_name, Names, Classes) || Class_name <- Class_names],
+	Result = iter_split(Names, Classes),
 	atom_to_list(if_err(Result)).
 	
 % Return if the list has the atom 'err' in it or not.
@@ -131,7 +137,7 @@ if_err([err | _]) -> err;
 if_err([_ | Rest]) -> if_err(Rest).
 
 % Iterates over the names and splits them to from Class:Name to {Class, [Name]}.  Then matches the Pid with the names.
-iter_split(_List, Names, Classes) -> 
+iter_split(Names, Classes) -> 
 	% Call the matching function.
 	iter_match( 
 		[{
@@ -167,24 +173,6 @@ notify_class_diagram(Classes, Coordinator, Did, ClassDiagramId, Name) ->
   
 find_class([{Socket, Name}| _Classes], Name) -> Socket;
 find_class([_| Classes], Name) -> find_class(Classes, Name).
-
-getName([], _Name) -> err;
-getName([{_, Name}| _Names], Name) -> Name;
-getName([_| Names], Name) -> 
-	getName(Names, Name).
-
-% Gets the name of a specific node.
-%getName(Socket)  ->
-%	gen_tcp:send(Socket, term_to_binary({self(), getName})),
-%	receive 
-%	  {tcp, Socket, Info} ->
-%	    case binary_to_term(Info) of
-%		  {getName, Name} -> Name
-%		
-%	after
-%		1000 ->
-%		  err
-%	end.
 
 % Gets the class of a specific node.
 getClass(Socket, Name) ->
