@@ -265,7 +265,7 @@ class Decode {
     private void classDiagramClasses(String[] classes, String id, String SDID) {
 
         // Retrieve the draw object to add the classes too.
-       // Draw draw = DiagramView.getDiagramViewInView().getDraw();
+        Draw draw = DiagramView.getDiagramViewInView().getDraw();
 
        // Platform.runLater(() -> {
 
@@ -281,11 +281,12 @@ class Decode {
                     // Attributes list.
                     String fields = single_class.substring(name_index + 1);
                     // Add the class to the draw object.
-                    //draw.addClassDiagramClass(class_name);
+                    draw.addClassDiagramClass(class_name);
                     // Print class name and fields.
                     System.out.println("Class name: " + class_name + ", fields: " + fields);
                 } else {
                     System.out.println("Class name (no fields): " + single_class);
+                    draw.addClassDiagramClass(single_class);
                 }
             }
 
