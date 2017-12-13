@@ -27,12 +27,11 @@ tcp_connect(Ip,  [Port|Ports]) ->
 loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, ClassDiagram, Class_names) -> 
   receive
 	% Add a class diagram
-    {class_diagram, Classid, Classes, Relations, Coordinator} ->
-    io:format("classdiagram"),
-	  Coordinator ! {class_diagram, Classid, Did, {Classes, Relations}},
+    {class_diagram, Classid, Classes2, Relations, Coordinator} ->
+	  Coordinator ! {class_diagram, Classid, Did, {Classes2, Relations}},
 	  %Sends info to the Coordinator that a message has been received by a node. To be printed client-side.
 	  Coordinator !  {Did, print_information, ["Linked Class diagram: " ++ name_classes(Classes, Class_names, Classes)]},
-  	  loop(Sockets, Coordinator, Did, Sockets, Classes, Message_number, PrevList, {Classid, {Classes, Relations}}, Class_names);
+  	  loop(Sockets, Coordinator, Did, Classes, NextList, Message_number, PrevList, {Classid, {Classes2, Relations}}, Class_names);
   	
   	
     % Sends the class diagram upstreams.
@@ -141,8 +140,10 @@ iter_split({Socket, _}, Names, Classes) ->
 iter_match(_, [], _) -> ok;
 
 iter_match(Socket, [{Class, [Name]}], Classes) -> 
-	case getName(Classes, Name) == list_to_atom(Name) of
-		true  -> gen_tcp:send(Socket, term_to_binary({setClass, Class, Name}));
+	case atom_to_list(getName(Classes, list_to_atom(Name))) == [Name] of
+		true  -> 
+			io:format("true"),
+			gen_tcp:send(Socket, term_to_binary({setClass, Class, Name}));
 		% If the last case is not a match, Return err.
 		false -> err
 	end;
@@ -171,7 +172,8 @@ find_class([_| Classes], Name) -> find_class(Classes, Name).
 
 getName([], _Name) -> err;
 getName([{_, Name}| _Names], Name) -> Name;
-getName([_| Names], Name) -> getName(Names, Name).
+getName([_| Names], Name) -> 
+	getName(Names, Name).
 
 % Gets the name of a specific node.
 %getName(Socket)  ->
@@ -188,7 +190,7 @@ getName([_| Names], Name) -> getName(Names, Name).
 
 % Gets the class of a specific node.
 getClass(Socket, Name) ->
-	gen_tcp:send(term_to_binary({getClass, Name})),
+	gen_tcp:send(Socket, term_to_binary({getClass, Name})),
 	receive 
 	  {tcp, Socket, Info} ->
 	    case binary_to_term(Info) of

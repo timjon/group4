@@ -72,7 +72,6 @@ find_diagram(Diagram_id, [_| Diagrams])  -> find_diagram(Diagram_id, Diagrams).
 
 % If it is a class diagram
 use_input({ok, {class_diagram, Sid, Did, Classes, Relations}}, Socket, Diagrams) -> 
-	io:format("yo"),
 	Pid = find_diagram(Sid, Diagrams),
 	Pid ! {class_diagram, Did, Classes, Relations, self()},
 	loop(Socket, Diagrams);
