@@ -56,8 +56,6 @@ public class Draw {
 
     public void addClassDiagramRelation(String class1, String class2) {
 
-        System.out.println("class1: " + class1 + " class2:" + class2);
-
         // Initialises a mocked relationship
         ClassRelationship cl= new ClassRelationship(null,null,0);
 
@@ -71,9 +69,6 @@ public class Draw {
                 two = i;
             }
         }
-
-        System.out.println("one: " + one);
-        System.out.println("Two: " + two);
 
         cl.setParents(one, two);
 
