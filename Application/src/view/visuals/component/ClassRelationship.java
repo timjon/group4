@@ -65,7 +65,7 @@ public class ClassRelationship implements Renderable {
         // Offsets
         int XOffset = 0; // Horizontal offset
         int YOffset = 0; // Vertical offset
-        
+
         int stepsParameter = Math.abs(XDistance)/size == 0?1:Math.abs(XDistance)/size;
         int Yinc = YDistance/stepsParameter;
         int magic = (XDistance<0?-1:1)*size;

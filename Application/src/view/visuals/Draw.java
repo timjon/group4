@@ -442,10 +442,8 @@ public class Draw {
                 Coordinates c1 = allClassDiagramClasses.get(cr.class1Index).getCoordinates();
                 Coordinates c2 = allClassDiagramClasses.get(cr.class2Index).getCoordinates();
                 cr.init(c1,c2,space/6);
-
             }
         }
-
     }
 
     /**
