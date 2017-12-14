@@ -23,37 +23,54 @@ public class ClassRelationship implements Renderable {
     private static ImageView arrow = new ImageView("resources/road-arrow.png");
     private Coordinates coordinates; //coordinates
     private Coordinates fromNode, toNode;
-    private int size; //size of the allowed class space
+    private int size; //size of the road sprite
     public int class1Index = 0;
     public int class2Index = 0;
 
 
-    // Constructor
+    /**
+     * Constructor
+     * @param fromNode superclass
+     * @param toNode subclass
+     * @param size size of the road sprite
+     */
     public ClassRelationship(Coordinates fromNode, Coordinates toNode, int size) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.size = size;
     }
 
-    // Initialiser for rendering the road sprites between a super class and a sub class
+    /**
+     * Initialiser for rendering the road sprites between a super class and a sub class
+     * @param fromNode superclass
+     * @param toNode subclass
+     * @param size size of the road sprite
+     */
     public void init(Coordinates fromNode, Coordinates toNode, int size) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.size = size;
     }
 
-
+    /**
+     * sets the parents of the subclass and the subclass
+     * @param one first class
+     * @param two second class
+     */
     public void setParents(int one, int two) {
         this.class1Index = one;
         this.class2Index = two;
     }
 
+    /**
+     * renders each relationship between the superclass and the subclass
+     * @param gc Graphics context
+     */
     @Override
     public void render(GraphicsContext gc) {
 
         // If we got no size to work with.
         if (size == 0) return;
-
         // Coordinates
         int startingPointX = fromNode.getX(); // Points to the middle of the super class, used for horizontal lines
         int startingPointY = fromNode.getY(); // Points to the middle of the super class, user for vertical lines
@@ -62,37 +79,38 @@ public class ClassRelationship implements Renderable {
         // Deltas of distances
         int XDistance = endingPointX - startingPointX; //if this is negative, ending point is more to the left than starting point on X axis
         int YDistance = endingPointY - startingPointY; // if this is negative, same as above, for Y axis
-
         // Offsets
         int XOffset = 0; // Horizontal offset
         int YOffset = 0; // Vertical offset
 
+        // used to decide the amount of road sprites to be drawn
         int stepsParameter = Math.abs(XDistance)/size == 0?1:Math.abs(XDistance)/size;
-        int Yinc = YDistance/stepsParameter;
-        //System.out.println("Start:" + endingPointY + "end:" + startingPointY);
-        int magic = (XDistance<0?-1:1)*size;
+        // used to increment the vertical offset
+        int yInc = YDistance/stepsParameter;
+        // used to increment the horizontal offset
+        int xInc = (XDistance<0?-1:1)*size;
 
         if (stepsParameter == 1) {
             for (int i = 0; i < Math.abs(YDistance/size); i++) {
                 YOffset += size * (YDistance<0?-1:1);
+                // increase horizontal offset
                 int x = startingPointX + XOffset;
+                // increase vertical distance
                 int y = startingPointY + YOffset;
+                // Draw a road sprite
                 gc.drawImage(road, x, y, size*1.2, size*1.2);
             }
         } else {
             // This for loop is responsible for drawing the road sprites
             for (int i = 0; i < stepsParameter; i++) {
-                XOffset += magic;
-                YOffset += Yinc;
+                XOffset += xInc;
+                YOffset += yInc;
                 int x = startingPointX + XOffset;
                 int y = startingPointY + YOffset;
-
-                // Draw road sprites
+                // Draw a road sprite
                 gc.drawImage(road, x, y, size*1.2, size*1.2);
             }
         }
-
-
 
         // Rotate inheritance arrow
         arrow.setRotate(getArrowAngle(XDistance, YDistance));
@@ -100,13 +118,13 @@ public class ClassRelationship implements Renderable {
         SnapshotParameters snapshotParameters = new SnapshotParameters();
         snapshotParameters.setFill(Color.TRANSPARENT);
         Image rotatedArrow = arrow.snapshot(snapshotParameters, null);
-        double arrowSize;
-        arrowSize= size*1.2;
+        //arrow size for the arrow head at the end of the road
+        double arrowSize = size*1.2;
         if (Math.abs(YDistance) > 0 && Math.abs(XDistance) > 0){
             arrowSize = size*1.2+5;
         }
         // Draw an arrow at the end of the road
-        gc.drawImage(rotatedArrow, startingPointX + XOffset -magic*2.3, startingPointY + YOffset - -Yinc*2, arrowSize, arrowSize);
+        gc.drawImage(rotatedArrow, startingPointX + XOffset -xInc*2.3, startingPointY + YOffset - -yInc*2, arrowSize, arrowSize);
     }
 
     /**

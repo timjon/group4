@@ -358,7 +358,7 @@ class Decode {
     /**
      * Adds a relationship to the Draw object.
      * @param id of the diagram
-     * @param relationship type between class diagra classes
+     * @param relationship type between class diagram classes
      */
     private void classRelation(String id, String relationship) {
 
@@ -369,7 +369,7 @@ class Decode {
 
             // Split on comma.
             String[] single_relationship = relationship.split(",");
-
+            // initialises the super class and the sub class for visualising the inheritance relationship
             draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
         });
     }
