@@ -5,8 +5,6 @@ import javafx.scene.canvas.GraphicsContext;
 
 import javafx.scene.image.Image;
 
-import javafx.scene.paint.Color;
-import model.classDiagram.ClassDiagram;
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
@@ -30,6 +28,7 @@ public class Draw {
 
     private ArrayList<Renderable> allClasses = new ArrayList<>(); // Stores the classes
     private ArrayList<Renderable> allClassDiagramClasses = new ArrayList<>(); //Stores the classdiagram classes
+    private ArrayList<ClassRelationship> allClassRelationships = new ArrayList<>(); //Stores the classdiagram relationships
     private ArrayList<Renderable> allDeploymentClasses = new ArrayList<>(); //Stores the Deploymentdiagram nodes
 
     private ArrayList<Message> messages = new ArrayList<>(); // Stores the messages between nodes.
@@ -56,10 +55,6 @@ public class Draw {
         /**
          * Todo Mock data
          */
-        addClassDiagramClass("g");
-        addClassDiagramClass("u1");
-        addClassDiagramClass("u2");
-        addClassDiagramClass("u3");
 
         addDeploymentDiagramClass("Server");
         addDeploymentDiagramClass("Smartphone");
@@ -69,6 +64,28 @@ public class Draw {
         addProcessToDevice("desktop_computer1", "u1");
         addProcessToDevice("desktop_computer1", "u2");
 
+
+    }
+
+    public void addClassDiagramRelation(String class1, String class2) {
+
+        // Initialises a mocked relationship
+        ClassRelationship cl= new ClassRelationship(null,null,0);
+
+        int one = 0;
+        int two = 0;
+        for (int i = 0; i < allClassDiagramClasses.size(); i++) {
+            if (allClassDiagramClasses.get(i).getName().equals(class1)) {
+                one = i;
+            }
+            if (allClassDiagramClasses.get(i).getName().equals(class2)) {
+                two = i;
+            }
+        }
+
+        cl.setParents(one, two);
+
+        allClassRelationships.add(cl);
     }
 
     /**
@@ -218,6 +235,7 @@ public class Draw {
         renderClass();
         renderMessage();
         renderClassDiagramClass();
+        renderClassRelationship();
         renderDeploymentDiagram();
     }
 
@@ -286,6 +304,9 @@ public class Draw {
             r.render(gc);
         for (Renderable r: messages)
             r.render(gc);
+        //rendering of class diagram's relationships
+        for (Renderable r: allClassRelationships)
+            r.render(graphicsContextClass);
         //rendering of class diagram
         for (Renderable e: allClassDiagramClasses)
             e.render(graphicsContextClass);
@@ -302,6 +323,10 @@ public class Draw {
             r.update();
         for (Renderable r: messages)
             r.update();
+        //rendering of class diagram's relationships
+        for (Renderable r: allClassRelationships)
+            r.update();
+        //rendering of class diagram
         for (Renderable r: allClassDiagramClasses)
             r.update();
         for (Renderable r: allDeploymentClasses)
@@ -400,6 +425,23 @@ public class Draw {
                     //Placing of the classes
                     diagram.get(element).place(new Coordinates(x, y), (space/2));
                 }
+            }
+        }
+    }
+
+    /**
+     * Places the relationships in the class diagram
+     */
+    void renderClassRelationship(){
+        if (allClassRelationships.size()==0) return;
+        int space = ((int)this.canvas_class.getWidth())/this.allClassDiagramClasses.size();
+
+        for (Renderable renderable: allClassRelationships) {
+            if (renderable instanceof ClassRelationship) {
+                ClassRelationship cr = (ClassRelationship) renderable;
+                Coordinates c1 = allClassDiagramClasses.get(cr.class1Index).getCoordinates();
+                Coordinates c2 = allClassDiagramClasses.get(cr.class2Index).getCoordinates();
+                cr.init(c1,c2,space/6);
             }
         }
     }
