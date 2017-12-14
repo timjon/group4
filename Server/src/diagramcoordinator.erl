@@ -12,7 +12,7 @@ init(_Coordinator, _Did, {_, []}, _) -> no_messages;
 %Spawns and Initializes the diagram coordinator
 
 init(Coordinator, Did, {Classes, Messages},  Class_names) -> 
-  Sockets = tcp_connect("192.168.0.102", [8041, 8042, 8043]),
+  Sockets = tcp_connect("172.20.10.6", [8041, 8042, 8043]),
   %Sending information that the Coordinator has been spawned. To be printed in the executionlog
   Coordinator ! {Did, print_information, ["Diagram coordinator was spawned"]},
   Nodes = spawn_nodes(Sockets, Classes, Did, Coordinator, []),
