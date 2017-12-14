@@ -62,7 +62,7 @@ public class ClassRelationship implements Renderable {
         // Deltas of distances
         int XDistance = endingPointX - startingPointX; //if this is negative, ending point is more to the left than starting point on X axis
         int YDistance = endingPointY - startingPointY; // if this is negative, same as above, for Y axis
-        
+
         // Offsets
         int XOffset = 0; // Horizontal offset
         int YOffset = 0; // Vertical offset
