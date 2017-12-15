@@ -2,20 +2,14 @@ package view.visuals;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-
 import javafx.scene.image.Image;
-
-import model.classDiagram.Relationships;
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
- * @version 2.3
+ * @version 2.4
  * @author Pontus Laestadius, Sebastian Fransson
  * Collaborators Rashad Kamsheh, Kosara Golemshinska, Isabelle Törnqvist
  */
@@ -52,27 +46,6 @@ public class Draw {
         canvas = new Canvas(w, h);
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
-    }
-
-    public void addClassDiagramRelation(String class1, String class2) {
-
-        // Initialises a mocked relationship
-        ClassRelationship cl= new ClassRelationship(null,null,0);
-
-        int one = 0;
-        int two = 0;
-        for (int i = 0; i < allClassDiagramClasses.size(); i++) {
-            if (allClassDiagramClasses.get(i).getName().equals(class1)) {
-                one = i;
-            }
-            if (allClassDiagramClasses.get(i).getName().equals(class2)) {
-                two = i;
-            }
-        }
-
-        cl.setParents(one, two);
-
-        allClassRelationships.add(cl);
     }
 
     /**
@@ -255,6 +228,7 @@ public class Draw {
      */
     void initDeploymentDiagram(GraphicsContext gc){
         gc.clearRect(0,0,getWidth(),getHeight());
+        // adds the background to deployment diagram canvas
         gc.drawImage(deploymentDiagramBackground,0,0, this.canvas_deployment.getWidth(),this.canvas_deployment.getHeight());
     }
 
@@ -314,9 +288,10 @@ public class Draw {
         //rendering of class diagram's relationships
         for (Renderable r: allClassRelationships)
             r.update();
-        //rendering of class diagram
+        //rendering of classes in class diagrams
         for (Renderable r: allClassDiagramClasses)
             r.update();
+        //rendering of classes in deployment diagrams
         for (Renderable r: allDeploymentClasses)
             r.update();
     }
@@ -423,7 +398,33 @@ public class Draw {
     }
 
     /**
-     * Places the relationships in the class diagram
+     * initialises an inheritance relationship between a super class and a sub class
+     * @param class1
+     * @param class2
+     */
+    public void addClassDiagramRelation(String class1, String class2) {
+
+        // Initialises an inheritance relationship
+        ClassRelationship cl= new ClassRelationship(null,null,0);
+
+        int first = 0;
+        int second = 0;
+        for (int i = 0; i < allClassDiagramClasses.size(); i++) {
+            if (allClassDiagramClasses.get(i).getName().equals(class1)) {
+                first = i;
+            }
+            if (allClassDiagramClasses.get(i).getName().equals(class2)) {
+                second = i;
+            }
+        }
+
+        cl.setParents(first, second);
+        // adds the initialised relationship to the array list
+        allClassRelationships.add(cl);
+    }
+
+    /**
+     * Places the inheritance relationships in the class diagram
      */
     void renderClassRelationship(){
         if (allClassRelationships.size()==0) return;
@@ -432,7 +433,9 @@ public class Draw {
         for (Renderable renderable: allClassRelationships) {
             if (renderable instanceof ClassRelationship) {
                 ClassRelationship cr = (ClassRelationship) renderable;
+                // super class
                 Coordinates c1 = allClassDiagramClasses.get(cr.class1Index).getCoordinates();
+                // sub class
                 Coordinates c2 = allClassDiagramClasses.get(cr.class2Index).getCoordinates();
                 cr.init(c1,c2,space/6);
             }

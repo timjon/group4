@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborators: Pontus Laestadius 2017-12-04
-%%Version: 1.4
+%%Version: 2.0
 
 %Initialized the process for the node
 init(Coordinator, Name) ->
@@ -11,12 +11,6 @@ init(Coordinator, Name) ->
 
 loop(Coordinator, Name, Class) ->
   receive
-  
-    % Gets the name of the node.
-    %{Pid, getName} -> 
-  	 % Pid ! {getName, Name},
-  	  %loop(Coordinator, Name, Class);
-  	
   	% Gets the class of the node.
     {Pid, getClass} -> 
   	  Pid ! {getClass, Class},
