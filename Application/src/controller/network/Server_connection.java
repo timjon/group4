@@ -26,7 +26,7 @@ public class Server_connection {
      */
     public void openConnection(){
         try {
-            socket = new Socket("10.0.151.42", 8040);
+            socket = new Socket("127.0.0.1", 8040);
             outputStream =  new PrintWriter(socket.getOutputStream());
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (UnknownHostException e) {
