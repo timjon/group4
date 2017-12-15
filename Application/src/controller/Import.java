@@ -1,6 +1,5 @@
 package controller;
 
-import com.sun.istack.internal.Nullable;
 import controller.network.Net;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
@@ -148,8 +147,6 @@ public class Import {
      * @param share if it is shared.
      * @param diagram the diagram to send.
      */
-
-    @Nullable
     static void sendDiagram(boolean share, String diagram) {
 
         // Ignore null diagrams.

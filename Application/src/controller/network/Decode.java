@@ -56,7 +56,9 @@ class Decode {
                 String field = removeCharactersFromString(split[i], '[', ']');
 
                 // Remove not required characters.
-                String second = split[i++].replace("]", "");
+                String second = removeCharactersFromString(split[++i], '[', ']');
+
+                System.out.println("field: " + field + " second:" + second);
 
                 // Add a diagram class to it.
                 draw.addDeploymentDiagramClass(second);
