@@ -1,6 +1,6 @@
 -module(lobbycoordinator).
 -export([init/0]).
-%%Version 1.1
+%%Version 1.2
 %%Authors: Sebastian Fransson, Tim Jonasson
 %%Collaborators: Pontus Laestadius 2017-12-08
 
@@ -73,7 +73,6 @@ loop(Rooms, Lobby_increment) ->
 	  
 	%This happens when you send a new diagram to the lobby
 	{Creator_Socket, {Did, Class_names, Classes, Messages}} -> 
-	  io:format("Im creating stuff ~n"),
 	  %Gets the lobby id
 	  Lid = [Lid||{Lid, _Password, _Pid, Socket, _Ref} <- Rooms, Creator_Socket == Socket],
 	  %Checks if the lobby exists
