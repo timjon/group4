@@ -20,7 +20,6 @@ import javafx.stage.WindowEvent;
 import model.Menu;
 import view.DiagramView;
 import view.ExecutionLog;
-import view.handlers.Animation;
 import view.handlers.Resizer;
 import static view.DiagramView.tabPane;
 import controller.network.Net;
@@ -122,5 +121,9 @@ public class Main extends Application {
             Resizer.init(primaryStage); // Starts a listener for handling resizing of the window.
             Net.init();
         });
+
+        // Sets minimum size to remove errors.
+        primaryStage.setMinWidth(640);
+        primaryStage.setMinHeight(480);
     }
 }

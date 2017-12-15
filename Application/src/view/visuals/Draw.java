@@ -3,6 +3,7 @@ package view.visuals;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import view.DiagramView;
 import view.handlers.Animation;
 import view.visuals.component.*;
@@ -46,6 +47,14 @@ public class Draw {
         canvas = new Canvas(w, h);
         canvas_class = new Canvas(0, 0);
         canvas_deployment = new Canvas(0,0);
+
+
+        int font_size = 30;
+        canvas.getGraphicsContext2D().setFont(new Font(font_size));
+        canvas_class.getGraphicsContext2D().setFont(new Font(font_size));
+        canvas_deployment.getGraphicsContext2D().setFont(new Font(font_size));
+
+
     }
 
     /**
