@@ -416,18 +416,19 @@ public class Draw {
         // Initialises an inheritance relationship
         ClassRelationship cl= new ClassRelationship(null,null,0);
 
-        int first = 0;
-        int second = 0;
+        int superClass = 0;
+        int subClass = 0;
+        // gets the index and assigns the relationship classes to the superclass and sub class
         for (int i = 0; i < allClassDiagramClasses.size(); i++) {
             if (allClassDiagramClasses.get(i).getName().equals(class1)) {
-                first = i;
+                superClass = i;
             }
             if (allClassDiagramClasses.get(i).getName().equals(class2)) {
-                second = i;
+                subClass = i;
             }
         }
-
-        cl.setParents(first, second);
+        //sets the parents
+        cl.setParents(superClass, subClass);
         // adds the initialised relationship to the array list
         allClassRelationships.add(cl);
     }
@@ -442,11 +443,12 @@ public class Draw {
         for (Renderable renderable: allClassRelationships) {
             if (renderable instanceof ClassRelationship) {
                 ClassRelationship cr = (ClassRelationship) renderable;
-                // super class
-                Coordinates c1 = allClassDiagramClasses.get(cr.class1Index).getCoordinates();
-                // sub class
-                Coordinates c2 = allClassDiagramClasses.get(cr.class2Index).getCoordinates();
-                cr.init(c1,c2,space/6);
+                // super class coordinates
+                Coordinates superClass = allClassDiagramClasses.get(cr.class1Index).getCoordinates();
+                // sub class coordinates
+                Coordinates subClass = allClassDiagramClasses.get(cr.class2Index).getCoordinates();
+                // initialise a relationship between the 2 classes
+                cr.init(superClass,subClass,space/6);
             }
         }
     }
