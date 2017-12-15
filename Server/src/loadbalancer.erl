@@ -3,7 +3,7 @@
 
 %%Author: Tim Jonasson
 %%Collaborator: Sebastian Fransson
-%%Version: 1.1
+%%Version: 2.0
 
 % Makes it possible to initialize the server with an escript command
 main(_) -> 
