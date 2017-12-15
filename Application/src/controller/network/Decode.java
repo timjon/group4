@@ -6,13 +6,15 @@ import view.DiagramView;
 import view.visuals.Draw;
 import view.ExecutionLog;
 
+import java.util.ArrayList;
+
 import static controller.Import.disp;
 import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
  * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
- * @version 1.6
+ * @version 1.7
  */
 class Decode {
     // Raw string to be decoded.
@@ -44,24 +46,17 @@ class Decode {
             // Splits the input.
             String[] split = rawStringToDecode.split(",");
 
+            // Get the draw object.
+            Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
             // Start on the third value (ignoring the first, second and third.)
             for (int i = 3; i < split.length; i++) {
 
                 // Remove not required characters.
                 String field = removeCharactersFromString(split[i], '[', ']');
-                String second = "";
 
-                if (!field.contains("]")) {
-
-                    // Iterate i as we pull the next item.
-                    i += 1;
-
-                    // Remove not required characters.
-                    second = split[i].replace("]", "");
-                }
-
-                // Get the draw object.
-                Draw draw = DiagramView.getDiagramViewInView().getDraw();
+                // Remove not required characters.
+                String second = split[i++].replace("]", "");
 
                 // Add a diagram class to it.
                 draw.addDeploymentDiagramClass(second);
@@ -72,7 +67,6 @@ class Decode {
 
             // Ignore the rest of decoding.
             return;
-
         }
 
         // Class diagram has been found.
