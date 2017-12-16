@@ -58,8 +58,6 @@ class Decode {
                 // Remove not required characters.
                 String second = removeCharactersFromString(split[++i], '[', ']');
 
-                System.out.println("field: " + field + " second:" + second);
-
                 // Add a diagram class to it.
                 draw.addDeploymentDiagramClass(second);
 
