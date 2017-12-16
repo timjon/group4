@@ -151,7 +151,7 @@ use_input({ok, {Did, Class_names, Classes, Messages}}, Socket, Diagrams) ->
 
 %In case the parsing fails
 use_input(_, Socket, Diagrams) -> 
-  Term = "INFO# Parsing fail, please input the same diagram again~",
+  Term = "INFO# Parsing fail, please input the same file again~",
   gen_tcp:send(Socket, list_to_binary(Term)),
   loop(Socket, Diagrams).
 
