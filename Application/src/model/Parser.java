@@ -226,15 +226,26 @@ public class Parser {
             String r = "{" + m.getFrom() + "," + m.getTo() + ",[";
             result.append(r);
 
-            // Iterate through the message content.
-            for (String s: m.getMessage()) {
+            // Check if there are any messages or not.
+            if (m.getMessage() != null) {
+                result.append("'");
 
-                result.append(s);
-                result.append(",");
+                // Iterate through the message content.
+                for (String s: m.getMessage()) {
+
+                    result.append(s);
+                    result.append("','");
+                }
+
+                // Removes extra comma, and applies formatting.
+                result.replace(result.length()-2, result.length(), "]},");
+            } else {
+                // No messages, so just end the list.
+                result.append("]},");
             }
 
-            // Removes extra comma, and applies formatting.
-            result.replace(result.length()-1, result.length(), "]},");
+
+
         }
 
         // Removes extra comma.
