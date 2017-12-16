@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author Rashad Kamsheh & Isabelle Törnqvist
  * collaborator: Pontus Laestadius, Sebastian Fransson
- * @version 2.1
+ * @version 2.2
  * @since 2017-10-16
  *
  * Made with usage of Gson library for parsing json into Java objects
@@ -46,7 +46,6 @@ public class Parser {
 
     // Stores a general purpose diagram variable.
     private String diagram = null;
-
     // Stores a possible parallel version of a diagram.
     private String parallel = null;
 

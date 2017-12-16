@@ -71,7 +71,8 @@ public class Server_connection {
         try {
             //The character ~ is used as the stop character so the client knows when to stop reading from the input stream
             while( (value = inputStream.read()) != '~') {
-                stringBuilder.append((char)value);
+                if (inputStream.ready())
+                    stringBuilder.append((char)value);
             }
         } catch (IOException e1) {
             e1.printStackTrace();

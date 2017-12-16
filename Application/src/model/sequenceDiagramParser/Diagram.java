@@ -8,7 +8,7 @@ import java.util.List;
  * This diagram class will include diagram that is in the parsed sequence diagram including the main note and
  * the list of content
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.0
+ * @version 1.1
  * @since 2017-10-16
  */
 
@@ -16,7 +16,6 @@ import java.util.List;
 public class Diagram {
 
     private String node;
-
     private List<Content> content = null;
 
     /**

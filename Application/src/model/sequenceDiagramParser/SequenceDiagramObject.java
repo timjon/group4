@@ -7,25 +7,20 @@ import java.util.List;
  * The getters and setters and their declarations are made to adhere with a predetermined JSON format
  *
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.0
+ * @version 1.1
  * @since 2017-10-16
  */
 
 public class SequenceDiagramObject {
 
-
     //instance of class Meta to handle diagram's meta
     private Meta meta;
-
     //handle the Type of the diagram
     private String type;
-
     //instance of class Processes to handle the Processes of the diagram
     private List<Processes> processes = null;
-
     //instance of class Diagram to handle the messages of the diagram
     private Diagram diagram;
-
 
     /**
      * @return current meta

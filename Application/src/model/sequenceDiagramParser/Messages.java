@@ -7,7 +7,7 @@ import java.util.List;
  * The getters and setters and their declarations are made to adhere with a predetermined JSON format
  * This Messages class contains the messages being sent between the classes of the parsed sequence diagram
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.0
+ * @version 1.1
  * @since 2017-10-16
  */
 
@@ -15,11 +15,8 @@ import java.util.List;
 public class Messages {
 
     private String node;
-
     private String from;
-
     private String to;
-
     private List<String> message = null;
 
     /**

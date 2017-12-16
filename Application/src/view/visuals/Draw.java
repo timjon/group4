@@ -450,7 +450,7 @@ public class Draw {
                 // sub class coordinates
                 Coordinates subClass = allClassDiagramClasses.get(cr.class2Index).getCoordinates();
                 // initialise a relationship between the 2 classes
-                cr.init(superClass,subClass,space/6);
+                cr.updateLocation(superClass,subClass,space/10);
             }
         }
     }

@@ -8,18 +8,15 @@ import java.util.List;
  * This Meta class contains the information of the parsed diagram including the name of the format, the version and
  * the list of extensions
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.0
+ * @version 1.1
  * @since 2017-10-16
  */
 
 public class Meta {
 
     private String format;
-
     private String version;
-
     private List<Object> extensions = null;
-
 
     /**
      * @return current object List of extensions

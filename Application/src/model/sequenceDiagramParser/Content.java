@@ -7,7 +7,7 @@ import java.util.List;
  * The getters and setters and their declarations are made to adhere with a predetermined JSON format
  * This Content class will include the content of the parsed diagram, including the main node and the list of messages
  * @author Rashad Kamsheh & Isabelle Törnqvist
- * @version 1.0
+ * @version 1.1
  * @since 2017-10-16
  */
 
@@ -15,7 +15,6 @@ import java.util.List;
 public class Content {
 
     private String node;
-
     private List<Messages> content = null;
 
     /**
