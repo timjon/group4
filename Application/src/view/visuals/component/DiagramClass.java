@@ -127,9 +127,9 @@ public class DiagramClass implements Renderable {
             gc.setFill(Color.BLACK); // Selects BLACK to be the color of the text.
             gc.fillText(
                     this.name, // Sets the text to be the name of the DiagramClass.
-                    x + size_DiagramClass/4 -this.name.length()*2, // Dynamically determines the x position.
+                    x -this.name.length()*2, // Dynamically determines the x position.
                     y -size_DiagramClass/2, // Does not need to be dynamic, as all elements scale downwards.
-                    size +size_DiagramClass); // Sets a max width as to not bother the other DiagramClasses texts.
+                    size); // Sets a max width as to not bother the other DiagramClasses texts.
     }
 
     /**
