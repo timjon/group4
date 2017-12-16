@@ -1,7 +1,6 @@
 package view.visuals;
 
 import javafx.scene.canvas.GraphicsContext;
-import view.visuals.component.Coordinates;
 
 /**
  * Implementing this assures the class can be rendered through generics.

@@ -2,7 +2,7 @@ package view.visuals.component;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.text.Font;
+import view.visuals.Coordinates;
 import view.visuals.Renderable;
 
 import java.util.ArrayList;

@@ -5,9 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import view.visuals.Coordinates;
 import view.visuals.Renderable;
-
-import java.util.ArrayList;
 
 /**
  * Class for simulating the relationships of the class diagram

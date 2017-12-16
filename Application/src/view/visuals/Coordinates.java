@@ -1,4 +1,4 @@
-package view.visuals.component;
+package view.visuals;
 
 /**
  * Holds x and y positions
@@ -22,14 +22,14 @@ public class Coordinates {
     /**
      * @return the x coordinate.
      */
-    int getX() {
+    public int getX() {
         return x;
     }
 
     /**
      * @return the y coordinate.
      */
-    int getY() {
+    public int getY() {
         return y;
     }
 }

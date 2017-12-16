@@ -3,7 +3,7 @@ package view.visuals.component;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import view.visuals.Renderable;
+import view.visuals.Coordinates;
 
 import java.util.ArrayList;
 
