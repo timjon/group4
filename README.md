@@ -13,6 +13,6 @@ Tim Jonasson, Pontus Laestadius, Rashad Kamsheh, Sebastian Fransson, Kosara Gole
 is a Java serialization/deserialization library to convert Java Objects into JSON and back
 
 # How to run the server
-1. Edit IP in diagramcoordinator.erl: change to your local IP
+1. Edit IP in diagramcoordinator.erl: change to your public IP
 2. run compile.sh
 
