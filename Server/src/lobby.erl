@@ -1,6 +1,6 @@
 -module(lobby).
 -export([init/3]).
-%%Version: 1.1
+%%Version: 1.2
 %%Authors: Sebastian Fransson, Tim Jonasson
 %%This module manages a lobby and all the diagrams connected to it
 
@@ -111,7 +111,13 @@ loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) ->
 	  %Send Diagrams to the clients.
       Format_result = io_lib:format("~p", [{class_diagram, Sid, Did, Classes, Relations}]) ++ "~",
 	  send_messages(Members, Format_result),
-      loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID) 	
+      loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID);
+	
+	%This case happens when a class highlighting request is received.
+	{class_diagram, Did, SequenceDiagramId, highlight, Name} ->
+	  Format_result = io_lib:format("~p", [{class_diagram, Did, SequenceDiagramId, highlight_class_diagram, Name}]) ++ "~",
+      send_messages(Members, Format_result),
+	  loop(Creator_Socket, Password, Members, Diagrams, Lobby_ID)
   end.
   
 %Sends the classes of all given diagrams to the given user

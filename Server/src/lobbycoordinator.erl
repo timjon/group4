@@ -1,6 +1,6 @@
 -module(lobbycoordinator).
 -export([init/0]).
-%%Version 1.1
+%%Version 1.2
 %%Authors: Sebastian Fransson, Tim Jonasson
 %%Collaborators: Pontus Laestadius 2017-12-08
 

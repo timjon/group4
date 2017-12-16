@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @version 1.1
+ * @version 1.2
  * @author Pontus Laestadius
  * collaborator: Sebastian Fransson
  * @since 2017-10-06
@@ -65,7 +65,6 @@ public class Import {
 
                     // Any unexpected exceptions.
                 } catch (IOException e) {
-
 
                     // Removes from the valid diagramViews and moves to the invalid diagramViews.
                     files_invalid.add(file);
@@ -122,51 +121,18 @@ public class Import {
             switch (model.DiagramCheck.ContainsDiagram(result)) {
                 case "sequence_diagram":
                     parse.parseSequenceDiagram(file);
-                    // Catches if there are no diagrams.
-                    try {
-                        if(share) {
-                            Net.push("{share, " + parse.getDiagram() + "}");
-                        }else{
-                            Net.push(parse.getDiagram());
-                        }
-                    } catch (NullPointerException e) {
-                        continue;
-                    }
-
-                    // Catches a nullpointer exception if there is no parallel diagram.
-                    try {
-                        if(share) {
-                            Net.push("{share, " + parse.getParallelSequenceDiagram() + "}");
-                        }else {
-                            Net.push(parse.getParallelSequenceDiagram());
-                        }
-                    } catch (NullPointerException e) {
-                        continue;
-                    }
-
+                    sendDiagram(share, parse.getDiagram());
+                    sendDiagram(share, parse.getParallelSequenceDiagram());
                     break;
+
                 case "class_diagram":
                     parse.parseClassDiagram(file);
-                    if(share) {
-                        Net.push("{share, " + parse.getDiagram() + "}");
-                    }else{
-                        Net.push(parse.getDiagram());
-                    }
+                    sendDiagram(share, parse.getDiagram());
                     break;
 
                 case "deployment_diagram":
-                    // if the file is incomplete, catches a null pointer.
-                    try {
-                        parse.parseDeploymentDiagram(file);
-                        System.out.println(parse.getDiagram()); //TODO TEST FORMAT
-                        if (share) {
-                            Net.push("{share, " + parse.getDiagram() + "}");
-                        } else {
-                            Net.push(parse.getDiagram());
-                        }
-                    }catch(NullPointerException np) {
-                        continue;
-                    }
+                    parse.parseDeploymentDiagram(file);
+                    sendDiagram(share, parse.getDiagram());
                     break;
             }
 
@@ -174,5 +140,24 @@ public class Import {
         // if the diagram is not included in the switch case, check if the diagram is invalid
         model.DiagramCheck.ContainsDiagram(result);
         model.Menu.getInstance().identifyState();
+    }
+
+    /**
+     * Identifies if it's a shared or a normal diagram and sends it.
+     * @param share if it is shared.
+     * @param diagram the diagram to send.
+     */
+    static void sendDiagram(boolean share, String diagram) {
+
+        // Ignore null diagrams.
+        if (diagram == null) return;
+
+        // If it is shared.
+        if (share)
+            Net.push("{share, " + diagram + "}");
+
+        // If it is not.
+        else
+            Net.push(diagram);
     }
 }

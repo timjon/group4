@@ -72,7 +72,7 @@ public class Automate extends Thread {
                     message = DiagramView.getDiagramViewInView().getDraw().getLastMessage();
 
                     // If the last message is done animating.
-                    if (!message.isKeepAnimating()) {
+                    if (!message.isAnimating()) {
                         Net.changeMessage("next_message");
                     }
                 }

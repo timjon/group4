@@ -6,13 +6,15 @@ import view.DiagramView;
 import view.visuals.Draw;
 import view.ExecutionLog;
 
+import java.util.ArrayList;
+
 import static controller.Import.disp;
 import static view.DiagramView.tabPane;
 
 /**
  * @author Pontus Laestadius
  * Collaborators: Sebastian Fransson, Tim Jonasson, Kosara Golemshinska
- * @version 1.5
+ * @version 1.7
  */
 class Decode {
     // Raw string to be decoded.
@@ -31,6 +33,41 @@ class Decode {
     void execute() {
         // If no string has been allocated, abort.
         if (rawStringToDecode == null) return;
+
+        // Deployment diagram has been found.
+        if (rawStringToDecode.contains("deployment_diagram")) {
+
+            // Remove the curly brackets.
+            rawStringToDecode = removeCharactersFromString(rawStringToDecode, '{', '}', '"');
+
+            // Removes whitespaces and new lines.
+            rawStringToDecode = rawStringToDecode.replaceAll("\n", "").replaceAll("\\s", "");
+
+            // Splits the input.
+            String[] split = rawStringToDecode.split(",");
+
+            // Get the draw object.
+            Draw draw = DiagramView.getDiagramViewInView().getDraw();
+
+            // Start on the third value (ignoring the first, second and third.)
+            for (int i = 3; i < split.length; i++) {
+
+                // Remove not required characters.
+                String field = removeCharactersFromString(split[i], '[', ']');
+
+                // Remove not required characters.
+                String second = removeCharactersFromString(split[++i], '[', ']');
+
+                // Add a diagram class to it.
+                draw.addDeploymentDiagramClass(second);
+
+                // Add a process device to it.
+                draw.addProcessToDevice(second, field);
+            }
+
+            // Ignore the rest of decoding.
+            return;
+        }
 
         // Class diagram has been found.
         if (rawStringToDecode.contains("class_diagram")) {
@@ -95,10 +132,7 @@ class Decode {
                     }
                 }
             }
-        }
-
-        if(rawStringToDecode.contains("deployment_diagram")) {
-            System.out.println(rawStringToDecode); //TODO TEST FOR BACKEND. REMOVE WHEN MERGE.
+            // Ignores rest of the cases.
             return;
         }
 
@@ -318,7 +352,7 @@ class Decode {
     /**
      * Adds a relationship to the Draw object.
      * @param id of the diagram
-     * @param relationship type between class diagra classes
+     * @param relationship type between class diagram classes
      */
     private void classRelation(String id, String relationship) {
 
@@ -329,9 +363,8 @@ class Decode {
 
             // Split on comma.
             String[] single_relationship = relationship.split(",");
-
-            // TODO implement after inheritance has been finished
-            // draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
+            // initialises the super class and the sub class for visualising the inheritance relationship
+            draw.addClassDiagramRelation(single_relationship[1], single_relationship[2]);
         });
     }
 

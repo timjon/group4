@@ -44,7 +44,8 @@ public class DeploymentDiagramClass extends ClassDiagramClass {
 
     //Maps process to device
     public void addProcess(String process) {
-        processes.add(process);
+        if (!processes.contains(process))
+            processes.add(process);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class DeploymentDiagramClass extends ClassDiagramClass {
                 this.device,
                 this.coordinates.getX() + (size/2)/4 -this.device.length()*2,
                 this.coordinates.getY() -(size/2),
-                size );
+                size*2);
 
         //Allowed size of the image for the process
         process_size = size/4;
@@ -91,7 +92,7 @@ public class DeploymentDiagramClass extends ClassDiagramClass {
                     process,
                     (this.coordinates.getX() + (process_size/2)/4 - process.length()*2) + offset,
                     this.coordinates.getY() -(process_size/2),
-                    process_size );
+                    process_size*2 );
 
             offset += process_size + 5;
         }
