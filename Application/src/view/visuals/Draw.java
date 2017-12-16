@@ -342,12 +342,14 @@ public class Draw {
     void renderClassDiagramClass() {
         if (allClassDiagramClasses.size() == 0) return;
         int space = ((int) this.canvas_class.getWidth()) / this.allClassDiagramClasses.size();
-        double temp = Math.sqrt(allClassDiagramClasses.size());
-        int temp2 = (int)temp;
-        if(temp != (double)temp2){
-            temp2++;
+        //Calculates the length of the row
+        double rowLength = Math.sqrt(allClassDiagramClasses.size());
+        int adjustedLength = (int)rowLength;
+        //Rounds the length to the next integer if necessary
+        if(rowLength != (double)adjustedLength){
+            adjustedLength++;
         }
-        matrix(allClassDiagramClasses, temp2, space,this.canvas_class);
+        matrix(allClassDiagramClasses, adjustedLength, space,this.canvas_class);
     }
 
     /**
